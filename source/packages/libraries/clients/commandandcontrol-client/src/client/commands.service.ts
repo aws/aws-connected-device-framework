@@ -25,42 +25,39 @@ import { ClientServiceBase } from './common.service';
 export interface CommandsService {
     createCommand(
         command: EditableCommandResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string>;
     createNamedCommand(
         commandId: string,
         command: EditableCommandResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string>;
     updateCommand(
         commandId: string,
         command: EditableCommandResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void>;
     listCommands(
         tags?: Tags,
         fromCommandIdExclusive?: string,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<CommandResourceList>;
     getCommand(commandId: string, additionalHeaders?: RequestHeaders): Promise<CommandResource>;
     deleteCommand(commandId: string, additionalHeaders?: RequestHeaders): Promise<void>;
 }
 
-
 @injectable()
 export class CommandsServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }
 
-    protected commandsRelativeUrl() : string {
+    protected commandsRelativeUrl(): string {
         return '/commands';
     }
 
-    protected commandRelativeUrl(commandId:string) : string {
+    protected commandRelativeUrl(commandId: string): string {
         return PathHelper.encodeUrl('commands', commandId);
     }
-
 }

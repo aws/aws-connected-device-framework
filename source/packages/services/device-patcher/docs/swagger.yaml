@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -12,7 +13,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 openapi: 3.0.0
 info:
-  title: "AWS Connected Device Framework: Device Patcher"
+  title: 'AWS Connected Device Framework: Device Patcher'
   description: >
     Allows for patching of devices remotely utilizing SSM State Manager Associations Ansible Playbook executions on physical devices.
 
@@ -31,9 +32,8 @@ tags:
     description: >
       Patch represent SSM State Manager association against devices managed as hybrid instances.
 
-
 paths:
-  "/patchTemplates":
+  '/patchTemplates':
     post:
       tags:
         - Patch Templates
@@ -48,28 +48,28 @@ paths:
             schema:
               $ref: '#/components/schemas/CreatePatchTemplate'
       responses:
-        "201":
+        '201':
           description: Created
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "409":
-          $ref: "#/components/responses/Conflict"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
     get:
       tags:
         - Patch Templates
       summary: List all available patch patch templates.
       operationId: listTemplates
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/PatchTemplatesList"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PatchTemplatesList'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/patchTemplates/{templateName}":
+  '/patchTemplates/{templateName}':
     parameters:
       - $ref: '#/components/parameters/templateName'
     patch:
@@ -86,10 +86,10 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdatePatchTemplate'
       responses:
-        "201":
+        '201':
           description: Created
-        "400":
-          $ref: "#/components/responses/BadRequest"
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
     get:
       tags:
@@ -99,14 +99,14 @@ paths:
         Returns a specific patch template by template name.
       operationId: getTemplate
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/PatchTemplate"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PatchTemplate'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Patch Templates
@@ -115,13 +115,13 @@ paths:
         Deletes a specific patch template by template name.
       operationId: deleteTemplate
       responses:
-        "204":
+        '204':
           description: OK
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/activiations":
-    "post":
+  '/activiations':
+    'post':
       tags:
         - Activation
       summary: Creates a device activation
@@ -135,14 +135,14 @@ paths:
             schema:
               $ref: '#/components/schemas/Activation'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Activation"
+                $ref: '#/components/schemas/Activation'
 
-  "/activations/{activationId}":
+  '/activations/{activationId}':
     parameters:
       - $ref: '#/components/parameters/activationId'
     get:
@@ -151,14 +151,14 @@ paths:
       summary: Find a specific activation by Id
       operationId: getActivationById
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Activation"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Activation'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
     delete:
       tags:
@@ -166,14 +166,13 @@ paths:
       summary: Deletes a specific activation for a device by id
       operationId: deleteActivationById
       responses:
-        "204":
+        '204':
           description: OK
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-
-  "/deployemntTasks":
-    "post":
+  '/deployemntTasks':
+    'post':
       tags:
         - Patch Tasks
       summary: Creates a device patches in bulk
@@ -187,15 +186,14 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchList'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/PatchTask"
+                $ref: '#/components/schemas/PatchTask'
 
-
-  "/patchTasks/{patchTaskId}":
+  '/patchTasks/{patchTaskId}':
     parameters:
       - $ref: '#/components/parameters/patchTaskId'
     get:
@@ -204,16 +202,16 @@ paths:
       summary: Find a specific patch Task by patchTaskId
       operationId: getPatchById
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/PatchTask"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PatchTask'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/patches/{patchId}":
+  '/patches/{patchId}':
     parameters:
       - $ref: '#/components/parameters/patchId'
     get:
@@ -222,14 +220,14 @@ paths:
       summary: Get a patch by its Id
       operationId: getPatch
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Patch"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Patch'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags:
         - Patch
@@ -244,12 +242,12 @@ paths:
             schema:
               $ref: '#/components/schemas/RetryPatch'
       responses:
-        "200":
+        '200':
           description: OK
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "400":
-          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
     delete:
       tags:
@@ -257,12 +255,12 @@ paths:
       summary: Deletes a specific patch by patchId
       operationId: deletePatchById
       responses:
-        "204":
+        '204':
           description: OK
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/patchTasks/{patchTaskId}/patches":
+  '/patchTasks/{patchTaskId}/patches':
     parameters:
       - $ref: '#/components/parameters/patchTaskId'
     get:
@@ -271,17 +269,16 @@ paths:
       summary: Gets the list of patches associated with a particular patch Task
       operationId: getPatchsByTask
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/PatchList"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PatchList'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-
-  "/devices/{deviceId}/patches":
+  '/devices/{deviceId}/patches':
     parameters:
       - $ref: '#/components/parameters/deviceId'
     get:
@@ -290,19 +287,17 @@ paths:
       summary: Gets the list of patches associated with a particular device
       operationId: getPatchsByDevice
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/PatchList"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PatchList'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
 components:
-
   parameters:
-
     templateName:
       name: templateName
       in: path
@@ -343,7 +338,6 @@ components:
       schema:
         type: string
 
-
     offset:
       name: offset
       in: query
@@ -358,9 +352,7 @@ components:
         type: integer
         minimum: 0
 
-
   responses:
-
     Created:
       description: Created successfully
       headers:
@@ -373,24 +365,23 @@ components:
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
     NotFound:
       description: Not found
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
     Conflict:
       description: Conflict
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
   schemas:
-
     CreatePatchTemplate:
       type: object
       properties:
@@ -403,7 +394,7 @@ components:
         patchType:
           type: string
           description: type
-          enum: [ agentless, agentbased ]
+          enum: [agentless, agentbased]
         enabled:
           type: boolean
           description: Whether the template is enabled for use.
@@ -419,11 +410,10 @@ components:
         - playbookFileContent
       example:
         name: ggv2 installer template
-        patchType: "agentbased"
-        playbookFileContent: "LS0tCi0gaG9zdHM6IGFsbAogIHJlbW90ZV91c2VyOiBlYzJfdXNlcgogIGdhdGhlcl9mYWN0czogZmFsc2UKICBiZWNvbWU6IHllcwogIHRhc2tzOgogICAgLSBwaW5nOgo="
+        patchType: 'agentbased'
+        playbookFileContent: 'LS0tCi0gaG9zdHM6IGFsbAogIHJlbW90ZV91c2VyOiBlYzJfdXNlcgogIGdhdGhlcl9mYWN0czogZmFsc2UKICBiZWNvbWU6IHllcwogIHRhc2tzOgogICAgLSBwaW5nOgo='
         extraVars[key1]: val1
         extraVars[key2]: val2
-
 
     UpdatePatchTemplate:
       type: object
@@ -436,7 +426,7 @@ components:
         patchType:
           type: string
           description: type
-          enum: [ agentless, agentbased ]
+          enum: [agentless, agentbased]
         enabled:
           type: boolean
           description: Whether the template is enabled for use.
@@ -501,19 +491,17 @@ components:
       example:
         name: ggv2 installer template
         versionNo: 1
-        createdAt: "2020-03-16T21:42:53.594Z"
-        updatedAt: "2020-03-16T21:42:53.594Z"
+        createdAt: '2020-03-16T21:42:53.594Z'
+        updatedAt: '2020-03-16T21:42:53.594Z'
         enabled: true
-        patchType: "agentbased"
-        playbookName: "ggv2-ec2-amazonlinux2-installer-playbook.yml"
+        patchType: 'agentbased'
+        playbookName: 'ggv2-ec2-amazonlinux2-installer-playbook.yml'
         playbookSource:
-          bucket: "myBucket"
-          key: "device-patching/ggv2-ec2-amazonlinux2-installer-playbook.yml"
+          bucket: 'myBucket'
+          key: 'device-patching/ggv2-ec2-amazonlinux2-installer-playbook.yml'
         extraVars:
           commonVar1: commonVarVal1
           commonVar2: commonVarVal2
-
-
 
     PatchTemplatesList:
       properties:
@@ -521,7 +509,7 @@ components:
           type: array
           description: A list of templates
           items:
-            $ref: "#/components/schemas/PatchTemplate"
+            $ref: '#/components/schemas/PatchTemplate'
         pagination:
           type: object
           properties:
@@ -533,27 +521,25 @@ components:
             count:
               type: integer
 
-
       example:
         templates:
-          -
-            name: ggv2 installer template
+          - name: ggv2 installer template
             versionNo: 1
-            createdAt: "2020-03-16T21:42:53.594Z"
-            updatedAt: "2020-03-16T21:42:53.594Z"
+            createdAt: '2020-03-16T21:42:53.594Z'
+            updatedAt: '2020-03-16T21:42:53.594Z'
             enabled: true
-            patchType: "agentbased"
+            patchType: 'agentbased'
             playbookSource:
-              type: "s3"
-              bucket: "myBucket"
-              prefix: "device-patching/ggv2-ec2-amazonlinux2-installer-playbook.yml"
+              type: 's3'
+              bucket: 'myBucket'
+              prefix: 'device-patching/ggv2-ec2-amazonlinux2-installer-playbook.yml'
             extraVars:
               commonVar1: commonVarVal1
               commonVar2: commonVarVal2
         pagination:
           count: 3
           lastEvaluated:
-            name: "myTemplate5"
+            name: 'myTemplate5'
 
     Activation:
       type: object
@@ -568,9 +554,9 @@ components:
           type: string
           description: The region where device activation has been created
       example:
-        activationId: "a1102421-922f-46d5-9a85-bdbad8d90d6c"
-        activationCode: "nxj3IC1HBquDVxM14Oqo"
-        activationRegion: "us-east-1"
+        activationId: 'a1102421-922f-46d5-9a85-bdbad8d90d6c'
+        activationCode: 'nxj3IC1HBquDVxM14Oqo'
+        activationRegion: 'us-east-1'
 
     PatchTask:
       type: object
@@ -592,8 +578,7 @@ components:
           type: array
           description: A list of patches
           items:
-            $ref: "#/components/schemas/Patch"
-
+            $ref: '#/components/schemas/Patch'
 
     Patch:
       type: object
@@ -645,21 +630,19 @@ components:
               type: string
               description: extra variables which are passed through to the playbook
 
-
-
       example:
-        deviceId: "ggv2-ec2-devive1"
-        patchId: "a1b83c20-ab84-11ea-9634-37cb5e1c09aa"
-        createdAt: "2020-06-11T01:41:12.546Z"
-        updatedAt: "2020-06-11T01:41:12.546Z"
-        patchTemplateName: "ggv2-ec2-amazonlinux2-template"
-        patchStatus: "failed"
-        patchType: "agentbased"
-        statusMessage: "DEVICE_NOT_ACTIVATED_AS_HYBRID_INSTANCE"
-        associationId: "a1b83c20-ab84-11ea-9634-37cb5e1c09aa"
+        deviceId: 'ggv2-ec2-devive1'
+        patchId: 'a1b83c20-ab84-11ea-9634-37cb5e1c09aa'
+        createdAt: '2020-06-11T01:41:12.546Z'
+        updatedAt: '2020-06-11T01:41:12.546Z'
+        patchTemplateName: 'ggv2-ec2-amazonlinux2-template'
+        patchStatus: 'failed'
+        patchType: 'agentbased'
+        statusMessage: 'DEVICE_NOT_ACTIVATED_AS_HYBRID_INSTANCE'
+        associationId: 'a1b83c20-ab84-11ea-9634-37cb5e1c09aa'
         extraVars:
-          iot_endpoint: "<string>"
-          iot_role_alias: "<string>"
+          iot_endpoint: '<string>'
+          iot_role_alias: '<string>'
 
     RetryPatch:
       type: object
@@ -668,7 +651,7 @@ components:
           type: string
           description: retry is the only supported patching operation supported for Retry Patchs
       example:
-        patchStatus: "retry"
+        patchStatus: 'retry'
 
     PatchList:
       type: object
@@ -677,7 +660,7 @@ components:
           type: array
           description: A list of templates
           items:
-            $ref: "#/components/schemas/Patch"
+            $ref: '#/components/schemas/Patch'
         pagination:
           type: object
           properties:

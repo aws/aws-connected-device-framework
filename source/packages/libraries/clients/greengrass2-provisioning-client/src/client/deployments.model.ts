@@ -65,7 +65,7 @@ export interface NewDeploymentTask {
                     action: string;
                     thresholdPercentage: number;
                     minnumberOfExecutedThings: number;
-                }
+                },
             ];
         };
         timeoutConfig?: {
@@ -75,13 +75,13 @@ export interface NewDeploymentTask {
 }
 
 export interface DeploymentTask extends NewDeploymentTask {
-	id: string;
-	taskStatus: DeploymentTaskStatus;
-	statusMessage?: string;
-	createdAt: Date;
-	updatedAt?: Date;
+    id: string;
+    taskStatus: DeploymentTaskStatus;
+    statusMessage?: string;
+    createdAt: Date;
+    updatedAt?: Date;
 
-	deployments?: Deployment[];
+    deployments?: Deployment[];
 
     // no. of batches the task has been split into
     batchesTotal?: number;
@@ -89,4 +89,4 @@ export interface DeploymentTask extends NewDeploymentTask {
     batchesComplete?: number;
 }
 
-export type DeploymentTaskStatus = 'Waiting'|'InProgress'|'Success'|'Failure';
+export type DeploymentTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';

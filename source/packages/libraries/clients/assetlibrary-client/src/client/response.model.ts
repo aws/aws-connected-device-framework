@@ -16,5 +16,5 @@ export interface Response<T> {
 }
 
 export class ErrorModel {
-	error: string;
+    error: string;
 }

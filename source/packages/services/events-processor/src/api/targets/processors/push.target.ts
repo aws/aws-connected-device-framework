@@ -25,7 +25,7 @@ export class PushTarget extends SNSTarget implements SNSTargetCreation {
     constructor(
         @inject('aws.region') region: string,
         @inject('aws.accountId') accountId: string,
-        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS
+        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS,
     ) {
         super(region, accountId, snsFactory);
         this.sns = snsFactory();
@@ -33,7 +33,7 @@ export class PushTarget extends SNSTarget implements SNSTargetCreation {
 
     public async create(config: PushTargetItem, topicArn: string): Promise<string> {
         logger.debug(
-            `push.target create: in: config:${JSON.stringify(config)}, topicArn:${topicArn}`
+            `push.target create: in: config:${JSON.stringify(config)}, topicArn:${topicArn}`,
         );
 
         // validate input

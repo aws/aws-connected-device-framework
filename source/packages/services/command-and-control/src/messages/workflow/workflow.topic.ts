@@ -22,18 +22,22 @@ import { WorkflowPublishAction } from './workflow.publishAction';
 
 @injectable()
 export class TopicAction extends WorkflowPublishAction {
-
     private iotData: AWS.IotData;
 
     constructor(
         @inject('deliveryMethod.topic.mqttTopic') private topic: string,
-        @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData) {
+        @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData,
+    ) {
         super();
         this.iotData = iotDataFactory();
     }
 
-    async process(message:MessageItem,command:CommandItem): Promise<boolean> {
-        logger.debug(`workflow.topic process: message:${JSON.stringify(message)}, command:${JSON.stringify(command)}`);
+    async process(message: MessageItem, command: CommandItem): Promise<boolean> {
+        logger.debug(
+            `workflow.topic process: message:${JSON.stringify(message)}, command:${JSON.stringify(
+                command,
+            )}`,
+        );
 
         ow(command, ow.object.plain);
         const topicDeliveryMethod = command.deliveryMethod as TopicDeliveryMethod;
@@ -41,47 +45,44 @@ export class TopicAction extends WorkflowPublishAction {
         ow(this.topic, ow.string.nonEmpty);
         ow(message, ow.object.plain);
 
-        const payload = super.replacePayloadTokens(message,command);
+        const payload = super.replacePayloadTokens(message, command);
 
-        const msg:MessagePayload = {
+        const msg: MessagePayload = {
             operation: command.operation,
             payload,
         };
 
         // if there are no tokens to be replaced in the topic, its a shared topic
-        const isSharedTopic = this.topic.indexOf('${')<0;
+        const isSharedTopic = this.topic.indexOf('${') < 0;
 
         if (isSharedTopic) {
-
             // expecting a reply is not supported if sending to a shared topic as that would
             // require message specific correlation info to be sent as part of the payload
             ow(topicDeliveryMethod.expectReply, ow.boolean.false);
 
             // targeting specific things cannot be supported for shared topics either
-            ow(message.resolvedTargets?.length??0, 'targets', ow.number.equal(0));
+            ow(message.resolvedTargets?.length ?? 0, 'targets', ow.number.equal(0));
 
             // send message to the shared topic
             await this.publish(this.topic, msg);
-
         } else {
-
             // TODO: validate message has all required payload params identified/provided
 
             // enumerate all the targeted things, publishing to device specific topics
             ow(message.resolvedTargets, ow.array.minLength(1));
-            for(const target of message.resolvedTargets) {
+            for (const target of message.resolvedTargets) {
                 target.correlationId = super.uidGenerator();
-                msg.correlationId = target.correlationId
+                msg.correlationId = target.correlationId;
                 const thingTopic = this.topic.replace(/\$\{thingName\}/g, target.id);
                 msg.topics = {
                     accepted: `${thingTopic}/${target.correlationId}/accepted`,
-                    rejected: `${thingTopic}/${target.correlationId}/rejected`
+                    rejected: `${thingTopic}/${target.correlationId}/rejected`,
                 };
-                if (command.deliveryMethod.expectReply===true) {
+                if (command.deliveryMethod.expectReply === true) {
                     // if expecting reply, then build thing specific payloads including correlation info
                     msg.topics.reply = `${thingTopic}/${target.correlationId}/reply`;
                 }
-                if (topicDeliveryMethod.onlineOnly===true) {
+                if (topicDeliveryMethod.onlineOnly === true) {
                     // TODO: verify that device is online before sending
                 }
                 // TODO: support other topic params?
@@ -103,13 +104,15 @@ export class TopicAction extends WorkflowPublishAction {
         return true;
     }
 
-    private async publish(topic:string, payload:MessagePayload) : Promise<void> {
-        logger.debug(`workflow.topic publish: in: topic:${topic}, payload:${JSON.stringify(payload)}`);
+    private async publish(topic: string, payload: MessagePayload): Promise<void> {
+        logger.debug(
+            `workflow.topic publish: in: topic:${topic}, payload:${JSON.stringify(payload)}`,
+        );
 
         const params = {
             topic,
             payload: JSON.stringify(payload),
-            qos: 1
+            qos: 1,
         };
 
         try {
@@ -130,5 +133,5 @@ interface MessagePayload {
         accepted: string;
         rejected: string;
         reply?: string;
-    }
+    };
 }

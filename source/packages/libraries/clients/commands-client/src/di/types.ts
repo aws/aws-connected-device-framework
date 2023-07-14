@@ -11,10 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const COMMANDS_CLIENT_TYPES = {
-
     CommandsService: Symbol.for('CommandsClient_CommandsService'),
     TemplatesService: Symbol.for('CommandsClient_TemplatesService'),
     RestClient: Symbol.for('CommandsClient_RestClient'),
-    RestClientFactory: Symbol.for('Factory<CommandsClient_RestClient>')
-
+    RestClientFactory: Symbol.for('Factory<CommandsClient_RestClient>'),
 };

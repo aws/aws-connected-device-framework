@@ -22,14 +22,14 @@ export interface TargetsService {
         subscriptionId: string,
         targetType: string,
         target: TargetResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void>;
 
     deleteTarget(
         subscriptionId: string,
         targetType: string,
         targetId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void>;
 }
 
@@ -42,14 +42,14 @@ export class TargetsServiceBase extends CommonServiceBase {
     protected targetRelativeUrl(
         subscriptionId: string,
         targetType: string,
-        targetId: string
+        targetId: string,
     ): string {
         return `/${PathHelper.encodeUrl(
             'subscriptions',
             subscriptionId,
             'targets',
             targetType,
-            targetId
+            targetId,
         )}`;
     }
 }

@@ -10,12 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {injectable} from 'inversify'
+import { injectable } from 'inversify';
 
 @injectable()
 export class TypeUtils {
-
-    public parseInt(val:unknown, ifNan?:number) : number {
+    public parseInt(val: unknown, ifNan?: number): number {
         const asInt = parseInt(val as string);
         if (isNaN(asInt)) {
             return ifNan;

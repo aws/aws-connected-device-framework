@@ -15,7 +15,6 @@
  * The symbols representing each of the classes. Use these to identify which object is to be injected into another.
  */
 export const DEVICE_SIMULATOR_TYPES = {
-
     DeviceStateMachine: Symbol.for('DeviceStateMachine'),
 
     CalcEngine: Symbol.for('CalcEngine'),

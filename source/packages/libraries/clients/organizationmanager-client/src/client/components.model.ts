@@ -26,7 +26,7 @@ export interface ComponentItem {
     bypassCheck?: boolean;
 }
 
-export type ComponentResource = Omit<ComponentItem, "organizationalUnitId">
+export type ComponentResource = Omit<ComponentItem, 'organizationalUnitId'>;
 
 export type ComponentResourceList = ComponentResource[];
 

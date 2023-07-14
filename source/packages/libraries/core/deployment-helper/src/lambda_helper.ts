@@ -12,11 +12,22 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 import { send } from 'cfn-response-promise';
-import { CloudFormationCustomResourceCreateEvent, CloudFormationCustomResourceDeleteEvent, CloudFormationCustomResourceUpdateEvent, Context } from 'aws-lambda';
+import {
+    CloudFormationCustomResourceCreateEvent,
+    CloudFormationCustomResourceDeleteEvent,
+    CloudFormationCustomResourceUpdateEvent,
+    Context,
+} from 'aws-lambda';
 
-import {logger} from '@awssolutions/simple-cdf-logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
-exports.handler = async (event: CloudFormationCustomResourceCreateEvent|CloudFormationCustomResourceUpdateEvent|CloudFormationCustomResourceDeleteEvent, context: Context) => {
+exports.handler = async (
+    event:
+        | CloudFormationCustomResourceCreateEvent
+        | CloudFormationCustomResourceUpdateEvent
+        | CloudFormationCustomResourceDeleteEvent,
+    context: Context,
+) => {
     logger.debug(`Event:${JSON.stringify(event)} Context: ${JSON.stringify(context)}`);
 
     // TODO: Try Loading the config from S3
@@ -34,7 +45,7 @@ exports.handler = async (event: CloudFormationCustomResourceCreateEvent|CloudFor
             assetLibraryHistoryApplicationConfigOverride: JSON.stringify({}),
             commandsApplicationConfigOverride: JSON.stringify({}),
             certificateActivatorApplicationConfigOverride: JSON.stringify({}),
-            certificateVendorApplicationConfigOverride: JSON.stringify({})
+            certificateVendorApplicationConfigOverride: JSON.stringify({}),
         });
     } else if (event.RequestType === 'Update') {
         return await send(event, context, 'SUCCESS', {
@@ -48,8 +59,7 @@ exports.handler = async (event: CloudFormationCustomResourceCreateEvent|CloudFor
             assetLibraryHistoryApplicationConfigOverride: JSON.stringify({}),
             commandsApplicationConfigOverride: JSON.stringify({}),
             certificateActivatorApplicationConfigOverride: JSON.stringify({}),
-            certificateVendorApplicationConfigOverride: JSON.stringify({})
-
+            certificateVendorApplicationConfigOverride: JSON.stringify({}),
         });
     } else if (event.RequestType === 'Delete') {
         return await send(event, context, 'SUCCESS', {
@@ -63,7 +73,7 @@ exports.handler = async (event: CloudFormationCustomResourceCreateEvent|CloudFor
             assetLibraryHistoryApplicationConfigOverride: JSON.stringify({}),
             commandsApplicationConfigOverride: JSON.stringify({}),
             certificateActivatorApplicationConfigOverride: JSON.stringify({}),
-            certificateVendorApplicationConfigOverride: JSON.stringify({})
+            certificateVendorApplicationConfigOverride: JSON.stringify({}),
         });
     }
 };

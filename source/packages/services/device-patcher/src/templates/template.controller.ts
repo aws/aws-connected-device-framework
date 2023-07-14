@@ -13,7 +13,7 @@
 import { Response } from 'express';
 import { inject } from 'inversify';
 import ow from 'ow';
-import multer from "multer";
+import multer from 'multer';
 
 import {
     interfaces,
@@ -25,7 +25,7 @@ import {
     httpPatch,
     httpPost,
     httpDelete,
-    queryParam
+    queryParam,
 } from 'inversify-express-utils';
 import { Request } from 'express';
 
@@ -39,14 +39,14 @@ import { PatchTemplateAssembler } from './template.assembler';
 import { PatchTemplateItem } from './template.model';
 
 const storage = multer.memoryStorage();
-const upload = multer({storage});
+const upload = multer({ storage });
 
 @controller('/patchTemplates')
 export class PatchTemplateController implements interfaces.Controller {
-
     public constructor(
         @inject(TYPES.PatchTemplatesService) private patchTemplatesService: PatchTemplatesService,
-        @inject(TYPES.PatchTemplateAssembler) private patchTemplateAssembler: PatchTemplateAssembler,
+        @inject(TYPES.PatchTemplateAssembler)
+        private patchTemplateAssembler: PatchTemplateAssembler,
     ) {}
 
     @httpPost('', upload.single('playbookFile'))
@@ -71,9 +71,9 @@ export class PatchTemplateController implements interfaces.Controller {
             template.playbookFile = req.file.buffer;
             template.playbookName = req.file.originalname;
 
-            if(template.extraVars) {
-                if(typeof template.extraVars === 'string') {
-                    throw new Error("BAD_REQUEST")
+            if (template.extraVars) {
+                if (typeof template.extraVars === 'string') {
+                    throw new Error('BAD_REQUEST');
                 }
             }
             await this.patchTemplatesService.create(template);
@@ -106,9 +106,9 @@ export class PatchTemplateController implements interfaces.Controller {
                 template.playbookName = req.file.originalname;
             }
 
-            if(template.extraVars) {
-                if(typeof template.extraVars === 'string') {
-                    throw new Error("BAD_REQUEST")
+            if (template.extraVars) {
+                if (typeof template.extraVars === 'string') {
+                    throw new Error('BAD_REQUEST');
                 }
             }
 
@@ -123,12 +123,12 @@ export class PatchTemplateController implements interfaces.Controller {
 
     @httpGet('/:name')
     public async getTemplate(
-        @response() res:Response,
-        @requestParam('name') name: string
+        @response() res: Response,
+        @requestParam('name') name: string,
     ): Promise<PatchTemplateItem> {
         logger.info(`PatchTemplate.controller getTemplate: in: templateId:${name}`);
 
-        let template:PatchTemplateItem;
+        let template: PatchTemplateItem;
         try {
             template = await this.patchTemplatesService.get(name);
         } catch (err) {
@@ -143,16 +143,25 @@ export class PatchTemplateController implements interfaces.Controller {
     public async listTemplates(
         @queryParam('count') count: number,
         @queryParam('exclusiveStartName') exclusiveStartName: string,
-        @response() res:Response,
+        @response() res: Response,
     ): Promise<void> {
-        logger.info(`PatchTemplates.controller listTemplate: in: count:${count}, exclusiveStartName:${exclusiveStartName}`);
+        logger.info(
+            `PatchTemplates.controller listTemplate: in: count:${count}, exclusiveStartName:${exclusiveStartName}`,
+        );
 
         try {
-            const [items, paginationKey] = await this.patchTemplatesService.list(count, {name: exclusiveStartName});
-            const resources = this.patchTemplateAssembler.toListResource(items, count, paginationKey);
-            logger.debug(`PatchTemplates.controller listTemplates: exit: ${JSON.stringify(resources)}`);
+            const [items, paginationKey] = await this.patchTemplatesService.list(count, {
+                name: exclusiveStartName,
+            });
+            const resources = this.patchTemplateAssembler.toListResource(
+                items,
+                count,
+                paginationKey,
+            );
+            logger.debug(
+                `PatchTemplates.controller listTemplates: exit: ${JSON.stringify(resources)}`,
+            );
             res.status(200).send(resources);
-
         } catch (err) {
             logger.error(`PatchTemplate.controller : err: ${err}`);
             handleError(err, res);
@@ -160,16 +169,17 @@ export class PatchTemplateController implements interfaces.Controller {
     }
 
     @httpDelete('/:name')
-    public async deleteTemplate(@requestParam('name') name:string, @response() res:Response) : Promise<void> {
+    public async deleteTemplate(
+        @requestParam('name') name: string,
+        @response() res: Response,
+    ): Promise<void> {
         logger.info(`templates.controller deleteTemplate: in: name:${name}`);
 
         try {
             await this.patchTemplatesService.delete(name);
         } catch (e) {
-            handleError(e,res);
+            handleError(e, res);
         }
         logger.info(`templates.controller deleteTemplate: exit: `);
     }
-
-
 }

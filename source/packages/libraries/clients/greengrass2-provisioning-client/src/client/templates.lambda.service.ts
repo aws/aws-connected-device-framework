@@ -28,7 +28,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -37,7 +37,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
     async createTemplate(
         template: NewTemplate,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
@@ -58,7 +58,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
     async updateTemplate(
         template: NewTemplate,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);

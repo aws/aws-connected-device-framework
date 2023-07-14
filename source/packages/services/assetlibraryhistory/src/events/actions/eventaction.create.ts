@@ -19,22 +19,20 @@ import { EventModel, StateHistoryModel } from '../events.models';
 
 @injectable()
 export class CreateAction implements EventAction {
+    constructor(@inject(TYPES.EventsDao) private eventsDao: EventsDao) {}
 
-    constructor(
-        @inject(TYPES.EventsDao) private eventsDao: EventsDao) {}
-
-    async execute(event:EventModel): Promise<EventModel> {
+    async execute(event: EventModel): Promise<EventModel> {
         logger.debug(`eventaction.create execute: event:${JSON.stringify(event)}}`);
 
         // TODO: validation
 
-        const toSave:StateHistoryModel = {
+        const toSave: StateHistoryModel = {
             objectId: event.objectId,
             type: event.type,
             time: event.time,
             event: event.event,
             user: event.user,
-            state: event.payload
+            state: event.payload,
         };
 
         // save the updated job info (1 record for the version, 1 to represent the latest)
@@ -44,7 +42,5 @@ export class CreateAction implements EventAction {
 
         logger.debug('eventaction.create execute: exit:true');
         return event;
-
     }
-
 }

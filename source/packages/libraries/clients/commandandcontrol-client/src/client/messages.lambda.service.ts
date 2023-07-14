@@ -37,14 +37,14 @@ export class MessagesLambdaService extends MessagesServiceBase implements Messag
     }
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private readonly lambdaInvoker: LambdaInvokerService
+        private readonly lambdaInvoker: LambdaInvokerService,
     ) {
         super();
     }
 
     async createMessage(
         message: NewMessageResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(message, ow.object.nonEmpty);
         ow(message.commandId, ow.string.nonEmpty);
@@ -62,7 +62,7 @@ export class MessagesLambdaService extends MessagesServiceBase implements Messag
 
     async getMessage(
         messageId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<MessageResource> {
         ow(messageId, ow.string.nonEmpty);
 
@@ -79,7 +79,7 @@ export class MessagesLambdaService extends MessagesServiceBase implements Messag
         commandId: string,
         count?: number,
         fromCreatedAtExclusive?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<MessageList> {
         ow(commandId, ow.string.nonEmpty);
 
@@ -96,7 +96,7 @@ export class MessagesLambdaService extends MessagesServiceBase implements Messag
     async getRecipient(
         messageId: string,
         thingName: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<Recipient> {
         ow(messageId, ow.string.nonEmpty);
         ow(thingName, ow.string.nonEmpty);
@@ -114,7 +114,7 @@ export class MessagesLambdaService extends MessagesServiceBase implements Messag
         messageId: string,
         fromThingNameExclusive?: string,
         count?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<RecipientList> {
         ow(messageId, ow.string.nonEmpty);
 
@@ -136,7 +136,7 @@ export class MessagesLambdaService extends MessagesServiceBase implements Messag
         thingName: string,
         fromReceivedAtExclusive?: number,
         count?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<ReplyList> {
         ow(messageId, ow.string.nonEmpty);
 

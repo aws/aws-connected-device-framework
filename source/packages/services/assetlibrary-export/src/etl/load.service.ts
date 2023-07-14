@@ -20,12 +20,11 @@ import ow from 'ow';
 
 @injectable()
 export class LoadService {
-
     private readonly loaders: Loaders = {};
 
     constructor(
         @inject(TYPES.S3Loader) protected s3Loader: S3Loader,
-        @inject('defaults.etl.load.type') private loadType: string
+        @inject('defaults.etl.load.type') private loadType: string,
     ) {
         this.loaders['S3'] = s3Loader;
     }

@@ -30,18 +30,18 @@ export class SearchServiceLite {
     constructor(
         @inject(TYPES.SearchDao) private searchDao: SearchDaoLite,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
-        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler
+        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
     ) {}
 
     public async search(
         model: SearchRequestModel,
         offset?: string,
-        count?: number
+        count?: number,
     ): Promise<[(GroupItem | DeviceItem)[], string, number]> {
         logger.debug(
             `search.lite.service search: in: model: ${JSON.stringify(
-                model
-            )}, offset:${offset}, count:${count}`
+                model,
+            )}, offset:${offset}, count:${count}`,
         );
 
         // validation
@@ -75,7 +75,7 @@ export class SearchServiceLite {
         if (results === undefined) {
             count = 0;
             logger.debug(
-                `search.lite.service search: exit: models: undefined, offset:${offset}, count:${count}`
+                `search.lite.service search: exit: models: undefined, offset:${offset}, count:${count}`,
             );
             return [undefined, offset, count];
         }

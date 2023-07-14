@@ -28,7 +28,7 @@ export class IotCoreEventSource implements EventSource {
         @inject('aws.accountId') private accountId: string,
         @inject('aws.lambda.lambdaInvoke.arn') private lambdaInvokeEntryLambda: string,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
-        @inject(TYPES.LambdaFactory) lambdaFactory: () => AWS.Lambda
+        @inject(TYPES.LambdaFactory) lambdaFactory: () => AWS.Lambda,
     ) {
         this.iot = iotFactory();
         this.lambda = lambdaFactory();

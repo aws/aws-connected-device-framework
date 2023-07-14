@@ -11,51 +11,51 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export enum CommonNameGenerator {
-	increment = 'increment',
-	list = 'list',
-	static = 'static'
+    increment = 'increment',
+    list = 'list',
+    static = 'static',
 }
 
 export interface CertificateChunkRequest {
-	taskId:string;
-	chunkId:number;
-	certInfo: CertificateInfo;
-	quantity:number;
-	caAlias:string;
+    taskId: string;
+    chunkId: number;
+    certInfo: CertificateInfo;
+    quantity: number;
+    caAlias: string;
 }
 
 export interface CertificateChunkResponse {
-	quantity: number;
-	location: string;
+    quantity: number;
+    location: string;
 }
 
 export interface CertificateInfo {
-	commonName?:CommonName|string;
-	commonNameList?:string[];
-	organization?:string;
-	organizationalUnit?:string;
-	locality?:string;
-	stateName?:string;
-	country?:string;
-	emailAddress?:string;
-	distinguishedNameQualifier?:string;
-	includeCA?:boolean;
-	daysExpiry?:number;
+    commonName?: CommonName | string;
+    commonNameList?: string[];
+    organization?: string;
+    organizationalUnit?: string;
+    locality?: string;
+    stateName?: string;
+    country?: string;
+    emailAddress?: string;
+    distinguishedNameQualifier?: string;
+    includeCA?: boolean;
+    daysExpiry?: number;
 }
 
 export interface CommonName {
-	generator?:CommonNameGenerator;
-	prefix?:string;
-	commonNameStart?:string;
-	commonNameList?:string[];
-	commonNameStatic?:string;
+    generator?: CommonNameGenerator;
+    prefix?: string;
+    commonNameStart?: string;
+    commonNameList?: string[];
+    commonNameStatic?: string;
 }
 export interface ACMCertificateChunkResponse {
-	certificates: ACMCertificate[];
+    certificates: ACMCertificate[];
 }
 
 export interface ACMCertificate {
-	certificateArn: string;
-	certificate: string;
-	privateKey?: string;
+    certificateArn: string;
+    certificate: string;
+    privateKey?: string;
 }

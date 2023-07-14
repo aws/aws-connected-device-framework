@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export class LambdaApiGatewayEventBuilder implements LambdaApiGatewayEvent {
-
     public resource: string;
     public path: string;
     public httpMethod: LambdaApiGatewayEventMethodTypes;
@@ -62,28 +61,22 @@ export class LambdaApiGatewayEventBuilder implements LambdaApiGatewayEvent {
     public setPath(path: string) {
         this.path = path;
         this.pathParameters = {
-            path
+            path,
         };
         return this;
     }
-
 }
 
-export type LambdaApiGatewayEventMethodTypes =
-    | 'GET'
-    | 'PUT'
-    | 'POST'
-    | 'DELETE'
-    | 'PATCH';
+export type LambdaApiGatewayEventMethodTypes = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH';
 
 export interface LambdaApiGatewayEvent {
     resource: string;
     path: string;
     httpMethod: LambdaApiGatewayEventMethodTypes;
     headers: Dictionary;
-    multiValueHeaders?: {[key:string]: string[]};
+    multiValueHeaders?: { [key: string]: string[] };
     queryStringParameters: Dictionary | null;
-    multiValueQueryStringParameters?: {[key:string]: string[]} | null;
+    multiValueQueryStringParameters?: { [key: string]: string[] } | null;
     pathParameters: Dictionary;
     stageVariables?: Dictionary | null;
     requestContext?: any;
@@ -120,8 +113,8 @@ export class LambdaApiGatewayEventResponse implements ApiGatewayInvokeResponsePa
 }
 
 export class Dictionary {
-    [key:string]: any;
+    [key: string]: any;
 }
 export class DictionaryArray {
-    [key:string]: string[];
+    [key: string]: string[];
 }

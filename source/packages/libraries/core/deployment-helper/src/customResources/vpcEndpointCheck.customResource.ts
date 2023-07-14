@@ -17,49 +17,52 @@ import { CustomResource } from './customResource';
 
 @injectable()
 export class VpcEndpointCheckCustomResource implements CustomResource {
-
     private ec2: AWS.EC2;
 
-    constructor(
-        @inject(TYPES.EC2Factory) ec2Factory: () => AWS.EC2,
-    ) {
+    constructor(@inject(TYPES.EC2Factory) ec2Factory: () => AWS.EC2) {
         this.ec2 = ec2Factory();
     }
 
-    public async create(customResourceEvent: CustomResourceEvent) : Promise<VpcEndpointCheckCustomResponse> {
-
+    public async create(
+        customResourceEvent: CustomResourceEvent,
+    ): Promise<VpcEndpointCheckCustomResponse> {
         const vpcId = customResourceEvent.ResourceProperties.VpcId;
         const region = customResourceEvent.ResourceProperties.Region;
         const serviceName = customResourceEvent.ResourceProperties.ServiceName;
 
         const params: AWS.EC2.Types.DescribeVpcEndpointsRequest = {
-            Filters: [{
+            Filters: [
+                {
                     Name: 'vpc-id',
-                    Values: [`${vpcId}`]
-                }, {
+                    Values: [`${vpcId}`],
+                },
+                {
                     Name: 'service-name',
-                    Values: [`com.amazonaws.${region}.${serviceName}`]
-                }
-            ]
+                    Values: [`com.amazonaws.${region}.${serviceName}`],
+                },
+            ],
         };
 
         const result = await this.ec2.describeVpcEndpoints(params).promise();
 
         return {
-            isNotEnabled: result.VpcEndpoints?.length === 0
+            isNotEnabled: result.VpcEndpoints?.length === 0,
         };
     }
 
-    public async update(customResourceEvent: CustomResourceEvent): Promise<VpcEndpointCheckCustomResponse> {
-
+    public async update(
+        customResourceEvent: CustomResourceEvent,
+    ): Promise<VpcEndpointCheckCustomResponse> {
         return this.create(customResourceEvent);
     }
 
-    public async delete(_customResourceEvent: CustomResourceEvent): Promise<VpcEndpointCheckCustomResponse> {
+    public async delete(
+        _customResourceEvent: CustomResourceEvent,
+    ): Promise<VpcEndpointCheckCustomResponse> {
         return {};
     }
 }
 
 export interface VpcEndpointCheckCustomResponse {
-    isNotEnabled?: boolean
+    isNotEnabled?: boolean;
 }

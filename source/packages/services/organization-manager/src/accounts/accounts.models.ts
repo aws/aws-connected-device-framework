@@ -11,10 +11,15 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-export type AccountStatus = 'CREATING' | 'ACTIVE' | 'PROVISIONED' | 'SUSPENDED' | 'PENDING' | 'ERROR'
+export type AccountStatus =
+    | 'CREATING'
+    | 'ACTIVE'
+    | 'PROVISIONED'
+    | 'SUSPENDED'
+    | 'PENDING'
+    | 'ERROR';
 
-export type ComponentStatus = 'CREATED' | 'UPDATED' | 'FAILED'
-
+export type ComponentStatus = 'CREATED' | 'UPDATED' | 'FAILED';
 
 export interface AccountResource {
     accountId?: string;
@@ -25,50 +30,51 @@ export interface AccountResource {
     ssoLastName: string;
     status: AccountStatus;
     organizationalUnitId: string;
-    regions: string[],
-    tags?: { [key: string]: string }
+    regions: string[];
+    tags?: { [key: string]: string };
 }
 
 export type AccountResourceList = {
-    accounts: AccountResource[],
+    accounts: AccountResource[];
     pagination?: {
         lastEvaluated?: {
-            accountName: string,
-            organizationId: string
-        },
-        count?: number
+            accountName: string;
+            organizationId: string;
+        };
+        count?: number;
     };
-}
+};
 
-export type AccountsItem =
-    Omit<AccountResource, "tags">
+export type AccountsItem = Omit<AccountResource, 'tags'>;
 
 export type AccountComponentModel = {
-    accountId: string,
-    componentName: string,
-    region: string,
-    status: ComponentStatus
-}
+    accountId: string;
+    componentName: string;
+    region: string;
+    status: ComponentStatus;
+};
 
-export type AccountCreationRequest = Omit<AccountResource, "status"> & { createAccountRequestId: string }
+export type AccountCreationRequest = Omit<AccountResource, 'status'> & {
+    createAccountRequestId: string;
+};
 
 export type AccountUpdateRequest = {
     name: string;
     organizationalUnitId: string;
     status?: AccountStatus;
-    regions?: string[],
+    regions?: string[];
     accountId?: string;
-}
+};
 
-export type AccountRegionUpdateRequest = Pick<AccountResource, "regions" | "accountId">
+export type AccountRegionUpdateRequest = Pick<AccountResource, 'regions' | 'accountId'>;
 
-export type AccountStatusUpdateRequest = Pick<AccountResource, "status" | "name">
+export type AccountStatusUpdateRequest = Pick<AccountResource, 'status' | 'name'>;
 
-export type ProvisionedAccountDetail = Pick<AccountResource, "status" | "accountId">
+export type ProvisionedAccountDetail = Pick<AccountResource, 'status' | 'accountId'>;
 
 export type DynamoDbPaginationKey = { [key: string]: string };
 
 export type AccountListPaginationKey = {
     organizationalUnitId: string;
     accountName: string;
-}
+};

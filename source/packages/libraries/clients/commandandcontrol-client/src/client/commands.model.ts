@@ -73,13 +73,13 @@ export interface JobDeliveryMethod extends AbstractDeliveryMethod {
 export type DeliveryMethod = 'JOB' | 'TOPIC' | 'SHADOW';
 
 export interface CommandResourceList {
-	commands: CommandResource[];
-	pagination?: {
-		lastEvaluated?: {
-			commandId: string
-		},
-		count?: number,
-	};
+    commands: CommandResource[];
+    pagination?: {
+        lastEvaluated?: {
+            commandId: string;
+        };
+        count?: number;
+    };
 }
 
 export type Tags = { [key: string]: Tag };

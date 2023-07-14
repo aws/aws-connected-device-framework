@@ -23,7 +23,6 @@ import ow from 'ow';
 
 @injectable()
 export class S3Loader implements Loader {
-
     private s3: AWS.S3;
 
     constructor(
@@ -46,8 +45,8 @@ export class S3Loader implements Loader {
         ow(batch.timestamp, 'batchType', ow.number.greaterThan(0));
 
         const dateTimeFormat = (timestamp: number, format: string) => {
-            return DateTime.fromMillis(timestamp, {zone: 'utc'}).toFormat(format)
-        }
+            return DateTime.fromMillis(timestamp, { zone: 'utc' }).toFormat(format);
+        };
 
         const compiled = _.template(this.loadPath);
         const compiledKey = compiled({
@@ -59,12 +58,12 @@ export class S3Loader implements Loader {
                     export: {
                         bucket: this.exportBucket,
                         prefix: this.exportKeyPrefix,
-                    }
-                }
-            }
+                    },
+                },
+            },
         });
 
-        const params:AWS.S3.PutObjectRequest = {
+        const params: AWS.S3.PutObjectRequest = {
             Bucket: this.exportBucket,
             Key: compiledKey,
             Body: JSON.stringify(batch.items),
@@ -78,8 +77,7 @@ export class S3Loader implements Loader {
         return {
             batchId: batch.id,
             exportBucket: this.exportBucket,
-            exportKey: compiledKey
+            exportKey: compiledKey,
         };
-
     }
 }

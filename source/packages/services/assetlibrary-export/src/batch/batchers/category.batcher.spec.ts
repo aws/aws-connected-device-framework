@@ -17,7 +17,6 @@ import { CategoryBatcher } from '../batchers/category.batcher';
 import { LabelsService } from '../../labels/labels.service';
 
 describe('CategoryBatcher', () => {
-
     let mockedLabelsService: jest.Mocked<LabelsService>;
     let instance: CategoryBatcher;
 
@@ -28,20 +27,22 @@ describe('CategoryBatcher', () => {
     });
 
     it('should create batches by categories', async () => {
-
         const mockedRequest1 = {
-            'label': 'device',
-            'total': 500
+            label: 'device',
+            total: 500,
         };
 
         const mockedRequest2 = {
-            'label': 'group',
-            'total': 500
+            label: 'group',
+            total: 500,
         };
 
-        mockedLabelsService.getObjectCount = jest.fn().mockReturnValueOnce(mockedRequest1).mockReturnValueOnce(mockedRequest2)
+        mockedLabelsService.getObjectCount = jest
+            .fn()
+            .mockReturnValueOnce(mockedRequest1)
+            .mockReturnValueOnce(mockedRequest2);
 
-        const response =  await instance.batch();
+        const response = await instance.batch();
 
         expect(response.length).toEqual(10);
 
@@ -50,7 +51,5 @@ describe('CategoryBatcher', () => {
         expect(response[0]).toHaveProperty('id');
         expect(response[0]).toHaveProperty('range');
         expect(response[0].type).toBeUndefined();
-
     });
-
 });

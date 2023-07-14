@@ -16,12 +16,20 @@ import ow from 'ow';
 import pLimit from 'p-limit';
 
 import {
-    DeleteCoreDeviceCommand, GetCoreDeviceCommand, GetCoreDeviceCommandOutput, GreengrassV2Client,
-    ListEffectiveDeploymentsCommand, ListEffectiveDeploymentsCommandOutput,
-    ListInstalledComponentsCommand, ListInstalledComponentsCommandOutput
+    DeleteCoreDeviceCommand,
+    GetCoreDeviceCommand,
+    GetCoreDeviceCommandOutput,
+    GreengrassV2Client,
+    ListEffectiveDeploymentsCommand,
+    ListEffectiveDeploymentsCommandOutput,
+    ListInstalledComponentsCommand,
+    ListInstalledComponentsCommandOutput,
 } from '@aws-sdk/client-greengrassv2';
 import {
-    CreateThingGroupCommand, DescribeThingCommand, DescribeThingGroupCommand, IoTClient
+    CreateThingGroupCommand,
+    DescribeThingCommand,
+    DescribeThingGroupCommand,
+    IoTClient,
 } from '@aws-sdk/client-iot';
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 import {
@@ -37,15 +45,25 @@ import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
 import { S3Utils } from '../utils/s3.util';
 import { CoreListPaginationKey, CoresDao } from './cores.dao';
-import { ConfigGeneratorEvent, CoreCreatedEvent, CoreCreatedPayload, CoreDeletedEvent, CoreDeletedPayload, CoreItem, FailedCoreDeployment } from './cores.models';
+import {
+    ConfigGeneratorEvent,
+    CoreCreatedEvent,
+    CoreCreatedPayload,
+    CoreDeletedEvent,
+    CoreDeletedPayload,
+    CoreItem,
+    FailedCoreDeployment,
+} from './cores.models';
 
 import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
-import { DeploymentTaskListPaginationKey, DeploymentTasksDao } from '../deploymentTasks/deploymentTasks.dao';
+import {
+    DeploymentTaskListPaginationKey,
+    DeploymentTasksDao,
+} from '../deploymentTasks/deploymentTasks.dao';
 import { Deployment } from '../deployments/deployments.models';
 
 @injectable()
 export class CoresService {
-
     private ggv2: GreengrassV2Client;
     private iot: IoTClient;
     private lambda: LambdaClient;
@@ -59,15 +77,25 @@ export class CoresService {
         @inject(TYPES.IotFactory) iotFactory: () => IoTClient,
         @inject(TYPES.Greengrassv2Factory) ggv2Factory: () => GreengrassV2Client,
         @inject(TYPES.LambdaFactory) lambdaFactory: () => LambdaClient,
-        @inject(EVENT_PUBLISHER_TYPES.CDFEventPublisher) private cdfEventPublisher: CDFEventPublisher,
+        @inject(EVENT_PUBLISHER_TYPES.CDFEventPublisher)
+        private cdfEventPublisher: CDFEventPublisher,
     ) {
         this.iot = iotFactory();
         this.ggv2 = ggv2Factory();
         this.lambda = lambdaFactory();
     }
 
-    public async associateTemplate(coreName: string, templateName: string, templateVersion: number, state: 'desired' | 'reported', deploymentStatus?: string, deploymentStatusMessage?: string): Promise<void> {
-        logger.debug(`cores.service associateTemplate: in: coreName:${coreName}, templateName:${templateName}, templateVersion:${templateVersion}, state:${state}, deploymentStatus:${deploymentStatus}, deploymentStatusMessage:${deploymentStatusMessage}`);
+    public async associateTemplate(
+        coreName: string,
+        templateName: string,
+        templateVersion: number,
+        state: 'desired' | 'reported',
+        deploymentStatus?: string,
+        deploymentStatusMessage?: string,
+    ): Promise<void> {
+        logger.debug(
+            `cores.service associateTemplate: in: coreName:${coreName}, templateName:${templateName}, templateVersion:${templateVersion}, state:${state}, deploymentStatus:${deploymentStatus}, deploymentStatusMessage:${deploymentStatusMessage}`,
+        );
 
         ow(coreName, ow.string.nonEmpty);
         ow(templateName, 'template name', ow.string.nonEmpty);
@@ -79,22 +107,34 @@ export class CoresService {
             await this.coresDao.associateTemplate(coreName, templateName, templateVersion, state);
         } else if (deploymentStatus === 'SUCCESSFUL') {
             // reported state where deployment was successful
-            await this.coresDao.associateTemplate(coreName, templateName, templateVersion, state, deploymentStatus, deploymentStatusMessage);
-
-
+            await this.coresDao.associateTemplate(
+                coreName,
+                templateName,
+                templateVersion,
+                state,
+                deploymentStatus,
+                deploymentStatusMessage,
+            );
         } else {
             // reported state where deployment was unsuccessful, so instead save this as a failed desired state instead of reported as the reported installed template/version would not have changed
             const existing = await this.coresDao.get(coreName);
-            await this.coresDao.associateTemplate(coreName, existing?.template?.desired?.name, existing?.template?.desired?.version, 'desired', deploymentStatus, deploymentStatusMessage);
+            await this.coresDao.associateTemplate(
+                coreName,
+                existing?.template?.desired?.name,
+                existing?.template?.desired?.version,
+                'desired',
+                deploymentStatus,
+                deploymentStatusMessage,
+            );
         }
-
-
 
         logger.debug(`cores.service associateTemplate: exit`);
     }
 
     public async associateFailedDeploymentStarts(cores: FailedCoreDeployment[]): Promise<void> {
-        logger.debug(`cores.service associateFailedDeploymentStarts: in: cores:${JSON.stringify(cores)}`);
+        logger.debug(
+            `cores.service associateFailedDeploymentStarts: in: cores:${JSON.stringify(cores)}`,
+        );
 
         ow(cores, ow.array.minLength(1));
         for (const c of cores) {
@@ -106,7 +146,6 @@ export class CoresService {
         await this.coresDao.associateFailedDeploymentStarts(cores);
 
         logger.debug(`cores.service associateFailedDeploymentStarts: exit`);
-
     }
 
     public async get(name: string): Promise<CoreItem> {
@@ -117,23 +156,33 @@ export class CoresService {
         const coreFuture = this.coresDao.get(name);
         const installedComponentsFuture = this.ggv2.send(
             new ListInstalledComponentsCommand({
-                coreDeviceThingName: name
+                coreDeviceThingName: name,
                 // TODO: manage pagination of installed components
-            }));
+            }),
+        );
         const coreDeviceFuture = this.ggv2.send(
             new GetCoreDeviceCommand({
-                coreDeviceThingName: name
-            }));
+                coreDeviceThingName: name,
+            }),
+        );
         const effectiveDeploymentsFuture = this.ggv2.send(
             new ListEffectiveDeploymentsCommand({
-                coreDeviceThingName: name
-            }));
+                coreDeviceThingName: name,
+            }),
+        );
 
-        const [core, components, coreDevice, effectiveDeployments] = await Promise.allSettled([coreFuture, installedComponentsFuture, coreDeviceFuture, effectiveDeploymentsFuture]);
+        const [core, components, coreDevice, effectiveDeployments] = await Promise.allSettled([
+            coreFuture,
+            installedComponentsFuture,
+            coreDeviceFuture,
+            effectiveDeploymentsFuture,
+        ]);
 
         logger.silly(`cores.service get: components:${JSON.stringify(components)}`);
         logger.silly(`cores.service get: coreDevice:${JSON.stringify(coreDevice)}`);
-        logger.silly(`cores.service get: effectiveDeployments:${JSON.stringify(effectiveDeployments)}`);
+        logger.silly(
+            `cores.service get: effectiveDeployments:${JSON.stringify(effectiveDeployments)}`,
+        );
 
         const response = (core as PromiseFulfilledResult<CoreItem>).value;
         if (response === undefined) {
@@ -141,18 +190,20 @@ export class CoresService {
         }
         response.device = {
             installedComponents: [],
-            effectiveDeployments: []
+            effectiveDeployments: [],
         };
 
         if (components.status === 'fulfilled') {
-            const ics = (components as PromiseFulfilledResult<ListInstalledComponentsCommandOutput>).value;
+            const ics = (
+                components as PromiseFulfilledResult<ListInstalledComponentsCommandOutput>
+            ).value;
             if ((ics?.installedComponents?.length ?? 0) > 0) {
                 for (const ic of ics.installedComponents) {
                     response.device.installedComponents.push({
                         name: ic.componentName,
-                        version: ic.componentVersion
+                        version: ic.componentVersion,
                         // TODO: determine whether installed component matches what is on template or not
-                    })
+                    });
                 }
             }
         }
@@ -171,7 +222,9 @@ export class CoresService {
         }
 
         if (effectiveDeployments.status === 'fulfilled') {
-            const eds = (effectiveDeployments as PromiseFulfilledResult<ListEffectiveDeploymentsCommandOutput>).value;
+            const eds = (
+                effectiveDeployments as PromiseFulfilledResult<ListEffectiveDeploymentsCommandOutput>
+            ).value;
             if ((eds?.effectiveDeployments?.length ?? 0) > 0) {
                 for (const ed of eds.effectiveDeployments) {
                     response.device.effectiveDeployments.push({
@@ -184,19 +237,22 @@ export class CoresService {
                         coreDeviceExecutionStatus: ed.coreDeviceExecutionStatus,
                         reason: ed.reason,
                         createdAt: ed.creationTimestamp,
-                        updatedAt: ed.modifiedTimestamp
+                        updatedAt: ed.modifiedTimestamp,
                     });
                 }
             }
         }
-
 
         logger.debug(`cores.service get: exit: ${JSON.stringify(response)}`);
         return response;
     }
 
     public async createCores(task: CoreTaskItem, cores: CoreItem[]): Promise<CoreItem[]> {
-        logger.debug(`cores.service createCores: in: task:${JSON.stringify(task)}, cores: ${JSON.stringify(cores)}`);
+        logger.debug(
+            `cores.service createCores: in: task:${JSON.stringify(task)}, cores: ${JSON.stringify(
+                cores,
+            )}`,
+        );
 
         // fail fast if invalid request
         ow(cores, ow.array.minLength(1));
@@ -216,11 +272,11 @@ export class CoresService {
                             taskStatus: 'Failure',
                             statusMessage: e.message,
                             createdAt: new Date(),
-                            updatedAt: new Date()
-                        }
+                            updatedAt: new Date(),
+                        };
                     }
                     return processed;
-                })
+                }),
             );
         }
 
@@ -230,7 +286,11 @@ export class CoresService {
     }
 
     public async createCore(task: CoreTaskItem, request: CoreItem): Promise<CoreItem> {
-        logger.debug(`cores.service createCore: in: task:${JSON.stringify(task)}, request:${JSON.stringify(request)}`);
+        logger.debug(
+            `cores.service createCore: in: task:${JSON.stringify(task)}, request:${JSON.stringify(
+                request,
+            )}`,
+        );
 
         // fail fast if invalid request
         ow(request?.name, 'core name', ow.string.nonEmpty);
@@ -241,16 +301,18 @@ export class CoresService {
             ...request,
             taskStatus: 'InProgress',
             createdAt: new Date(),
-            updatedAt: new Date()
-        }
+            updatedAt: new Date(),
+        };
         await this.coreTasksDao.saveTaskDetail(task.id, core);
 
         // determine if core is already registered with ggv2
         let coreAlreadyExists = true;
         try {
-            await this.ggv2.send(new GetCoreDeviceCommand({
-                coreDeviceThingName: core.name
-            }));
+            await this.ggv2.send(
+                new GetCoreDeviceCommand({
+                    coreDeviceThingName: core.name,
+                }),
+            );
         } catch (e) {
             if (e.name === 'ResourceNotFoundException') {
                 coreAlreadyExists = false;
@@ -258,14 +320,16 @@ export class CoresService {
         }
 
         if (coreAlreadyExists) {
-            logger.warn(`cores.service createCore: core: ${core.name} already registered with GGv2 as a core device`);
+            logger.warn(
+                `cores.service createCore: core: ${core.name} already registered with GGv2 as a core device`,
+            );
             core.taskStatus = 'Success';
             core.statusMessage = 'Core device already registered';
             core.updatedAt = new Date();
         } else {
             const futures: Promise<void>[] = [
                 this.createThingGroupIfNotExist(core.name),
-                this.createThingIfNotExist(core)
+                this.createThingIfNotExist(core),
             ];
             await Promise.all(futures);
         }
@@ -279,11 +343,22 @@ export class CoresService {
         if (core.taskStatus === 'InProgress') {
             core.taskStatus = 'Success';
             core.updatedAt = new Date();
-            await this.cdfEventPublisher.emitEvent<CoreCreatedPayload>({ name: CoreCreatedEvent, payload: { coreName: core.name, status: 'success', taskId: task.id } })
+            await this.cdfEventPublisher.emitEvent<CoreCreatedPayload>({
+                name: CoreCreatedEvent,
+                payload: { coreName: core.name, status: 'success', taskId: task.id },
+            });
         }
 
         if (core.taskStatus === 'Failure') {
-            await this.cdfEventPublisher.emitEvent<CoreCreatedPayload>({ name: CoreCreatedEvent, payload: { coreName: core.name, status: 'failed', message: core.statusMessage, taskId: task.id } })
+            await this.cdfEventPublisher.emitEvent<CoreCreatedPayload>({
+                name: CoreCreatedEvent,
+                payload: {
+                    coreName: core.name,
+                    status: 'failed',
+                    message: core.statusMessage,
+                    taskId: task.id,
+                },
+            });
         }
 
         // save final state
@@ -291,7 +366,6 @@ export class CoresService {
 
         logger.debug(`cores.service createCore: exit: ${JSON.stringify(core)}`);
         return core;
-
     }
 
     /**
@@ -302,26 +376,38 @@ export class CoresService {
         logger.debug(`cores.service: createThingIfNotExist: in: core:${JSON.stringify(core)}`);
         let thingExists = true;
         try {
-            await this.iot.send(new DescribeThingCommand({
-                thingName: core.name
-            }));
+            await this.iot.send(
+                new DescribeThingCommand({
+                    thingName: core.name,
+                }),
+            );
         } catch (e) {
             if (e.name === 'ResourceNotFoundException') {
                 thingExists = false;
             }
         }
         if (!thingExists) {
-            logger.debug(`cores.service createThingIfNotExist: provisioning thing for core: ${core.name}`);
+            logger.debug(
+                `cores.service createThingIfNotExist: provisioning thing for core: ${core.name}`,
+            );
             let res: ProvisionThingResponse;
             try {
                 const req: ProvisionThingRequest = {
                     provisioningTemplateId: core.provisioningTemplate,
                     parameters: core.provisioningParameters,
-                    cdfProvisioningParameters: core.cdfProvisioningParameters
+                    cdfProvisioningParameters: core.cdfProvisioningParameters,
                 };
-                logger.silly(`cores.service createThingIfNotExist: provisioning: req:${JSON.stringify(req)}`);
+                logger.silly(
+                    `cores.service createThingIfNotExist: provisioning: req:${JSON.stringify(
+                        req,
+                    )}`,
+                );
                 res = await this.thingsService.provisionThing(req);
-                logger.silly(`cores.service createThingIfNotExist: provisioning: res:${JSON.stringify(res)}`);
+                logger.silly(
+                    `cores.service createThingIfNotExist: provisioning: res:${JSON.stringify(
+                        res,
+                    )}`,
+                );
             } catch (err) {
                 logger.error(`cores.service createThingIfNotExist: provisioning: err:${err}`);
                 core.taskStatus = 'Failure';
@@ -331,17 +417,23 @@ export class CoresService {
             // if CDF has created certificates on behalf of the device, we need to store these for later retrieval by the device
             if (res?.certificatePem !== undefined) {
                 try {
-                    const [bucket, key] = await this.uploadCerts(core.name, res.certificatePem, res.privateKey);
+                    const [bucket, key] = await this.uploadCerts(
+                        core.name,
+                        res.certificatePem,
+                        res.privateKey,
+                    );
                     if (!core.artifacts) {
                         core.artifacts = {};
                     }
                     core.artifacts.certs = {
                         bucket,
                         key,
-                        createdAt: new Date()
+                        createdAt: new Date(),
                     };
                 } catch (err) {
-                    logger.error(`cores.service createThingIfNotExist: failed uploading certs:  err:${err}`);
+                    logger.error(
+                        `cores.service createThingIfNotExist: failed uploading certs:  err:${err}`,
+                    );
                     core.taskStatus = 'Failure';
                     core.statusMessage = `Failed uploading certs: ${err}`;
                 }
@@ -363,22 +455,28 @@ export class CoresService {
 
         let thingGroupExists = true;
         try {
-            await this.iot.send(new DescribeThingGroupCommand({
-                thingGroupName: coreName
-            }));
+            await this.iot.send(
+                new DescribeThingGroupCommand({
+                    thingGroupName: coreName,
+                }),
+            );
         } catch (e) {
             if (e.name === 'ResourceNotFoundException') {
                 thingGroupExists = false;
             }
         }
         if (!thingGroupExists) {
-            logger.debug(`cores.service createThingGroupIfNotExist: creating thing group for core: ${coreName}`);
-            await this.iot.send(new CreateThingGroupCommand({
-                thingGroupName: coreName,
-                thingGroupProperties: {
-                    thingGroupDescription: `Greengrass V2 thing group for core ${coreName}`
-                }
-            }));
+            logger.debug(
+                `cores.service createThingGroupIfNotExist: creating thing group for core: ${coreName}`,
+            );
+            await this.iot.send(
+                new CreateThingGroupCommand({
+                    thingGroupName: coreName,
+                    thingGroupProperties: {
+                        thingGroupDescription: `Greengrass V2 thing group for core ${coreName}`,
+                    },
+                }),
+            );
         }
         logger.debug(`cores.service: createThingGroupIfNotExist: exit:`);
     }
@@ -388,7 +486,11 @@ export class CoresService {
      * @param core
      */
     private async createCoreInstallerConfig(task: CoreTaskItem, core: CoreItem): Promise<void> {
-        logger.debug(`cores.service: createCoreInstallerConfig: in: task:${JSON.stringify(task)} core:${JSON.stringify(core)}`);
+        logger.debug(
+            `cores.service: createCoreInstallerConfig: in: task:${JSON.stringify(
+                task,
+            )} core:${JSON.stringify(core)}`,
+        );
 
         if (core?.configFileGenerator === undefined) {
             // nothing to generate
@@ -397,10 +499,12 @@ export class CoresService {
 
         const e = process.env.INSTALLER_CONFIG_GENERATORS;
         logger.debug(`cores.service: createCoreInstallerConfig: config:${e}`);
-        const generators = JSON.parse(e)
+        const generators = JSON.parse(e);
         const generator = generators[core.configFileGenerator];
         if ((generator?.length ?? 0) === 0) {
-            logger.error(`cores.service createCoreInstallerConfig: unrecognized generator alias:${core.configFileGenerator}`);
+            logger.error(
+                `cores.service createCoreInstallerConfig: unrecognized generator alias:${core.configFileGenerator}`,
+            );
             core.taskStatus = 'Failure';
             core.statusMessage = `Unrecognized generator alias: ${core.configFileGenerator}`;
             return;
@@ -412,20 +516,24 @@ export class CoresService {
             provisioningTemplate: core.provisioningTemplate,
             templateParameters: core.provisioningParameters,
             cdfProvisioningParameters: core.cdfProvisioningParameters,
-        }
+        };
 
         let config: string;
         try {
-            const r = await this.lambda.send(new InvokeCommand({
-                FunctionName: generator,
-                Payload: Buffer.from(JSON.stringify(payload)),
-                InvocationType: 'RequestResponse'
-            }));
+            const r = await this.lambda.send(
+                new InvokeCommand({
+                    FunctionName: generator,
+                    Payload: Buffer.from(JSON.stringify(payload)),
+                    InvocationType: 'RequestResponse',
+                }),
+            );
             const asciiDecoder = new TextDecoder('ascii');
             config = JSON.parse(asciiDecoder.decode(r?.Payload)).config;
             logger.silly(`cores.service createCoreInstallerConfig: config ${config}`);
         } catch (err) {
-            logger.error(`cores.service createCoreInstallerConfig: failed creating config: err:${err}`);
+            logger.error(
+                `cores.service createCoreInstallerConfig: failed creating config: err:${err}`,
+            );
             core.taskStatus = 'Failure';
             core.statusMessage = `Failed creating config: ${err}`;
             return;
@@ -444,10 +552,12 @@ export class CoresService {
             core.artifacts.config = {
                 bucket: bucket,
                 key: s3Key,
-                createdAt: new Date()
+                createdAt: new Date(),
             };
         } catch (err) {
-            logger.error(`cores.service createCoreInstallerConfig: failed uploading config:  err:${err}`);
+            logger.error(
+                `cores.service createCoreInstallerConfig: failed uploading config:  err:${err}`,
+            );
             core.taskStatus = 'Failure';
             core.statusMessage = `Failed uploading certs: ${err}`;
             return;
@@ -457,7 +567,11 @@ export class CoresService {
         logger.debug(`cores.service: createCoreInstallerConfig: exit:`);
     }
 
-    private async uploadCerts(coreName: string, certificate: string, privateKey?: string): Promise<[string, string]> {
+    private async uploadCerts(
+        coreName: string,
+        certificate: string,
+        privateKey?: string,
+    ): Promise<[string, string]> {
         logger.debug(`cores.service: uploadCerts: in: coreName:${coreName}`);
 
         const zip = new AdmZip();
@@ -479,8 +593,14 @@ export class CoresService {
         return response;
     }
 
-    public async deleteCore(task: CoreTaskItem, name: string, deprovisionCore: boolean): Promise<CoreItem> {
-        logger.debug(`cores.service deleteCore: in: name:${name}, deprovisionCore:${deprovisionCore}`);
+    public async deleteCore(
+        task: CoreTaskItem,
+        name: string,
+        deprovisionCore: boolean,
+    ): Promise<CoreItem> {
+        logger.debug(
+            `cores.service deleteCore: in: name:${name}, deprovisionCore:${deprovisionCore}`,
+        );
 
         // fail fast if invalid request
         ow(name, 'core name', ow.string.nonEmpty);
@@ -491,9 +611,9 @@ export class CoresService {
             throw new Error(`CORE_NOT_FOUND`);
         }
 
-        core.taskStatus = 'InProgress'
-        core.createdAt = new Date()
-        core.updatedAt = new Date()
+        core.taskStatus = 'InProgress';
+        core.createdAt = new Date();
+        core.updatedAt = new Date();
 
         await this.coreTasksDao.saveTaskDetail(task.id, core);
 
@@ -526,11 +646,22 @@ export class CoresService {
         if (core.taskStatus === 'InProgress') {
             core.taskStatus = 'Success';
             core.updatedAt = new Date();
-            await this.cdfEventPublisher.emitEvent<CoreDeletedPayload>({ name: CoreDeletedEvent, payload: { coreName: name, status: 'success', taskId: task.id } })
+            await this.cdfEventPublisher.emitEvent<CoreDeletedPayload>({
+                name: CoreDeletedEvent,
+                payload: { coreName: name, status: 'success', taskId: task.id },
+            });
         }
 
         if (core.taskStatus === 'Failure') {
-            await this.cdfEventPublisher.emitEvent<CoreDeletedPayload>({ name: CoreDeletedEvent, payload: { coreName: name, status: 'failed', message: core.statusMessage, taskId: task.id } })
+            await this.cdfEventPublisher.emitEvent<CoreDeletedPayload>({
+                name: CoreDeletedEvent,
+                payload: {
+                    coreName: name,
+                    status: 'failed',
+                    message: core.statusMessage,
+                    taskId: task.id,
+                },
+            });
         }
 
         // save final state
@@ -538,11 +669,21 @@ export class CoresService {
 
         logger.debug(`cores.service deleteCore: exit:`);
 
-        return core
+        return core;
     }
 
-    public async list(templateName: string, templateVersion: number, failedOnly: boolean, count?: number, exclusiveStart?: CoreListPaginationKey): Promise<[CoreItem[], CoreListPaginationKey]> {
-        logger.debug(`cores.service list: in: templateName:${templateName}, templateVersion:${templateVersion}, failedOnly:${failedOnly}, count:${count}, exclusiveStart:${JSON.stringify(exclusiveStart)}`);
+    public async list(
+        templateName: string,
+        templateVersion: number,
+        failedOnly: boolean,
+        count?: number,
+        exclusiveStart?: CoreListPaginationKey,
+    ): Promise<[CoreItem[], CoreListPaginationKey]> {
+        logger.debug(
+            `cores.service list: in: templateName:${templateName}, templateVersion:${templateVersion}, failedOnly:${failedOnly}, count:${count}, exclusiveStart:${JSON.stringify(
+                exclusiveStart,
+            )}`,
+        );
 
         if (count) {
             count = Number(count);
@@ -550,21 +691,38 @@ export class CoresService {
         if (templateVersion) {
             templateVersion = Number(templateVersion);
         }
-        const result = await this.coresDao.list(templateName, templateVersion, failedOnly, count, exclusiveStart);
+        const result = await this.coresDao.list(
+            templateName,
+            templateVersion,
+            failedOnly,
+            count,
+            exclusiveStart,
+        );
 
         logger.debug(`cores.service list: exit: ${JSON.stringify(result)}`);
         return result;
     }
 
-
-    public async listDeploymentsByCore(coreName: string, count?: number, exclusiveStart?: DeploymentTaskListPaginationKey): Promise<[Deployment[], DeploymentTaskListPaginationKey]> {
-        logger.debug(`cores.service listDeploymentsByCore: in: coreName:${coreName}, count:${count}, exclusiveStart:${JSON.stringify(exclusiveStart)}`);
+    public async listDeploymentsByCore(
+        coreName: string,
+        count?: number,
+        exclusiveStart?: DeploymentTaskListPaginationKey,
+    ): Promise<[Deployment[], DeploymentTaskListPaginationKey]> {
+        logger.debug(
+            `cores.service listDeploymentsByCore: in: coreName:${coreName}, count:${count}, exclusiveStart:${JSON.stringify(
+                exclusiveStart,
+            )}`,
+        );
 
         if (count) {
             count = Number(count);
         }
 
-        const result = await this.deploymentTasksDao.listDeploymentsByCore(coreName, count, exclusiveStart);
+        const result = await this.deploymentTasksDao.listDeploymentsByCore(
+            coreName,
+            count,
+            exclusiveStart,
+        );
 
         logger.debug(`cores.service listDeploymentsByCore: exit: ${JSON.stringify(result)}`);
         return result;

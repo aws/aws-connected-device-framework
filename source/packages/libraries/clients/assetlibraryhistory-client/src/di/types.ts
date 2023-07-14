@@ -11,10 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const ASSETLIBRARYHISTORY_CLIENT_TYPES = {
-
     EventsService: Symbol.for('AssetLibraryHistoryClient_EventsService'),
 
     RestClient: Symbol.for('AssetLibraryHistoryClient_RestClient'),
-    RestClientFactory: Symbol.for('Factory<AssetLibraryHistoryClient_RestClient>')
-
+    RestClientFactory: Symbol.for('Factory<AssetLibraryHistoryClient_RestClient>'),
 };

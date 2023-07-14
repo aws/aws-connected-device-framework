@@ -13,7 +13,6 @@
 import { SSMClient, PutParameterCommand, PutParameterCommandInput } from '@aws-sdk/client-ssm';
 
 export class SsmUtils {
-
     private ssm: SSMClient;
 
     public constructor(region: string) {
@@ -25,9 +24,9 @@ export class SsmUtils {
             Name: path,
             Value: value,
             Type: 'String',
-            Overwrite: true
-        }
+            Overwrite: true,
+        };
 
-        await this.ssm.send(new PutParameterCommand(parameterInput))
+        await this.ssm.send(new PutParameterCommand(parameterInput));
     }
 }

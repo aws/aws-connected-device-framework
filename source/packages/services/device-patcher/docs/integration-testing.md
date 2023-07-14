@@ -19,4 +19,3 @@ sudo yum -y install ansible
 - Terminate the instance
 
 **NOTE:** The instance still needs to be ssm agent activated as hybrid instance before a patch can be deployed. This step is performed automatically as part of integration tests but is your responsibility when using this AMI elsewhere.
-

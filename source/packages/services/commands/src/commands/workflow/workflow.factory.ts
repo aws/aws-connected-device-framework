@@ -22,25 +22,28 @@ import { SaveAction } from './workflow.save';
 
 @injectable()
 export class WorkflowFactory {
-
     constructor(
-        @inject(TYPES.InvalidTransitionAction) private invalidTransitionAction: InvalidTransitionAction,
+        @inject(TYPES.InvalidTransitionAction)
+        private invalidTransitionAction: InvalidTransitionAction,
         @inject(TYPES.StartJobAction) private startJobAction: StartJobAction,
         @inject(TYPES.SaveAction) private saveAction: SaveAction,
-        @inject(TYPES.CreateAction) private createAction: CreateAction) {}
+        @inject(TYPES.CreateAction) private createAction: CreateAction,
+    ) {}
 
-    getAction(existingStatus:CommandStatus, updatedStatus:CommandStatus): WorkflowAction[] {
-        logger.debug(`workflow.factory execute: existingStatus:${JSON.stringify(existingStatus)}, updatedStatus:${JSON.stringify(updatedStatus)}`);
+    getAction(existingStatus: CommandStatus, updatedStatus: CommandStatus): WorkflowAction[] {
+        logger.debug(
+            `workflow.factory execute: existingStatus:${JSON.stringify(
+                existingStatus,
+            )}, updatedStatus:${JSON.stringify(updatedStatus)}`,
+        );
 
         // if updated status is undefined, assume no change
-        if (updatedStatus===undefined) {
-            updatedStatus=existingStatus;
+        if (updatedStatus === undefined) {
+            updatedStatus = existingStatus;
         }
 
         switch (existingStatus) {
-
             case CommandStatus.DRAFT:
-
                 switch (updatedStatus) {
                     case CommandStatus.DRAFT:
                         return [this.saveAction];
@@ -54,7 +57,6 @@ export class WorkflowFactory {
                 }
 
             case CommandStatus.PUBLISHED:
-
                 switch (updatedStatus) {
                     case CommandStatus.CANCELLED:
                         // TODO cancel
@@ -76,7 +78,6 @@ export class WorkflowFactory {
 
             default:
                 return [this.invalidTransitionAction];
-
         }
     }
 }

@@ -43,7 +43,7 @@ export class CommandsService {
         @inject(TYPES.CommandsValidator) private validator: CommandsValidator,
         @inject(TYPES.CommandsDao) private commandDao: CommandsDao,
         @inject(TYPES.MessagesService) private messagesService: MessagesService,
-        @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS
+        @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS,
     ) {
         this.sqs = sqsFactory();
 
@@ -66,12 +66,12 @@ export class CommandsService {
     public async list(
         tags?: Tags,
         exclusiveStart?: CommandListPaginationKey,
-        count?: number
+        count?: number,
     ): Promise<[CommandItem[], CommandListPaginationKey]> {
         logger.debug(
             `commands.service list: in: tags:${JSON.stringify(
-                tags
-            )}, exclusiveStart:${JSON.stringify(exclusiveStart)}, count:${count}`
+                tags,
+            )}, exclusiveStart:${JSON.stringify(exclusiveStart)}, count:${count}`,
         );
 
         if (count) {
@@ -100,12 +100,12 @@ export class CommandsService {
     public async listIds(
         tags: Tags,
         exclusiveStart?: CommandListPaginationKey,
-        count = this.MAX_LIST_RESULTS
+        count = this.MAX_LIST_RESULTS,
     ): Promise<[string[], CommandListPaginationKey]> {
         logger.debug(
             `commands.service listIds: in: tags:${JSON.stringify(
-                tags
-            )}, exclusiveStart:${JSON.stringify(exclusiveStart)}, count:${count}`
+                tags,
+            )}, exclusiveStart:${JSON.stringify(exclusiveStart)}, count:${count}`,
         );
 
         if (count) {
@@ -130,7 +130,7 @@ export class CommandsService {
                 tagKeys[tagIndex],
                 tagValues[tagIndex],
                 paginationKey,
-                count
+                count,
             );
         }
         const resultsForTags = await Promise.all(resultsForTagsFutures);
@@ -154,7 +154,7 @@ export class CommandsService {
                 tagKeys[tagIndex],
                 tagValues[tagIndex],
                 paginationKey,
-                count
+                count,
             );
             if ((resultsForTags[tagIndex]?.[0]?.length ?? 0) === 0) {
                 // no more to process
@@ -320,9 +320,7 @@ export class CommandsService {
         const futures: Promise<void>[] = [];
         const limit = pLimit(this.promisesConcurrency);
         for (const m of messages) {
-            futures.push(
-                limit(() => this.messagesService.deleteMessage(m.id))
-            );
+            futures.push(limit(() => this.messagesService.deleteMessage(m.id)));
         }
         await Promise.all(futures);
 
@@ -345,7 +343,7 @@ export class CommandsService {
             },
         };
         logger.debug(
-            `commands.service sqsSendCommandForDeletion: params: ${JSON.stringify(params)}`
+            `commands.service sqsSendCommandForDeletion: params: ${JSON.stringify(params)}`,
         );
 
         return this.sqs.sendMessage(params).promise();

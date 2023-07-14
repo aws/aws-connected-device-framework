@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const GREENGRASS2_PROVISIONING_CLIENT_TYPES = {
-
     TemplatesService: Symbol.for('Greengrass2ProvisioningClient_TemplatesService'),
     CoresService: Symbol.for('Greengrass2ProvisioningClient_CoresService'),
     DevicesService: Symbol.for('Greengrass2ProvisioningClient_DevicesService'),
@@ -19,6 +18,5 @@ export const GREENGRASS2_PROVISIONING_CLIENT_TYPES = {
     FleetService: Symbol.for('Greengrass2ProvisioningClient_FleetService'),
 
     RestClient: Symbol.for('Greengrass2ProvisioningClient_RestClient'),
-    RestClientFactory: Symbol.for('Factory<Greengrass2ProvisioningClient_RestClient>')
-
+    RestClientFactory: Symbol.for('Factory<Greengrass2ProvisioningClient_RestClient>'),
 };

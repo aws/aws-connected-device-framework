@@ -30,7 +30,7 @@ export class DeploymentsLambdaService
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -39,7 +39,7 @@ export class DeploymentsLambdaService
 
     async createDeploymentTask(
         task: NewDeploymentTask,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(task?.template?.name, 'template name', ow.string.nonEmpty);
         ow(task.targets, 'targets', ow.object.nonEmpty);
@@ -56,7 +56,7 @@ export class DeploymentsLambdaService
 
     async getDeploymentTask(
         taskId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeploymentTask> {
         ow(taskId, ow.string.nonEmpty);
 

@@ -13,9 +13,7 @@
 import { CustomResourceEvent } from './customResource.model';
 
 export interface CustomResource {
-
-    create(customResourceEvent: CustomResourceEvent) : Promise<unknown>;
-    update(customResourceEvent: CustomResourceEvent) : Promise<unknown>;
-    delete(customResourceEvent: CustomResourceEvent) : Promise<unknown>;
-
+    create(customResourceEvent: CustomResourceEvent): Promise<unknown>;
+    update(customResourceEvent: CustomResourceEvent): Promise<unknown>;
+    delete(customResourceEvent: CustomResourceEvent): Promise<unknown>;
 }

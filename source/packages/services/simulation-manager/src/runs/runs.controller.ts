@@ -12,28 +12,40 @@
  *********************************************************************************************************************/
 import { Response } from 'express';
 import { inject } from 'inversify';
-import { interfaces, controller, response, requestBody, httpPost, requestParam } from 'inversify-express-utils';
+import {
+    interfaces,
+    controller,
+    response,
+    requestBody,
+    httpPost,
+    requestParam,
+} from 'inversify-express-utils';
 
-import {handleError} from '../utils/errors';
-import {logger} from '../utils/logger';
+import { handleError } from '../utils/errors';
+import { logger } from '../utils/logger';
 import { RunItem } from './runs.models';
 import { RunsService } from './runs.service';
 import { TYPES } from '../di/types';
 
 @controller('/simulations/:simulationId/runs')
 export class RunsController implements interfaces.Controller {
-
-    public constructor(
-        @inject(TYPES.RunsService) private _service: RunsService) {}
+    public constructor(@inject(TYPES.RunsService) private _service: RunsService) {}
 
     @httpPost('/')
-    public async createRun(@requestParam('simulationId') simulationId:string, @requestBody() item: RunItem, @response() res: Response): Promise<void> {
-
-        logger.info(`Runs.controller createRun: simulationId:${simulationId}, item:${JSON.stringify(item)}`);
+    public async createRun(
+        @requestParam('simulationId') simulationId: string,
+        @requestBody() item: RunItem,
+        @response() res: Response,
+    ): Promise<void> {
+        logger.info(
+            `Runs.controller createRun: simulationId:${simulationId}, item:${JSON.stringify(
+                item,
+            )}`,
+        );
 
         try {
-            item.simulationId=simulationId;
-            const runId = await this._service.createRun({item});
+            item.simulationId = simulationId;
+            const runId = await this._service.createRun({ item });
             res.status(201).location(`/simulations/${simulationId}/runs/${runId}`);
         } catch (err) {
             handleError(err, res);
@@ -41,5 +53,4 @@ export class RunsController implements interfaces.Controller {
 
         logger.debug(`Runs.controller createRun: exit:`);
     }
-
 }

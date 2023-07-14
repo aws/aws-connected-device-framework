@@ -22,16 +22,16 @@ import { AuthzDaoFull } from './authz.full.dao';
 export class AuthzServiceFull {
     constructor(
         @inject(TYPES.AuthzDaoFull) private dao: AuthzDaoFull,
-        @inject('authorization.enabled') private isAuthzEnabled: boolean
+        @inject('authorization.enabled') private isAuthzEnabled: boolean,
     ) {}
 
     public async authorizationCheck(
         deviceIds: string[],
         groupPaths: string[],
-        accessLevelRequired: ClaimAccess
+        accessLevelRequired: ClaimAccess,
     ): Promise<void> {
         logger.debug(
-            `authz.full.service authorizationCheck: in: deviceIds:${deviceIds}, groupPaths:${groupPaths}, accessLevelRequired:${accessLevelRequired}`
+            `authz.full.service authorizationCheck: in: deviceIds:${deviceIds}, groupPaths:${groupPaths}, accessLevelRequired:${accessLevelRequired}`,
         );
 
         if (!this.isAuthzEnabled) {
@@ -48,7 +48,7 @@ export class AuthzServiceFull {
         const combinedIds: string[] = [...new Set([...deviceIds, ...groupPaths])];
 
         logger.debug(
-            `authz.full.service authorizationCheck: combinedIds:${JSON.stringify(combinedIds)}`
+            `authz.full.service authorizationCheck: combinedIds:${JSON.stringify(combinedIds)}`,
         );
         if (combinedIds.length === 0) {
             return;
@@ -62,7 +62,7 @@ export class AuthzServiceFull {
         const authorizations = await this.dao.listAuthorizedHierarchies(
             deviceIds,
             groupPaths,
-            claims.listPaths()
+            claims.listPaths(),
         );
 
         const existsSet =
@@ -75,11 +75,11 @@ export class AuthzServiceFull {
 
         // if the user does not have access to all, then not authorized to any
         const notAuthorized = Object.keys(authorizations.authorized).filter(
-            (k) => !combinedIds.includes(k)
+            (k) => !combinedIds.includes(k),
         );
         if (notAuthorized.length > 0) {
             throw new NotAuthorizedError(
-                `Access to ${JSON.stringify(notAuthorized)} not authorized.`
+                `Access to ${JSON.stringify(notAuthorized)} not authorized.`,
             );
         }
 
@@ -98,7 +98,7 @@ export class AuthzServiceFull {
         if (entitiesWithSufficientAccess.length !== combinedIds.length) {
             logger.debug(`authz.full.service authorizationCheck: not authorized`);
             throw new NotAuthorizedError(
-                `Insufficient access to ${JSON.stringify(entitiesWithSufficientAccess)}.`
+                `Insufficient access to ${JSON.stringify(entitiesWithSufficientAccess)}.`,
             );
         }
 
@@ -108,14 +108,14 @@ export class AuthzServiceFull {
     public updateRelsIdentifyingAuth(
         relatedEntities: RelatedEntityArrayMap,
         entityLabels: EntityTypeMap,
-        authenticatedTypes: StringArrayMap
+        authenticatedTypes: StringArrayMap,
     ): void {
         logger.silly(
             `authz.full.service updateRelsIdentifyingAuth: in: relatedEntities: ${JSON.stringify(
-                relatedEntities
+                relatedEntities,
             )}, entityLabels: ${JSON.stringify(
-                entityLabels
-            )}, authenticatedTypes: ${JSON.stringify(authenticatedTypes)}`
+                entityLabels,
+            )}, authenticatedTypes: ${JSON.stringify(authenticatedTypes)}`,
         );
         if (relatedEntities) {
             for (const [relation, entities] of Object.entries(relatedEntities)) {
@@ -132,8 +132,8 @@ export class AuthzServiceFull {
         }
         logger.silly(
             `authz.full.service updateRelsIdentifyingAuth: updated: rels: ${JSON.stringify(
-                relatedEntities
-            )}`
+                relatedEntities,
+            )}`,
         );
     }
 }

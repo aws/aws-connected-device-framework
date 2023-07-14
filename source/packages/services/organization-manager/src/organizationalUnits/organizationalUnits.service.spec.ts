@@ -14,14 +14,13 @@
 import 'reflect-metadata';
 
 import AWS from 'aws-sdk';
-import { OrganizationalUnitsService } from "./organizationalUnits.service";
-import { CreateOrganizationalUnitRequest } from "aws-sdk/clients/organizations";
-import { OrganizationalUnitResource } from "./organizationalUnits.model";
-import { createMockInstance } from "jest-create-mock-instance";
-import { OrganizationalUnitsDao } from "./organizationalUnits.dao";
+import { OrganizationalUnitsService } from './organizationalUnits.service';
+import { CreateOrganizationalUnitRequest } from 'aws-sdk/clients/organizations';
+import { OrganizationalUnitResource } from './organizationalUnits.model';
+import { createMockInstance } from 'jest-create-mock-instance';
+import { OrganizationalUnitsDao } from './organizationalUnits.dao';
 import { OrganizationalUnitsAssembler } from './organizationalUnits.assembler';
 import { AccountsDao } from '../accounts/accounts.dao';
-
 
 describe('OrganizationalUnitService', function () {
     let instance: OrganizationalUnitsService;
@@ -32,143 +31,175 @@ describe('OrganizationalUnitService', function () {
     const createOrganizationalUnitInput: OrganizationalUnitResource = {
         name: 'ou-test-1',
         tags: {
-            createdAt: 'now'
-        }
-    }
+            createdAt: 'now',
+        },
+    };
 
     beforeEach(() => {
         mockedOrganizations = new AWS.Organizations();
-        mockedOrganizations.listRoots = jest.fn().mockReturnValueOnce({ promise: () => Promise.resolve({ Roots: [] }) });
+        mockedOrganizations.listRoots = jest
+            .fn()
+            .mockReturnValueOnce({ promise: () => Promise.resolve({ Roots: [] }) });
         const mockOrganizationsFactory = () => {
             return mockedOrganizations;
         };
-        mockedOrganizationalUnitsDao = createMockInstance(OrganizationalUnitsDao)
-        mockAccountsDao = createMockInstance(AccountsDao)
+        mockedOrganizationalUnitsDao = createMockInstance(OrganizationalUnitsDao);
+        mockAccountsDao = createMockInstance(AccountsDao);
 
         mockedOrganizationalUnitsDao.createOrganizationalUnit = jest.fn();
 
-
-        instance = new OrganizationalUnitsService(true, true, mockedOrganizationalUnitsDao, new OrganizationalUnitsAssembler(), mockAccountsDao, mockOrganizationsFactory)
-    })
+        instance = new OrganizationalUnitsService(
+            true,
+            true,
+            mockedOrganizationalUnitsDao,
+            new OrganizationalUnitsAssembler(),
+            mockAccountsDao,
+            mockOrganizationsFactory,
+        );
+    });
 
     it('createOrganizationalUnit: happy path', async () => {
-        mockedOrganizations.listRoots = jest.fn().mockReturnValueOnce({ promise: () => Promise.resolve({ Roots: [fakeRootId] }) });
+        mockedOrganizations.listRoots = jest
+            .fn()
+            .mockReturnValueOnce({ promise: () => Promise.resolve({ Roots: [fakeRootId] }) });
 
-        const mockCreateOrganizationalUnit = mockedOrganizations.createOrganizationalUnit = <any>(jest.fn().mockReturnValueOnce({ promise: () => Promise.resolve({}) }));
+        const mockCreateOrganizationalUnit = (mockedOrganizations.createOrganizationalUnit = <any>(
+            jest.fn().mockReturnValueOnce({ promise: () => Promise.resolve({}) })
+        ));
 
-        await instance.createOrganizationalUnit(createOrganizationalUnitInput)
+        await instance.createOrganizationalUnit(createOrganizationalUnitInput);
 
-        const createOrganizationalUnitRequest: CreateOrganizationalUnitRequest = mockCreateOrganizationalUnit.mock.calls[0][0]
+        const createOrganizationalUnitRequest: CreateOrganizationalUnitRequest =
+            mockCreateOrganizationalUnit.mock.calls[0][0];
 
-        expect(createOrganizationalUnitRequest.ParentId).toBe('fakeRootId')
-        expect(createOrganizationalUnitRequest.Name).toBe(createOrganizationalUnitInput.name)
+        expect(createOrganizationalUnitRequest.ParentId).toBe('fakeRootId');
+        expect(createOrganizationalUnitRequest.Name).toBe(createOrganizationalUnitInput.name);
         expect(createOrganizationalUnitRequest.Tags).toContainEqual({
-            "Key": "createdAt",
-            "Value": "now"
-        })
-    })
+            Key: 'createdAt',
+            Value: 'now',
+        });
+    });
 
     it('createOrganizationalUnit: invalid input', async () => {
-        const invalidInput = {} as OrganizationalUnitResource
-        await expect(instance.createOrganizationalUnit(invalidInput)).rejects.toThrow('Expected object to not be empty');
-    })
+        const invalidInput = {} as OrganizationalUnitResource;
+        await expect(instance.createOrganizationalUnit(invalidInput)).rejects.toThrow(
+            'Expected object to not be empty',
+        );
+    });
 
     it('createOrganizationalUnit: list roots throws exception', async () => {
         mockedOrganizations.listRoots = jest.fn().mockReturnValueOnce({
             promise: () => {
-                throw new Error('aws organizations exception')
-            }
+                throw new Error('aws organizations exception');
+            },
         });
-        await expect(instance.createOrganizationalUnit(createOrganizationalUnitInput)).rejects.toThrow('aws organizations exception');
-    })
+        await expect(
+            instance.createOrganizationalUnit(createOrganizationalUnitInput),
+        ).rejects.toThrow('aws organizations exception');
+    });
 
     it('createOrganizationalUnit: return no roots', async () => {
-        mockedOrganizations.createOrganizationalUnit = <any>(jest.fn().mockReturnValueOnce({ promise: () => Promise.resolve({}) }));
-        await expect(instance.createOrganizationalUnit(createOrganizationalUnitInput)).rejects.toThrow('root cannot be found in current organizations');
-    })
+        mockedOrganizations.createOrganizationalUnit = <any>(
+            jest.fn().mockReturnValueOnce({ promise: () => Promise.resolve({}) })
+        );
+        await expect(
+            instance.createOrganizationalUnit(createOrganizationalUnitInput),
+        ).rejects.toThrow('root cannot be found in current organizations');
+    });
 
     it('listOrganizationalUnits: happy path', async () => {
-        mockedOrganizations.listRoots = jest.fn().mockReturnValueOnce({ promise: () => Promise.resolve({ Roots: [fakeRootId] }) });
+        mockedOrganizations.listRoots = jest
+            .fn()
+            .mockReturnValueOnce({ promise: () => Promise.resolve({ Roots: [fakeRootId] }) });
         mockedOrganizations.listOrganizationalUnitsForParent = jest.fn().mockReturnValueOnce({
-            promise: () => Promise.resolve({
-                OrganizationalUnits: [{
-                    Id: 'ou-1',
-                    Name: 'ou-number-1'
-                }]
-            })
+            promise: () =>
+                Promise.resolve({
+                    OrganizationalUnits: [
+                        {
+                            Id: 'ou-1',
+                            Name: 'ou-number-1',
+                        },
+                    ],
+                }),
         });
         mockedOrganizations.listTagsForResource = jest.fn().mockReturnValueOnce({
-            promise: () => Promise.resolve({
-                Tags:
-                    [{
-                        Key: 'ouOneKey',
-                        Value: 'ouOneValue'
-                    }]
-            })
+            promise: () =>
+                Promise.resolve({
+                    Tags: [
+                        {
+                            Key: 'ouOneKey',
+                            Value: 'ouOneValue',
+                        },
+                    ],
+                }),
         });
-        const listOrganizationalUnitsResponse = await instance.listOrganizationalUnits()
-        expect(listOrganizationalUnitsResponse.length).toBe(1)
+        const listOrganizationalUnitsResponse = await instance.listOrganizationalUnits();
+        expect(listOrganizationalUnitsResponse.length).toBe(1);
         expect(listOrganizationalUnitsResponse[0]).toEqual({
-            "name": "ou-number-1",
-            "id": "ou-1",
-            "tags": { "ouOneKey": "ouOneValue" }
-        })
-    })
+            name: 'ou-number-1',
+            id: 'ou-1',
+            tags: { ouOneKey: 'ouOneValue' },
+        });
+    });
 
     it('listOrganizationalUnits: return no organizational units for roots', async () => {
         mockedOrganizations.listOrganizationalUnitsForParent = jest.fn().mockReturnValueOnce({
-            promise: () => Promise.resolve({
-                OrganizationalUnits: []
-            })
+            promise: () =>
+                Promise.resolve({
+                    OrganizationalUnits: [],
+                }),
         });
-        const listOrganizationalUnitsResponse = await instance.listOrganizationalUnits()
-        expect(listOrganizationalUnitsResponse.length).toBe(0)
-    })
+        const listOrganizationalUnitsResponse = await instance.listOrganizationalUnits();
+        expect(listOrganizationalUnitsResponse.length).toBe(0);
+    });
 
     it('listOrganizationalUnits: list tag resource throws exception', async () => {
         mockedOrganizations.listOrganizationalUnitsForParent = jest.fn().mockReturnValueOnce({
-            promise: () => Promise.resolve({
-                OrganizationalUnits: [{
-                    Id: 'ou-1',
-                    Name: 'ou-number-1'
-                }]
-            })
+            promise: () =>
+                Promise.resolve({
+                    OrganizationalUnits: [
+                        {
+                            Id: 'ou-1',
+                            Name: 'ou-number-1',
+                        },
+                    ],
+                }),
         });
         mockedOrganizations.listTagsForResource = jest.fn().mockReturnValueOnce({
             promise: () => {
-                throw new Error('tag cannot be found')
-            }
+                throw new Error('tag cannot be found');
+            },
         });
         await expect(instance.listOrganizationalUnits()).rejects.toThrow('tag cannot be found');
-
-    })
+    });
 
     it('getOrganizationalUnit: happy path', async () => {
-
-        mockedOrganizationalUnitsDao.getOrganizationalUnit = jest.fn().mockResolvedValue(
-            {
-                id: 'ou-1',
-                name: 'ou-number-1',
-            });
+        mockedOrganizationalUnitsDao.getOrganizationalUnit = jest.fn().mockResolvedValue({
+            id: 'ou-1',
+            name: 'ou-number-1',
+        });
 
         mockedOrganizations.listTagsForResource = jest.fn().mockReturnValueOnce({
-            promise: () => Promise.resolve({
-                Tags:
-                    [{
-                        Key: 'ouOneKey',
-                        Value: 'ouOneValue'
-                    }]
-            })
+            promise: () =>
+                Promise.resolve({
+                    Tags: [
+                        {
+                            Key: 'ouOneKey',
+                            Value: 'ouOneValue',
+                        },
+                    ],
+                }),
         });
-        const getOrganizationalUnitResponse = await instance.getOrganizationalUnit('ou-number-1')
-        expect(getOrganizationalUnitResponse.name).toBe('ou-number-1')
-        expect(getOrganizationalUnitResponse.tags).toEqual({ "ouOneKey": "ouOneValue" })
-    })
+        const getOrganizationalUnitResponse = await instance.getOrganizationalUnit('ou-number-1');
+        expect(getOrganizationalUnitResponse.name).toBe('ou-number-1');
+        expect(getOrganizationalUnitResponse.tags).toEqual({ ouOneKey: 'ouOneValue' });
+    });
 
     it('getOrganizationalUnit: ou does not exist in dynamodb', async () => {
-        mockedOrganizationalUnitsDao.getOrganizationalUnit = jest.fn().mockResolvedValue(undefined);
-        const organizationalUnit = await instance.getOrganizationalUnit('ou-number-2')
-        expect(organizationalUnit).toBeUndefined()
-    })
-
+        mockedOrganizationalUnitsDao.getOrganizationalUnit = jest
+            .fn()
+            .mockResolvedValue(undefined);
+        const organizationalUnit = await instance.getOrganizationalUnit('ou-number-2');
+        expect(organizationalUnit).toBeUndefined();
+    });
 });

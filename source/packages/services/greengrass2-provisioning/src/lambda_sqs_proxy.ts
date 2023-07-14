@@ -23,47 +23,56 @@ const devicesTasksSvc: DeviceTasksService = container.get(TYPES.DeviceTasksServi
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 exports.handler = async (event: any, _context: unknown) => {
-  logger.debug(`lambda_sqs_proxy handler: event: ${JSON.stringify(event)}`);
+    logger.debug(`lambda_sqs_proxy handler: event: ${JSON.stringify(event)}`);
 
-  if (event?.Records) {
-    for (const r of event.Records) {
+    if (event?.Records) {
+        for (const r of event.Records) {
+            if (r.eventSource !== 'aws:sqs') {
+                logger.warn(
+                    `lambda_sqs_proxy handler: ignoring non-sqs events: ${JSON.stringify(r)}`,
+                );
+                continue;
+            }
 
-      if (r.eventSource !== 'aws:sqs') {
-        logger.warn(`lambda_sqs_proxy handler: ignoring non-sqs events: ${JSON.stringify(r)}`);
-        continue;
-      }
+            const messageType = r.messageAttributes?.messageType?.stringValue;
+            const body = JSON.parse(r.body);
 
-      const messageType = r.messageAttributes?.messageType?.stringValue;
-      const body = JSON.parse(r.body);
-
-      switch (messageType) {
-        case 'CoreTask:Create':
-          await coreTasksSvc.processCreateCoreTaskBatch(body.taskId, body.cores);
-          break;
-        case 'CoreTaskStatus':
-          await coreTasksSvc.updateCoreTaskStatus(body.coreTaskId, body.deviceTaskId, body.counter);
-          break;
-        case 'CoreTask:Delete':
-          await coreTasksSvc.processDeleteCoreTaskBatch(body.taskId, body.cores);
-          break;
-        case 'DeviceTask:Create':
-          await devicesTasksSvc.processCreateDeviceTaskBatch(body.taskId, body.devices);
-          break;
-        case 'DeviceTask:Delete':
-          await devicesTasksSvc.processDeleteDeviceTaskBatch(body.taskId, body.devices);
-          break;
-        case 'DeploymentTask':
-          await deploymentTasksSvc.processDeploymentTask(body);
-          break;
-        case 'DeploymentTaskBatch':
-          await deploymentTasksSvc.processDeploymentTaskBatch(body.id, body.templateName, body.templateVersion, body.deployments);
-          break;
-        default:
-          logger.warn(`lambda_sqs_proxy handler: ignoring un-recognized sqs event`);
-      }
+            switch (messageType) {
+                case 'CoreTask:Create':
+                    await coreTasksSvc.processCreateCoreTaskBatch(body.taskId, body.cores);
+                    break;
+                case 'CoreTaskStatus':
+                    await coreTasksSvc.updateCoreTaskStatus(
+                        body.coreTaskId,
+                        body.deviceTaskId,
+                        body.counter,
+                    );
+                    break;
+                case 'CoreTask:Delete':
+                    await coreTasksSvc.processDeleteCoreTaskBatch(body.taskId, body.cores);
+                    break;
+                case 'DeviceTask:Create':
+                    await devicesTasksSvc.processCreateDeviceTaskBatch(body.taskId, body.devices);
+                    break;
+                case 'DeviceTask:Delete':
+                    await devicesTasksSvc.processDeleteDeviceTaskBatch(body.taskId, body.devices);
+                    break;
+                case 'DeploymentTask':
+                    await deploymentTasksSvc.processDeploymentTask(body);
+                    break;
+                case 'DeploymentTaskBatch':
+                    await deploymentTasksSvc.processDeploymentTaskBatch(
+                        body.id,
+                        body.templateName,
+                        body.templateVersion,
+                        body.deployments,
+                    );
+                    break;
+                default:
+                    logger.warn(`lambda_sqs_proxy handler: ignoring un-recognized sqs event`);
+            }
+        }
     }
-  }
 
-  logger.debug(`lambda_sqs_proxy handler: exit:`);
-
+    logger.debug(`lambda_sqs_proxy handler: exit:`);
 };

@@ -35,15 +35,13 @@ import { PoliciesServiceLite } from '../policies/policies.lite.service';
 import { InitServiceLite } from '../init/init.lite.service';
 import { ProfilesAssembler } from '../profiles/profiles.assembler';
 
-
-export const LiteContainerModule = new ContainerModule (
+export const LiteContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind
+        _rebind: interfaces.Rebind,
     ) => {
-
         bind<TypesService>(TYPES.TypesService).to(TypesServiceLite).inSingletonScope();
         bind<TypesDaoLite>(TYPES.TypesDao).to(TypesDaoLite).inSingletonScope();
 
@@ -63,19 +61,19 @@ export const LiteContainerModule = new ContainerModule (
         bind<InitService>(TYPES.InitService).to(InitServiceLite).inSingletonScope();
 
         decorate(injectable(), AWS.Iot);
-        bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
-            .toFactory<AWS.Iot>((ctx: interfaces.Context) => {
-            return () => {
-
-                if (!isBound(TYPES.Iot)) {
-                    const params:AWS.Iot.Types.ClientConfiguration = {
-                        region: process.env.AWS_REGION
-                    };
-                    const iotData = new AWS.Iot(params);
-                    bind<AWS.Iot>(TYPES.Iot).toConstantValue(iotData);
-                }
-                return ctx.container.get<AWS.Iot>(TYPES.Iot);
-            };
-        });
-    }
+        bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory).toFactory<AWS.Iot>(
+            (ctx: interfaces.Context) => {
+                return () => {
+                    if (!isBound(TYPES.Iot)) {
+                        const params: AWS.Iot.Types.ClientConfiguration = {
+                            region: process.env.AWS_REGION,
+                        };
+                        const iotData = new AWS.Iot(params);
+                        bind<AWS.Iot>(TYPES.Iot).toConstantValue(iotData);
+                    }
+                    return ctx.container.get<AWS.Iot>(TYPES.Iot);
+                };
+            },
+        );
+    },
 );

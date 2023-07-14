@@ -8,6 +8,7 @@
 - Run ./infrastructure/deploy-cfn.bash passing in deployment env, customer config location and kms key id as parameters. Optionally pass aws parameters such as aws region and aws profile.
 
 Eg:
+
 ```sh
 npm install && npm run build
 aws s3 mb s3://sam-deploy-bucket-username --profile cdf

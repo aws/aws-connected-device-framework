@@ -29,7 +29,7 @@ export class CertificatesLambdaService
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -39,7 +39,7 @@ export class CertificatesLambdaService
     async getCertificates(
         taskId: string,
         downloadType: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string[] | Buffer> {
         ow(taskId, ow.string.nonEmpty);
 
@@ -55,7 +55,7 @@ export class CertificatesLambdaService
 
     async getCertificatesTask(
         taskId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<CertificateBatchTaskWithChunks> {
         ow(taskId, ow.string.nonEmpty);
 

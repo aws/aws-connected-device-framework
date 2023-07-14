@@ -34,7 +34,7 @@ export interface GroupsService {
     createGroup(
         body: Group10Resource | Group20Resource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string>;
 
     /**
@@ -47,7 +47,7 @@ export interface GroupsService {
     bulkCreateGroup(
         body: BulkLoadGroups,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<BulkLoadGroupsResponse>;
 
     /**
@@ -69,7 +69,7 @@ export interface GroupsService {
     getGroup(
         groupPath: string,
         additionalHeaders?: RequestHeaders,
-        includeGroups?: boolean
+        includeGroups?: boolean,
     ): Promise<Group10Resource | Group20Resource>;
 
     /**
@@ -88,7 +88,7 @@ export interface GroupsService {
         state?: DeviceState,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeviceResourceList>;
 
     /**
@@ -106,7 +106,7 @@ export interface GroupsService {
         template?: string,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<GroupResourceList>;
 
     /**
@@ -122,7 +122,7 @@ export interface GroupsService {
         groupPath: string,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<GroupResourceList>;
 
     /**
@@ -137,21 +137,21 @@ export interface GroupsService {
         groupPath: string,
         body: Group10Resource | Group20Resource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void>;
 
     attachToGroup(
         sourceGroupPath: string,
         relationship: string,
         targetGroupPath: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void>;
 
     detachFromGroup(
         sourceGroupPath: string,
         relationship: string,
         targetGroupPath: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void>;
 
     /**
@@ -174,7 +174,7 @@ export interface GroupsService {
         offset?: number,
         count?: number,
         sort?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<GroupResourceList>;
 
     /**
@@ -197,7 +197,7 @@ export interface GroupsService {
         offset?: number,
         count?: number,
         sort?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeviceResourceList>;
 }
 
@@ -234,14 +234,14 @@ export class GroupsServiceBase extends ClientServiceBase {
     protected groupAttachedGroupRelativeUrl(
         sourceGroupPath: string,
         relationship: string,
-        targetGroupPath: string
+        targetGroupPath: string,
     ): string {
         return PathHelper.encodeUrl(
             'groups',
             sourceGroupPath,
             relationship,
             'groups',
-            targetGroupPath
+            targetGroupPath,
         );
     }
 

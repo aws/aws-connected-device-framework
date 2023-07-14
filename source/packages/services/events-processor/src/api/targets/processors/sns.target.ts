@@ -34,7 +34,7 @@ export class SNSTarget {
     public constructor(
         @inject('aws.region') private region: string,
         @inject('aws.accountId') private accountId: string,
-        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS
+        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS,
     ) {
         this._sns = snsFactory();
     }
@@ -137,8 +137,8 @@ export class SNSTarget {
 
     private async createTopic(userId: string) {
         logger.debug(`sns.target createTopic: in: userId:${userId}`);
-        const params:AWS.SNS.CreateTopicInput = {
-            Name: this.topicName(userId)
+        const params: AWS.SNS.CreateTopicInput = {
+            Name: this.topicName(userId),
         };
         await this._sns.createTopic(params).promise();
         logger.debug(`sns.target createTopic: exit:`);
@@ -166,10 +166,10 @@ export class SNSTarget {
     protected async subscribe(
         protocol: string,
         topicArn: string,
-        endpoint: string
+        endpoint: string,
     ): Promise<string> {
         logger.debug(
-            `sns.target subscribe: in: protocol:${protocol}, topicArn:${topicArn}, endpoint:${endpoint}`
+            `sns.target subscribe: in: protocol:${protocol}, topicArn:${topicArn}, endpoint:${endpoint}`,
         );
 
         const params: AWS.SNS.Types.SubscribeInput = {

@@ -18,21 +18,21 @@ import { TypeCategory } from './constants';
 export interface TypeModel {
     templateId: string;
     category: TypeCategory;
-	schema: TypeVersionModel;
+    schema: TypeVersionModel;
 }
 
 export interface TypeVersionModel {
-	version?: number;
+    version?: number;
     definition: TypeDefinitionModel;
     status?: TypeDefinitionStatus;
     relations?: TypeRelationsModel;
 }
 
 export interface TypeDefinitionModel {
-	properties?: {
+    properties?: {
         [key: string]: {
-            type: string[]
-        }
+            type: string[];
+        };
     };
     required?: string[];
     relations?: TypeRelationsModel;
@@ -42,88 +42,90 @@ export interface TypeDefinitionModel {
 
 export type RelationTargetSimple = string;
 export type RelationTargetExpanded = {
-    name: string,
-    includeInAuth?:boolean,
+    name: string;
+    includeInAuth?: boolean;
 };
 export type RelationTarget = RelationTargetSimple | RelationTargetExpanded;
 
-export function isRelationTargetExpanded(toBeDetermined: unknown) : toBeDetermined is RelationTargetExpanded {
-	const asRelationTargetExpanded = toBeDetermined as RelationTargetExpanded;
-	if (asRelationTargetExpanded?.name) {
-		return true;
-	}
-	return false;
+export function isRelationTargetExpanded(
+    toBeDetermined: unknown,
+): toBeDetermined is RelationTargetExpanded {
+    const asRelationTargetExpanded = toBeDetermined as RelationTargetExpanded;
+    if (asRelationTargetExpanded?.name) {
+        return true;
+    }
+    return false;
 }
 
 export class TypeRelationsModel {
-	out?: { [key: string]: RelationTarget[] };
+    out?: { [key: string]: RelationTarget[] };
     in?: { [key: string]: RelationTarget[] };
 
-    public outgoingIncludes(rel:string,targetName:string ) : boolean {
-        if (this.out?.[rel]===undefined) {
+    public outgoingIncludes(rel: string, targetName: string): boolean {
+        if (this.out?.[rel] === undefined) {
             return false;
         }
         const targets = this.out[rel];
         let found = false;
-        targets.forEach(t=> {
+        targets.forEach((t) => {
             if (isRelationTargetExpanded(t)) {
-                found = found || ((t as RelationTargetExpanded).name===targetName);
+                found = found || (t as RelationTargetExpanded).name === targetName;
             } else {
-                found = found || ((t as RelationTargetSimple)===targetName);
+                found = found || (t as RelationTargetSimple) === targetName;
             }
         });
         return found;
     }
 
-    public incomingIncludes(rel:string,targetName:string ) : boolean {
-        if (this.in?.[rel]===undefined) {
+    public incomingIncludes(rel: string, targetName: string): boolean {
+        if (this.in?.[rel] === undefined) {
             return false;
         }
         const targets = this.in[rel];
         let found = false;
-        targets.forEach(t=> {
+        targets.forEach((t) => {
             if (isRelationTargetExpanded(t)) {
-                found = found || ((t as RelationTargetExpanded).name===targetName);
+                found = found || (t as RelationTargetExpanded).name === targetName;
             } else {
-                found = found || ((t as RelationTargetSimple)===targetName);
+                found = found || (t as RelationTargetSimple) === targetName;
             }
         });
         return found;
     }
 
-    public addOutgoing(rel:string, target:RelationTarget): void {
-        if (this.out===undefined) {
-            this.out= {};
+    public addOutgoing(rel: string, target: RelationTarget): void {
+        if (this.out === undefined) {
+            this.out = {};
         }
-        if (this.out[rel]===undefined) {
-            this.out[rel]= [];
+        if (this.out[rel] === undefined) {
+            this.out[rel] = [];
         }
         this.out[rel].push(target);
     }
 
-    public addIncoming(rel:string, target:RelationTarget): void {
-        if (this.in===undefined) {
-            this.in= {};
+    public addIncoming(rel: string, target: RelationTarget): void {
+        if (this.in === undefined) {
+            this.in = {};
         }
-        if (this.in[rel]===undefined) {
-            this.in[rel]= [];
+        if (this.in[rel] === undefined) {
+            this.in[rel] = [];
         }
         this.in[rel].push(target);
     }
 
-    public outgoingAuthRelations() :StringArrayMap {
+    public outgoingAuthRelations(): StringArrayMap {
         logger.silly(`types.models outgoingAuthRelations: in:`);
-        const result:StringArrayMap  = {};
+        const result: StringArrayMap = {};
         logger.silly(`types.models outgoingAuthRelations: this.in: ${JSON.stringify(this.out)}`);
-        if (this.out===undefined) {
+        if (this.out === undefined) {
             return result;
         }
-        for(const [relation,targets] of Object.entries(this.out)) {
+        for (const [relation, targets] of Object.entries(this.out)) {
             for (const target of targets) {
                 if (isRelationTargetExpanded(target)) {
                     if ((target as RelationTargetExpanded).includeInAuth) {
-                        if (result[relation]===undefined) {
-                            result[relation]= [];
+                        if (result[relation] === undefined) {
+                            result[relation] = [];
                         }
                         result[relation].push((target as RelationTargetExpanded).name);
                     }
@@ -134,19 +136,19 @@ export class TypeRelationsModel {
         return result;
     }
 
-    public incomingAuthRelations() : StringArrayMap {
+    public incomingAuthRelations(): StringArrayMap {
         logger.silly(`types.models incomingAuthRelations: in:`);
-        const result:StringArrayMap  = {};
+        const result: StringArrayMap = {};
         logger.silly(`types.models incomingAuthRelations: this.in: ${JSON.stringify(this.in)}`);
-        if (this.in===undefined) {
+        if (this.in === undefined) {
             return result;
         }
-        for(const [relation,targets] of Object.entries(this.in)) {
+        for (const [relation, targets] of Object.entries(this.in)) {
             for (const target of targets) {
                 if (isRelationTargetExpanded(target)) {
                     if ((target as RelationTargetExpanded).includeInAuth) {
-                        if (result[relation]===undefined) {
-                            result[relation]= [];
+                        if (result[relation] === undefined) {
+                            result[relation] = [];
                         }
                         result[relation].push((target as RelationTargetExpanded).name);
                     }
@@ -166,40 +168,40 @@ export interface TypeResource extends TypeDefinitionModel {
 export interface TypeResourceList {
     results: TypeResource[];
     pagination?: {
-        offset:number;
-        count:number;
+        offset: number;
+        count: number;
     };
 }
 
 export enum TypeDefinitionStatus {
-    draft='draft',
-    published='published',
-    deprecated='deprecated'
+    draft = 'draft',
+    published = 'published',
+    deprecated = 'deprecated',
 }
 
 export interface TemplateDefinitionJson {
     properties?: {
         [key: string]: {
-            type: string | string[]
-        }
-    },
-    required:string[],
+            type: string | string[];
+        };
+    };
+    required: string[];
     definitions: {
         subType: {
-            type: string,
+            type: string;
             properties?: {
                 [key: string]: {
-                    type: string | string[]
-                }
-            },
-            required?: string[],
-            additionalProperties: boolean
-        },
+                    type: string | string[];
+                };
+            };
+            required?: string[];
+            additionalProperties: boolean;
+        };
         componentTypes: {
-            type: string,
+            type: string;
             items: {
-                anyOf: TemplateDefinitionJson[]
-            }
-        }
-    }
+                anyOf: TemplateDefinitionJson[];
+            };
+        };
+    };
 }

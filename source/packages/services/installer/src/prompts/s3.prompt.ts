@@ -15,37 +15,42 @@ import inquirerS3 from 'inquirer-s3';
 
 inquirer.registerPrompt('s3-object', inquirerS3);
 
-export function chooseS3BucketPrompt(message:string, name:string, initial?: string): Question {
-  return {
-    message,
-    type: 'input',
-    name,
-    default: initial,
-    askAnswered: true,
-    validate(answer: string) {
-      if ((answer?.length ?? 0) === 0) {
-        return `You must enter the name of an S3 bucket.`;
-      }
-      return true;
-    },
-  };
+export function chooseS3BucketPrompt(message: string, name: string, initial?: string): Question {
+    return {
+        message,
+        type: 'input',
+        name,
+        default: initial,
+        askAnswered: true,
+        validate(answer: string) {
+            if ((answer?.length ?? 0) === 0) {
+                return `You must enter the name of an S3 bucket.`;
+            }
+            return true;
+        },
+    };
 }
 
 interface S3Question extends ListQuestionOptions {
-  type: 's3-object';
-  bucket: string;
-  objectPrefix: string;
+    type: 's3-object';
+    bucket: string;
+    objectPrefix: string;
 }
 
-export function chooseS3ObjectPrompt(message:string, name:string, bucket:string, objectPrefix?:string): S3Question {
-  return {
-    message,
-    type: 's3-object',
-    name,
-    bucket,
-    objectPrefix,
-    pageSize: 20,
-    loop: false,
-    askAnswered: true,
-  };
+export function chooseS3ObjectPrompt(
+    message: string,
+    name: string,
+    bucket: string,
+    objectPrefix?: string,
+): S3Question {
+    return {
+        message,
+        type: 's3-object',
+        name,
+        bucket,
+        objectPrefix,
+        pageSize: 20,
+        loop: false,
+        askAnswered: true,
+    };
 }

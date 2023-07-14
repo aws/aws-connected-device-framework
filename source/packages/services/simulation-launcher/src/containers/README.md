@@ -6,18 +6,18 @@ This is a one-time setup:
 aws ecr create-repository --repository-name cdf-jmeter
 ```
 
-Returns: 
+Returns:
 
 ```json
 {
-    "repository": {
-        "repositoryArn": "arn:aws:ecr:us-west-2:xxxxxxxxxxxx:repository/jmeter",
-        "registryId": "xxxxxxxxxxxx",
-        "repositoryName": "jmeter",
-        "repositoryUri": "xxxxxxxxxxxx.dkr.ecr.us-west-2.amazonaws.com/jmeter",
-        "createdAt": 1573497220.0,
-        "imageTagMutability": "MUTABLE"
-    }
+  "repository": {
+    "repositoryArn": "arn:aws:ecr:us-west-2:xxxxxxxxxxxx:repository/jmeter",
+    "registryId": "xxxxxxxxxxxx",
+    "repositoryName": "jmeter",
+    "repositoryUri": "xxxxxxxxxxxx.dkr.ecr.us-west-2.amazonaws.com/jmeter",
+    "createdAt": 1573497220.0,
+    "imageTagMutability": "MUTABLE"
+  }
 }
 ```
 
@@ -34,7 +34,7 @@ docker build -t jmeter jmeter/.
 Retrieve the `docker login` command:
 
 ```sh
-aws ecr get-login-password --no-include-email 
+aws ecr get-login-password --no-include-email
 ```
 
 Copy, paste and run the response from the previous step to log into the docker repo.
@@ -52,6 +52,7 @@ docker push "xxxxxxxxxxxx.dkr.ecr.us-west-2.amazonaws.com/jmeter"
 ```
 
 ## Local debugging
+
 In order to run the container locally, you need to change the settings in `./docker-compose.yaml`. Once you supplied all necessary information, you can run the container locally but executing
 
 ```sh

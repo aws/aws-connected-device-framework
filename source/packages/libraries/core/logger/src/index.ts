@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {createLogger, Logger, LoggerOptions, transports} from 'winston';
+import { createLogger, Logger, LoggerOptions, transports } from 'winston';
 
 /**
  * Class representing CDF Logging mechanism.
@@ -28,9 +28,7 @@ export class CDFLogger {
         const defaultLoggingOptions: LoggerOptions = {
             level: logLevel ? logLevel : 'debug',
             exitOnError: false,
-            transports: [
-                new transports.Console()
-            ]
+            transports: [new transports.Console()],
         };
         this._internalLogger = createLogger(defaultLoggingOptions);
     }
@@ -70,5 +68,4 @@ export class CDFLogger {
     public error(message: string, ...meta: any[]): void {
         this._internalLogger.error(message, meta);
     }
-
 }

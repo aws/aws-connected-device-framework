@@ -20,7 +20,7 @@ import { DeploymentTask, NewDeploymentTask } from './deployments.model';
 export interface DeploymentsService {
     createDeploymentTask(
         task: NewDeploymentTask,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string>;
 
     getDeploymentTask(taskId: string, additionalHeaders?: RequestHeaders): Promise<DeploymentTask>;
@@ -28,16 +28,15 @@ export interface DeploymentsService {
 
 @injectable()
 export class DeploymentsServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }
 
-    protected deploymentTasksRelativeUrl() : string {
+    protected deploymentTasksRelativeUrl(): string {
         return '/deploymentTasks';
     }
 
-    protected deploymentTaskRelativeUrl(name:string) : string {
+    protected deploymentTaskRelativeUrl(name: string): string {
         return PathHelper.encodeUrl('deploymentTasks', name);
     }
 }

@@ -19,23 +19,21 @@ import { EventModel, StateHistoryModel } from '../events.models';
 
 @injectable()
 export class DeleteAction implements EventAction {
+    constructor(@inject(TYPES.EventsDao) private eventsDao: EventsDao) {}
 
-    constructor(
-        @inject(TYPES.EventsDao) private eventsDao: EventsDao) {}
-
-    async execute(event:EventModel): Promise<EventModel> {
+    async execute(event: EventModel): Promise<EventModel> {
         logger.debug(`eventaction.delete execute: event:${JSON.stringify(event)}}`);
 
         // TODO: validation
 
         // finally, save the versions
-        const toSave:StateHistoryModel = {
+        const toSave: StateHistoryModel = {
             objectId: event.objectId,
             type: event.type,
             time: event.time,
             event: event.event,
             user: event.user,
-            state: event.payload
+            state: event.payload,
         };
 
         await this.eventsDao.create(toSave);
@@ -43,7 +41,5 @@ export class DeleteAction implements EventAction {
         await this.eventsDao.update(toSave);
 
         return event;
-
     }
-
 }

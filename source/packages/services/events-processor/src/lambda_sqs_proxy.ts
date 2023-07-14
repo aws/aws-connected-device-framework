@@ -49,7 +49,7 @@ exports.handler = async (event: any, _context: any) => {
                 }
             } else {
                 logger.warn(
-                    `lambda_sqs_proxy handler: ignoring non-sqs events: ${JSON.stringify(r)}`
+                    `lambda_sqs_proxy handler: ignoring non-sqs events: ${JSON.stringify(r)}`,
                 );
                 continue;
             }

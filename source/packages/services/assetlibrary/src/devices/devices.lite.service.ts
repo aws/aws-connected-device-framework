@@ -11,9 +11,9 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
-import { BulkDevicesResult, DeviceItemList, DeviceItem} from './devices.models';
+import { BulkDevicesResult, DeviceItemList, DeviceItem } from './devices.models';
 import { DevicesService } from './devices.service';
-import {logger} from '@awssolutions/simple-cdf-logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import ow from 'ow';
 import { TYPES } from '../di/types';
 import { DevicesDaoLite } from './devices.lite.dao';
@@ -26,23 +26,36 @@ import { DeviceNotFoundError, NotSupportedError } from '../utils/errors';
 
 @injectable()
 export class DevicesServiceLite implements DevicesService {
-
     constructor(
         @inject(TYPES.DevicesDao) private devicesDao: DevicesDaoLite,
         @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoLite,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
-        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
+        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
+    ) {}
 
-    public async listRelatedDevices(_deviceId: string, _relationship: string, _direction:string, _template:string, _state:string, _offset:number, _count:number) : Promise<DeviceItemList> {
+    public async listRelatedDevices(
+        _deviceId: string,
+        _relationship: string,
+        _direction: string,
+        _template: string,
+        _state: string,
+        _offset: number,
+        _count: number,
+    ): Promise<DeviceItemList> {
         throw new NotSupportedError();
     }
 
-    public async get(deviceId:string, _expandComponents?:boolean, _attributes?:string[], _includeGroups?:boolean): Promise<DeviceItem> {
+    public async get(
+        deviceId: string,
+        _expandComponents?: boolean,
+        _attributes?: string[],
+        _includeGroups?: boolean,
+    ): Promise<DeviceItem> {
         logger.debug(`devices.lite.service get: in: deviceId:${deviceId}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
-        const result  = await this.devicesDao.get(deviceId);
+        const result = await this.devicesDao.get(deviceId);
 
         const model = this.devicesAssembler.toDeviceItem(result);
 
@@ -50,26 +63,38 @@ export class DevicesServiceLite implements DevicesService {
         return model;
     }
 
-    public async getBulk(deviceIds:string[], _expandComponents?:boolean, _attributes?:string[], _includeGroups?:boolean) : Promise<DeviceItemList> {
+    public async getBulk(
+        deviceIds: string[],
+        _expandComponents?: boolean,
+        _attributes?: string[],
+        _includeGroups?: boolean,
+    ): Promise<DeviceItemList> {
         logger.debug(`devices.lite.service getBulk: in: deviceIds:${deviceIds}`);
 
-        ow(deviceIds, 'deviceIds',ow.array.nonEmpty);
+        ow(deviceIds, 'deviceIds', ow.array.nonEmpty);
 
-        const models: DeviceItem[]=[];
-        for(const deviceId of deviceIds) {
+        const models: DeviceItem[] = [];
+        for (const deviceId of deviceIds) {
             models.push(await this.get(deviceId));
         }
-        const r = {results: models};
+        const r = { results: models };
         logger.debug(`device.lite.service get: exit: ${JSON.stringify(r)}`);
         return r;
     }
 
-    public async createBulk(_devices:DeviceItem[], _applyProfile?:string) : Promise<BulkDevicesResult> {
+    public async createBulk(
+        _devices: DeviceItem[],
+        _applyProfile?: string,
+    ): Promise<BulkDevicesResult> {
         throw new NotSupportedError();
     }
 
-    public async create(model: DeviceItem, applyProfile?:string) : Promise<string> {
-        logger.debug(`devices.lite.service create: in: model: ${JSON.stringify(model)}, applyProfile:${applyProfile}`);
+    public async create(model: DeviceItem, applyProfile?: string): Promise<string> {
+        logger.debug(
+            `devices.lite.service create: in: model: ${JSON.stringify(
+                model,
+            )}, applyProfile:${applyProfile}`,
+        );
 
         ow(model, ow.object.nonEmpty);
         ow(model.templateId, ow.string.nonEmpty);
@@ -86,18 +111,18 @@ export class DevicesServiceLite implements DevicesService {
 
         // NOTE: Device components not supported in lite mode
 
-        const groupIds:string[]=[];
+        const groupIds: string[] = [];
         if (model.groups?.out) {
-            Object.keys(model.groups.out)
-                .forEach(relation=> groupIds.push(
-                    ... Object.values(model.groups.out[relation]).map(e=>e.id)));
+            Object.keys(model.groups.out).forEach((relation) =>
+                groupIds.push(...Object.values(model.groups.out[relation]).map((e) => e.id)),
+            );
         }
 
         // verify all referenced device groups exist
-        const futures = groupIds.map(g=> this.groupsDao.get(g));
+        const futures = groupIds.map((g) => this.groupsDao.get(g));
         const groups = await Promise.allSettled(futures);
-        if (groups.some(g=> g.status!=='fulfilled')) {
-            throw {name:'ArgumentError', message:'GROUP_NOT_FOUND'};
+        if (groups.some((g) => g.status !== 'fulfilled')) {
+            throw { name: 'ArgumentError', message: 'GROUP_NOT_FOUND' };
         }
 
         // create device and associated groups
@@ -108,19 +133,26 @@ export class DevicesServiceLite implements DevicesService {
             objectId: model.deviceId,
             type: Type.device,
             event: Event.create,
-            payload: JSON.stringify(model)
+            payload: JSON.stringify(model),
         });
 
         logger.debug(`devices.lite.service create: exit: id: ${id}`);
         return id;
     }
 
-    public async updateBulk(_devices:DeviceItem[], _applyProfile?:string) : Promise<BulkDevicesResult> {
+    public async updateBulk(
+        _devices: DeviceItem[],
+        _applyProfile?: string,
+    ): Promise<BulkDevicesResult> {
         throw new NotSupportedError();
     }
 
-    public async update(model:DeviceItem, applyProfile?:string) : Promise<void> {
-        logger.debug(`devices.lite.service update: in: model: ${JSON.stringify(model)}, applyProfile:${applyProfile}`);
+    public async update(model: DeviceItem, applyProfile?: string): Promise<void> {
+        logger.debug(
+            `devices.lite.service update: in: model: ${JSON.stringify(
+                model,
+            )}, applyProfile:${applyProfile}`,
+        );
 
         ow(model, ow.object.nonEmpty);
         ow(model.deviceId, ow.string.nonEmpty);
@@ -132,11 +164,11 @@ export class DevicesServiceLite implements DevicesService {
 
         // as 'lite' only supports updating full resources, we need to fetch the original, then merge thge changes
         const existing = await this.get(model.deviceId);
-        if (existing===undefined) {
+        if (existing === undefined) {
             throw new DeviceNotFoundError(model.deviceId);
         }
         const merged = Object.assign(new DeviceItem(), existing, model);
-        merged.attributes = {...existing.attributes, ...model.attributes};
+        merged.attributes = { ...existing.attributes, ...model.attributes };
 
         // Save to datastore
         const node = this.devicesAssembler.toNode(merged);
@@ -147,13 +179,13 @@ export class DevicesServiceLite implements DevicesService {
             objectId: model.deviceId,
             type: Type.device,
             event: Event.modify,
-            payload: JSON.stringify(model)
+            payload: JSON.stringify(model),
         });
 
         logger.debug(`devices.lite.full.service update: exit:`);
     }
 
-    public async delete(deviceId: string) : Promise<void> {
+    public async delete(deviceId: string): Promise<void> {
         logger.debug(`device.lite.service delete: in: deviceId: ${deviceId}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -168,17 +200,24 @@ export class DevicesServiceLite implements DevicesService {
             objectId: deviceId,
             type: Type.device,
             event: Event.delete,
-            payload: JSON.stringify(device)
+            payload: JSON.stringify(device),
         });
 
         logger.debug(`device.lite.service delete: exit:`);
     }
 
-    public async attachToGroup(deviceId:string, _relationship:string, _direction:string, groupPath:string) : Promise<void> {
-        logger.debug(`device.lite.service attachToGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`);
+    public async attachToGroup(
+        deviceId: string,
+        _relationship: string,
+        _direction: string,
+        groupPath: string,
+    ): Promise<void> {
+        logger.debug(
+            `device.lite.service attachToGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`,
+        );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
         // Save to datastore
         await this.devicesDao.attachToGroup(deviceId, groupPath);
@@ -191,18 +230,25 @@ export class DevicesServiceLite implements DevicesService {
             attributes: {
                 deviceId,
                 attachedToGroup: groupPath,
-                relationship: 'group'
-            }
+                relationship: 'group',
+            },
         });
 
         logger.debug(`device.lite.service attachToGroup: exit:`);
     }
 
-    public async detachFromGroup(deviceId:string, _relationship:string, _direction:string, groupPath:string) : Promise<void> {
-        logger.debug(`device.lite.service detachFromGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`);
+    public async detachFromGroup(
+        deviceId: string,
+        _relationship: string,
+        _direction: string,
+        groupPath: string,
+    ): Promise<void> {
+        logger.debug(
+            `device.lite.service detachFromGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`,
+        );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
         // Save to datastore
         await this.devicesDao.detachFromGroup(deviceId, groupPath);
@@ -215,43 +261,72 @@ export class DevicesServiceLite implements DevicesService {
             attributes: {
                 deviceId,
                 attachedToGroup: groupPath,
-                relationship: 'group'
-            }
+                relationship: 'group',
+            },
         });
 
         logger.debug(`device.lite.service attachToGroup: exit:`);
     }
 
-    detachFromGroups(_deviceId: string, _relationship?: string, _direction?: string): Promise<void> {
+    detachFromGroups(
+        _deviceId: string,
+        _relationship?: string,
+        _direction?: string,
+    ): Promise<void> {
         throw new NotSupportedError();
     }
 
-    public async attachToDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) : Promise<void> {
+    public async attachToDevice(
+        _deviceId: string,
+        _relationship: string,
+        _direction: string,
+        _otherDeviceId: string,
+    ): Promise<void> {
         throw new NotSupportedError();
     }
 
-    public async detachFromDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) : Promise<void> {
+    public async detachFromDevice(
+        _deviceId: string,
+        _relationship: string,
+        _direction: string,
+        _otherDeviceId: string,
+    ): Promise<void> {
         throw new NotSupportedError();
     }
 
-    public async detachFromDevices(_deviceId: string, _template?: string, _relationship?: string, _direction?: string): Promise<void> {
+    public async detachFromDevices(
+        _deviceId: string,
+        _template?: string,
+        _relationship?: string,
+        _direction?: string,
+    ): Promise<void> {
         throw new NotSupportedError();
     }
 
-    public async updateComponent(_deviceId:string, _componentId:string, _model:DeviceItem) : Promise<void> {
+    public async updateComponent(
+        _deviceId: string,
+        _componentId: string,
+        _model: DeviceItem,
+    ): Promise<void> {
         throw new NotSupportedError();
     }
 
-    public async deleteComponent(_deviceId:string, _componentId:string) : Promise<void> {
+    public async deleteComponent(_deviceId: string, _componentId: string): Promise<void> {
         throw new NotSupportedError();
     }
 
-    public async createComponent(_parentDeviceId:string, _model:DeviceItem) : Promise<string> {
+    public async createComponent(_parentDeviceId: string, _model: DeviceItem): Promise<string> {
         throw new NotSupportedError();
     }
 
-    public async listRelatedGroups(_deviceId: string, _relationship: string, _direction:string, _template:string, _offset:number, _count:number) : Promise<GroupItemList> {
+    public async listRelatedGroups(
+        _deviceId: string,
+        _relationship: string,
+        _direction: string,
+        _template: string,
+        _offset: number,
+        _count: number,
+    ): Promise<GroupItemList> {
         throw new NotSupportedError();
     }
-
 }

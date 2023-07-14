@@ -13,14 +13,13 @@
 import { DeviceProfileItem, GroupProfileItem, ProfileItemList } from './profiles.models';
 
 export interface ProfilesService {
+    get(templateId: string, profileId: string): Promise<DeviceProfileItem | GroupProfileItem>;
 
-    get(templateId:string, profileId:string): Promise<DeviceProfileItem|GroupProfileItem> ;
+    create(model: DeviceProfileItem | GroupProfileItem): Promise<string>;
 
-    create(model:DeviceProfileItem|GroupProfileItem) : Promise<string> ;
+    update(model: DeviceProfileItem | GroupProfileItem): Promise<string>;
 
-    update(model: DeviceProfileItem | GroupProfileItem) : Promise<string> ;
+    delete(templateId: string, profileId: string): Promise<void>;
 
-    delete(templateId:string, profileId:string) : Promise<void> ;
-
-    list(templateId:string): Promise<ProfileItemList> ;
+    list(templateId: string): Promise<ProfileItemList>;
 }

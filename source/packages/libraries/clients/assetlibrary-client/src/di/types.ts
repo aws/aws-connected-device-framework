@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const ASSETLIBRARY_CLIENT_TYPES = {
-
     DevicesService: Symbol.for('AssetLibraryClient_DevicesService'),
     GroupsService: Symbol.for('AssetLibraryClient_GroupsService'),
     PoliciesService: Symbol.for('AssetLibraryClient_PoliciesService'),
@@ -20,8 +19,7 @@ export const ASSETLIBRARY_CLIENT_TYPES = {
     ProfilesService: Symbol.for('AssetLibraryClient_ProfilesService'),
 
     RestClient: Symbol.for('AssetLibraryClient_RestClient'),
-    RestClientFactory: Symbol.for('Factory<AssetLibraryClient_RestClient>')
-
+    RestClientFactory: Symbol.for('Factory<AssetLibraryClient_RestClient>'),
 };
 
 // This type will be deprecated. Left here to avoid breaking change for legacy users.

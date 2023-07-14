@@ -28,7 +28,7 @@ export class CoresLambdaService extends CoresServiceBase implements CoresService
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -95,7 +95,7 @@ export class CoresLambdaService extends CoresServiceBase implements CoresService
 
     async listDeploymentsByCore(
         coreName: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeploymentList> {
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deploymentsByCoreRelativeUrl(coreName))

@@ -32,11 +32,11 @@ export class SearchServiceFull implements SearchService {
         @inject(TYPES.SearchDao) private searchDao: SearchDaoFull,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
-        @inject('authorization.enabled') private isAuthzEnabled: boolean
+        @inject('authorization.enabled') private isAuthzEnabled: boolean,
     ) {}
 
     public async search(
-        model: SearchRequestModel
+        model: SearchRequestModel,
     ): Promise<[(GroupItem | DeviceItem)[], number, number]> {
         logger.debug(`search.full.service search: in: model: ${JSON.stringify(model)}`);
 
@@ -63,7 +63,7 @@ export class SearchServiceFull implements SearchService {
         if (results === undefined || results.length === 0) {
             model.count = 0;
             logger.debug(
-                `search.full.service search: exit: models: undefined, offset:${model.offset}, count:${model.count}`
+                `search.full.service search: exit: models: undefined, offset:${model.offset}, count:${model.count}`,
             );
             return [undefined, model.offset, model.count];
         }
@@ -83,7 +83,7 @@ export class SearchServiceFull implements SearchService {
         logger.debug(
             `search.full.service search: exit: models: ${JSON.stringify(models)}, offset:${
                 model.offset
-            }, count:${model.count}`
+            }, count:${model.count}`,
         );
         return [models, model.offset, model.count];
     }

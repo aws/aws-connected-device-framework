@@ -30,7 +30,7 @@ export class EventsourcesLambdaService
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -39,7 +39,7 @@ export class EventsourcesLambdaService
 
     async createEventSource(
         eventSource: EventSourceDetailResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(eventSource, ow.object.nonEmpty);
 
@@ -67,7 +67,7 @@ export class EventsourcesLambdaService
 
     async getEventSource(
         eventSourceId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<EventSourceDetailResource> {
         ow(eventSourceId, ow.string.nonEmpty);
 
@@ -83,7 +83,7 @@ export class EventsourcesLambdaService
     async updateEventSource(
         eventSourceId: string,
         eventSource: EventSourceDetailResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(eventSourceId, ow.string.nonEmpty);
         ow(eventSource, ow.object.nonEmpty);
@@ -99,7 +99,7 @@ export class EventsourcesLambdaService
 
     async deleteEventSource(
         eventSourceId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(eventSourceId, ow.string.nonEmpty);
 

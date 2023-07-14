@@ -14,13 +14,12 @@ import 'reflect-metadata';
 import AWS, { AWSError } from 'aws-sdk';
 import { createMockInstance } from 'jest-create-mock-instance';
 
-import {ActivationService} from './activation.service';
-import {ActivationDao} from './activation.dao';
-import {ActivationItem} from './activation.model';
+import { ActivationService } from './activation.service';
+import { ActivationDao } from './activation.dao';
+import { ActivationItem } from './activation.model';
 
 describe('ActivationService', () => {
-
-    let mockedActivationDao: jest.Mocked<ActivationDao>
+    let mockedActivationDao: jest.Mocked<ActivationDao>;
     let mockedSSM: AWS.SSM;
     let instance: ActivationService;
 
@@ -30,24 +29,25 @@ describe('ActivationService', () => {
             return mockedSSM;
         };
 
-        mockedActivationDao = createMockInstance(ActivationDao)
-        instance = new ActivationService(mockedSSMFactory, mockedActivationDao)
+        mockedActivationDao = createMockInstance(ActivationDao);
+        instance = new ActivationService(mockedSSMFactory, mockedActivationDao);
     });
 
     it('should create an activation', async () => {
-
         const activationRequest: ActivationItem = {
-            'deviceId': 'test-core-001'
+            deviceId: 'test-core-001',
         };
 
-        const mockedSSMCreateActivationResponse = new MockAWSPromise<AWS.SSM.Types.CreateActivationResult>();
+        const mockedSSMCreateActivationResponse =
+            new MockAWSPromise<AWS.SSM.Types.CreateActivationResult>();
         mockedSSMCreateActivationResponse.response = {
             ActivationId: '<some-activation-id>',
-            ActivationCode: '<some-activation-code>'
+            ActivationCode: '<some-activation-code>',
         };
 
-        const mockSSMCreateActivation = mockedSSM.createActivation =
-            <any> jest.fn().mockReturnValueOnce(mockedSSMCreateActivationResponse);
+        const mockSSMCreateActivation = (mockedSSM.createActivation = <any>(
+            jest.fn().mockReturnValueOnce(mockedSSMCreateActivationResponse)
+        ));
 
         const response = await instance.createActivation(activationRequest);
 
@@ -58,21 +58,21 @@ describe('ActivationService', () => {
         expect(response.activationId).toEqual('<some-activation-id>');
         expect(response.activationCode).toEqual('<some-activation-code>');
         expect(mockSSMCreateActivation.mock.calls.length).toBe(1);
-
     });
 
     it('should get an activation', async () => {
-        const activationId:string = 'activation-001';
+        const activationId: string = 'activation-001';
 
         const mockedActivationResponse = {
             deviceId: 'test-core-001',
             activationId: activationId,
             createdAt: '<some-date>',
             updatedAt: '<some-date>',
-        }
+        };
 
-        const mockGetByDeviceId = mockedActivationDao.get =
-            jest.fn().mockReturnValueOnce(mockedActivationResponse);
+        const mockGetByDeviceId = (mockedActivationDao.get = jest
+            .fn()
+            .mockReturnValueOnce(mockedActivationResponse));
 
         const response = await instance.getActivation(activationId);
 
@@ -91,42 +91,40 @@ describe('ActivationService', () => {
     it('should delete an activation', async () => {
         const activationId: string = 'a1b2c3d4-a1bc-1a23-a1b2-abcd1234ef56';
 
-
-        const mockedSSMDeleteActivationResponse = new MockAWSPromise<AWS.SSM.Types.CreateActivationResult>();
+        const mockedSSMDeleteActivationResponse =
+            new MockAWSPromise<AWS.SSM.Types.CreateActivationResult>();
         mockedSSMDeleteActivationResponse.response = {};
 
-        const mockSSMDeleteActivation = mockedSSM.deleteActivation =
-            <any> jest.fn().mockReturnValueOnce(mockedSSMDeleteActivationResponse);
+        const mockSSMDeleteActivation = (mockedSSM.deleteActivation = <any>(
+            jest.fn().mockReturnValueOnce(mockedSSMDeleteActivationResponse)
+        ));
 
-
-        const mockDelete = mockedActivationDao.delete =
-            jest.fn().mockReturnValueOnce({});
+        const mockDelete = (mockedActivationDao.delete = jest.fn().mockReturnValueOnce({}));
 
         const response = await instance.deleteActivation(activationId);
 
         expect(response).toBeUndefined();
-        expect(mockSSMDeleteActivation.mock.calls.length).toBe(1)
-        expect(mockDelete.mock.calls.length).toBe(1)
-
+        expect(mockSSMDeleteActivation.mock.calls.length).toBe(1);
+        expect(mockDelete.mock.calls.length).toBe(1);
     });
 
     it('should update an activation', async () => {
         const activation = {
-            'deviceId': 'test-core-001',
-            'activationId': '<some-activation-id>'
+            deviceId: 'test-core-001',
+            activationId: '<some-activation-id>',
         };
 
         const mockedUpdateResponse = {};
 
-        const mockUpdate = mockedActivationDao.update =
-            jest.fn().mockReturnValueOnce(mockedUpdateResponse);
+        const mockUpdate = (mockedActivationDao.update = jest
+            .fn()
+            .mockReturnValueOnce(mockedUpdateResponse));
 
         const response = await instance.updateActivation(activation);
 
         expect(response).toBeUndefined();
-        expect(mockUpdate.mock.calls.length).toBe(1)
+        expect(mockUpdate.mock.calls.length).toBe(1);
     });
-
 });
 
 class MockAWSPromise<T> {

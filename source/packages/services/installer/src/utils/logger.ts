@@ -13,20 +13,19 @@
 import chalk from 'chalk';
 
 export const feedback = {
-  info: (message: string): void => {
-    chalk.green(message);
-  },
+    info: (message: string): void => {
+        chalk.green(message);
+    },
 
-  section: (message: string): void => {
-    chalk.bgYellow(message);
-  },
+    section: (message: string): void => {
+        chalk.bgYellow(message);
+    },
 
-  error: (message: string): void => {
-    chalk.bgRed(message);
-  },
+    error: (message: string): void => {
+        chalk.bgRed(message);
+    },
 
-  status: (message: string): void => {
-    chalk.bgGreen(message);
-  }
-}
-
+    status: (message: string): void => {
+        chalk.bgGreen(message);
+    },
+};

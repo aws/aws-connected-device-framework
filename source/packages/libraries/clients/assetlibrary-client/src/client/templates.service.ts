@@ -17,22 +17,40 @@ import { ClientServiceBase } from './common.service';
 import { CategoryEnum, StatusEnum, TypeResource, TypeResourceList } from './templates.model';
 
 export interface TemplatesService {
-    getTemplate(category: CategoryEnum, templateId: string, status: StatusEnum, additionalHeaders?: RequestHeaders): Promise<TypeResource>;
+    getTemplate(
+        category: CategoryEnum,
+        templateId: string,
+        status: StatusEnum,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<TypeResource>;
 
     createTemplate(resource: TypeResource, additionalHeaders?: RequestHeaders): Promise<void>;
 
     updateTemplate(resource: TypeResource, additionalHeaders?: RequestHeaders): Promise<void>;
 
-    publishTemplate(category: CategoryEnum, templateId: string, additionalHeaders?: RequestHeaders): Promise<void>;
+    publishTemplate(
+        category: CategoryEnum,
+        templateId: string,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<void>;
 
-    deleteTemplate(category: CategoryEnum, templateId: string, additionalHeaders?: RequestHeaders): Promise<void>;
+    deleteTemplate(
+        category: CategoryEnum,
+        templateId: string,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<void>;
 
-    listTemplates(category: CategoryEnum, status?: string, offset?: number, count?: number, additionalHeaders?: RequestHeaders): Promise<TypeResourceList>;
+    listTemplates(
+        category: CategoryEnum,
+        status?: string,
+        offset?: number,
+        count?: number,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<TypeResourceList>;
 }
 
 @injectable()
 export class TemplatesServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }

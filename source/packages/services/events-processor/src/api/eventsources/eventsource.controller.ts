@@ -32,18 +32,18 @@ import { EventSourceService } from './eventsource.service';
 @controller('/eventsources')
 export class EventSourceController implements interfaces.Controller {
     constructor(
-        @inject(TYPES.EventSourceService) private eventSourceService: EventSourceService
+        @inject(TYPES.EventSourceService) private eventSourceService: EventSourceService,
     ) {}
 
     @httpPost('')
     public async createEventSource(
         @requestBody() eventSource: EventSourceDetailResource,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<void> {
         logger.debug(
             `eventSource.controller createEventSource: in: eventSource:${JSON.stringify(
-                eventSource
-            )}`
+                eventSource,
+            )}`,
         );
 
         try {
@@ -77,7 +77,7 @@ export class EventSourceController implements interfaces.Controller {
     @httpGet('/:eventSourceId')
     public async getEventSource(
         @requestParam('eventSourceId') eventSourceId: string,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<EventSourceDetailResource> {
         logger.debug(`eventSource.controller getEventSource: eventSourceId:${eventSourceId}`);
 
@@ -98,12 +98,12 @@ export class EventSourceController implements interfaces.Controller {
     public async updateEventSource(
         @requestParam('eventSourceId') eventSourceId: string,
         @requestBody() eventSource: EventSourceDetailResource,
-        @response() _res: Response
+        @response() _res: Response,
     ): Promise<void> {
         logger.debug(
             `eventSource.controller updateEventSource: eventSource:${JSON.stringify(
-                eventSource
-            )}, eventSourceId:${eventSourceId}`
+                eventSource,
+            )}, eventSourceId:${eventSourceId}`,
         );
 
         throw new Error('NOT_IMPLEMENTED');
@@ -112,7 +112,7 @@ export class EventSourceController implements interfaces.Controller {
     @httpDelete('/:eventSourceId')
     public async deleteEventSource(
         @requestParam('eventSourceId') eventSourceId: string,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<void> {
         logger.debug(`eventSource.controller deleteEventSource: eventSourceId:${eventSourceId}`);
 

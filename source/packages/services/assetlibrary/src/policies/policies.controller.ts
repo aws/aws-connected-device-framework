@@ -11,40 +11,57 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Response } from 'express';
-import { interfaces, controller, response, httpPost, requestBody, httpGet, queryParam, httpPatch, requestParam, httpDelete } from 'inversify-express-utils';
+import {
+    interfaces,
+    controller,
+    response,
+    httpPost,
+    requestBody,
+    httpGet,
+    queryParam,
+    httpPatch,
+    requestParam,
+    httpDelete,
+} from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { PolicyModel, PolicyListModel } from './policies.models';
 import { PoliciesService } from './policies.service';
-import {TYPES} from '../di/types';
-import {logger} from '@awssolutions/simple-cdf-logger';
-import {ArgumentError, handleError} from '../utils/errors';
+import { TYPES } from '../di/types';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { ArgumentError, handleError } from '../utils/errors';
 
 @controller('/policies')
 export class PoliciesController implements interfaces.Controller {
-
-    constructor( @inject(TYPES.PoliciesService) private policiesService: PoliciesService) {}
+    constructor(@inject(TYPES.PoliciesService) private policiesService: PoliciesService) {}
 
     @httpPost('')
-    public async create(@requestBody() policy: PolicyModel, @response() res: Response) : Promise<void> {
+    public async create(
+        @requestBody() policy: PolicyModel,
+        @response() res: Response,
+    ): Promise<void> {
         logger.info(`policies.controller  create: in: policy: ${JSON.stringify(policy)}`);
         try {
             await this.policiesService.create(policy);
         } catch (e) {
-            handleError(e,res);
+            handleError(e, res);
         }
     }
 
     @httpGet('/inherited')
-    public async listInheritedPolicies( @queryParam('deviceId') deviceId:string, @queryParam('groupPath') groupPaths:string[],
-        @queryParam('type') type:string, @response() res:Response): Promise<PolicyListModel> {
+    public async listInheritedPolicies(
+        @queryParam('deviceId') deviceId: string,
+        @queryParam('groupPath') groupPaths: string[],
+        @queryParam('type') type: string,
+        @response() res: Response,
+    ): Promise<PolicyListModel> {
+        logger.info(
+            `policies.controller getInheritedPolicies: in: deviceId:${deviceId}, type:${type}, groupPaths:${groupPaths}`,
+        );
 
-        logger.info(`policies.controller getInheritedPolicies: in: deviceId:${deviceId}, type:${type}, groupPaths:${groupPaths}`);
-
-        const r: PolicyListModel= {results:[]};
+        const r: PolicyListModel = { results: [] };
 
         try {
-
-            let results: PolicyModel[]=[];
+            let results: PolicyModel[] = [];
             if (deviceId) {
                 results = await this.policiesService.listInheritedByDevice(deviceId, type);
             } else if (groupPaths) {
@@ -53,77 +70,96 @@ export class PoliciesController implements interfaces.Controller {
                 res.status(400);
             }
 
-            if (results===undefined) {
+            if (results === undefined) {
                 res.status(404);
             } else {
-                r.results=results;
+                r.results = results;
             }
         } catch (e) {
-            handleError(e,res);
+            handleError(e, res);
         }
         logger.debug(`controller exit: ${JSON.stringify(r)}`);
         return r;
     }
 
     @httpGet('')
-    public async listPolicies(@queryParam('type') type:string, @queryParam('offset') offset:number, @queryParam('count') count:number,
-        @response() res:Response): Promise<PolicyListModel> {
-
-        logger.info(`policies.controller listPolicies: in: type:${type}, offset:${offset}, count:${count}`);
-        const r: PolicyListModel= {results:[]};
+    public async listPolicies(
+        @queryParam('type') type: string,
+        @queryParam('offset') offset: number,
+        @queryParam('count') count: number,
+        @response() res: Response,
+    ): Promise<PolicyListModel> {
+        logger.info(
+            `policies.controller listPolicies: in: type:${type}, offset:${offset}, count:${count}`,
+        );
+        const r: PolicyListModel = { results: [] };
         if (offset && count) {
             r.pagination = {
                 offset,
-                count
+                count,
             };
         }
 
         try {
-            if (type !== undefined && typeof type !== "string") {
-                throw new ArgumentError(`Invalid "type" query: ${JSON.stringify(type)}. Please provided only one "type" query string`)
+            if (type !== undefined && typeof type !== 'string') {
+                throw new ArgumentError(
+                    `Invalid "type" query: ${JSON.stringify(
+                        type,
+                    )}. Please provided only one "type" query string`,
+                );
             }
 
             const results = await this.policiesService.listPolicies(type, offset, count);
-            r.results=results;
+            r.results = results;
         } catch (e) {
-            handleError(e,res);
+            handleError(e, res);
         }
         return r;
     }
 
     @httpGet('/:policyId')
-    public async getPolicy(@requestParam('policyId') policyId:string, @response() res:Response) : Promise<PolicyModel> {
-
+    public async getPolicy(
+        @requestParam('policyId') policyId: string,
+        @response() res: Response,
+    ): Promise<PolicyModel> {
         logger.info(`policy.controller getPolicy: in: policyId:${policyId}`);
         try {
             return await this.policiesService.get(policyId);
         } catch (e) {
-            handleError(e,res);
+            handleError(e, res);
         }
         return null;
     }
 
     @httpPatch('/:policyId')
-    public async updatePolicy(@requestParam('policyId') policyId:string, @requestBody() policy:PolicyModel, @response() res:Response) : Promise<void> {
-
-        logger.info(`policy.controller updatePolicy: in: policyId:${policyId}, policy:${JSON.stringify(policy)}`);
+    public async updatePolicy(
+        @requestParam('policyId') policyId: string,
+        @requestBody() policy: PolicyModel,
+        @response() res: Response,
+    ): Promise<void> {
+        logger.info(
+            `policy.controller updatePolicy: in: policyId:${policyId}, policy:${JSON.stringify(
+                policy,
+            )}`,
+        );
         try {
             policy.policyId = policyId;
             await this.policiesService.update(policy);
         } catch (e) {
-            handleError(e,res);
+            handleError(e, res);
         }
     }
 
     @httpDelete('/:policyId')
-    public async deletePolicy(@response() res: Response, @requestParam('policyId') policyId: string) : Promise<void> {
-
+    public async deletePolicy(
+        @response() res: Response,
+        @requestParam('policyId') policyId: string,
+    ): Promise<void> {
         logger.info(`policy.controller deletePolicy: in: policyId: ${policyId}`);
         try {
             await this.policiesService.delete(policyId);
         } catch (e) {
-            handleError(e,res);
+            handleError(e, res);
         }
     }
-
 }

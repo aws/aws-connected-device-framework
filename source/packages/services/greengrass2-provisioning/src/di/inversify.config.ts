@@ -67,7 +67,9 @@ container.load(provisioningContainerModule);
 container.load(assetLibraryContainerModule);
 container.load(eventPublisherContainerModule);
 
-container.bind<boolean>('enablePublishEvents').toConstantValue(process.env.ENABLE_PUBLISH_EVENTS == 'true');
+container
+    .bind<boolean>('enablePublishEvents')
+    .toConstantValue(process.env.ENABLE_PUBLISH_EVENTS == 'true');
 
 container.bind<DynamoDbUtils>(TYPES.DynamoDbUtils).to(DynamoDbUtils).inSingletonScope();
 container.bind<S3Utils>(TYPES.S3Utils).to(S3Utils).inSingletonScope();
@@ -78,34 +80,55 @@ container.bind<CoresDao>(TYPES.CoresDao).to(CoresDao).inSingletonScope();
 
 container.bind<CoreTasksDao>(TYPES.CoreTasksDao).to(CoreTasksDao).inSingletonScope();
 container.bind<CoreTasksService>(TYPES.CoreTasksService).to(CoreTasksService).inSingletonScope();
-container.bind<CoreTasksAssembler>(TYPES.CoreTasksAssembler).to(CoreTasksAssembler).inSingletonScope();
+container
+    .bind<CoreTasksAssembler>(TYPES.CoreTasksAssembler)
+    .to(CoreTasksAssembler)
+    .inSingletonScope();
 
 container.bind<DevicesAssembler>(TYPES.DevicesAssembler).to(DevicesAssembler).inSingletonScope();
 container.bind<DevicesService>(TYPES.DevicesService).to(DevicesService).inSingletonScope();
 container.bind<DevicesDao>(TYPES.DevicesDao).to(DevicesDao).inSingletonScope();
 
-container.bind<DeviceTasksAssembler>(TYPES.DeviceTasksAssembler).to(DeviceTasksAssembler).inSingletonScope();
-container.bind<DeviceTasksService>(TYPES.DeviceTasksService).to(DeviceTasksService).inSingletonScope();
+container
+    .bind<DeviceTasksAssembler>(TYPES.DeviceTasksAssembler)
+    .to(DeviceTasksAssembler)
+    .inSingletonScope();
+container
+    .bind<DeviceTasksService>(TYPES.DeviceTasksService)
+    .to(DeviceTasksService)
+    .inSingletonScope();
 container.bind<DeviceTasksDao>(TYPES.DeviceTasksDao).to(DeviceTasksDao).inSingletonScope();
 
 container.bind<TemplatesDao>(TYPES.TemplatesDao).to(TemplatesDao).inSingletonScope();
 container.bind<TemplatesService>(TYPES.TemplatesService).to(TemplatesService).inSingletonScope();
-container.bind<TemplatesAssembler>(TYPES.TemplatesAssembler).to(TemplatesAssembler).inSingletonScope();
+container
+    .bind<TemplatesAssembler>(TYPES.TemplatesAssembler)
+    .to(TemplatesAssembler)
+    .inSingletonScope();
 
-container.bind<DeploymentTasksDao>(TYPES.DeploymentTasksDao).to(DeploymentTasksDao).inSingletonScope();
-container.bind<DeploymentTasksService>(TYPES.DeploymentTasksService).to(DeploymentTasksService).inSingletonScope();
+container
+    .bind<DeploymentTasksDao>(TYPES.DeploymentTasksDao)
+    .to(DeploymentTasksDao)
+    .inSingletonScope();
+container
+    .bind<DeploymentTasksService>(TYPES.DeploymentTasksService)
+    .to(DeploymentTasksService)
+    .inSingletonScope();
 
-container.bind<DeploymentsService>(TYPES.DeploymentsService).to(DeploymentsService).inSingletonScope();
+container
+    .bind<DeploymentsService>(TYPES.DeploymentsService)
+    .to(DeploymentsService)
+    .inSingletonScope();
 
 container.bind<FleetDao>(TYPES.FleetDao).to(FleetDao).inSingletonScope();
 container.bind<FleetService>(TYPES.FleetService).to(FleetService).inSingletonScope();
 
 // for 3rd party objects, we need to use factory injectors
 decorate(injectable(), DynamoDBClient);
-container.bind<interfaces.Factory<DynamoDBClient>>(TYPES.DynamoDBFactory)
+container
+    .bind<interfaces.Factory<DynamoDBClient>>(TYPES.DynamoDBFactory)
     .toFactory<DynamoDBClient>(() => {
         return () => {
-
             if (!container.isBound(TYPES.DynamoDB)) {
                 const ddb = new DynamoDBClient({ region: process.env.AWS_REGION });
                 container.bind<DynamoDBClient>(TYPES.DynamoDB).toConstantValue(ddb);
@@ -115,12 +138,14 @@ container.bind<interfaces.Factory<DynamoDBClient>>(TYPES.DynamoDBFactory)
     });
 
 decorate(injectable(), DynamoDBDocumentClient);
-container.bind<interfaces.Factory<DynamoDBDocumentClient>>(TYPES.DynamoDBDocumentFactory)
+container
+    .bind<interfaces.Factory<DynamoDBDocumentClient>>(TYPES.DynamoDBDocumentFactory)
     .toFactory<DynamoDBDocumentClient>(() => {
         return () => {
-
             if (!container.isBound(TYPES.DynamoDBDocument)) {
-                const ddbFactory = container.get<interfaces.Factory<DynamoDBClient>>(TYPES.DynamoDBFactory);
+                const ddbFactory = container.get<interfaces.Factory<DynamoDBClient>>(
+                    TYPES.DynamoDBFactory,
+                );
                 const ddb = ddbFactory() as DynamoDBClient;
                 const marshallOptions = {
                     // Whether to automatically convert empty strings, blobs, and sets to `null`.
@@ -137,59 +162,54 @@ container.bind<interfaces.Factory<DynamoDBDocumentClient>>(TYPES.DynamoDBDocumen
                 };
                 const translateConfig = { marshallOptions, unmarshallOptions };
                 const ddbDocClient = DynamoDBDocumentClient.from(ddb, translateConfig);
-                container.bind<DynamoDBDocumentClient>(TYPES.DynamoDBDocument).toConstantValue(ddbDocClient);
+                container
+                    .bind<DynamoDBDocumentClient>(TYPES.DynamoDBDocument)
+                    .toConstantValue(ddbDocClient);
             }
             return container.get<DynamoDBDocumentClient>(TYPES.DynamoDBDocument);
         };
     });
 
 decorate(injectable(), SQSClient);
-container.bind<interfaces.Factory<SQSClient>>(TYPES.SQSFactory)
-    .toFactory<SQSClient>(() => {
-        return () => {
-
-            if (!container.isBound(TYPES.SQS)) {
-                const sqs = new SQSClient({ region: process.env.AWS_REGION });
-                container.bind<SQSClient>(TYPES.SQS).toConstantValue(sqs);
-            }
-            return container.get<SQSClient>(TYPES.SQS);
-        };
-    });
+container.bind<interfaces.Factory<SQSClient>>(TYPES.SQSFactory).toFactory<SQSClient>(() => {
+    return () => {
+        if (!container.isBound(TYPES.SQS)) {
+            const sqs = new SQSClient({ region: process.env.AWS_REGION });
+            container.bind<SQSClient>(TYPES.SQS).toConstantValue(sqs);
+        }
+        return container.get<SQSClient>(TYPES.SQS);
+    };
+});
 
 decorate(injectable(), S3Client);
-container.bind<interfaces.Factory<S3Client>>(TYPES.S3Factory)
-    .toFactory<S3Client>(() => {
-        return () => {
-
-            if (!container.isBound(TYPES.S3)) {
-                const s3 = new S3Client({ region: process.env.AWS_REGION });
-                container.bind<S3Client>(TYPES.S3).toConstantValue(s3);
-            }
-            return container.get<S3Client>(TYPES.S3);
-        };
-    });
+container.bind<interfaces.Factory<S3Client>>(TYPES.S3Factory).toFactory<S3Client>(() => {
+    return () => {
+        if (!container.isBound(TYPES.S3)) {
+            const s3 = new S3Client({ region: process.env.AWS_REGION });
+            container.bind<S3Client>(TYPES.S3).toConstantValue(s3);
+        }
+        return container.get<S3Client>(TYPES.S3);
+    };
+});
 
 decorate(injectable(), IoTClient);
-container.bind<interfaces.Factory<IoTClient>>(TYPES.IotFactory)
-    .toFactory<IoTClient>(() => {
-        return () => {
-
-            if (!container.isBound(TYPES.Iot)) {
-                const iot = new IoTClient({ region: process.env.AWS_REGION });
-                container.bind<IoTClient>(TYPES.Iot).toConstantValue(iot);
-            }
-            return container.get<IoTClient>(TYPES.Iot);
-        };
-    });
+container.bind<interfaces.Factory<IoTClient>>(TYPES.IotFactory).toFactory<IoTClient>(() => {
+    return () => {
+        if (!container.isBound(TYPES.Iot)) {
+            const iot = new IoTClient({ region: process.env.AWS_REGION });
+            container.bind<IoTClient>(TYPES.Iot).toConstantValue(iot);
+        }
+        return container.get<IoTClient>(TYPES.Iot);
+    };
+});
 
 container.load(thingListBuilderContainerModule);
 
-
 decorate(injectable(), GreengrassV2Client);
-container.bind<interfaces.Factory<GreengrassV2Client>>(TYPES.Greengrassv2Factory)
+container
+    .bind<interfaces.Factory<GreengrassV2Client>>(TYPES.Greengrassv2Factory)
     .toFactory<GreengrassV2Client>(() => {
         return () => {
-
             if (!container.isBound(TYPES.Greengrassv2)) {
                 const ggv2 = new GreengrassV2Client({ region: process.env.AWS_REGION });
                 container.bind<GreengrassV2Client>(TYPES.Greengrassv2).toConstantValue(ggv2);
@@ -199,10 +219,10 @@ container.bind<interfaces.Factory<GreengrassV2Client>>(TYPES.Greengrassv2Factory
     });
 
 decorate(injectable(), LambdaClient);
-container.bind<interfaces.Factory<LambdaClient>>(TYPES.LambdaFactory)
+container
+    .bind<interfaces.Factory<LambdaClient>>(TYPES.LambdaFactory)
     .toFactory<LambdaClient>(() => {
         return () => {
-
             if (!container.isBound(TYPES.Lambda)) {
                 const l = new LambdaClient({ region: process.env.AWS_REGION });
                 container.bind<LambdaClient>(TYPES.Lambda).toConstantValue(l);

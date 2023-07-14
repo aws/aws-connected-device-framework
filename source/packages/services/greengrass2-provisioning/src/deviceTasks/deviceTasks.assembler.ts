@@ -19,9 +19,7 @@ import { DeviceTaskItem, DeviceTaskResource, NewDeviceTaskResource } from './dev
 
 @injectable()
 export class DeviceTasksAssembler {
-
-    constructor(
-        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler) { }
+    constructor(@inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler) {}
 
     public toResource(item: DeviceTaskItem): DeviceTaskResource {
         logger.debug(`coreTasks.assembler toResource: in: item:${JSON.stringify(item)}`);
@@ -35,8 +33,8 @@ export class DeviceTasksAssembler {
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
             type: item.type,
-            options: item.options
-        }
+            options: item.options,
+        };
 
         logger.debug(`coreTasks.assembler toResource: exit:${JSON.stringify(resource)}`);
         return resource;
@@ -49,8 +47,8 @@ export class DeviceTasksAssembler {
             devices: resource.devices,
             coreName: resource.coreName,
             type: resource.type,
-            options: resource.options
-        }
+            options: resource.options,
+        };
 
         logger.debug(`coreTasks.assembler toItem: exit:${JSON.stringify(item)}`);
         return item;

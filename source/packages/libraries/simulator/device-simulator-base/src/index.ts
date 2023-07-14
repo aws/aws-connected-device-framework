@@ -20,6 +20,5 @@ export * from './iot/shadow.model';
 export * from './localState/localState.manager';
 export * from './templates/telemetry.transformer';
 
-export {DEVICE_SIMULATOR_TYPES} from './di/types';
-export {deviceSimulatorContainerModule} from './di/inversify.config';
-
+export { DEVICE_SIMULATOR_TYPES } from './di/types';
+export { deviceSimulatorContainerModule } from './di/inversify.config';

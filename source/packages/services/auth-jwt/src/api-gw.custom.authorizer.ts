@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from './utils/logger';
-import {verify} from 'jsonwebtoken';
+import { verify } from 'jsonwebtoken';
 import axios from 'axios';
 import * as jwkToBuffer from 'jwk-to-pem';
 import ow from 'ow';
@@ -28,43 +28,43 @@ export interface ClaimVerifyResult {
 }
 
 export class ApiGwCustomAuthorizer {
-
-    private cognitoIssuer:string;
-    private publicKeys:MapOfKidToPublicKey;
+    private cognitoIssuer: string;
+    private publicKeys: MapOfKidToPublicKey;
 
     constructor() {
         this.cognitoIssuer = process.env.TOKEN_ISSUER;
-        if (this.cognitoIssuer===undefined) {
+        if (this.cognitoIssuer === undefined) {
             throw new Error('Token Issuer must be defined');
         }
     }
 
-    private async getPublicKeys() : Promise<MapOfKidToPublicKey> {
+    private async getPublicKeys(): Promise<MapOfKidToPublicKey> {
         const url = `${this.cognitoIssuer}/.well-known/jwks.json`;
         const publicKeys = await axios.get<PublicKeys>(url);
         const cacheKeys = publicKeys.data.keys.reduce((agg, current) => {
-            const rsa:jwkToBuffer.RSA = {
+            const rsa: jwkToBuffer.RSA = {
                 kty: 'RSA',
                 e: current.e,
-                n: current.n
+                n: current.n,
             };
             const pem = jwkToBuffer.default(rsa);
-            agg[current.kid] = {instance: current, pem};
+            agg[current.kid] = { instance: current, pem };
             return agg;
         }, {} as MapOfKidToPublicKey);
 
-        logger.debug(`api-gw.custom.authorizer: getPublicKeys: cacheKeys:${JSON.stringify(cacheKeys)}`);
+        logger.debug(
+            `api-gw.custom.authorizer: getPublicKeys: cacheKeys:${JSON.stringify(cacheKeys)}`,
+        );
         return cacheKeys;
     }
 
     public async verify(request: ClaimVerifyRequest): Promise<ClaimVerifyResult> {
         logger.debug(`api-gw.custom.authorizer: verify: in: request:${JSON.stringify(request)}`);
 
-        let result:ClaimVerifyResult;
+        let result: ClaimVerifyResult;
 
         try {
-
-            if (this.publicKeys===undefined || this.publicKeys===null) {
+            if (this.publicKeys === undefined || this.publicKeys === null) {
                 this.publicKeys = await this.getPublicKeys();
             }
 
@@ -82,7 +82,7 @@ export class ApiGwCustomAuthorizer {
             }
 
             const claim = verify(token, key.pem) as Claim;
-            const currentSeconds = Math.floor( (new Date()).valueOf() / 1000);
+            const currentSeconds = Math.floor(new Date().valueOf() / 1000);
             if (currentSeconds > claim.exp || currentSeconds < claim.auth_time) {
                 throw new Error('claim is expired or invalid');
             }
@@ -95,10 +95,10 @@ export class ApiGwCustomAuthorizer {
                 throw new Error('claim use is not access');
             }
 
-            result = {userName: claim.username, clientId: claim.client_id, isValid: true};
+            result = { userName: claim.username, clientId: claim.client_id, isValid: true };
         } catch (error) {
-          logger.error(`api-gw.custom.authorizer: verify: error:${error}`);
-          result = {userName: '', clientId: '', error, isValid: false};
+            logger.error(`api-gw.custom.authorizer: verify: error:${error}`);
+            result = { userName: '', clientId: '', error, isValid: false };
         }
 
         logger.debug(`api-gw.custom.authorizer: verify: exist:${JSON.stringify(result)}`);
@@ -135,4 +135,4 @@ interface Claim {
     exp: number;
     username: string;
     client_id: string;
-  }
+}

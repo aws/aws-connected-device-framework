@@ -13,36 +13,36 @@
 import { AssetLibUpdate } from './assetlib_update';
 import { getRequestIdFromContext, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
 import { container } from './di/inversify.config';
-import {TYPES} from './di/types';
+import { TYPES } from './di/types';
 
-let assetLib:AssetLibUpdate;
+let assetLib: AssetLibUpdate;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 exports.lambda_handler = async (event: any, _context: unknown) => {
-  logger.debug(`event: ${JSON.stringify(event)}`);
+    logger.debug(`event: ${JSON.stringify(event)}`);
 
-  setRequestId(getRequestIdFromContext(_context));
+    setRequestId(getRequestIdFromContext(_context));
 
-  if (assetLib===undefined) {
-    assetLib = container.get(TYPES.AssetLibUpdate);
-  }
-
-  const clientId = event.clientId;
-
-  // TODO: figure out how to extract a boolean `connected` from the eventType
-  const status = event.eventType;
-  let connected:boolean;
-  if (status === 'connected') {
-    connected = true;
-  } else if (status === 'disconnected') {
-    if (event.disconnectReason === 'DUPLICATE_CLIENTID') {
-      return;
-    } else {
-      connected = false;
+    if (assetLib === undefined) {
+        assetLib = container.get(TYPES.AssetLibUpdate);
     }
-  } else {
-    connected = false;
-  }
 
-  await assetLib.updateDeviceConnected(clientId, connected);
+    const clientId = event.clientId;
+
+    // TODO: figure out how to extract a boolean `connected` from the eventType
+    const status = event.eventType;
+    let connected: boolean;
+    if (status === 'connected') {
+        connected = true;
+    } else if (status === 'disconnected') {
+        if (event.disconnectReason === 'DUPLICATE_CLIENTID') {
+            return;
+        } else {
+            connected = false;
+        }
+    } else {
+        connected = false;
+    }
+
+    await assetLib.updateDeviceConnected(clientId, connected);
 };

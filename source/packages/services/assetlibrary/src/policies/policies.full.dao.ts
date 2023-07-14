@@ -12,8 +12,8 @@
  *********************************************************************************************************************/
 import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
-import {logger} from '@awssolutions/simple-cdf-logger';
-import { PolicyModel, AttachedPolicy, Policy} from './policies.models';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { PolicyModel, AttachedPolicy, Policy } from './policies.models';
 import { TYPES } from '../di/types';
 import { BaseDaoFull } from '../data/base.full.dao';
 
@@ -21,10 +21,9 @@ const __ = process.statics;
 
 @injectable()
 export class PoliciesDaoFull extends BaseDaoFull {
-
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
-	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -37,18 +36,20 @@ export class PoliciesDaoFull extends BaseDaoFull {
         let query;
         const conn = super.getConnection();
         try {
-            query = await conn.traversal.V(id).as('policy').
-                project('policy', 'groups').
-                    by( __.select('policy').valueMap().with_(process.withOptions.tokens)).
-                    by( __.select('policy').out('appliesTo').hasLabel('group').fold()).
-                next();
+            query = await conn.traversal
+                .V(id)
+                .as('policy')
+                .project('policy', 'groups')
+                .by(__.select('policy').valueMap().with_(process.withOptions.tokens))
+                .by(__.select('policy').out('appliesTo').hasLabel('group').fold())
+                .next();
         } finally {
             await conn.close();
         }
 
         logger.debug(`policy.full.dao get: query: ${JSON.stringify(query)}`);
 
-        if (query===undefined || query.value===null) {
+        if (query === undefined || query.value === null) {
             logger.debug(`policy.full.dao get: exit: node: undefined`);
             return undefined;
         }
@@ -56,7 +57,6 @@ export class PoliciesDaoFull extends BaseDaoFull {
         const result = JSON.parse(JSON.stringify(query.value)) as Policy;
         logger.debug(`policy.full.dao get: exit: result: ${JSON.stringify(result)}`);
         return result;
-
     }
 
     public async create(model: PolicyModel): Promise<string> {
@@ -66,7 +66,8 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
         const conn = super.getConnection();
         try {
-            const traversal = conn.traversal.addV('policy')
+            const traversal = conn.traversal
+                .addV('policy')
                 .property(process.t.id, id)
                 .property('policyId', model.policyId.toLowerCase())
                 .property('type', model.type)
@@ -74,7 +75,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
                 .property('document', model.document)
                 .as('policy');
 
-            model.appliesTo.forEach((path,index)=> {
+            model.appliesTo.forEach((path, index) => {
                 this.addCreateAppliesToTraversal(path, index, traversal);
             });
 
@@ -87,20 +88,27 @@ export class PoliciesDaoFull extends BaseDaoFull {
         return id;
     }
 
-    private addCreateAppliesToTraversal(path:string, identifier:number, traversal:process.GraphTraversal) {
+    private addCreateAppliesToTraversal(
+        path: string,
+        identifier: number,
+        traversal: process.GraphTraversal,
+    ) {
         const groupId = `group___${path}`;
         const groupAlias = `group_added_${identifier}`;
-        traversal.V(groupId).as(groupAlias)
-            .addE('appliesTo').from_('policy').to(groupAlias);
+        traversal.V(groupId).as(groupAlias).addE('appliesTo').from_('policy').to(groupAlias);
     }
 
-    private addRemoveAppliesToTraversal(path:string): process.GraphTraversal {
+    private addRemoveAppliesToTraversal(path: string): process.GraphTraversal {
         const groupId = `group___${path}`;
         return __.select('policy').outE('appliesTo').where(__.otherV().hasId(groupId));
     }
 
-    public async update(existing:PolicyModel, updated:PolicyModel): Promise<string> {
-        logger.debug(`policies.dao update: in: existing:${JSON.stringify(existing)}, updated:${JSON.stringify(updated)}`);
+    public async update(existing: PolicyModel, updated: PolicyModel): Promise<string> {
+        logger.debug(
+            `policies.dao update: in: existing:${JSON.stringify(
+                existing,
+            )}, updated:${JSON.stringify(updated)}`,
+        );
 
         const id = `policy___${existing.policyId}`;
 
@@ -121,23 +129,26 @@ export class PoliciesDaoFull extends BaseDaoFull {
             traversal.as('policy');
 
             /*  identfy any changes in the appliesTo relationship  */
-            const changedAppliesTo = this.identifyChangedAppliesTo(existing.appliesTo, updated.appliesTo);
-            logger.debug(`policies.dao update: changedAppliesTo: ${JSON.stringify(changedAppliesTo)}`);
+            const changedAppliesTo = this.identifyChangedAppliesTo(
+                existing.appliesTo,
+                updated.appliesTo,
+            );
+            logger.debug(
+                `policies.dao update: changedAppliesTo: ${JSON.stringify(changedAppliesTo)}`,
+            );
 
             /*  any new appliesTo we can simply add the step to the traversal  */
-            changedAppliesTo.add.forEach((path,index)=> {
+            changedAppliesTo.add.forEach((path, index) => {
                 this.addCreateAppliesToTraversal(path, index, traversal);
             });
 
             /*  as a drop() step terminates a traversal, we need to process all these as part of a single union step as the last step  */
-            const removedAppliesToSteps: process.GraphTraversal[]= [];
-            changedAppliesTo.remove.forEach((path)=> {
+            const removedAppliesToSteps: process.GraphTraversal[] = [];
+            changedAppliesTo.remove.forEach((path) => {
                 removedAppliesToSteps.push(this.addRemoveAppliesToTraversal(path));
             });
-            if (removedAppliesToSteps.length>0) {
-                traversal.local(
-                        __.union(...removedAppliesToSteps)
-                    ).drop();
+            if (removedAppliesToSteps.length > 0) {
+                traversal.local(__.union(...removedAppliesToSteps)).drop();
             }
 
             /*  lets execute it  */
@@ -151,20 +162,19 @@ export class PoliciesDaoFull extends BaseDaoFull {
         return id;
     }
 
-    private identifyChangedAppliesTo(existing:string[], updated:string[]): ChangedAppliesTo  {
-
-        const toRemove:string[]=[];
-        const toAdd:string[]=[];
+    private identifyChangedAppliesTo(existing: string[], updated: string[]): ChangedAppliesTo {
+        const toRemove: string[] = [];
+        const toAdd: string[] = [];
 
         // first find removed
-        existing.forEach(e=> {
+        existing.forEach((e) => {
             if (!updated.includes(e)) {
                 toRemove.push(e);
             }
         });
 
         // then find added
-        toAdd.forEach(a => {
+        toAdd.forEach((a) => {
             if (!existing.includes(a)) {
                 toAdd.push(a);
             }
@@ -172,104 +182,125 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
         return {
             add: toAdd,
-            remove: toRemove
+            remove: toRemove,
         };
-
     }
 
-    public async listDeviceAttachedPolicies(deviceId:string, type:string): Promise<AttachedPolicy[]> {
-        logger.debug(`policies.dao listDeviceAttachedPolicies: in: deviceId:${deviceId}, type:${type}`);
+    public async listDeviceAttachedPolicies(
+        deviceId: string,
+        type: string,
+    ): Promise<AttachedPolicy[]> {
+        logger.debug(
+            `policies.dao listDeviceAttachedPolicies: in: deviceId:${deviceId}, type:${type}`,
+        );
 
         const id = `device___${deviceId.toLowerCase()}`;
 
         let results;
         const conn = super.getConnection();
         try {
-            results = await conn.traversal.V(id).as('device')
-            .union(
-                __.out(),
-                __.out().repeat(__.out('parent').simplePath().dedup()).emit()
-                ).as('deviceGroups')
-            .in_('appliesTo').hasLabel('policy').has('type',type).dedup().as('policies')
-            .project('policy', 'groups', 'policyGroups')
-                .by( __.identity().valueMap().with_(process.withOptions.tokens))
-                .by( __.select('device').out().hasLabel('group').fold())
-                .by( __.local( __.out('appliesTo').fold())).
-            toList();
+            results = await conn.traversal
+                .V(id)
+                .as('device')
+                .union(__.out(), __.out().repeat(__.out('parent').simplePath().dedup()).emit())
+                .as('deviceGroups')
+                .in_('appliesTo')
+                .hasLabel('policy')
+                .has('type', type)
+                .dedup()
+                .as('policies')
+                .project('policy', 'groups', 'policyGroups')
+                .by(__.identity().valueMap().with_(process.withOptions.tokens))
+                .by(__.select('device').out().hasLabel('group').fold())
+                .by(__.local(__.out('appliesTo').fold()))
+                .toList();
         } finally {
             await conn.close();
         }
 
-        const policies: AttachedPolicy[]=[];
-        for(const result of results) {
+        const policies: AttachedPolicy[] = [];
+        for (const result of results) {
             policies.push(JSON.parse(JSON.stringify(result)) as AttachedPolicy);
         }
 
-        logger.debug(`policies.dao listDeviceAttachedPolicies: exit: policies: ${JSON.stringify(policies)}`);
+        logger.debug(
+            `policies.dao listDeviceAttachedPolicies: exit: policies: ${JSON.stringify(policies)}`,
+        );
         return policies;
     }
 
-    public async listGroupAttachedPolicies(groupPaths:string[], type:string): Promise<AttachedPolicy[]> {
-        logger.debug(`policies.dao listGroupAttachedPolicies: in: groupPaths:${groupPaths}, type:${type}`);
+    public async listGroupAttachedPolicies(
+        groupPaths: string[],
+        type: string,
+    ): Promise<AttachedPolicy[]> {
+        logger.debug(
+            `policies.dao listGroupAttachedPolicies: in: groupPaths:${groupPaths}, type:${type}`,
+        );
 
-        const ids:string[]=[];
-        groupPaths.forEach(v=> ids.push(`group___${v.toLowerCase()}`));
+        const ids: string[] = [];
+        groupPaths.forEach((v) => ids.push(`group___${v.toLowerCase()}`));
 
         let results;
         const conn = super.getConnection();
         try {
-            const traverser = conn.traversal.V(ids).as('groups').
-                union(
-                    __.identity(),
-                    __.repeat(__.out('parent').simplePath().dedup()).emit()
-                ).as('parentGroups').
-                in_('appliesTo').hasLabel('policy');
+            const traverser = conn.traversal
+                .V(ids)
+                .as('groups')
+                .union(__.identity(), __.repeat(__.out('parent').simplePath().dedup()).emit())
+                .as('parentGroups')
+                .in_('appliesTo')
+                .hasLabel('policy');
 
-            if (type!==undefined) {
-                traverser.has('type',type);
+            if (type !== undefined) {
+                traverser.has('type', type);
             }
 
-            traverser.dedup().as('policies')
+            traverser
+                .dedup()
+                .as('policies')
                 .project('policy', 'groups', 'policyGroups')
-                    .by( __.identity().valueMap().with_(process.withOptions.tokens))
-                    .by( __.select('groups').fold())
-                    .by( __.local( __.out('appliesTo').fold()));
+                .by(__.identity().valueMap().with_(process.withOptions.tokens))
+                .by(__.select('groups').fold())
+                .by(__.local(__.out('appliesTo').fold()));
 
             results = await traverser.toList();
         } finally {
             await conn.close();
         }
 
-        const policies: AttachedPolicy[]=[];
-        for(const result of results) {
+        const policies: AttachedPolicy[] = [];
+        for (const result of results) {
             policies.push(JSON.parse(JSON.stringify(result)) as AttachedPolicy);
         }
 
-        logger.debug(`policies.dao listGroupAttachedPolicies: exit: policies: ${JSON.stringify(policies)}`);
+        logger.debug(
+            `policies.dao listGroupAttachedPolicies: exit: policies: ${JSON.stringify(policies)}`,
+        );
         return policies;
     }
 
-    public async listPolicies(type:string, offset:number, count:number): Promise<Policy[]> {
+    public async listPolicies(type: string, offset: number, count: number): Promise<Policy[]> {
         logger.debug(`policies.dao listPolicies: type:${type}, offset:${offset}, count:${count}`);
 
         let results;
         const conn = super.getConnection();
         try {
             const traverser = conn.traversal.V().hasLabel('policy');
-            if (type!==undefined) {
+            if (type !== undefined) {
                 traverser.has('type', type.toLowerCase());
             }
-            traverser.as('policies').
-                project('policy', 'groups').
-                    by( __.valueMap().with_(process.withOptions.tokens)).
-                    by( __.out('appliesTo').hasLabel('group').fold());
+            traverser
+                .as('policies')
+                .project('policy', 'groups')
+                .by(__.valueMap().with_(process.withOptions.tokens))
+                .by(__.out('appliesTo').hasLabel('group').fold());
 
             // apply pagination
-            if (offset!==undefined && count!==undefined) {
+            if (offset !== undefined && count !== undefined) {
                 // note: workaround for wierd typescript issue. even though offset/count are declared as numbers
                 // througout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
-                const offsetAsInt = parseInt(offset.toString(),0);
-                const countAsInt = parseInt(count.toString(),0);
+                const offsetAsInt = parseInt(offset.toString(), 0);
+                const countAsInt = parseInt(count.toString(), 0);
                 traverser.range(offsetAsInt, offsetAsInt + countAsInt);
             }
 
@@ -280,8 +311,8 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
         logger.debug(`results: ${JSON.stringify(results)}`);
 
-        const policies: Policy[]=[];
-        for(const result of results) {
+        const policies: Policy[] = [];
+        for (const result of results) {
             policies.push(JSON.parse(JSON.stringify(result)) as Policy);
         }
 

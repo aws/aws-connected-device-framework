@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import {TypesDaoFull} from './types.full.dao';
+import { TypesDaoFull } from './types.full.dao';
 import { createMockInstance } from 'jest-create-mock-instance';
 import { structure } from 'gremlin';
 import { TypeRelationsModel } from './types.models';
@@ -22,13 +22,13 @@ describe('TypesDao', () => {
 
     beforeEach(() => {
         mockedGraph = createMockInstance(structure.Graph);
-        instance = new TypesDaoFull('neptuneUrl', ()=> mockedGraph);
+        instance = new TypesDaoFull('neptuneUrl', () => mockedGraph);
     });
 
     it('All incoming links removed', async () => {
         const existing = new TypeRelationsModel();
         existing.in = {
-            located_at: ['site']
+            located_at: ['site'],
         };
         const updated = new TypeRelationsModel();
 
@@ -37,41 +37,41 @@ describe('TypesDao', () => {
         expect(changes.add.out).toEqual({});
         expect(changes.add.in).toEqual({});
         expect(changes.remove.out).toEqual({});
-        expect(changes.remove.in).toEqual({located_at: ['site']});
+        expect(changes.remove.in).toEqual({ located_at: ['site'] });
     });
 
     it('Relations in.key removed', async () => {
         const existing = new TypeRelationsModel();
         existing.in = {
-            located_at: ['site']
+            located_at: ['site'],
         };
         const updated = new TypeRelationsModel();
         updated.in = {
-            installed_at: ['site']
+            installed_at: ['site'],
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
 
         expect(changes.add.out).toEqual({});
-        expect(changes.add.in).toEqual({installed_at: ['site']});
+        expect(changes.add.in).toEqual({ installed_at: ['site'] });
         expect(changes.remove.out).toEqual({});
-        expect(changes.remove.in).toEqual({located_at: ['site']});
+        expect(changes.remove.in).toEqual({ located_at: ['site'] });
     });
 
     it('Relations in.key.type changed', async () => {
         const existing = new TypeRelationsModel();
         existing.in = {
-            located_at: ['site']
+            located_at: ['site'],
         };
         const updated = new TypeRelationsModel();
         updated.in = {
-            located_at: ['site','group']
+            located_at: ['site', 'group'],
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
 
         expect(changes.add.out).toEqual({});
-        expect(changes.add.in).toEqual({located_at: ['group']});
+        expect(changes.add.in).toEqual({ located_at: ['group'] });
         expect(changes.remove.out).toEqual({});
         expect(changes.remove.in).toEqual({});
     });
@@ -79,32 +79,34 @@ describe('TypesDao', () => {
     it('Relations in.key.type removed', async () => {
         const existing = new TypeRelationsModel();
         existing.in = {
-            located_at: ['site']
+            located_at: ['site'],
         };
         const updated = new TypeRelationsModel();
         updated.in = {
-            located_at: ['group']
+            located_at: ['group'],
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
 
         expect(changes.add.out).toEqual({});
-        expect(changes.add.in).toEqual({located_at: ['group']});
+        expect(changes.add.in).toEqual({ located_at: ['group'] });
         expect(changes.remove.out).toEqual({});
-        expect(changes.remove.in).toEqual({located_at: ['site']});
+        expect(changes.remove.in).toEqual({ located_at: ['site'] });
     });
 
     it('Relations in.key.type changed to expanded', async () => {
         const existing = new TypeRelationsModel();
         existing.in = {
-            located_at: ['site']
+            located_at: ['site'],
         };
         const updated = new TypeRelationsModel();
         updated.in = {
-            located_at: [{
-                name: 'site',
-                includeInAuth: true
-            }]
+            located_at: [
+                {
+                    name: 'site',
+                    includeInAuth: true,
+                },
+            ],
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
@@ -115,58 +117,57 @@ describe('TypesDao', () => {
         expect(changes.remove.in).toEqual(existing.in);
     });
 
-
     it('Relations out added', async () => {
         const existing = new TypeRelationsModel();
         existing.in = {
-            located_at: ['site']
+            located_at: ['site'],
         };
         const updated = new TypeRelationsModel();
         updated.out = {
-            located_at: ['location']
+            located_at: ['location'],
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
 
-        expect(changes.add.out).toEqual({located_at: ['location']});
+        expect(changes.add.out).toEqual({ located_at: ['location'] });
         expect(changes.add.in).toEqual({});
         expect(changes.remove.out).toEqual({});
-        expect(changes.remove.in).toEqual({located_at: ['site']});
+        expect(changes.remove.in).toEqual({ located_at: ['site'] });
     });
 
     it('Relations out.key added', async () => {
         const existing = new TypeRelationsModel();
         existing.out = {
-            installed_at: ['location']
+            installed_at: ['location'],
         };
         const updated = new TypeRelationsModel();
         updated.out = {
-            located_at: ['location']
+            located_at: ['location'],
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
 
-        expect(changes.add.out).toEqual({located_at: ['location']});
+        expect(changes.add.out).toEqual({ located_at: ['location'] });
         expect(changes.add.in).toEqual({});
-        expect(changes.remove.out).toEqual({installed_at: ['location']});
+        expect(changes.remove.out).toEqual({ installed_at: ['location'] });
         expect(changes.remove.in).toEqual({});
     });
 
     it('Relations out.key.type added', async () => {
         const existing = new TypeRelationsModel();
         existing.out = {
-            installed_at: ['location']
+            installed_at: ['location'],
         };
         const updated = new TypeRelationsModel();
         updated.out = {
-            installed_at: ['group']
+            installed_at: ['group'],
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
 
-        expect(changes.add.out).toEqual({installed_at: ['group']});
+        expect(changes.add.out).toEqual({ installed_at: ['group'] });
         expect(changes.add.in).toEqual({});
-        expect(changes.remove.out).toEqual({installed_at: ['location']});
+        expect(changes.remove.out).toEqual({ installed_at: ['location'] });
         expect(changes.remove.in).toEqual({});
     });
 
@@ -174,12 +175,12 @@ describe('TypesDao', () => {
         const existing = new TypeRelationsModel();
         existing.out = {
             installed_at: ['location'],
-            located_at: ['site']
+            located_at: ['site'],
         };
         const updated = new TypeRelationsModel();
         updated.out = {
             located_at: ['site'],
-            installed_at: ['location']
+            installed_at: ['location'],
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
@@ -193,11 +194,11 @@ describe('TypesDao', () => {
     it('Relations out.keys.types changed order', async () => {
         const existing = new TypeRelationsModel();
         existing.out = {
-            installed_at: ['location','site']
+            installed_at: ['location', 'site'],
         };
         const updated = new TypeRelationsModel();
         updated.out = {
-            installed_at: ['site','location']
+            installed_at: ['site', 'location'],
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
@@ -211,16 +212,16 @@ describe('TypesDao', () => {
     it('Relations out.keys.types 1 added', async () => {
         const existing = new TypeRelationsModel();
         existing.out = {
-            installed_at: ['location']
+            installed_at: ['location'],
         };
         const updated = new TypeRelationsModel();
         updated.out = {
-            installed_at: ['site','location']
+            installed_at: ['site', 'location'],
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
 
-        expect(changes.add.out).toEqual({installed_at: ['site']});
+        expect(changes.add.out).toEqual({ installed_at: ['site'] });
         expect(changes.add.in).toEqual({});
         expect(changes.remove.out).toEqual({});
         expect(changes.remove.in).toEqual({});
@@ -229,34 +230,39 @@ describe('TypesDao', () => {
     it('Relations out.keys.types 1 removed', async () => {
         const existing = new TypeRelationsModel();
         existing.out = {
-                installed_at: ['site','location']
+            installed_at: ['site', 'location'],
         };
         const updated = new TypeRelationsModel();
         updated.out = {
-            installed_at: ['location']
+            installed_at: ['location'],
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
 
         expect(changes.add.out).toEqual({});
         expect(changes.add.in).toEqual({});
-        expect(changes.remove.out).toEqual({installed_at: ['site']});
+        expect(changes.remove.out).toEqual({ installed_at: ['site'] });
         expect(changes.remove.in).toEqual({});
     });
 
     it('Relations out.keys.types 1 expanded added', async () => {
         const existing = new TypeRelationsModel();
         existing.out = {
-            parent: [{name:'root', includeInAuth:true}]
+            parent: [{ name: 'root', includeInAuth: true }],
         };
         const updated = new TypeRelationsModel();
         updated.out = {
-            parent: [{name:'root', includeInAuth:true}, {name:'test-deviceswithauthgroup', includeInAuth:true}]
+            parent: [
+                { name: 'root', includeInAuth: true },
+                { name: 'test-deviceswithauthgroup', includeInAuth: true },
+            ],
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
 
-        expect(changes.add.out).toEqual({parent: [{name:'test-deviceswithauthgroup', includeInAuth:true}]});
+        expect(changes.add.out).toEqual({
+            parent: [{ name: 'test-deviceswithauthgroup', includeInAuth: true }],
+        });
         expect(changes.add.in).toEqual({});
         expect(changes.remove.out).toEqual({});
         expect(changes.remove.in).toEqual({});

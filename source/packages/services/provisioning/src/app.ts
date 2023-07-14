@@ -48,11 +48,11 @@ server.setConfig((app) => {
         const customDomainPath = process.env.CUSTOM_DOMAIN_BASE_PATH;
         if (customDomainPath) {
             req.url = normalisePath(req.url, customDomainPath);
-            logger.silly(`${customDomainPath} is removed from the request url`)
+            logger.silly(`${customDomainPath} is removed from the request url`);
         }
         next();
     });
-  
+
     app.use(json({ type: supportedVersions }));
 
     // default the response's headers
@@ -64,23 +64,22 @@ server.setConfig((app) => {
         next();
     });
 
-  // enable cors
-  const corsAllowedOrigin = process.env.CORS_ORIGIN;
-  let exposedHeaders = process.env.CORS_EXPOSED_HEADERS;
-  if (exposedHeaders === null || exposedHeaders === '') {
-      exposedHeaders = undefined;
-  }
-  if (corsAllowedOrigin?.length>0) {
-      const c = cors({
-          origin: corsAllowedOrigin,
-          exposedHeaders
-      });
-      app.use(c);
-  }
-
+    // enable cors
+    const corsAllowedOrigin = process.env.CORS_ORIGIN;
+    let exposedHeaders = process.env.CORS_EXPOSED_HEADERS;
+    if (exposedHeaders === null || exposedHeaders === '') {
+        exposedHeaders = undefined;
+    }
+    if (corsAllowedOrigin?.length > 0) {
+        const c = cors({
+            origin: corsAllowedOrigin,
+            exposedHeaders,
+        });
+        app.use(c);
+    }
 });
 
-export const serverInstance:Application = server.build();
+export const serverInstance: Application = server.build();
 const port = process.env.PORT;
 serverInstance.listen(port);
 

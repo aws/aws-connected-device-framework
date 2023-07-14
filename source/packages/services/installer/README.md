@@ -66,14 +66,13 @@ The installer wizard can be bypassed by providing a pre-existing installer confi
 
 This will deploy all the modules configured in your last deployment wizard run. This type of deployment is recommended for continuous integration and automated deployments.
 
-
 ### Packaging
 
 The packaging command will package all the modules that selected and upload both the CloudFormation template files and parameter files to S3 bucket. This is useful in scenarios where CDF needs to be deployed via a CI/CD pipeline.
 
 For example, if you specify `cdf-packaging-bucket` as the s3 bucket to use, the templates will be uploaded to `s3://cdf-packaging-bucket/cloudformation/templates` and the parameters file will be uploaded to `s3://cdf-packaging-bucket/cloudformation/parameters`. It will also upload the list of tagging parameters to `s3://cdf-packaging-bucket/cloudformation/tags`
 
-The installer will try to pre-populate the parameters file based on your answer and default value in the CloudFormation template, but there are some parameters that are dependent on the output of other stacks, make sure you deploy the stack in the right  order (see "Deploying the packaged template manually" below for a suggested ordering).
+The installer will try to pre-populate the parameters file based on your answer and default value in the CloudFormation template, but there are some parameters that are dependent on the output of other stacks, make sure you deploy the stack in the right order (see "Deploying the packaged template manually" below for a suggested ordering).
 
 #### Packaging using an existing configuration
 
@@ -91,14 +90,14 @@ To package the cloudformation templates, you have to provide installer configura
 
 If you specify `cdf-production-packaging-bucket` as the optional bucket and `v1.0.0` as the optional prefix, the templates will be uploaded to `s3://cdf-production-packaging-bucket/v1.0.0/templates` , parameters will be uploaded to `s3://cdf-production-packaging-bucket/v1.0.0/parameters` and tags to `s3://cdf-production-packaging-bucket/v1.0.0/tags`
 
-> **_NOTE:_**  You can generate the configuration file by running the deploy command in **dryRun** mode as follows:
+> **_NOTE:_** You can generate the configuration file by running the deploy command in **dryRun** mode as follows:
 > `cdf-cli deploy <environment> <region> -d`
 
 #### Deploying the packaged template manually
 
 Below are the details of each module ordered by deployment sequence (for full CDF deployment). If you only want to deploy some modules, locate the module on the table and workbackward from the list of dependencies to figure out which module that needs to be deployed as pre-requisite.
 
-> **_NOTE:_**  The file name in template column refers to the packaged template that is uploaded to S3 as part of the packacing process, but the link will redirect you to the pre-packaged file.
+> **_NOTE:_** The file name in template column refers to the packaged template that is uploaded to S3 as part of the packacing process, but the link will redirect you to the pre-packaged file.
 
 | Module                                     | Template                                                                                                                                                          | Dependencies                                                                                    | Optional Dependencies              | Notes                                                                                                                                 |
 | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -127,8 +126,6 @@ Below are the details of each module ordered by deployment sequence (for full CD
 | `Simuation Manager`                        | [cfn-simulation-manager.template](../simulation-manager/infrastructure/cfn-simulation-manager.yml)                                                                | `KMS`<br>`Simulation Launcher`<br>`Deployment Helper`<br>`Asset Library Service`                | `VPC`                              | `VPC` is only needed when you need to run API Gateway in **private** mode                                                             |
 | `Greengrass V2 Provisioning`               | [cfn-greengrass2-provisioning.template](../greengrass2-provisioning/infrastructure/cfn-greengrass2-provisioning.yml)                                              | `KMS`<br>`Greengrass 2 Installer Config Generators`<br>`Provisioning`<br>`EventBus`             | `VPC`<br>`Asset Library Service`   | `Asset Library Service` is only needed if you want to perform complex query when selecting devices for components deployment          |
 | `Certificate Vendor`                       | [cfn-certificatevendor.template](../certificatevendor/infrastructure/cfn-certificatevendor.yml)                                                                   | `KMS`<br>`Asset Library Service`<br>`Commands`<br>`OpenSSL Lambda Layer`<br>`Deployment Helper` |                                    |
-
-
 
 ### Deleting stacks
 
@@ -161,11 +158,11 @@ This retrieves the urls for all the CDF modules that expose a REST API endpoint 
 
 You can generate the `.env` file automatically for running modules locally. This is useful when carrying out local development.
 
-| Argument            | Description                                                  |
-| ------------------- | ------------------------------------------------------------ |
-| `environment`       | the environment to deploy                                    |
-| `region`            | the region to deploy into                                    |
-| `output-folder`     | the folder to store the generated env file(s)                |
+| Argument        | Description                                   |
+| --------------- | --------------------------------------------- |
+| `environment`   | the environment to deploy                     |
+| `region`        | the region to deploy into                     |
+| `output-folder` | the folder to store the generated env file(s) |
 
 ```shell
 > cdf-cli cloud-to-env <environment> <region> <output-folder>

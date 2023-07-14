@@ -40,7 +40,7 @@ import { SubscriptionAssembler } from './subscription.assembler';
 export class SubscriptionController implements interfaces.Controller {
     constructor(
         @inject(TYPES.SubscriptionService) private subscriptionService: SubscriptionService,
-        @inject(TYPES.SubscriptionAssembler) private subscriptionAssembler: SubscriptionAssembler
+        @inject(TYPES.SubscriptionAssembler) private subscriptionAssembler: SubscriptionAssembler,
     ) {}
 
     @httpPost('/events/:eventId/subscriptions')
@@ -48,12 +48,12 @@ export class SubscriptionController implements interfaces.Controller {
         @requestParam('eventId') eventId: string,
         @requestBody() resource: SubscriptionBaseResource,
         @request() req: Request,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<void> {
         logger.debug(
             `subscription.controller createSubscription: in: eventId:${eventId}, resource:${JSON.stringify(
-                resource
-            )}`
+                resource,
+            )}`,
         );
 
         resource.event = { id: eventId };
@@ -71,10 +71,10 @@ export class SubscriptionController implements interfaces.Controller {
     public async getSubscription(
         @requestParam('subscriptionId') subscriptionId: string,
         @request() req: Request,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<SubscriptionBaseResource> {
         logger.debug(
-            `subscription.controller getSubscription: in: subscriptionId:${subscriptionId}`
+            `subscription.controller getSubscription: in: subscriptionId:${subscriptionId}`,
         );
 
         let resource: SubscriptionBaseResource;
@@ -97,10 +97,10 @@ export class SubscriptionController implements interfaces.Controller {
     @httpDelete('/subscriptions/:subscriptionId')
     public async deleteSubscription(
         @requestParam('subscriptionId') subscriptionId: string,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<void> {
         logger.debug(
-            `subscription.controller deleteSubscription: in: subscriptionId:${subscriptionId}`
+            `subscription.controller deleteSubscription: in: subscriptionId:${subscriptionId}`,
         );
 
         try {
@@ -116,12 +116,12 @@ export class SubscriptionController implements interfaces.Controller {
     public async updateSubscription(
         @requestParam('subscriptionId') subscriptionId: string,
         @requestBody() resource: UpdateSubcriptionRequest,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<void> {
         logger.debug(
             `subscription.controller updateSubscription: in: subscriptionId:${subscriptionId}, resource:${JSON.stringify(
-                resource
-            )}`
+                resource,
+            )}`,
         );
 
         try {
@@ -142,10 +142,10 @@ export class SubscriptionController implements interfaces.Controller {
         @requestParam('userId') userId: string,
         @queryParam('principal') principal: string,
         @queryParam('principalValue') principalValue: string,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<void> {
         logger.debug(
-            `subscription.controller deleteSubscriptionsForUser: in: userId:${userId}, principal:${principal}, principalValue:${principalValue}`
+            `subscription.controller deleteSubscriptionsForUser: in: userId:${userId}, principal:${principal}, principalValue:${principalValue}`,
         );
 
         try {
@@ -163,10 +163,10 @@ export class SubscriptionController implements interfaces.Controller {
         @queryParam('principal') principal: string,
         @queryParam('principalValue') principalValue: string,
         @request() req: Request,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<SubscriptionResourceList> {
         logger.debug(
-            `subscription.controller listSubscriptionsForUser: in: userId:${userId}, principal:${principal}, principalValue:${principalValue}`
+            `subscription.controller listSubscriptionsForUser: in: userId:${userId}, principal:${principal}, principalValue:${principalValue}`,
         );
 
         let resources: SubscriptionResourceList;
@@ -175,7 +175,7 @@ export class SubscriptionController implements interfaces.Controller {
                 userId,
                 false,
                 principal,
-                principalValue
+                principalValue,
             );
             if (items === undefined) {
                 res.status(404).end();
@@ -186,7 +186,7 @@ export class SubscriptionController implements interfaces.Controller {
         }
 
         logger.debug(
-            `subscription.controller listSubscriptionsForUser: exit: ${JSON.stringify(resources)}`
+            `subscription.controller listSubscriptionsForUser: exit: ${JSON.stringify(resources)}`,
         );
         return resources;
     }
@@ -196,10 +196,10 @@ export class SubscriptionController implements interfaces.Controller {
         @requestParam('eventId') eventId: string,
         @queryParam('fromSubscriptionId') fromSubscriptionId: string,
         @request() req: Request,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<SubscriptionResourceList> {
         logger.debug(
-            `subscription.controller listSubscriptionsForEvent: in: eventId:${eventId}, fromSubscriptionId:${fromSubscriptionId}`
+            `subscription.controller listSubscriptionsForEvent: in: eventId:${eventId}, fromSubscriptionId:${fromSubscriptionId}`,
         );
 
         let resources: SubscriptionResourceList;
@@ -220,14 +220,16 @@ export class SubscriptionController implements interfaces.Controller {
             resources = this.subscriptionAssembler.toResourceList(
                 items,
                 req['version'],
-                pagination
+                pagination,
             );
         } catch (e) {
             handleError(e, res);
         }
 
         logger.debug(
-            `subscription.controller listSubscriptionsForEvent: exit: ${JSON.stringify(resources)}`
+            `subscription.controller listSubscriptionsForEvent: exit: ${JSON.stringify(
+                resources,
+            )}`,
         );
         return resources;
     }

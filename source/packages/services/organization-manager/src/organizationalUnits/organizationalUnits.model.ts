@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-
 export interface OrganizationalUnitResource {
     name: string;
     id?: string;
@@ -19,6 +18,8 @@ export interface OrganizationalUnitResource {
     createdAt?: Date;
 }
 
-export type OrganizationalUnitItem = Omit<OrganizationalUnitResource, "tags" | "createdAt"> & { createdAt: string }
+export type OrganizationalUnitItem = Omit<OrganizationalUnitResource, 'tags' | 'createdAt'> & {
+    createdAt: string;
+};
 
-export const TAG_CREATED_BY = { 'createdBy': 'aws-connected-device-framework' }
+export const TAG_CREATED_BY = { createdBy: 'aws-connected-device-framework' };

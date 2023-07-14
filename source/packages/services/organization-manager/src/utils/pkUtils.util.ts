@@ -12,9 +12,11 @@
  *********************************************************************************************************************/
 const PK_DELIMITER = ':';
 
-
-export function createDelimitedAttribute(type: PkType, ...items: (string | number | boolean)[]): string {
-    const escapedItems = items.map(i => {
+export function createDelimitedAttribute(
+    type: PkType,
+    ...items: (string | number | boolean)[]
+): string {
+    const escapedItems = items.map((i) => {
         if (typeof i === 'string') {
             return escape(i);
         } else {
@@ -24,7 +26,10 @@ export function createDelimitedAttribute(type: PkType, ...items: (string | numbe
     return `${delimitedAttributePrefix(type)}${escapedItems.join(PK_DELIMITER)}`;
 }
 
-export function createDelimitedAttributePrefix(type: PkType, ...items: (string | number | boolean)[]): string {
+export function createDelimitedAttributePrefix(
+    type: PkType,
+    ...items: (string | number | boolean)[]
+): string {
     return `${createDelimitedAttribute(type, ...items)}`;
 }
 
@@ -33,7 +38,7 @@ export function expandDelimitedAttribute(value: string): string[] {
         return undefined;
     }
     const expanded = value.split(PK_DELIMITER);
-    return expanded.map(i => {
+    return expanded.map((i) => {
         if (typeof i === 'string') {
             return unescape(i);
         } else {
@@ -55,5 +60,5 @@ export enum PkType {
     Components = 'CP',
     OrganizationalUnits = 'OU',
     Region = 'RG',
-    Details = 'DETAIL'
+    Details = 'DETAIL',
 }

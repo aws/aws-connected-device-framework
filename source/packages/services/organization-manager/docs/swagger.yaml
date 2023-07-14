@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: "Connected Device Framework: Organization Manager"
+  title: 'Connected Device Framework: Organization Manager'
   description: |
     The CDF Organization Manager provides an opinionated, but optional, AWS environment structure based on AWS best practices by constructing a well-architected multi-account organization with organization units (OU’s), based on security and compliance best practices, providing isolated operational boundaries between different workloads and resources.
 
@@ -26,31 +26,31 @@ tags:
       An AWS Account.
 
 paths:
-  "/organizationalUnits/{ouId}/bulkcomponents":
+  '/organizationalUnits/{ouId}/bulkcomponents':
     parameters:
-      - $ref: "#/components/parameters/ouId"
+      - $ref: '#/components/parameters/ouId'
     get:
       tags:
         - Components
       description: get list of components map to a organizational unit
       operationId: bulkGetComponents
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Component"
+                  $ref: '#/components/schemas/Component'
               examples:
                 get_bulk_components_response:
-                  $ref: "#/components/examples/get_bulk_components_response"
+                  $ref: '#/components/examples/get_bulk_components_response'
 
         400:
-          $ref: "#/components/responses/BadRequest"
+          $ref: '#/components/responses/BadRequest'
         404:
-          $ref: "#/components/responses/NotFound"
+          $ref: '#/components/responses/NotFound'
     put:
       description: Map a batch of components to organizational unit
       operationId: bulkCreateComponents
@@ -60,23 +60,23 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/BulkComponents"
+              $ref: '#/components/schemas/BulkComponents'
             examples:
               create_bulk_components_request:
-                $ref: "#/components/examples/create_bulk_components_request"
+                $ref: '#/components/examples/create_bulk_components_request'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/BulkComponentsResponse"
+                $ref: '#/components/schemas/BulkComponentsResponse'
         400:
-          $ref: "#/components/responses/BadRequest"
+          $ref: '#/components/responses/BadRequest'
         404:
-          $ref: "#/components/responses/NotFound"
+          $ref: '#/components/responses/NotFound'
 
-  "/organizationalUnits":
+  '/organizationalUnits':
     post:
       tags:
         - Organizational Units (OU's)
@@ -88,26 +88,26 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/NewOrganizationalUnit"
+              $ref: '#/components/schemas/NewOrganizationalUnit'
             examples:
               create_organizational_unit_request:
-                $ref: "#/components/examples/create_organizational_unit_request"
+                $ref: '#/components/examples/create_organizational_unit_request'
 
       responses:
-        "201":
+        '201':
           description: Created
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/OrganizationalUnit"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "409":
-          $ref: "#/components/responses/Conflict"
+                $ref: '#/components/schemas/OrganizationalUnit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
 
-  "/organizationalUnits/{ouId}":
+  '/organizationalUnits/{ouId}':
     parameters:
-      - $ref: "#/components/parameters/ouId"
+      - $ref: '#/components/parameters/ouId'
     delete:
       tags:
         - Organizational Units (OU's)
@@ -116,12 +116,12 @@ paths:
         Delete an existing organizational unit.
       operationId: deleteOrganizationalUnit
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
-        "409":
-          $ref: "#/components/responses/Conflict"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags:
         - Organizational Units (OU's)
@@ -130,18 +130,18 @@ paths:
         Retrieves an existing organizational unit.
       operationId: getOrganizationalUnit
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/OrganizationalUnit"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/OrganizationalUnit'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/organizationalUnits/{ouId}/accounts":
+  '/organizationalUnits/{ouId}/accounts':
     parameters:
-      - $ref: "#/components/parameters/ouId"
+      - $ref: '#/components/parameters/ouId'
     post:
       tags:
         - Accounts
@@ -153,31 +153,31 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/NewAccount"
+              $ref: '#/components/schemas/NewAccount'
             examples:
               create_account_request:
-                $ref: "#/components/examples/create_account_request"
+                $ref: '#/components/examples/create_account_request'
       responses:
-        "201":
+        '201':
           description: Created
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Account"
-        "202":
+                $ref: '#/components/schemas/Account'
+        '202':
           description: Accepted
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Account"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "409":
-          $ref: "#/components/responses/Conflict"
+                $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
 
-  "/accounts/{accountId}":
+  '/accounts/{accountId}':
     parameters:
-      - $ref: "#/components/parameters/accountId"
+      - $ref: '#/components/parameters/accountId'
     get:
       tags:
         - Accounts
@@ -186,14 +186,14 @@ paths:
         Retrieves an existing account, either using its `createRequestAccountId` or `accountId` as the identifier.
       operationId: getAccount
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Account"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Account'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
     delete:
       tags:
@@ -203,12 +203,12 @@ paths:
         Moves an existing account into the `suspended` OU which prevents it from being used any further.
       operationId: deleteAccount
       responses:
-        "202":
+        '202':
           description: Accepted
-        "204":
+        '204':
           description: No Content
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '404':
+          $ref: '#/components/responses/NotFound'
 
     patch:
       tags:
@@ -221,18 +221,18 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/UpdateAccount"
+              $ref: '#/components/schemas/UpdateAccount'
       responses:
-        "202":
+        '202':
           description: Accepted
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Account"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
 components:
   schemas:
@@ -259,7 +259,7 @@ components:
         components:
           type: array
           items:
-            $ref: "#/components/schemas/Component"
+            $ref: '#/components/schemas/Component'
 
     Component:
       type: object
@@ -305,12 +305,12 @@ components:
 
     OrganizationalUnit:
       allOf:
-        - $ref: "#/components/schemas/NewOrganizationalUnit"
+        - $ref: '#/components/schemas/NewOrganizationalUnit'
         - type: object
           properties:
             createdAt:
               type: string
-              format: "date-time"
+              format: 'date-time'
               description: Date/time the template was created.
               readOnly: true
           required:
@@ -370,7 +370,7 @@ components:
 
     Account:
       allOf:
-        - $ref: "#/components/schemas/NewAccount"
+        - $ref: '#/components/schemas/NewAccount'
         - type: object
           properties:
             state:
@@ -393,12 +393,12 @@ components:
                 - SUSPENDED
             createdAt:
               type: string
-              format: "date-time"
+              format: 'date-time'
               description: Date/time the template was created.
               readOnly: true
             updatedAt:
               type: string
-              format: "date-time"
+              format: 'date-time'
               description: Date/time the template was updated.
               readOnly: true
 
@@ -485,21 +485,21 @@ components:
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
     NotFound:
       description: Not found
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
     Conflict:
       description: Conflict
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
   examples:
     create_account_request:
@@ -514,7 +514,7 @@ components:
         ssoLastName: Smith
         ssoFirstName: John
         organizationalUnitId: ou-xxxx-xxxxxx
-        accountId: "111111111"
+        accountId: '111111111'
 
     get_bulk_components_response:
       summary: Response to get bulk components operation
@@ -536,7 +536,7 @@ components:
           bypassCheck: true
         - name: cdf-sample-tenant-component
           parameters:
-            ControlPlaneAccount: "XXXXXXXXXXXXX"
+            ControlPlaneAccount: 'XXXXXXXXXXXXX'
             Environment: development
             ControlPlaneBusName: arn:aws:events:ap-southeast-2:XXXXXXXXXXXXX:event-bus/cdf-development
           description: template to provision deployment helper
@@ -546,20 +546,20 @@ components:
         - name: cdf-command-and-control
           parameters:
             Environment: development
-            ApplicationConfigurationOverride: ""
+            ApplicationConfigurationOverride: ''
             EventBusName: arn:aws:events:ap-southeast-2:XXXXXXXXXXXXX:event-bus/cdf-development
             ApiGatewayDefinitionTemplate: cfn-apiGateway-noAuth.yaml
-            AssetLibraryFunctionName: "/cdf/deployment-helper/development/NotAvailable"
-            BucketName: "/cdf/facade-tenant/development/templates/bucket"
-            CDFSecurityGroupId: "/cdf/deployment-helper/development/NotAvailable"
-            CustomResourceLambdaArn: "/cdf/deployment-helper/development/CustomResourceLambdaArn"
-            KmsKeyId: "/cdf/facade-tenant/development/key"
-            PrivateApiGatewayVPCEndpoint: "/cdf/deployment-helper/development/NotAvailable"
-            PrivateSubNetIds: "/cdf/deployment-helper/development/NotAvailable"
-            ProvisioningFunctionName: "/cdf/deployment-helper/development/NotAvailable"
+            AssetLibraryFunctionName: '/cdf/deployment-helper/development/NotAvailable'
+            BucketName: '/cdf/facade-tenant/development/templates/bucket'
+            CDFSecurityGroupId: '/cdf/deployment-helper/development/NotAvailable'
+            CustomResourceLambdaArn: '/cdf/deployment-helper/development/CustomResourceLambdaArn'
+            KmsKeyId: '/cdf/facade-tenant/development/key'
+            PrivateApiGatewayVPCEndpoint: '/cdf/deployment-helper/development/NotAvailable'
+            PrivateSubNetIds: '/cdf/deployment-helper/development/NotAvailable'
+            ProvisioningFunctionName: '/cdf/deployment-helper/development/NotAvailable'
             TemplateSnippetS3UriBase: s3://cdf-cfn-artifacts-XXXXXXXXXXXXX-ap-southeast-2/cloudformation/snippets/development/
             TemplateVersion: 0.0.1
-            VpcId: "/cdf/deployment-helper/development/NotAvailable"
+            VpcId: '/cdf/deployment-helper/development/NotAvailable'
           description: template to provision deployment helper
           runOrder: 3
           resourceFile: s3://org-manager-artifact-XXXXXXXXXXXXX-ap-southeast-2/aws-connected-device-framework/0.0.1/cfn-command-and-control.template
@@ -594,7 +594,7 @@ components:
             bypassCheck: true
           - name: cdf-sample-tenant-component
             parameters:
-              ControlPlaneAccount: "XXXXXXXXXXXXX"
+              ControlPlaneAccount: 'XXXXXXXXXXXXX'
               Environment: development
               ControlPlaneBusName: arn:aws:events:ap-southeast-2:XXXXXXXXXXXXX:event-bus/cdf-development
             description: template to provision deployment helper
@@ -604,20 +604,20 @@ components:
           - name: cdf-command-and-control
             parameters:
               Environment: development
-              ApplicationConfigurationOverride: ""
+              ApplicationConfigurationOverride: ''
               EventBusName: arn:aws:events:ap-southeast-2:XXXXXXXXXXXXX:event-bus/cdf-development
               ApiGatewayDefinitionTemplate: cfn-apiGateway-noAuth.yaml
-              AssetLibraryFunctionName: "/cdf/deployment-helper/development/NotAvailable"
-              BucketName: "/cdf/facade-tenant/development/templates/bucket"
-              CDFSecurityGroupId: "/cdf/deployment-helper/development/NotAvailable"
-              CustomResourceLambdaArn: "/cdf/deployment-helper/development/CustomResourceLambdaArn"
-              KmsKeyId: "/cdf/facade-tenant/development/key"
-              PrivateApiGatewayVPCEndpoint: "/cdf/deployment-helper/development/NotAvailable"
-              PrivateSubNetIds: "/cdf/deployment-helper/development/NotAvailable"
-              ProvisioningFunctionName: "/cdf/deployment-helper/development/NotAvailable"
+              AssetLibraryFunctionName: '/cdf/deployment-helper/development/NotAvailable'
+              BucketName: '/cdf/facade-tenant/development/templates/bucket'
+              CDFSecurityGroupId: '/cdf/deployment-helper/development/NotAvailable'
+              CustomResourceLambdaArn: '/cdf/deployment-helper/development/CustomResourceLambdaArn'
+              KmsKeyId: '/cdf/facade-tenant/development/key'
+              PrivateApiGatewayVPCEndpoint: '/cdf/deployment-helper/development/NotAvailable'
+              PrivateSubNetIds: '/cdf/deployment-helper/development/NotAvailable'
+              ProvisioningFunctionName: '/cdf/deployment-helper/development/NotAvailable'
               TemplateSnippetS3UriBase: s3://cdf-cfn-artifacts-XXXXXXXXXXXXX-ap-southeast-2/cloudformation/snippets/development/
               TemplateVersion: 0.0.1
-              VpcId: "/cdf/deployment-helper/development/NotAvailable"
+              VpcId: '/cdf/deployment-helper/development/NotAvailable'
             description: template to provision deployment helper
             runOrder: 3
             resourceFile: s3://org-manager-artifact-XXXXXXXXXXXXX-ap-southeast-2/aws-connected-device-framework/0.0.1/cfn-command-and-control.template

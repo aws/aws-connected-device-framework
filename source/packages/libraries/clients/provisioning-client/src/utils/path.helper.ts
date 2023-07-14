@@ -12,6 +12,6 @@
  *********************************************************************************************************************/
 export class PathHelper {
     public static encodeUrl(...paths: string[]): string {
-        return paths.map(p=> encodeURIComponent(p)).join('/');
+        return paths.map((p) => encodeURIComponent(p)).join('/');
     }
 }

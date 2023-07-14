@@ -10,13 +10,13 @@ It is responsible for launching and managing Fargate instances that run multiple
 
 The following represents the architecture of the Simulation Launcher module along with its mandatory sibling [Simulation Manager](../simulation-manager/README.md) module.
 
-![Architecture](<docs/images/cdf-core-hla-simulator.png>)
+![Architecture](docs/images/cdf-core-hla-simulator.png)
 
 [Simulation Manager](../simulation-manager/README.md) provides a set of API's that can be used to create and manage Fleet simulations.
 
 The incoming simulation events are routed to the simulation launcher that provisions and manages the ECS Fargate Cluster that runs the test plans which may include device simulations.
 
-Each ECS Fargate task uses its configuration to pull the relevant test plan and artifacts from the configured S3 bucket. Jmeter is used to execute the test plans on each Fargate instance,  and uploads the simulation results once complete.
+Each ECS Fargate task uses its configuration to pull the relevant test plan and artifacts from the configured S3 bucket. Jmeter is used to execute the test plans on each Fargate instance, and uploads the simulation results once complete.
 
 ## Useful Links
 

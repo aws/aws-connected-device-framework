@@ -17,7 +17,6 @@ import { GroupExtractor } from './extractors/group.extractor';
 import { ExtractService } from './extract.service';
 
 describe('ExtractService', () => {
-
     let mockedDeviceExtractor: DeviceExtractor;
     let mockedGroupExtractor: GroupExtractor;
     let instance: ExtractService;
@@ -33,11 +32,8 @@ describe('ExtractService', () => {
             id: 'some-uuid',
             category: 'device',
             type: 'type1',
-            items: [
-                'deviceId-1',
-                'deviceId-2'
-            ],
-            timestamp: 1643230032656
+            items: ['deviceId-1', 'deviceId-2'],
+            timestamp: 1643230032656,
         };
 
         const mockedDeviceExtractorResponse = {
@@ -45,13 +41,15 @@ describe('ExtractService', () => {
             category: 'device',
             type: 'type1',
             items: [
-                {deviceId: 'deviceId-1', templateId: 'type1'},
-                {deviceId: 'deviceId-2', templateId: 'type1'},
+                { deviceId: 'deviceId-1', templateId: 'type1' },
+                { deviceId: 'deviceId-2', templateId: 'type1' },
             ],
-            timestamp: 1643230032656
+            timestamp: 1643230032656,
         };
 
-        mockedDeviceExtractor.extract = jest.fn().mockReturnValueOnce(mockedDeviceExtractorResponse);
+        mockedDeviceExtractor.extract = jest
+            .fn()
+            .mockReturnValueOnce(mockedDeviceExtractorResponse);
 
         const response = await instance.extract(batch);
 
@@ -71,11 +69,8 @@ describe('ExtractService', () => {
             id: 'some-uuid',
             category: 'group',
             type: 'type1',
-            items: [
-                'type1/groupPath1',
-                'type1/groupPath2'
-            ],
-            timestamp: 1643230032656
+            items: ['type1/groupPath1', 'type1/groupPath2'],
+            timestamp: 1643230032656,
         };
 
         const mockedDeviceExtractorResponse = {
@@ -83,13 +78,15 @@ describe('ExtractService', () => {
             category: 'group',
             type: 'type1',
             items: [
-                {groupPath: 'type1/groupPath1', templateId: 'type1'},
-                {groupPath: 'type1/groupPath2', templateId: 'type1'},
+                { groupPath: 'type1/groupPath1', templateId: 'type1' },
+                { groupPath: 'type1/groupPath2', templateId: 'type1' },
             ],
-            timestamp: 1643230032656
+            timestamp: 1643230032656,
         };
 
-        mockedGroupExtractor.extract = jest.fn().mockReturnValueOnce(mockedDeviceExtractorResponse);
+        mockedGroupExtractor.extract = jest
+            .fn()
+            .mockReturnValueOnce(mockedDeviceExtractorResponse);
 
         const response = await instance.extract(batch);
 

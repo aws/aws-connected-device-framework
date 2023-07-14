@@ -12,20 +12,19 @@
  *********************************************************************************************************************/
 
 import 'reflect-metadata';
-import { ManifestDao } from "./manifest.dao";
-import { ManifestService } from "./manifest.service";
-import { createMockInstance } from "jest-create-mock-instance";
-import { ManifestAssembler } from "./manifest.assembler";
-import AWS from "aws-sdk";
-import { OrganizationalUnitsDao } from "../organizationalUnits/organizationalUnits.dao";
+import { ManifestDao } from './manifest.dao';
+import { ManifestService } from './manifest.service';
+import { createMockInstance } from 'jest-create-mock-instance';
+import { ManifestAssembler } from './manifest.assembler';
+import AWS from 'aws-sdk';
+import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';
 import { ComponentsDao } from '../components/components.dao';
 import { ComponentItem } from '../components/components.model';
 import S3, { ManagedUpload } from 'aws-sdk/clients/s3';
 import JSZip from 'jszip';
 import { logger } from '@awssolutions/simple-cdf-logger';
 
-const expectedManifestFile =
-`region: ap-southeast-2
+const expectedManifestFile = `region: ap-southeast-2
 version: 2021-03-15
 resources:
   - name: cfn-provisioning-ap-southeast-2
@@ -98,16 +97,15 @@ resources:
     parameters:
       - parameter_key: environment
         parameter_value: production
-`
+`;
 
 describe('TemplatesService', function () {
-
-    let mockedManifestDao: jest.Mocked<ManifestDao>
-    let mockedComponentsDao: jest.Mocked<ComponentsDao>
-    let mockedOrganizationalUnitsDao: jest.Mocked<OrganizationalUnitsDao>
+    let mockedManifestDao: jest.Mocked<ManifestDao>;
+    let mockedComponentsDao: jest.Mocked<ComponentsDao>;
+    let mockedOrganizationalUnitsDao: jest.Mocked<OrganizationalUnitsDao>;
 
     let mockS3: AWS.S3;
-    let instance: ManifestService
+    let instance: ManifestService;
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -118,61 +116,75 @@ describe('TemplatesService', function () {
             return mockS3;
         };
 
-        mockedComponentsDao = createMockInstance(ComponentsDao)
-        mockedOrganizationalUnitsDao = createMockInstance(OrganizationalUnitsDao)
-        mockedManifestDao = createMockInstance(ManifestDao)
+        mockedComponentsDao = createMockInstance(ComponentsDao);
+        mockedOrganizationalUnitsDao = createMockInstance(OrganizationalUnitsDao);
+        mockedManifestDao = createMockInstance(ManifestDao);
 
-        const componentItems: ComponentItem[] = [{
-            "name": "cfn-provisioning",
-            "description": "stack set for cfn-provisioning",
-            "resourceFile": "https://cdf-organization-manager-xxxx-artifacts-ap-southeast-2.s3.ap-southeast-2.amazonaws.com/cfn-provisioning-output.yml",
-            organizationalUnitId: "wl-development-main",
-            parameters: {},
-            runOrder: 1
-        }, {
-            "name": "cfn-device-monitor",
-            "description": "stack set for cfn-device-monitor",
-            "resourceFile": "s3://somebucket/somezipfile.zip",
-            organizationalUnitId: "wl-development-main",
-            parameters: {
-              'environment': 'production'
+        const componentItems: ComponentItem[] = [
+            {
+                name: 'cfn-provisioning',
+                description: 'stack set for cfn-provisioning',
+                resourceFile:
+                    'https://cdf-organization-manager-xxxx-artifacts-ap-southeast-2.s3.ap-southeast-2.amazonaws.com/cfn-provisioning-output.yml',
+                organizationalUnitId: 'wl-development-main',
+                parameters: {},
+                runOrder: 1,
             },
-            runOrder: 2
-        }]
+            {
+                name: 'cfn-device-monitor',
+                description: 'stack set for cfn-device-monitor',
+                resourceFile: 's3://somebucket/somezipfile.zip',
+                organizationalUnitId: 'wl-development-main',
+                parameters: {
+                    environment: 'production',
+                },
+                runOrder: 2,
+            },
+        ];
 
-        mockedComponentsDao.getComponentsByOu = jest.fn().mockResolvedValue(componentItems)
-        mockedOrganizationalUnitsDao.getOrganizationalUnits = jest.fn().mockResolvedValue([{ 'id': 'wl-development-main' }])
+        mockedComponentsDao.getComponentsByOu = jest.fn().mockResolvedValue(componentItems);
+        mockedOrganizationalUnitsDao.getOrganizationalUnits = jest
+            .fn()
+            .mockResolvedValue([{ id: 'wl-development-main' }]);
         mockedManifestDao.getRegionAccountForOus = jest.fn().mockResolvedValue({
             'wl-development-main': {
                 'ap-southeast-2': {
-                    accounts: ['cdf-one']
+                    accounts: ['cdf-one'],
                 },
                 'ap-southeast-1': {
-                    accounts: ['cdf-two']
+                    accounts: ['cdf-two'],
                 },
                 'us-west-1:us-west-2': {
-                    accounts: ['cdf-three', 'cdf-four']
+                    accounts: ['cdf-three', 'cdf-four'],
                 },
             },
-
-        })
+        });
         instance = new ManifestService(
-            mockedManifestDao, mockedComponentsDao,
-            mockedOrganizationalUnitsDao, new ManifestAssembler('ap-southeast-2'),
-            mockS3Factory, "bucket", "prefix", "fakeFilename")
-    })
+            mockedManifestDao,
+            mockedComponentsDao,
+            mockedOrganizationalUnitsDao,
+            new ManifestAssembler('ap-southeast-2'),
+            mockS3Factory,
+            'bucket',
+            'prefix',
+            'fakeFilename',
+        );
+    });
 
     it('createManifestFile: happy path', async () => {
         let fileStream: NodeJS.ReadableStream;
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        mockS3.upload = (params: S3.Types.PutObjectRequest, callback?: (err: Error, data: ManagedUpload.SendData) => void): ManagedUpload => {
-            fileStream = params.Body as NodeJS.ReadableStream
-            callback(null, { eTag: 'somefakeEtag' } as unknown as ManagedUpload.SendData)
-            return undefined
-        }
+        mockS3.upload = (
+            params: S3.Types.PutObjectRequest,
+            callback?: (err: Error, data: ManagedUpload.SendData) => void,
+        ): ManagedUpload => {
+            fileStream = params.Body as NodeJS.ReadableStream;
+            callback(null, { eTag: 'somefakeEtag' } as unknown as ManagedUpload.SendData);
+            return undefined;
+        };
 
-        await instance.updateManifestFile()
+        await instance.updateManifestFile();
 
         var manifestZipFile = '';
         fileStream.on('data', function (chunk) {
@@ -180,12 +192,11 @@ describe('TemplatesService', function () {
         });
 
         fileStream.on('end', async () => {
-            const jsZip = new JSZip()
-            const result = await jsZip.loadAsync(manifestZipFile)
-            const manifestFile = await result.file('manifest.yaml').async('string')
-            logger.info(manifestFile)
-            expect(manifestFile).toEqual(expectedManifestFile)
-        })
-
-    })
-})
+            const jsZip = new JSZip();
+            const result = await jsZip.loadAsync(manifestZipFile);
+            const manifestFile = await result.file('manifest.yaml').async('string');
+            logger.info(manifestFile);
+            expect(manifestFile).toEqual(expectedManifestFile);
+        });
+    });
+});

@@ -18,31 +18,28 @@ import { CustomResource } from './customResource';
 
 @injectable()
 export class IotEventsCustomResource implements CustomResource {
-
     private _iot: AWS.Iot;
 
-    constructor(
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
-    ) {
+    constructor(@inject(TYPES.IotFactory) iotFactory: () => AWS.Iot) {
         this._iot = iotFactory();
     }
 
-    public async create(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        const params:AWS.Iot.Types.UpdateEventConfigurationsRequest = {
+    public async create(_customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        const params: AWS.Iot.Types.UpdateEventConfigurationsRequest = {
             eventConfigurations: {
                 JOB: {
-                    Enabled: true
-                }
-            }
+                    Enabled: true,
+                },
+            },
         };
         return await this._iot.updateEventConfigurations(params).promise();
     }
 
-    public async update(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+    public async update(_customResourceEvent: CustomResourceEvent): Promise<unknown> {
         return await this.create(_customResourceEvent);
     }
 
-    public async delete(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+    public async delete(_customResourceEvent: CustomResourceEvent): Promise<unknown> {
         return {};
     }
 }

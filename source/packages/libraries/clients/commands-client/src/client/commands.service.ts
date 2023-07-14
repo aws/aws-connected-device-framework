@@ -15,7 +15,11 @@ import { injectable } from 'inversify';
 
 import { PathHelper } from '../utils/path.helper';
 import {
-    CommandListModel, CommandModel, ExecutionModel, ExecutionSummaryListModel, RequestHeaders
+    CommandListModel,
+    CommandModel,
+    ExecutionModel,
+    ExecutionSummaryListModel,
+    RequestHeaders,
 } from './commands.model';
 
 export interface CommandsService {
@@ -27,57 +31,77 @@ export interface CommandsService {
 
     getCommand(commandId: string, additionalHeaders?: RequestHeaders): Promise<CommandModel>;
 
-    uploadCommandFile(commandId: string, fileId: string, fileLocation: string, additionalHeaders?: RequestHeaders): Promise<void>;
+    uploadCommandFile(
+        commandId: string,
+        fileId: string,
+        fileLocation: string,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<void>;
 
-    deleteCommandFile(commandId: string, fileId: string, additionalHeaders?: RequestHeaders): Promise<void>;
+    deleteCommandFile(
+        commandId: string,
+        fileId: string,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<void>;
 
-    listExecutions(commandId: string, additionalHeaders?: RequestHeaders): Promise<ExecutionSummaryListModel>;
+    listExecutions(
+        commandId: string,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<ExecutionSummaryListModel>;
 
-    getExecution(commandId: string, thingName: string, additionalHeaders?: RequestHeaders): Promise<ExecutionModel>;
+    getExecution(
+        commandId: string,
+        thingName: string,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<ExecutionModel>;
 
-    cancelExecution(commandId: string, thingName: string, additionalHeaders?: RequestHeaders): Promise<ExecutionModel>;
+    cancelExecution(
+        commandId: string,
+        thingName: string,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<ExecutionModel>;
 }
 
 @injectable()
 export class CommandsServiceBase {
-
     protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
     protected _headers: RequestHeaders = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
+        Accept: this.MIME_TYPE,
+        'Content-Type': this.MIME_TYPE,
     };
 
-    protected commandsRelativeUrl() : string {
+    protected commandsRelativeUrl(): string {
         return '/commands';
     }
 
-    protected commandRelativeUrl(commandId:string) : string {
+    protected commandRelativeUrl(commandId: string): string {
         return PathHelper.encodeUrl('commands', commandId);
     }
 
-    protected commandFileRelativeUrl(commandId:string, fileId:string) : string {
+    protected commandFileRelativeUrl(commandId: string, fileId: string): string {
         return PathHelper.encodeUrl('commands', commandId, 'files', fileId);
     }
 
-    protected commandExecutionsRelativeUrl(commandId:string) : string {
+    protected commandExecutionsRelativeUrl(commandId: string): string {
         return PathHelper.encodeUrl('commands', commandId, 'executions');
     }
 
-    protected commandThingExecutionsRelativeUrl(commandId:string, thingName:string) : string {
-        return  PathHelper.encodeUrl('commands', commandId, 'executions', thingName);
+    protected commandThingExecutionsRelativeUrl(commandId: string, thingName: string): string {
+        return PathHelper.encodeUrl('commands', commandId, 'executions', thingName);
     }
 
-    protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
-
+    protected buildHeaders(additionalHeaders: RequestHeaders): RequestHeaders {
         let headers: RequestHeaders = Object.assign({}, this._headers);
 
         const customHeaders = process.env.COMMANDS_HEADERS;
         if (customHeaders !== undefined) {
             try {
-                const headersFromConfig: RequestHeaders = JSON.parse(customHeaders) as unknown as RequestHeaders;
-                headers = {...headers, ...headersFromConfig};
-            } catch (err) { 
+                const headersFromConfig: RequestHeaders = JSON.parse(
+                    customHeaders,
+                ) as unknown as RequestHeaders;
+                headers = { ...headers, ...headersFromConfig };
+            } catch (err) {
                 const wrappedErr = `Failed to parse configuration parameter COMMANDS_HEADERS as JSON with error: ${err}`;
                 console.log(wrappedErr);
                 throw new Error(wrappedErr);
@@ -85,17 +109,16 @@ export class CommandsServiceBase {
         }
 
         if (additionalHeaders !== null && additionalHeaders !== undefined) {
-            headers = {...headers, ...additionalHeaders};
+            headers = { ...headers, ...additionalHeaders };
         }
 
         const keys = Object.keys(headers);
-        keys.forEach(k=> {
-            if (headers[k]===undefined || headers[k]===null) {
+        keys.forEach((k) => {
+            if (headers[k] === undefined || headers[k] === null) {
                 delete headers[k];
             }
         });
 
         return headers;
     }
-
 }

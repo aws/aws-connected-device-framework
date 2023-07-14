@@ -33,7 +33,7 @@ export class SearchApigwService extends SearchServiceBase implements SearchServi
         searchRequest: SearchRequestModel,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<SearchResultsModel> {
         ow(searchRequest, ow.object.nonEmpty);
 
@@ -54,17 +54,17 @@ export class SearchApigwService extends SearchServiceBase implements SearchServi
             .get(url)
             .set(super.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
     public async delete(
         searchRequest: SearchRequestModel,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(searchRequest, ow.object.nonEmpty);
 
@@ -81,11 +81,11 @@ export class SearchApigwService extends SearchServiceBase implements SearchServi
             .delete(url)
             .set(super.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 }

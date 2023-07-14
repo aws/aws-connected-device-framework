@@ -17,5 +17,3 @@ export interface OrganizationalUnitResource {
     tags?: { [key: string]: string };
     createdAt?: Date;
 }
-
-

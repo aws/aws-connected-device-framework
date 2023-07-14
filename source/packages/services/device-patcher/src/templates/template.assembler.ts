@@ -17,16 +17,15 @@ import { TemplateListPaginationKey } from './template.dao';
 import {
     PatchTemplateItem,
     PatchTemplateResource,
-    PatchTemplatesListResource
+    PatchTemplatesListResource,
 } from './template.model';
 
 @injectable()
 export class PatchTemplateAssembler {
-
     public toResource(item: PatchTemplateItem): PatchTemplateResource {
         logger.debug(`templates.assembler toResource: in: item:${JSON.stringify(item)}`);
 
-        if (item===undefined) {
+        if (item === undefined) {
             logger.debug(`patch.assembler toResource: exit: item: undefined`);
             return undefined;
         }
@@ -34,7 +33,7 @@ export class PatchTemplateAssembler {
         const resource = new PatchTemplateResource();
 
         // common properties
-        Object.keys(item).forEach(key=> {
+        Object.keys(item).forEach((key) => {
             resource[key] = item[key];
         });
 
@@ -42,10 +41,10 @@ export class PatchTemplateAssembler {
         return resource;
     }
 
-    public toItem(res:PatchTemplateResource): PatchTemplateItem {
+    public toItem(res: PatchTemplateResource): PatchTemplateItem {
         logger.debug(`Patchtemplate.assembler toItem: in: resource:${JSON.stringify(res)}`);
 
-        if (res===undefined) {
+        if (res === undefined) {
             logger.debug(`patchTemplate.assembler fromResource: exit: res: undefined`);
             return undefined;
         }
@@ -53,42 +52,48 @@ export class PatchTemplateAssembler {
         const item = new PatchTemplateItem();
 
         // common properties
-        Object.keys(res).forEach(key=> {
+        Object.keys(res).forEach((key) => {
             item[key] = res[key];
         });
-
 
         logger.debug(`PatchTemplates.assembler toItem: exit:${JSON.stringify(item)}`);
         return item;
     }
 
-    public toListResource(items:PatchTemplateItem[], count?:number, paginateFrom?:TemplateListPaginationKey ): PatchTemplatesListResource {
-        logger.debug(`PatchTemplates.assembler toListResource: in: items:${JSON.stringify(items)}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`);
+    public toListResource(
+        items: PatchTemplateItem[],
+        count?: number,
+        paginateFrom?: TemplateListPaginationKey,
+    ): PatchTemplatesListResource {
+        logger.debug(
+            `PatchTemplates.assembler toListResource: in: items:${JSON.stringify(
+                items,
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+        );
 
-        const list:PatchTemplatesListResource= {
-            templates:[]
+        const list: PatchTemplatesListResource = {
+            templates: [],
         };
 
-        if (count!==undefined || paginateFrom!==undefined) {
+        if (count !== undefined || paginateFrom !== undefined) {
             list.pagination = {};
         }
 
-        if (count!==undefined) {
-            list.pagination.count=count;
+        if (count !== undefined) {
+            list.pagination.count = count;
         }
 
-        if (paginateFrom!==undefined) {
+        if (paginateFrom !== undefined) {
             list.pagination.lastEvaluated = {
-                name: paginateFrom?.name
+                name: paginateFrom?.name,
             };
         }
 
-        if ((items?.length??0)>0) {
-            items.forEach(i=> list.templates.push(this.toResource(i)));
+        if ((items?.length ?? 0) > 0) {
+            items.forEach((i) => list.templates.push(this.toResource(i)));
         }
 
         logger.debug(`PatchTemplates.assembler toListResource: exit: ${JSON.stringify(list)}`);
         return list;
-
     }
 }

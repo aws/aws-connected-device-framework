@@ -1,6 +1,7 @@
 # ASSET LIBRARY EXPORT CONFIGURATION
 
 The recommended way to create a local configuration file for the Asset Library Export service is through CDF's [installer](../../installer/README.md#deployment-using-wizard).
+
 # Configuration for Running Locally
 
 Once you had deployed cdf to your AWS account, you can generate `.env` file to be used for your local development
@@ -12,9 +13,9 @@ The instruction to generate the local file can be found [here](../../installer/R
 Default properties can be found in [here](../src/config/.env.defaults). Below are the properties that you can override.
 
 ```ini
-# Modify the key prefix if it needs to be different then the default      
+# Modify the key prefix if it needs to be different then the default
 AWS_S3_EXPORT_PREFIX=assetlibrary-export/
-# specify this property to export the data batched by types, 
+# specify this property to export the data batched by types,
 # the supported config is either "type" or "category"
 DEFAULTS_BATCH_BY=TYPE
 # specify the batch size to handle how many assetlibrary items needs to be batch togethar for the ETL workflow

@@ -12,26 +12,25 @@
  *********************************************************************************************************************/
 
 import serverlessHttp from 'serverless-http';
-import {serverInstance} from './app' ;
+import { serverInstance } from './app';
 import { SnsToApiGatewayEvents } from './utils/snsToApiGatewayEvents';
 
 const server = serverlessHttp(serverInstance);
 
-const eventTranslator:SnsToApiGatewayEvents = new SnsToApiGatewayEvents();
+const eventTranslator: SnsToApiGatewayEvents = new SnsToApiGatewayEvents();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 exports.handler = async (event: any, context: AWSLambda.Context) => {
-
-  // if SNS event, then transform it to look like API Gateway
-  // TODO: for now this handles one event and assumes the topic
-  //       this should be made more abstract to handle multiple message types / topics
-  if (event.hasOwnProperty('Records')) {
-    if (event.Records[0].EventSource === 'aws:sns') {
-      const eventJson = JSON.parse(event.Records[0].Sns.Message);
-      const apiGatewayEvent = eventTranslator.buildApiGatewayEventFromSnsEvent(eventJson);
-      event = apiGatewayEvent;
+    // if SNS event, then transform it to look like API Gateway
+    // TODO: for now this handles one event and assumes the topic
+    //       this should be made more abstract to handle multiple message types / topics
+    if (event.hasOwnProperty('Records')) {
+        if (event.Records[0].EventSource === 'aws:sns') {
+            const eventJson = JSON.parse(event.Records[0].Sns.Message);
+            const apiGatewayEvent = eventTranslator.buildApiGatewayEventFromSnsEvent(eventJson);
+            event = apiGatewayEvent;
+        }
     }
-  }
 
-  return await server(event, context);
+    return await server(event, context);
 };

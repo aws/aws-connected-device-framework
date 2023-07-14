@@ -16,8 +16,7 @@ import AWS = require('aws-sdk');
 import { TaskOverride } from 'aws-sdk/clients/ecs';
 import { logger } from './utils/logger';
 
-
-export type SimulationTaskOverride = Pick<TaskOverride, 'taskRoleArn'>
+export type SimulationTaskOverride = Pick<TaskOverride, 'taskRoleArn'>;
 
 export interface LaunchParams {
     simulationId: string;
@@ -40,7 +39,6 @@ interface InstanceParams {
 }
 
 export class Simulation {
-
     private readonly _ecs: AWS.ECS;
     private readonly _bucket: string;
     private readonly _subnetId: string;
@@ -74,15 +72,13 @@ export class Simulation {
             s3UploadKeyPrefix: `${params.s3RootKey}instances/1/`,
             subnetIds: subnetIds.split(','),
             securityGroupId,
-            taskOverrides: params.taskOverrides
-
+            taskOverrides: params.taskOverrides,
         };
         for (let i = 0; i < params.instances; i++) {
             await this.launchInstance(instanceParams);
             instanceParams.instanceId = instanceParams.instanceId + 1;
             instanceParams.s3PropertiesKey = `${params.s3RootKey}instances/${instanceParams.instanceId}/properties`;
         }
-
     }
 
     private async launchInstance(params: InstanceParams): Promise<AWS.ECS.Types.RunTaskResponse> {
@@ -92,37 +88,45 @@ export class Simulation {
             cluster: params.clusterId,
             taskDefinition: this._taskDefinitionArn.split('/')[1],
             overrides: {
-                containerOverrides: [{
-                    name: 'jmeter',
-                    environment: [{
-                        name: 'BUCKET',
-                        value: params.s3Bucket
-                    }, {
-                        name: 'EXTERNAL_PROPERTIES',
-                        value: params.s3PropertiesKey
-                    }, {
-                        name: 'TEST_PLAN',
-                        value: params.s3TestPlanKey
-                    }, {
-                        name: 'INSTANCE_ID',
-                        value: params.instanceId.toString()
-                    }, {
-                        name: 'UPLOAD_DIR',
-                        value: params.s3UploadKeyPrefix
-                    }]
-                }],
-                taskRoleArn: params.taskOverrides?.taskRoleArn
+                containerOverrides: [
+                    {
+                        name: 'jmeter',
+                        environment: [
+                            {
+                                name: 'BUCKET',
+                                value: params.s3Bucket,
+                            },
+                            {
+                                name: 'EXTERNAL_PROPERTIES',
+                                value: params.s3PropertiesKey,
+                            },
+                            {
+                                name: 'TEST_PLAN',
+                                value: params.s3TestPlanKey,
+                            },
+                            {
+                                name: 'INSTANCE_ID',
+                                value: params.instanceId.toString(),
+                            },
+                            {
+                                name: 'UPLOAD_DIR',
+                                value: params.s3UploadKeyPrefix,
+                            },
+                        ],
+                    },
+                ],
+                taskRoleArn: params.taskOverrides?.taskRoleArn,
             },
             networkConfiguration: {
                 awsvpcConfiguration: {
                     assignPublicIp: 'ENABLED',
                     securityGroups: [params.securityGroupId],
-                    subnets: params.subnetIds
-                }
+                    subnets: params.subnetIds,
+                },
             },
             count: 1,
             startedBy: params.simulationId,
-            launchType: 'FARGATE'
+            launchType: 'FARGATE',
             // tags: [{
             //         key: 'cdf-simulation-id',
             //         value: params.simulationId
@@ -148,5 +152,4 @@ export class Simulation {
             return;
         });
     }
-
 }

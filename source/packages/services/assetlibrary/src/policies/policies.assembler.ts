@@ -12,27 +12,28 @@
  *********************************************************************************************************************/
 import { process } from 'gremlin';
 import { injectable } from 'inversify';
-import { PolicyModel, AttachedPolicy, Policy} from './policies.models';
-import {logger} from '@awssolutions/simple-cdf-logger';
+import { PolicyModel, AttachedPolicy, Policy } from './policies.models';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 @injectable()
 export class PoliciesAssembler {
-
     public toModelFromTraverser(result: process.Traverser, labels: string[]): PolicyModel {
-        logger.debug(`policies.assembler toModelFromTraverser: in: result: ${result}, labels: ${labels}`);
+        logger.debug(
+            `policies.assembler toModelFromTraverser: in: result: ${result}, labels: ${labels}`,
+        );
 
         const model = new PolicyModel();
-        Object.keys(result).forEach( key => {
-            if (key==='policyId') {
-                model.policyId = <string> result[key];
-            } else if (key==='type') {
-                model.type = <string> result[key];
-            } else if (key==='description') {
-                model.description = <string> result[key];
-            } else if (key==='appliesTo') {
-                model.appliesTo = <string[]> result[key];
-            } else if (key==='document') {
-                model.document = <string> result[key];
+        Object.keys(result).forEach((key) => {
+            if (key === 'policyId') {
+                model.policyId = <string>result[key];
+            } else if (key === 'type') {
+                model.type = <string>result[key];
+            } else if (key === 'description') {
+                model.description = <string>result[key];
+            } else if (key === 'appliesTo') {
+                model.appliesTo = <string[]>result[key];
+            } else if (key === 'document') {
+                model.document = <string>result[key];
             }
         });
 
@@ -41,15 +42,17 @@ export class PoliciesAssembler {
     }
 
     public toModelFromPolicy(policy: Policy | AttachedPolicy): PolicyModel {
-        logger.debug(`policies.assembler toModelFromPolicy: in: policy: ${JSON.stringify(policy)}`);
+        logger.debug(
+            `policies.assembler toModelFromPolicy: in: policy: ${JSON.stringify(policy)}`,
+        );
 
-        if (policy===undefined) {
+        if (policy === undefined) {
             logger.debug(`policies.assembler toModelFromPolicy: exit: model: undefined`);
             return undefined;
         }
 
         const model = new PolicyModel();
-        model.policyId=policy.policy.policyId[0];
+        model.policyId = policy.policy.policyId[0];
         model.type = policy.policy.type[0];
         if (policy.policy.description) {
             model.description = policy.policy.description[0];
@@ -57,31 +60,36 @@ export class PoliciesAssembler {
         model.document = policy.policy.document[0];
 
         if ((policy as AttachedPolicy).policyGroups) {
-            (policy as AttachedPolicy).policyGroups.forEach(pg=> {
+            (policy as AttachedPolicy).policyGroups.forEach((pg) => {
                 const idParts = pg.id.split('___');
-                model.appliesTo.push(idParts[idParts.length-1]);
+                model.appliesTo.push(idParts[idParts.length - 1]);
             });
         } else {
-            policy.groups.forEach(pg=> {
+            policy.groups.forEach((pg) => {
                 const idParts = pg.id.split('___');
-                model.appliesTo.push(idParts[idParts.length-1]);
+                model.appliesTo.push(idParts[idParts.length - 1]);
             });
         }
 
-        logger.debug(`policies.assembler toModelFromPolicy: exit: model: ${JSON.stringify(model)}`);
+        logger.debug(
+            `policies.assembler toModelFromPolicy: exit: model: ${JSON.stringify(model)}`,
+        );
         return model;
     }
 
-    public toModelFromPolicies(policies: (AttachedPolicy|Policy)[]): PolicyModel[] {
-        logger.debug(`policies.assembler toModelFromPolicies: in: policies: ${JSON.stringify(policies)}`);
+    public toModelFromPolicies(policies: (AttachedPolicy | Policy)[]): PolicyModel[] {
+        logger.debug(
+            `policies.assembler toModelFromPolicies: in: policies: ${JSON.stringify(policies)}`,
+        );
 
-        const models: PolicyModel[]=[];
-        for(const policy of policies) {
+        const models: PolicyModel[] = [];
+        for (const policy of policies) {
             models.push(this.toModelFromPolicy(policy));
         }
 
-        logger.debug(`policies.assembler toModelFromMatches: exit: models: ${JSON.stringify(models)}`);
+        logger.debug(
+            `policies.assembler toModelFromMatches: exit: models: ${JSON.stringify(models)}`,
+        );
         return models;
     }
-
 }

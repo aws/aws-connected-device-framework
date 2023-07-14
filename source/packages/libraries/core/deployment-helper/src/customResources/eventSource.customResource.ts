@@ -7,7 +7,7 @@ import { inject, injectable } from 'inversify';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
 
-import {CustomResourceEvent} from './customResource.model';
+import { CustomResourceEvent } from './customResource.model';
 import {
     LambdaInvokerService,
     LAMBDAINVOKE_TYPES,
@@ -18,15 +18,19 @@ import ow from 'ow';
 
 @injectable()
 export class EventSourceCustomResource implements CustomResource {
-
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService,
     ) {}
 
-    protected headers:{[key:string]:string};
+    protected headers: { [key: string]: string };
 
-    public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`EventSourceCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `EventSourceCustomResource: create: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
 
         const functionName = customResourceEvent?.ResourceProperties?.FunctionName;
         const contentType = customResourceEvent?.ResourceProperties?.ContentType;
@@ -55,31 +59,42 @@ export class EventSourceCustomResource implements CustomResource {
 
         const eventSourceId = response?.header?.location?.split('/');
 
-        logger.debug(`EventSourceCustomResource: create: eventSourceId: ${eventSourceId[eventSourceId.length - 1]}`);
+        logger.debug(
+            `EventSourceCustomResource: create: eventSourceId: ${
+                eventSourceId[eventSourceId.length - 1]
+            }`,
+        );
 
         return { eventSourceId: eventSourceId[eventSourceId.length - 1] };
-
     }
 
-    public async update(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`EventSourceCustomResource: update: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `EventSourceCustomResource: update: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
 
         return await this.create(customResourceEvent);
     }
 
-    public async delete(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`EventSourceCustomResource: delete: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async delete(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `EventSourceCustomResource: delete: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
         // no delete
-         return {};
+        return {};
     }
 
-    protected getHeaders(contentType:string): {[key:string]:string} {
-        if (this.headers===undefined) {
+    protected getHeaders(contentType: string): { [key: string]: string } {
+        if (this.headers === undefined) {
             const h = {
-                'Accept': contentType,
-                'Content-Type': contentType
+                Accept: contentType,
+                'Content-Type': contentType,
             };
-            this.headers = {...h};
+            this.headers = { ...h };
         }
         return this.headers;
     }

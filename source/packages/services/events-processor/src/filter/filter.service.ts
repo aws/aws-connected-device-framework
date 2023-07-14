@@ -30,7 +30,7 @@ export class FilterService {
         @inject(TYPES.SubscriptionDao) private subscriptionDao: SubscriptionDao,
         @inject(TYPES.AlertDao) private alertDao: AlertDao,
         @inject(TYPES.EventConditionsUtils) private eventConditionsUtils: EventConditionsUtils,
-        @inject(TYPES.EventDao) private eventDao: EventDao
+        @inject(TYPES.EventDao) private eventDao: EventDao,
     ) {}
 
     public async filter(events: CommonEvent[]): Promise<void> {
@@ -82,7 +82,7 @@ export class FilterService {
                     Object.keys(ev.attributes)
                         .filter(
                             (key) =>
-                                ev.attributes[key] !== undefined && ev.attributes[key] !== null
+                                ev.attributes[key] !== undefined && ev.attributes[key] !== null,
                         )
                         .forEach((key) => engine.addFact(key, ev.attributes[key]));
 
@@ -101,7 +101,7 @@ export class FilterService {
                             const attributes = await this.getTemplatePropertiesData(
                                 sub,
                                 ev,
-                                templateCache
+                                templateCache,
                             );
                             alerts.push(this.buildAlert(sub, attributes));
                             if (!sub.alerted) {
@@ -155,7 +155,7 @@ export class FilterService {
 
     private buildAlert(
         sub: SubscriptionItem,
-        templatePropertiesData: TemplatePropertiesData
+        templatePropertiesData: TemplatePropertiesData,
     ): AlertItem {
         logger.debug(`filter.service buildAlert: in: sub:${JSON.stringify(sub)}`);
         const alert: AlertItem = {
@@ -189,12 +189,12 @@ export class FilterService {
 
     private async listSubscriptionsForEvent(
         ev: CommonEvent,
-        subscriptionMap: { [key: string]: SubscriptionItem[] }
+        subscriptionMap: { [key: string]: SubscriptionItem[] },
     ) {
         logger.debug(
             `filter.service listSubscriptionsForEvent: in: ev:${JSON.stringify(
-                ev
-            )}, subscriptionMap:${JSON.stringify(subscriptionMap)}`
+                ev,
+            )}, subscriptionMap:${JSON.stringify(subscriptionMap)}`,
         );
 
         const mapKey = this.subscriptionMapKey(ev);
@@ -203,13 +203,13 @@ export class FilterService {
             subscriptions = await this.subscriptionDao.listSubscriptionsForEventMessage(
                 ev.eventSourceId,
                 ev.principal,
-                ev.principalValue
+                ev.principalValue,
             );
             if (subscriptions !== undefined && subscriptions.length > 0) {
                 for (const sub of subscriptions) {
                     this.eventConditionsUtils.populateParameters(
                         sub.event.conditions,
-                        sub.ruleParameterValues
+                        sub.ruleParameterValues,
                     );
                 }
                 subscriptionMap[mapKey] = subscriptions;
@@ -218,8 +218,8 @@ export class FilterService {
 
         logger.debug(
             `filter.service listSubscriptionsForEvent: exit: subscriptions:${JSON.stringify(
-                subscriptions
-            )}`
+                subscriptions,
+            )}`,
         );
         return subscriptions;
     }
@@ -227,12 +227,12 @@ export class FilterService {
     private async getTemplatePropertiesData(
         sub: SubscriptionItem,
         event: CommonEvent,
-        templateCache: TemplateCache
+        templateCache: TemplateCache,
     ): Promise<TemplatePropertiesData> {
         logger.debug(
             `filter.service getEventAttributes: in: ev:${JSON.stringify(
-                sub
-            )}, subscriptionMap:${JSON.stringify(event)}`
+                sub,
+            )}, subscriptionMap:${JSON.stringify(event)}`,
         );
         const templatePropertiesData = {};
 
@@ -262,8 +262,8 @@ export class FilterService {
 
         logger.debug(
             `filter.service getEventAttributes: exit: attributeMap:${JSON.stringify(
-                templatePropertiesData
-            )}`
+                templatePropertiesData,
+            )}`,
         );
         // Return an object of referenced template properties and their values
         return templatePropertiesData;

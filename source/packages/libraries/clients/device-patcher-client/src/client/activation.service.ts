@@ -7,12 +7,12 @@ import { ClientServiceBase } from './common.service';
 export interface ActivationService {
     createActivation(
         deviceId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<ActivationResponse>;
 
     getActivation(
         activationId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<ActivationResponse>;
 
     deleteActivation(activationId: string, additionalHeaders?: RequestHeaders): Promise<void>;

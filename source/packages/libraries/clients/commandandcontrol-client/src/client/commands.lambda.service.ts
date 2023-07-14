@@ -19,7 +19,12 @@ import {
 } from '@awssolutions/cdf-lambda-invoke';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { CommandResource, CommandResourceList, EditableCommandResource, Tags } from './commands.model';
+import {
+    CommandResource,
+    CommandResourceList,
+    EditableCommandResource,
+    Tags,
+} from './commands.model';
 import { CommandsService, CommandsServiceBase } from './commands.service';
 import { RequestHeaders } from './common.model';
 
@@ -30,14 +35,14 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
     }
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private readonly lambdaInvoker: LambdaInvokerService
+        private readonly lambdaInvoker: LambdaInvokerService,
     ) {
         super();
     }
 
     async createCommand(
         command: EditableCommandResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(command, ow.object.nonEmpty);
 
@@ -55,7 +60,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
     async updateCommand(
         commandId: string,
         command: EditableCommandResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(command, ow.object.nonEmpty);
         ow(commandId, ow.string.nonEmpty);
@@ -72,7 +77,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
     async createNamedCommand(
         commandId: string,
         command: EditableCommandResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(command, ow.object.nonEmpty);
         ow(commandId, ow.string.nonEmpty);
@@ -92,7 +97,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
         tags?: Tags,
         fromCommandIdExclusive?: string,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<CommandResourceList> {
         let qs: DictionaryArray = {};
         if (count) {
@@ -100,7 +105,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
         }
         if (tags && (Object.keys(tags).length ?? 0) > 0) {
             qs.tag = Object.entries(tags).map(
-                ([k, v]) => `${encodeURIComponent(k)}:${encodeURIComponent(v)}`
+                ([k, v]) => `${encodeURIComponent(k)}:${encodeURIComponent(v)}`,
             );
         }
         qs = {
@@ -120,7 +125,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
 
     async getCommand(
         commandId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<CommandResource> {
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.commandRelativeUrl(commandId))

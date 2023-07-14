@@ -33,11 +33,15 @@ describe('FilterService', () => {
         mockedAlertDao = createMockInstance(AlertDao);
         mockedEventConditionsUtils = createMockInstance(EventConditionsUtils);
         mockedEventDao = createMockInstance(EventDao);
-        instance = new FilterService(mockedSubscriptionDao, mockedAlertDao, mockedEventConditionsUtils, mockedEventDao);
+        instance = new FilterService(
+            mockedSubscriptionDao,
+            mockedAlertDao,
+            mockedEventConditionsUtils,
+            mockedEventDao,
+        );
     });
 
-    it('happy path', async() => {
-
+    it('happy path', async () => {
         const eventSourceId = 'ES123';
         const principal = 'deviceId';
         const principalValue = 'device001';
@@ -50,79 +54,88 @@ describe('FilterService', () => {
             principal,
             principalValue,
         };
-        const events:CommonEvent[]= [
+        const events: CommonEvent[] = [
             {
-                ... commonMessageAttributes,
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 1,
-                    batteryLevel: 25
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevel: 25,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 2,
-                    batteryLevel: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevel: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 3,
-                    batteryLevel: 18
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevel: 18,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 4,
-                    batteryLevel: 21
-                }
-            }
+                    batteryLevel: 21,
+                },
+            },
         ];
 
         // mocks
-        const mockedListCall = mockedSubscriptionDao.listSubscriptionsForEventMessage = jest.fn().mockImplementationOnce(()=> {
-            const r:SubscriptionItem[]= [
-                {
-                    id: 'sub001',
-                    event: {
-                        id: 'ev001',
-                        name: 'batteryAlertLevel',
-                        conditions: {
-                            all: [{
-                                fact: 'batteryLevel',
-                                operator: 'lessThanInclusive',
-                                value: 20
-                            }]
-                        }
+        const mockedListCall = (mockedSubscriptionDao.listSubscriptionsForEventMessage = jest
+            .fn()
+            .mockImplementationOnce(() => {
+                const r: SubscriptionItem[] = [
+                    {
+                        id: 'sub001',
+                        event: {
+                            id: 'ev001',
+                            name: 'batteryAlertLevel',
+                            conditions: {
+                                all: [
+                                    {
+                                        fact: 'batteryLevel',
+                                        operator: 'lessThanInclusive',
+                                        value: 20,
+                                    },
+                                ],
+                            },
+                        },
+                        eventSource: {
+                            id: eventSourceId,
+                            principal,
+                        },
+                        principalValue,
+                        ruleParameterValues: {},
+                        alerted: false,
+                        enabled: true,
+                        user: {
+                            id: 'u001',
+                        },
                     },
-                    eventSource: {
-                        id: eventSourceId,
-                        principal
-                    },
-                    principalValue,
-                    ruleParameterValues:{},
-                    alerted:false,
-                    enabled:true,
-                    user: {
-                        id: 'u001'
-                    }
-                }
-            ];
-            return r;
-        });
+                ];
+                return r;
+            }));
 
-        const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
-            return {
-                supportedTargets: {
-                    'sms': 'default',
-                    'email': 'default2'
-                },
-                templates: {
-                    'default': 'The Battery level is {{=it.batterylevel}}',
-                    'default2': '{{=it[\'threshold\']}} and {{=it.sequence}}'
-                },
-                templateProperties: ['batteryLevel', 'threshold', 'sequence']
-            };
-        });
+        const mockedGetEventConfigCall = (mockedEventDao.getEventConfig = jest
+            .fn()
+            .mockImplementation(() => {
+                return {
+                    supportedTargets: {
+                        sms: 'default',
+                        email: 'default2',
+                    },
+                    templates: {
+                        default: 'The Battery level is {{=it.batterylevel}}',
+                        default2: "{{=it['threshold']}} and {{=it.sequence}}",
+                    },
+                    templateProperties: ['batteryLevel', 'threshold', 'sequence'],
+                };
+            }));
 
         // const expectedAlerts:AlertItem[] = [
         //     {
@@ -139,9 +152,11 @@ describe('FilterService', () => {
         //         }
         //     }
         // ];
-        const mockedCreateAlertsCall = mockedAlertDao.create = jest.fn().mockImplementationOnce((_alerts)=> {
-            // do nothing, acting as a spy only
-        });
+        const mockedCreateAlertsCall = (mockedAlertDao.create = jest
+            .fn()
+            .mockImplementationOnce((_alerts) => {
+                // do nothing, acting as a spy only
+            }));
 
         // execute
         await instance.filter(events);
@@ -152,8 +167,7 @@ describe('FilterService', () => {
         expect(mockedGetEventConfigCall).toBeCalled();
     });
 
-    it('rule checking fact against fact', async() => {
-
+    it('rule checking fact against fact', async () => {
         const eventSourceId = 'ES123';
         const principal = 'deviceId';
         const principalValue = 'device001';
@@ -166,110 +180,124 @@ describe('FilterService', () => {
         };
 
         // going from 25 > 22 > 18 (triggered) > 14 (ignored as no reset) > 23 > 12 (ignored as no reset) > 10 (ignored as no reset)
-        const events:CommonEvent[]= [
+        const events: CommonEvent[] = [
             {
-                ... commonMessageAttributes,
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 1,
                     batteryLevel: 25,
-                    batteryLevelThreshold: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 2,
                     batteryLevel: 22,
-                    batteryLevelThreshold: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 3,
                     batteryLevel: 18,
-                    batteryLevelThreshold: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 4,
                     batteryLevel: 14,
-                    batteryLevelThreshold: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 4,
                     batteryLevel: 23,
-                    batteryLevelThreshold: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 4,
                     batteryLevel: 12,
-                    batteryLevelThreshold: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 4,
                     batteryLevel: 10,
-                    batteryLevelThreshold: 22
-                }
-            }
+                    batteryLevelThreshold: 22,
+                },
+            },
         ];
 
         // mocks
-        const mockedListCall = mockedSubscriptionDao.listSubscriptionsForEventMessage = jest.fn().mockImplementationOnce(()=> {
-            const r:SubscriptionItem[]= [
-                {
-                    id: 'sub001',
-                    event: {
-                        id: 'ev001',
-                        name: 'batteryAlertLevel',
-                        conditions: {
-                            all: [{
-                                fact: 'batteryLevel',
-                                operator: 'lessThan',
-                                value: {
-                                    fact: 'batteryLevelThreshold'
-                                }
-                            }]
-                        }
+        const mockedListCall = (mockedSubscriptionDao.listSubscriptionsForEventMessage = jest
+            .fn()
+            .mockImplementationOnce(() => {
+                const r: SubscriptionItem[] = [
+                    {
+                        id: 'sub001',
+                        event: {
+                            id: 'ev001',
+                            name: 'batteryAlertLevel',
+                            conditions: {
+                                all: [
+                                    {
+                                        fact: 'batteryLevel',
+                                        operator: 'lessThan',
+                                        value: {
+                                            fact: 'batteryLevelThreshold',
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                        eventSource: {
+                            id: eventSourceId,
+                            principal,
+                        },
+                        principalValue,
+                        ruleParameterValues: {},
+                        alerted: false,
+                        enabled: true,
+                        user: {
+                            id: 'u001',
+                        },
                     },
-                    eventSource: {
-                        id: eventSourceId,
-                        principal
+                ];
+                return r;
+            }));
+
+        const mockedGetEventConfigCall = (mockedEventDao.getEventConfig = jest
+            .fn()
+            .mockImplementation(() => {
+                return {
+                    supportedTargets: {
+                        sms: 'default',
+                        email: 'default2',
                     },
-                    principalValue,
-                    ruleParameterValues:{},
-                    alerted:false,
-                    enabled:true,
-                    user: {
-                        id: 'u001'
-                    }
-                }
-            ];
-            return r;
-        });
+                    templates: {
+                        default: 'The Battery level is {{=it.batterylevel}}',
+                        default2: "{{=it['threshold']}} and {{=it.sequence}}",
+                    },
+                    templateProperties: ['batteryLevel', 'threshold', 'sequence'],
+                };
+            }));
 
-        const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
-            return {
-                supportedTargets: {
-                    'sms': 'default',
-                    'email': 'default2'
-                },
-                templates: {
-                    'default': 'The Battery level is {{=it.batterylevel}}',
-                    'default2': '{{=it[\'threshold\']}} and {{=it.sequence}}'
-                },
-                templateProperties: ['batteryLevel', 'threshold', 'sequence']
-            };
-        });
-
-        const mockedCreateAlertsCall = mockedAlertDao.create = jest.fn().mockImplementationOnce((_alerts)=> {
-            // do nothing, acting as a spy only
-        });
+        const mockedCreateAlertsCall = (mockedAlertDao.create = jest
+            .fn()
+            .mockImplementationOnce((_alerts) => {
+                // do nothing, acting as a spy only
+            }));
 
         // execute
         await instance.filter(events);
@@ -277,13 +305,12 @@ describe('FilterService', () => {
         // verify
         expect(mockedListCall).toBeCalledTimes(1);
         expect(mockedCreateAlertsCall).toBeCalledTimes(1);
-        const actualAlerts:AlertItem[] = mockedCreateAlertsCall.mock.calls[0][0];
-        expect(actualAlerts.length).toBe(2);        // only 2 should be alerted
+        const actualAlerts: AlertItem[] = mockedCreateAlertsCall.mock.calls[0][0];
+        expect(actualAlerts.length).toBe(2); // only 2 should be alerted
         expect(mockedGetEventConfigCall).toBeCalled();
     });
 
-    it('disabling alert thresholds should alert each time', async() => {
-
+    it('disabling alert thresholds should alert each time', async () => {
         const eventSourceId = 'ES123';
         const principal = 'deviceId';
         const principalValue = 'device001';
@@ -296,111 +323,125 @@ describe('FilterService', () => {
         };
 
         // going from 25 > 22 > 18 (triggered) > 14 (still triggers) > 23 > 12 (still triggers) > 10 (istill triggers)
-        const events:CommonEvent[]= [
+        const events: CommonEvent[] = [
             {
-                ... commonMessageAttributes,
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 1,
                     batteryLevel: 25,
-                    batteryLevelThreshold: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 2,
                     batteryLevel: 22,
-                    batteryLevelThreshold: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 3,
                     batteryLevel: 18,
-                    batteryLevelThreshold: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 4,
                     batteryLevel: 14,
-                    batteryLevelThreshold: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 4,
                     batteryLevel: 23,
-                    batteryLevelThreshold: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 4,
                     batteryLevel: 12,
-                    batteryLevelThreshold: 22
-                }
-            }, {
-                ... commonMessageAttributes,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
                 attributes: {
                     sequence: 4,
                     batteryLevel: 10,
-                    batteryLevelThreshold: 22
-                }
-            }
+                    batteryLevelThreshold: 22,
+                },
+            },
         ];
 
         // mocks
-        const mockedListCall = mockedSubscriptionDao.listSubscriptionsForEventMessage = jest.fn().mockImplementationOnce(()=> {
-            const r:SubscriptionItem[]= [
-                {
-                    id: 'sub001',
-                    event: {
-                        id: 'ev001',
-                        name: 'batteryAlertLevel',
-                        conditions: {
-                            all: [{
-                                fact: 'batteryLevel',
-                                operator: 'lessThan',
-                                value: {
-                                    fact: 'batteryLevelThreshold'
-                                }
-                            }]
+        const mockedListCall = (mockedSubscriptionDao.listSubscriptionsForEventMessage = jest
+            .fn()
+            .mockImplementationOnce(() => {
+                const r: SubscriptionItem[] = [
+                    {
+                        id: 'sub001',
+                        event: {
+                            id: 'ev001',
+                            name: 'batteryAlertLevel',
+                            conditions: {
+                                all: [
+                                    {
+                                        fact: 'batteryLevel',
+                                        operator: 'lessThan',
+                                        value: {
+                                            fact: 'batteryLevelThreshold',
+                                        },
+                                    },
+                                ],
+                            },
+                            disableAlertThreshold: true,
                         },
-                        disableAlertThreshold: true
+                        eventSource: {
+                            id: eventSourceId,
+                            principal,
+                        },
+                        principalValue,
+                        ruleParameterValues: {},
+                        alerted: false,
+                        enabled: true,
+                        user: {
+                            id: 'u001',
+                        },
                     },
-                    eventSource: {
-                        id: eventSourceId,
-                        principal
+                ];
+                return r;
+            }));
+
+        const mockedGetEventConfigCall = (mockedEventDao.getEventConfig = jest
+            .fn()
+            .mockImplementation(() => {
+                return {
+                    supportedTargets: {
+                        sms: 'default',
+                        email: 'default2',
                     },
-                    principalValue,
-                    ruleParameterValues:{},
-                    alerted:false,
-                    enabled:true,
-                    user: {
-                        id: 'u001'
-                    }
-                }
-            ];
-            return r;
-        });
+                    templates: {
+                        default: 'The Battery level is {{=it.batterylevel}}',
+                        default2: "{{=it['threshold']}} and {{=it.sequence}}",
+                    },
+                    templateProperties: ['batteryLevel', 'threshold', 'sequence'],
+                };
+            }));
 
-        const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
-            return {
-                supportedTargets: {
-                    'sms': 'default',
-                    'email': 'default2'
-                },
-                templates: {
-                    'default': 'The Battery level is {{=it.batterylevel}}',
-                    'default2': '{{=it[\'threshold\']}} and {{=it.sequence}}'
-                },
-                templateProperties: ['batteryLevel', 'threshold', 'sequence'],
-            };
-        });
-
-        const mockedCreateAlertsCall = mockedAlertDao.create = jest.fn().mockImplementationOnce((_alerts)=> {
-            // do nothing, acting as a spy only
-        });
+        const mockedCreateAlertsCall = (mockedAlertDao.create = jest
+            .fn()
+            .mockImplementationOnce((_alerts) => {
+                // do nothing, acting as a spy only
+            }));
 
         // execute
         await instance.filter(events);
@@ -408,10 +449,9 @@ describe('FilterService', () => {
         // verify
         expect(mockedListCall).toBeCalledTimes(1);
         expect(mockedCreateAlertsCall).toBeCalledTimes(1);
-        const actualAlerts:AlertItem[] = mockedCreateAlertsCall.mock.calls[0][0];
-        expect(actualAlerts.length).toBe(4);        // only 4 should be alerted
+        const actualAlerts: AlertItem[] = mockedCreateAlertsCall.mock.calls[0][0];
+        expect(actualAlerts.length).toBe(4); // only 4 should be alerted
         expect(mockedGetEventConfigCall).toBeCalled();
-
     });
 
     it('should return a attributes for an event', async () => {
@@ -426,24 +466,26 @@ describe('FilterService', () => {
                 id: 'ev001',
                 name: 'batteryAlertLevel',
                 conditions: {
-                    all: [{
-                        fact: 'batteryLevel',
-                        operator: 'lessThanInclusive',
-                        value: 20
-                    }]
-                }
+                    all: [
+                        {
+                            fact: 'batteryLevel',
+                            operator: 'lessThanInclusive',
+                            value: 20,
+                        },
+                    ],
+                },
             },
             eventSource: {
                 id: eventSourceId,
-                principal
+                principal,
             },
             principalValue,
-            ruleParameterValues:{},
-            alerted:false,
-            enabled:true,
+            ruleParameterValues: {},
+            alerted: false,
+            enabled: true,
             user: {
-                id: 'u001'
-            }
+                id: 'u001',
+            },
         };
 
         const mockedEvent = {
@@ -453,32 +495,38 @@ describe('FilterService', () => {
             sourceChangeType,
             attributes: {
                 sequence: 4,
-                batteryLevel: 21
-            }
+                batteryLevel: 21,
+            },
         };
 
         const mockedTemplateCache = {};
 
-        const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
-            return {
-                supportedTargets: {
-                    'sms': 'default',
-                    'email': 'default2'
-                },
-                templates: {
-                    'default': 'The Battery level is {{=it.batteryLevel}}',
-                    'default2': '{{=it[\'threshold\']}} and {{=it.sequence}}'
-                },
-                templateProperties: ['batteryLevel', 'threshold', 'sequence']
-            };
-        });
+        const mockedGetEventConfigCall = (mockedEventDao.getEventConfig = jest
+            .fn()
+            .mockImplementation(() => {
+                return {
+                    supportedTargets: {
+                        sms: 'default',
+                        email: 'default2',
+                    },
+                    templates: {
+                        default: 'The Battery level is {{=it.batteryLevel}}',
+                        default2: "{{=it['threshold']}} and {{=it.sequence}}",
+                    },
+                    templateProperties: ['batteryLevel', 'threshold', 'sequence'],
+                };
+            }));
 
         // @ts-ignore
-        const attributeMap = await instance.getTemplatePropertiesData(mockedSubscriptionItem, mockedEvent, mockedTemplateCache);
+        const attributeMap = await instance.getTemplatePropertiesData(
+            mockedSubscriptionItem,
+            mockedEvent,
+            mockedTemplateCache,
+        );
         expect(attributeMap).toEqual({
             batteryLevel: 21,
             sequence: 4,
-            principalValue
+            principalValue,
         });
 
         expect(mockedGetEventConfigCall).toBeCalledTimes(1);
@@ -496,24 +544,26 @@ describe('FilterService', () => {
                 id: 'ev001',
                 name: 'batteryAlertLevel',
                 conditions: {
-                    all: [{
-                        fact: 'batteryLevel',
-                        operator: 'lessThanInclusive',
-                        value: 20
-                    }]
-                }
+                    all: [
+                        {
+                            fact: 'batteryLevel',
+                            operator: 'lessThanInclusive',
+                            value: 20,
+                        },
+                    ],
+                },
             },
             eventSource: {
                 id: eventSourceId,
-                principal
+                principal,
             },
             principalValue,
-            ruleParameterValues:{},
-            alerted:false,
-            enabled:true,
+            ruleParameterValues: {},
+            alerted: false,
+            enabled: true,
             user: {
-                id: 'u001'
-            }
+                id: 'u001',
+            },
         };
 
         const mockedEvent = {
@@ -523,30 +573,35 @@ describe('FilterService', () => {
             sourceChangeType,
             attributes: {
                 sequence: 4,
-                batteryLevel: 21
-            }
+                batteryLevel: 21,
+            },
         };
 
         const mockedTemplateCache = {};
 
-        const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
-            return {
-                supportedTargets: {
-                    'sms': 'default',
-                    'email': 'default2'
-                },
-                templates: {
-                    'default': 'The Battery level is {{=it.batteryLevel}}',
-                    'default2': '{{=it[\'threshold\']}} and {{=it.sequence}}'
-                }
-            };
-        });
+        const mockedGetEventConfigCall = (mockedEventDao.getEventConfig = jest
+            .fn()
+            .mockImplementation(() => {
+                return {
+                    supportedTargets: {
+                        sms: 'default',
+                        email: 'default2',
+                    },
+                    templates: {
+                        default: 'The Battery level is {{=it.batteryLevel}}',
+                        default2: "{{=it['threshold']}} and {{=it.sequence}}",
+                    },
+                };
+            }));
 
         // @ts-ignore
-        const attributeMap = await instance.getTemplatePropertiesData(mockedSubscriptionItem, mockedEvent, mockedTemplateCache);
+        const attributeMap = await instance.getTemplatePropertiesData(
+            mockedSubscriptionItem,
+            mockedEvent,
+            mockedTemplateCache,
+        );
         expect(attributeMap).toEqual({});
 
         expect(mockedGetEventConfigCall).toBeCalledTimes(1);
     });
-
 });

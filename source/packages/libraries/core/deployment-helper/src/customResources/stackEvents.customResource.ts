@@ -10,18 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from "inversify";
-import { TYPES } from "../di/types";
-import { CustomResourceEvent } from "./customResource.model";
-import { CustomResource } from "./customResource";
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../di/types';
+import { CustomResourceEvent } from './customResource.model';
+import { CustomResource } from './customResource';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import ow from "ow";
+import ow from 'ow';
 
 type StackEventPayload = { [key: string]: string };
 
 interface StackEvent {
-    eventName: "CDFStackCreated" | "CDFStackUpdated";
-    status: "CREATED" | "UPDATED";
+    eventName: 'CDFStackCreated' | 'CDFStackUpdated';
+    status: 'CREATED' | 'UPDATED';
     stackName: string;
     region: string;
     accountId: string;
@@ -38,26 +38,30 @@ export class StackEventsCustomResource implements CustomResource {
     constructor(
         @inject(TYPES.EventBridgeFactory)
         private eventBridgeFactory: (region: string) => AWS.EventBridge,
-        @inject(TYPES.STSFactory) stsFactory: () => AWS.STS
+        @inject(TYPES.STSFactory) stsFactory: () => AWS.STS,
     ) {
         this.sts = stsFactory();
     }
 
-    private async publishEvent(eventBusName: string, stackName: string, payload?: StackEventPayload) {
-        const eventSource = "com.aws.cdf.customresource";
-        const eventDetailType = "CDF Deployment Events via CloudFormation Custom Resource";
+    private async publishEvent(
+        eventBusName: string,
+        stackName: string,
+        payload?: StackEventPayload,
+    ) {
+        const eventSource = 'com.aws.cdf.customresource';
+        const eventDetailType = 'CDF Deployment Events via CloudFormation Custom Resource';
 
-        const eventbridgeKeys = eventBusName.split(":");
+        const eventbridgeKeys = eventBusName.split(':');
         this.eventBridge = this.eventBridgeFactory(eventbridgeKeys[3]);
 
         try {
             const accountId = (await this.sts.getCallerIdentity().promise()).Account;
             const stackEvent: StackEvent = {
-                eventName: "CDFStackCreated",
+                eventName: 'CDFStackCreated',
                 stackName,
                 accountId,
                 region: AWS_REGION,
-                status: "CREATED",
+                status: 'CREATED',
                 payload,
             };
 
@@ -79,7 +83,11 @@ export class StackEventsCustomResource implements CustomResource {
     }
 
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
-        logger.debug(`StackEventsCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+        logger.debug(
+            `StackEventsCustomResource: create: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
 
         const eventBusName = customResourceEvent?.ResourceProperties?.EventBusName;
         const stackName = customResourceEvent?.ResourceProperties?.StackName;
@@ -95,7 +103,11 @@ export class StackEventsCustomResource implements CustomResource {
     }
 
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
-        logger.debug(`StackEventsCustomResource: update: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+        logger.debug(
+            `StackEventsCustomResource: update: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
 
         const eventBusName = customResourceEvent?.ResourceProperties?.EventBusName;
         const stackName = customResourceEvent?.ResourceProperties?.StackName;

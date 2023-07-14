@@ -22,17 +22,16 @@ import { TypesService } from '../../types/types.service';
 import { Batch, Batcher, Batches } from '../batch.service';
 import { TypeModel } from '../../types/types.models';
 import { LabelsService } from '../../labels/labels.service';
-import {BatcherBase} from '../batcher.base';
+import { BatcherBase } from '../batcher.base';
 
 @injectable()
-export class TypeBatcher extends BatcherBase implements Batcher  {
-
+export class TypeBatcher extends BatcherBase implements Batcher {
     constructor(
         @inject(TYPES.TypesService) private typesService: TypesService,
         @inject(TYPES.LabelsService) private labelsService: LabelsService,
         @inject('defaults.batch.size') private batchSize: number,
     ) {
-        super()
+        super();
     }
 
     public async batch(): Promise<Batches> {
@@ -50,26 +49,29 @@ export class TypeBatcher extends BatcherBase implements Batcher  {
 
         logger.debug(`BatchService batch: out`);
         return batches;
-
     }
 
-    private async getBatchesByTypes(category:string, types: TypeModel[]): Promise<Batch[]> {
-        logger.debug(`types.batcher: getBatchesByTypes in: category: ${category}, types: ${JSON.stringify(types)}`);
+    private async getBatchesByTypes(category: string, types: TypeModel[]): Promise<Batch[]> {
+        logger.debug(
+            `types.batcher: getBatchesByTypes in: category: ${category}, types: ${JSON.stringify(
+                types,
+            )}`,
+        );
 
-        const typeIds = types.map(type => type.templateId);
-        const batches:Batch[] = [];
+        const typeIds = types.map((type) => type.templateId);
+        const batches: Batch[] = [];
 
-        for(const type of typeIds) {
+        for (const type of typeIds) {
             const count = await this.labelsService.getObjectCount(type);
             const ranges = this.createRangesByCount(count.total, this.batchSize);
 
-            for(const range of ranges) {
+            for (const range of ranges) {
                 const batch = new Batch();
                 batch.id = generate();
                 batch.category = category;
                 batch.type = type;
                 batch.range = range;
-                batch.total = count.total
+                batch.total = count.total;
                 batch.timestamp = Date.now();
                 batches.push(batch);
             }
@@ -82,5 +84,4 @@ export class TypeBatcher extends BatcherBase implements Batcher  {
     private getCategories() {
         return [TypeCategory.Device, TypeCategory.Group];
     }
-
 }

@@ -14,29 +14,31 @@ import { injectable, inject } from 'inversify';
 import ow from 'ow';
 
 import { TYPES } from '../di/types';
-import {logger} from '@awssolutions/simple-cdf-logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 import { TypesDao } from './types.dao';
-import { TypeModel, TypeDefinitionStatus} from './types.models';
+import { TypeModel, TypeDefinitionStatus } from './types.models';
 import { TypeCategory } from './constants';
 
 @injectable()
 export class TypesService implements TypesService {
+    constructor(@inject(TYPES.TypesDao) private typesDao: TypesDao) {}
 
-    constructor( @inject(TYPES.TypesDao) private typesDao: TypesDao) {}
-
-    public async list(category:TypeCategory, status?:TypeDefinitionStatus): Promise<TypeModel[]> {
+    public async list(
+        category: TypeCategory,
+        status?: TypeDefinitionStatus,
+    ): Promise<TypeModel[]> {
         logger.debug(`types.full.service list: in: category:${category}, status:${status}`);
 
         ow(category, ow.string.nonEmpty);
 
-        if (status===undefined) {
-            status=TypeDefinitionStatus.published;
+        if (status === undefined) {
+            status = TypeDefinitionStatus.published;
         }
 
-        const results  = await this.typesDao.list(category, status);
-        if (results!==undefined && results.length>=0) {
-            for(const r of results) {
+        const results = await this.typesDao.list(category, status);
+        if (results !== undefined && results.length >= 0) {
+            for (const r of results) {
                 r.schema.definition.relations = r.schema.relations;
             }
         }

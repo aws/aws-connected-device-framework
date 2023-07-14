@@ -25,11 +25,10 @@ const __ = process.statics;
 
 @injectable()
 export class GroupsDao extends BaseDaoFull {
-
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -37,61 +36,78 @@ export class GroupsDao extends BaseDaoFull {
     public async get(groupPaths: string[]): Promise<Node[]> {
         logger.silly(`groups.full.dao get: in: groupPath: ${groupPaths}`);
 
-        const dbIds:string[] = groupPaths.map(g=> `group___${g}`);
+        const dbIds: string[] = groupPaths.map((g) => `group___${g}`);
 
         /**
          * return the group, but when retrieving linked entities we need to retrieve
          * all groups excluding linked via 'parent' and ignore linked devices
          */
-        let results:process.Traverser[];
+        let results: process.Traverser[];
         const conn = super.getConnection();
         try {
-            const traverser = await conn.traversal.V(dbIds).as('main')
-                .values('groupPath').as('entityId')
+            const traverser = await conn.traversal
+                .V(dbIds)
+                .as('main')
+                .values('groupPath')
+                .as('entityId')
                 .select('main')
                 .union(
-                    __.inE().as('e')
+                    __.inE()
+                        .as('e')
                         .not(__.hasLabel('parent'))
-                        .otherV().hasLabel('group').as('v')
-                        .valueMap().with_(process.withOptions.tokens).as('vProps')
-                        .constant('in').as('dir')
-                        .select('entityId', 'dir','e','vProps'),
-                    __.outE().as('e')
+                        .otherV()
+                        .hasLabel('group')
+                        .as('v')
+                        .valueMap()
+                        .with_(process.withOptions.tokens)
+                        .as('vProps')
+                        .constant('in')
+                        .as('dir')
+                        .select('entityId', 'dir', 'e', 'vProps'),
+                    __.outE()
+                        .as('e')
                         .not(__.hasLabel('parent'))
-                        .otherV().hasLabel('group').as('v')
-                        .valueMap().with_(process.withOptions.tokens).as('vProps')
-                        .constant('out').as('dir')
-                        .select('entityId','dir','e','vProps'),
-                    __.select('main').valueMap().with_(process.withOptions.tokens)
+                        .otherV()
+                        .hasLabel('group')
+                        .as('v')
+                        .valueMap()
+                        .with_(process.withOptions.tokens)
+                        .as('vProps')
+                        .constant('out')
+                        .as('dir')
+                        .select('entityId', 'dir', 'e', 'vProps'),
+                    __.select('main').valueMap().with_(process.withOptions.tokens),
                 );
 
-            logger.silly(`groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`);
+            logger.silly(
+                `groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`,
+            );
             results = await traverser.toList();
             logger.silly(`groups.full.dao get: result: ${JSON.stringify(results)}`);
         } finally {
             await conn.close();
         }
 
-        if (results===undefined || results.length===0) {
+        if (results === undefined || results.length === 0) {
             logger.silly(`groups.full.dao get: exit: node: undefined`);
             return undefined;
         }
 
         const nodes: Node[] = [];
-        const groups = results.filter(r=> isVertexDto(r)) as VertexDto[];
-        groups.forEach(g => {
+        const groups = results.filter((r) => isVertexDto(r)) as VertexDto[];
+        groups.forEach((g) => {
             // construct the node
             const node = this.fullAssembler.assembleNode(g);
             // find any relations for the groups
-            const relatedEntities = results.filter(r=> isRelatedEntityDto(r) && r.entityId === g['groupPath'][0])
-                .map(r=> r as unknown as RelatedEntityDto);
+            const relatedEntities = results
+                .filter((r) => isRelatedEntityDto(r) && r.entityId === g['groupPath'][0])
+                .map((r) => r as unknown as RelatedEntityDto);
 
-            relatedEntities.forEach(r=> this.fullAssembler.assembleAssociation(node,r));
+            relatedEntities.forEach((r) => this.fullAssembler.assembleAssociation(node, r));
             nodes.push(node);
         });
 
         logger.silly(`groups.full.dao get: exit: node: ${JSON.stringify(nodes)}`);
         return nodes;
     }
-
 }

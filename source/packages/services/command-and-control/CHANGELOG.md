@@ -3,6 +3,7 @@
 This log was last generated on Fri, 29 Jul 2022 17:47:13 GMT and should not be manually modified.
 
 ## 1.0.1
+
 Fri, 29 Jul 2022 17:47:13 GMT
 
 ### Patches
@@ -10,6 +11,7 @@ Fri, 29 Jul 2022 17:47:13 GMT
 - fixed samples in documentation
 
 ## 1.0.0
+
 Wed, 29 Jun 2022 00:56:16 GMT
 
 ### Breaking changes
@@ -21,6 +23,7 @@ Wed, 29 Jun 2022 00:56:16 GMT
 - allow user to specify CONTINUOUS or SNAPSHOT when creating command with type Job
 
 ## 0.0.7
+
 Fri, 24 Jun 2022 21:00:45 GMT
 
 ### Patches
@@ -28,6 +31,7 @@ Fri, 24 Jun 2022 21:00:45 GMT
 - Updated dependencies flagged as having security issues.
 
 ## 0.0.6
+
 Tue, 21 Jun 2022 00:47:55 GMT
 
 ### Patches
@@ -35,6 +39,7 @@ Tue, 21 Jun 2022 00:47:55 GMT
 - update to node 16.x
 
 ## 0.0.5
+
 Fri, 08 Apr 2022 07:03:46 GMT
 
 ### Patches
@@ -42,6 +47,7 @@ Fri, 08 Apr 2022 07:03:46 GMT
 - minor fixes to command-and-control to support assetlibrary targets
 
 ## 0.0.4
+
 Mon, 28 Mar 2022 03:56:19 GMT
 
 ### Patches
@@ -49,6 +55,7 @@ Mon, 28 Mar 2022 03:56:19 GMT
 - fix uidGenerator to allow it to be accessed from children class
 
 ## 0.0.3
+
 Mon, 28 Mar 2022 00:28:46 GMT
 
 ### Patches
@@ -56,6 +63,7 @@ Mon, 28 Mar 2022 00:28:46 GMT
 - default port specified in .env.defaults
 
 ## 0.0.2
+
 Fri, 25 Mar 2022 06:23:54 GMT
 
 ### Patches
@@ -63,7 +71,7 @@ Fri, 25 Mar 2022 06:23:54 GMT
 - should load thing-list-module after loading iot
 
 ## 0.0.1
+
 Fri, 25 Mar 2022 03:55:57 GMT
 
 _Initial release_
-

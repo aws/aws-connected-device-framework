@@ -14,20 +14,16 @@ import 'reflect-metadata';
 import { Simulation, LaunchParams } from './simulation';
 
 describe('LaunchSimulation', () => {
-
     it.skip('happy path should launch Fargate cluster', async () => {
+        const instance = new Simulation('us-west-2');
 
-        const instance= new Simulation('us-west-2');
-
-        const params:LaunchParams = {
-            simulationId:'DEAN2000',
-            instances:2,
-            s3RootKey:'simulations/DEAN2000',
+        const params: LaunchParams = {
+            simulationId: 'DEAN2000',
+            instances: 2,
+            s3RootKey: 'simulations/DEAN2000',
         };
 
         // execute
         await instance.launch(params);
-
     }, 300000);
-
 });

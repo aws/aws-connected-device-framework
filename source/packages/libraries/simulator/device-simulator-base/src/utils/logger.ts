@@ -11,11 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import {createLogger, LoggerOptions, transports} from 'winston';
-import {format} from 'logform';
+import { createLogger, LoggerOptions, transports } from 'winston';
+import { format } from 'logform';
 
 const jsonWithColorsAndTime = format.combine(
-    format.colorize({all:true}),
+    format.colorize({ all: true }),
     format.timestamp(),
     format.label(),
     format.metadata(),
@@ -24,21 +24,18 @@ const jsonWithColorsAndTime = format.combine(
     // format.json(),
 
     // so instead, a hack to write out what looks like json, but us in fact still a string that includes the correct color codes:
-    format.printf(info => {
+    format.printf((info) => {
         if (info.metadata.type) {
             return `{"ts":"${info.metadata.timestamp}", "level":"${info.level}", "class":"${info.metadata.class}", "method":"${info.metadata.method}", "type":"${info.metadata.type}", "message":"${info.message}"}`;
         } else {
             return `{"ts":"${info.metadata.timestamp}", "level":"${info.level}", "class":"${info.metadata.class}", "method":"${info.metadata.method}", "message":"${info.message}"}`;
         }
     }),
-
 );
 
-export const logger = createLogger(<LoggerOptions> {
+export const logger = createLogger(<LoggerOptions>{
     level: process.env.LOGGING_LEVEL,
     exitOnError: false,
-    transports: [
-        new transports.Console(),
-    ],
-    format: jsonWithColorsAndTime
+    transports: [new transports.Console()],
+    format: jsonWithColorsAndTime,
 });

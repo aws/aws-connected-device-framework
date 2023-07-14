@@ -25,7 +25,7 @@ import {
 export interface PatchService {
     createPatchTask(
         patchRequest: PatchTaskRequest,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string>;
 
     getPatchTask(taskId: string, additionalHeaders?: RequestHeaders): Promise<PatchTaskResponse>;
@@ -34,13 +34,13 @@ export interface PatchService {
 
     listPatchesByTaskId(
         taskId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<ListPatchResponse>;
 
     listPatchesByDeviceId(
         deviceId: string,
         status?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<ListPatchResponse>;
 
     updatePatch(patch: UpdatePatchRequest, additionalHeaders?: RequestHeaders): Promise<void>;
@@ -50,7 +50,6 @@ export interface PatchService {
 
 @injectable()
 export class PatchServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }
@@ -67,12 +66,11 @@ export class PatchServiceBase extends ClientServiceBase {
         return PathHelper.encodeUrl('patchTasks', taskId, 'patches');
     }
 
-    protected patchesRelativeUrl(patchId: string) : string {
-        return PathHelper.encodeUrl( 'patches', patchId);
+    protected patchesRelativeUrl(patchId: string): string {
+        return PathHelper.encodeUrl('patches', patchId);
     }
 
-    protected patchByDeviceRelativeUrl(deviceId: string) : string {
+    protected patchByDeviceRelativeUrl(deviceId: string): string {
         return PathHelper.encodeUrl('devices', deviceId, 'patches');
     }
-
 }

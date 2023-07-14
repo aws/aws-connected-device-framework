@@ -11,11 +11,9 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const ORGMANLIBRARY_CLIENT_TYPES = {
-
     AccountsService: Symbol.for('OrganizationManagerClient_AccountsService'),
     OrganizationalUnitsService: Symbol.for('OrganizationManagerClient_OrganizationalUnitsService'),
     BulkComponentsService: Symbol.for('OrganizationManagerClient_BulkComponentsService'),
     RestClient: Symbol.for('OrganizationManagerClient_RestClient'),
-    RestClientFactory: Symbol.for('Factory<OrganizationManagerClient_RestClient>')
-
+    RestClientFactory: Symbol.for('Factory<OrganizationManagerClient_RestClient>'),
 };

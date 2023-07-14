@@ -14,7 +14,6 @@ import 'reflect-metadata';
 import { EventConditions, EventConditionsUtils } from './event.models';
 
 describe('EventModel', () => {
-
     let instance: EventConditionsUtils;
 
     beforeEach(() => {
@@ -25,19 +24,19 @@ describe('EventModel', () => {
         const conditions: EventConditions = {
             all: [
                 {
-                    "fact": "batteryLevel",
-                    "operator": "lessThanInclusive",
-                    "value": "$batteryThreshold"
-                }
+                    fact: 'batteryLevel',
+                    operator: 'lessThanInclusive',
+                    value: '$batteryThreshold',
+                },
             ],
             any: [
                 {
-                    "fact": "temperatureLevel",
-                    "operator": "lessThanInclusive",
-                    "value": "$temperatureThreshold"
-                }
-            ]
-        }
+                    fact: 'temperatureLevel',
+                    operator: 'lessThanInclusive',
+                    value: '$temperatureThreshold',
+                },
+            ],
+        };
 
         const expectedParameters = ['batteryThreshold', 'temperatureThreshold'];
         const templateParameters = instance.extractParameters(conditions);
@@ -48,52 +47,51 @@ describe('EventModel', () => {
         const conditions: EventConditions = {
             all: [
                 {
-                    "fact": "batteryLevel",
-                    "operator": "lessThanInclusive",
-                    "value": "3"
-                }
-            ]
-        }
+                    fact: 'batteryLevel',
+                    operator: 'lessThanInclusive',
+                    value: '3',
+                },
+            ],
+        };
 
         const templateParameters = instance.extractParameters(conditions);
         expect(templateParameters).toEqual([]);
     });
 
-
     it('should populate parameters using the input', () => {
         const conditions: EventConditions = {
             all: [
                 {
-                    "fact": "batteryLevel",
-                    "operator": "lessThanInclusive",
-                    "value": "$batteryThreshold"
-                }
+                    fact: 'batteryLevel',
+                    operator: 'lessThanInclusive',
+                    value: '$batteryThreshold',
+                },
             ],
             any: [
                 {
-                    "fact": "temperatureLevel",
-                    "operator": "lessThanInclusive",
-                    "value": "$temperatureThreshold"
-                }
-            ]
-        }
+                    fact: 'temperatureLevel',
+                    operator: 'lessThanInclusive',
+                    value: '$temperatureThreshold',
+                },
+            ],
+        };
 
         const expectedConditions = {
             all: [
                 {
-                    "fact": "batteryLevel",
-                    "operator": "lessThanInclusive",
-                    "value": 2
-                }
+                    fact: 'batteryLevel',
+                    operator: 'lessThanInclusive',
+                    value: 2,
+                },
             ],
             any: [
                 {
-                    "fact": "temperatureLevel",
-                    "operator": "lessThanInclusive",
-                    "value": 10
-                }
-            ]
-        }
+                    fact: 'temperatureLevel',
+                    operator: 'lessThanInclusive',
+                    value: 10,
+                },
+            ],
+        };
 
         instance.populateParameters(conditions, { batteryThreshold: 2, temperatureThreshold: 10 });
         expect(conditions).toEqual(expectedConditions);

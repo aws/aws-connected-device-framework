@@ -12,34 +12,40 @@
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
 import { NotSupportedError } from '../utils/errors';
-import {logger} from '@awssolutions/simple-cdf-logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { DeviceProfileItem, GroupProfileItem, ProfileItemList } from './profiles.models';
 import { ProfilesService } from './profiles.service';
 
 @injectable()
 export class ProfilesServiceLite implements ProfilesService {
-
-    public async get(templateId:string, profileId:string): Promise<DeviceProfileItem|GroupProfileItem> {
-        logger.debug(`profiles.full.service get: in: templateId:${templateId}, profileId:${profileId}`);
+    public async get(
+        templateId: string,
+        profileId: string,
+    ): Promise<DeviceProfileItem | GroupProfileItem> {
+        logger.debug(
+            `profiles.full.service get: in: templateId:${templateId}, profileId:${profileId}`,
+        );
         throw new NotSupportedError();
     }
 
-    public async create(model:DeviceProfileItem|GroupProfileItem) : Promise<string> {
+    public async create(model: DeviceProfileItem | GroupProfileItem): Promise<string> {
         logger.debug(`profiles.full.service create: in: model:${JSON.stringify(model)}`);
         throw new NotSupportedError();
     }
 
-    public async update(model: DeviceProfileItem | GroupProfileItem) : Promise<string> {
+    public async update(model: DeviceProfileItem | GroupProfileItem): Promise<string> {
         logger.debug(`profiles.full.service update: in: model: ${JSON.stringify(model)}`);
         throw new NotSupportedError();
     }
 
-    public async delete(templateId:string, profileId:string) : Promise<void> {
-        logger.debug(`profiles.full.service delete: in: templateId:${templateId}, profileId:${profileId}`);
+    public async delete(templateId: string, profileId: string): Promise<void> {
+        logger.debug(
+            `profiles.full.service delete: in: templateId:${templateId}, profileId:${profileId}`,
+        );
         throw new NotSupportedError();
     }
 
-    public async list(templateId:string): Promise<ProfileItemList> {
+    public async list(templateId: string): Promise<ProfileItemList> {
         logger.debug(`profiles.full.service list: in: templateId:${templateId}`);
         throw new NotSupportedError();
     }

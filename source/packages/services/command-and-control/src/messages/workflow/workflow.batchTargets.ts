@@ -23,22 +23,27 @@ import { SendMessageResult } from 'aws-sdk/clients/sqs';
 
 @injectable()
 export class BatchTargetsAction implements WorkflowAction {
-
     private sqs: AWS.SQS;
 
     constructor(
-        @inject('aws.sqs.queues.messages.queueUrl') private messagesQueueUrl:string,
-        @inject('aws.sqs.queues.messages.topic.batchSize') private topicMessagesBatchSize:number,
-        @inject('aws.sqs.queues.messages.shadow.batchSize') private shadowMessagesBatchSize:number,
-        @inject('aws.sqs.queues.messages.job.batchSize') private jobMessagesBatchSize:number,
-        @inject('promises.concurrency') private promisesConcurrency:number,
+        @inject('aws.sqs.queues.messages.queueUrl') private messagesQueueUrl: string,
+        @inject('aws.sqs.queues.messages.topic.batchSize') private topicMessagesBatchSize: number,
+        @inject('aws.sqs.queues.messages.shadow.batchSize')
+        private shadowMessagesBatchSize: number,
+        @inject('aws.sqs.queues.messages.job.batchSize') private jobMessagesBatchSize: number,
+        @inject('promises.concurrency') private promisesConcurrency: number,
         @inject(TYPES.MessagesDao) private messagesDao: MessagesDao,
-        @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS) {
-            this.sqs = sqsFactory();
+        @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS,
+    ) {
+        this.sqs = sqsFactory();
     }
 
-    async process(message:MessageItem,command:CommandItem): Promise<boolean> {
-        logger.debug(`workflow.batchTargets process: message:${JSON.stringify(message)}, command:${JSON.stringify(command)}`);
+    async process(message: MessageItem, command: CommandItem): Promise<boolean> {
+        logger.debug(
+            `workflow.batchTargets process: message:${JSON.stringify(
+                message,
+            )}, command:${JSON.stringify(command)}`,
+        );
 
         ow(command, ow.object.plain);
         ow(message, ow.object.plain);
@@ -58,14 +63,12 @@ export class BatchTargetsAction implements WorkflowAction {
         await this.messagesDao.saveBatchProgress(message);
 
         // send each batch of deployments to sqs for async processing
-        const sqsFutures:Promise<SendMessageResult>[]= [];
+        const sqsFutures: Promise<SendMessageResult>[] = [];
         const limit = pLimit(this.promisesConcurrency);
         for (const batch of batches) {
             // replace full list of resolved targets with the batch, so the message item now represents a batch
             message.resolvedTargets = batch;
-            sqsFutures.push(
-                limit(()=> this.sqsSendMessage(message, command))
-            );
+            sqsFutures.push(limit(() => this.sqsSendMessage(message, command)));
         }
         await Promise.all(sqsFutures);
 
@@ -73,8 +76,8 @@ export class BatchTargetsAction implements WorkflowAction {
         return true;
     }
 
-    private getBatchSize(deliveryMethod:DeliveryMethod) : number {
-        switch(deliveryMethod) {
+    private getBatchSize(deliveryMethod: DeliveryMethod): number {
+        switch (deliveryMethod) {
             case 'JOB':
                 return this.jobMessagesBatchSize;
             case 'TOPIC':
@@ -84,19 +87,24 @@ export class BatchTargetsAction implements WorkflowAction {
         }
     }
 
-    private async sqsSendMessage(message:MessageItem, command:CommandItem) : Promise<SendMessageResult> {
-        return this.sqs.sendMessage({
-            QueueUrl: this.messagesQueueUrl,
-            MessageBody: JSON.stringify({
-                message,
-                command,
-            }),
-            MessageAttributes: {
-                messageType: {
-                    DataType: 'String',
-                    StringValue: `Message::${message.status}`
-                }
-            }
-        }).promise();
+    private async sqsSendMessage(
+        message: MessageItem,
+        command: CommandItem,
+    ): Promise<SendMessageResult> {
+        return this.sqs
+            .sendMessage({
+                QueueUrl: this.messagesQueueUrl,
+                MessageBody: JSON.stringify({
+                    message,
+                    command,
+                }),
+                MessageAttributes: {
+                    messageType: {
+                        DataType: 'String',
+                        StringValue: `Message::${message.status}`,
+                    },
+                },
+            })
+            .promise();
     }
 }

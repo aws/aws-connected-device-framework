@@ -14,16 +14,14 @@ import { format } from 'logform';
 import { createLogger, LoggerOptions, transports } from 'winston';
 const { combine, timestamp, printf } = format;
 
-export const logger = createLogger(<LoggerOptions> {
+export const logger = createLogger(<LoggerOptions>{
     level: process.env.LOGGING_LEVEL,
     exitOnError: false,
-    transports: [
-        new transports.Console(),
-    ],
+    transports: [new transports.Console()],
     format: combine(
-      timestamp(),
-      printf(nfo => {
-        return `${nfo.timestamp} ${nfo.level}: ${nfo.message}`;
-      })
+        timestamp(),
+        printf((nfo) => {
+            return `${nfo.timestamp} ${nfo.level}: ${nfo.message}`;
+        }),
     ),
 });

@@ -31,7 +31,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -41,7 +41,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
     async createProfile(
         category: string,
         body: DeviceProfileResource | GroupProfileResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(body, 'body', ow.object.nonEmpty);
         ow(body.templateId, 'templateId', ow.string.nonEmpty);
@@ -57,14 +57,14 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
 
     async createDeviceProfile(
         body: DeviceProfileResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         await this.createProfile('device', body, additionalHeaders);
     }
 
     async createGroupProfile(
         body: GroupProfileResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         await this.createProfile('group', body, additionalHeaders);
     }
@@ -73,7 +73,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
         category: string,
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeviceProfileResource | GroupProfileResource> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -91,7 +91,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
     async getDeviceProfile(
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeviceProfileResource> {
         return await this.getProfile('device', templateId, profileId, additionalHeaders);
     }
@@ -99,7 +99,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
     async getGroupProfile(
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<GroupProfileResource> {
         return await this.getProfile('group', templateId, profileId, additionalHeaders);
     }
@@ -109,7 +109,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
         templateId: string,
         profileId: string,
         body: DeviceProfileResource | GroupProfileResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -129,7 +129,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
         templateId: string,
         profileId: string,
         body: DeviceProfileResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         await this.updateProfile('device', templateId, profileId, body, additionalHeaders);
     }
@@ -138,7 +138,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
         templateId: string,
         profileId: string,
         body: GroupProfileResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         await this.updateProfile('group', templateId, profileId, body, additionalHeaders);
     }
@@ -147,7 +147,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
         category: string,
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -165,7 +165,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
     async deleteDeviceProfile(
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         return await this.deleteProfile('device', templateId, profileId, additionalHeaders);
     }
@@ -173,7 +173,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
     async deleteGroupProfile(
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         return await this.deleteProfile('group', templateId, profileId, additionalHeaders);
     }
@@ -181,7 +181,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
     async listProfiles(
         category: string,
         templateId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<ProfileResourceList> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -197,14 +197,14 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
 
     async listDeviceProfiles(
         templateId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<ProfileResourceList> {
         return await this.listProfiles('device', templateId, additionalHeaders);
     }
 
     async listGroupProfiles(
         templateId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<ProfileResourceList> {
         return await this.listProfiles('group', templateId, additionalHeaders);
     }

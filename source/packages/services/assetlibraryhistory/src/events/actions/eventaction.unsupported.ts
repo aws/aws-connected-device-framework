@@ -17,11 +17,9 @@ import { EventAction } from './eventaction.interfaces';
 
 @injectable()
 export class UnsupportedAction implements EventAction {
-
-    async execute(event:EventModel): Promise<EventModel> {
+    async execute(event: EventModel): Promise<EventModel> {
         logger.debug(`eventaction.unsupportAction execute: event:${JSON.stringify(event)}`);
 
         return null;
     }
-
 }

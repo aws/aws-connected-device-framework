@@ -12,19 +12,18 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import {Node, NodeAttributeValue} from './node';
+import { Node, NodeAttributeValue } from './node';
 import { ModelAttributeValue } from './model';
 import { RelatedEntityDto, VertexDto } from './full.model';
 import { NotSupportedError } from '../utils/errors';
 
 @injectable()
 export class LiteAssembler {
-
-    public assembleNode(_entity:VertexDto):Node {
+    public assembleNode(_entity: VertexDto): Node {
         throw new NotSupportedError();
     }
 
-    public assembleAssociation(_node:Node, _r:RelatedEntityDto) : void {
+    public assembleAssociation(_node: Node, _r: RelatedEntityDto): void {
         throw new NotSupportedError();
     }
 
@@ -35,6 +34,4 @@ export class LiteAssembler {
             return v;
         }
     }
-
 }
-

@@ -20,13 +20,17 @@ import { CommandsValidator } from '../commands.validator';
 
 @injectable()
 export class SaveAction implements WorkflowAction {
-
     constructor(
         @inject(TYPES.CommandsValidator) private commandsValidator: CommandsValidator,
-        @inject(TYPES.CommandsDao) private commandsDao: CommandsDao) {}
+        @inject(TYPES.CommandsDao) private commandsDao: CommandsDao,
+    ) {}
 
-    async execute(existing:CommandModel, updated:CommandModel): Promise<boolean> {
-        logger.debug(`workflow.save execute: existing:${JSON.stringify(existing)}, updated:${JSON.stringify(updated)}`);
+    async execute(existing: CommandModel, updated: CommandModel): Promise<boolean> {
+        logger.debug(
+            `workflow.save execute: existing:${JSON.stringify(existing)}, updated:${JSON.stringify(
+                updated,
+            )}`,
+        );
 
         this.commandsValidator.validate(updated);
 
@@ -35,7 +39,5 @@ export class SaveAction implements WorkflowAction {
 
         logger.debug('workflow.save execute: exit:true');
         return true;
-
     }
-
 }

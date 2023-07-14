@@ -19,13 +19,12 @@ import { PatchItem } from './patch/patch.model';
 const patchService: PatchService = container.get<PatchService>(TYPES.PatchService);
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-exports.handler = async(event: any, _context: any, callback: any) => {
-
+exports.handler = async (event: any, _context: any, callback: any) => {
     logger.debug(`event: ${JSON.stringify(event)}`);
 
-    if(event.Records) {
+    if (event.Records) {
         for (const record of event.Records) {
-            if(record.eventSource === 'aws:sqs') {
+            if (record.eventSource === 'aws:sqs') {
                 const patch: PatchItem = JSON.parse(record.body);
                 try {
                     await patchService.deploy(patch);
@@ -34,7 +33,9 @@ exports.handler = async(event: any, _context: any, callback: any) => {
                     callback('error', null);
                 }
             } else {
-                logger.warn(`lambda_sqs_proxy handler: ignoring non-sqs events: ${JSON.stringify(record)}`);
+                logger.warn(
+                    `lambda_sqs_proxy handler: ignoring non-sqs events: ${JSON.stringify(record)}`,
+                );
             }
         }
     }

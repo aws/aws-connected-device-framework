@@ -29,7 +29,7 @@ exports.export_handler = async (event: any, _context: any) => {
 
     logger.debug(`export_handler exit: result: ${JSON.stringify(batches)}`);
 
-    const batchIds = batches.map((batch) => batch.id)
+    const batchIds = batches.map((batch) => batch.id);
 
     return batchIds;
 };

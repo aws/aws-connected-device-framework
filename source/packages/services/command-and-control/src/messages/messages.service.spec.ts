@@ -24,9 +24,7 @@ import { MessagesService } from './messages.service';
 import { WorkflowFactory } from './workflow/workflow.factory';
 import { TopicAction } from './workflow/workflow.topic';
 
-
 describe('MessagesService', () => {
-
     let mockedCommandsDao: jest.Mocked<CommandsDao>;
     let mockedMessagesDao: jest.Mocked<MessagesDao>;
     let mockedWorkflowFactory: jest.Mocked<WorkflowFactory>;
@@ -38,8 +36,8 @@ describe('MessagesService', () => {
         mockedCommandsDao = createMockInstance(CommandsDao);
         mockedMessagesDao = createMockInstance(MessagesDao);
         mockedWorkflowFactory = createMockInstance(WorkflowFactory);
-        mockedSQS = new SQS;
-        mockedIot = new Iot;
+        mockedSQS = new SQS();
+        mockedIot = new Iot();
 
         const mockedSQSFactory = () => {
             return mockedSQS;
@@ -48,27 +46,35 @@ describe('MessagesService', () => {
         const mockedIotFactory = () => {
             return mockedIot;
         };
-        underTest = new MessagesService(10, 'mocked-queue-url', mockedCommandsDao, mockedMessagesDao, mockedWorkflowFactory, mockedSQSFactory, mockedIotFactory);
+        underTest = new MessagesService(
+            10,
+            'mocked-queue-url',
+            mockedCommandsDao,
+            mockedMessagesDao,
+            mockedWorkflowFactory,
+            mockedSQSFactory,
+            mockedIotFactory,
+        );
     });
 
     it('create - happy path', async () => {
-
         // stubs
         const command: CommandItem = {
             id: 'c123',
-
-        }
+        };
 
         const message: MessageItem = {
-            commandId: command.id
-        }
+            commandId: command.id,
+        };
 
         // mocks
         mockedCommandsDao.get = jest.fn().mockResolvedValueOnce([command]);
         mockedMessagesDao.saveMessage = jest.fn().mockResolvedValueOnce(undefined);
         const mockSendMessageResponse = new MockAWSPromise<AWS.SQS.SendMessageResult>();
         mockSendMessageResponse.response = {};
-        const mockSendMessage = mockedSQS.sendMessage = <any>(jest.fn((_params) => mockSendMessageResponse));
+        const mockSendMessage = (mockedSQS.sendMessage = <any>(
+            jest.fn((_params) => mockSendMessageResponse)
+        ));
 
         // execute
 
@@ -89,32 +95,34 @@ describe('MessagesService', () => {
         expect(sendMessageArgs.QueueUrl).toEqual('mocked-queue-url');
         expect(JSON.parse(sendMessageArgs.MessageBody)?.message?.id).toEqual(saved.id);
         expect(JSON.parse(sendMessageArgs.MessageBody)?.command?.id).toEqual(command.id);
-        expect(sendMessageArgs.MessageAttributes.messageType.StringValue).toEqual('Message::identifying_targets');
-
+        expect(sendMessageArgs.MessageAttributes.messageType.StringValue).toEqual(
+            'Message::identifying_targets',
+        );
     });
 
     it('create - happy path with payload params', async () => {
-
         // stubs
         const command: CommandItem = {
             id: 'c123',
-            payloadParams: ['foo', 'bar']
-        }
+            payloadParams: ['foo', 'bar'],
+        };
 
         const message: MessageItem = {
             commandId: command.id,
             payloadParamValues: {
                 foo: 'one',
-                bar: 'two'
-            }
-        }
+                bar: 'two',
+            },
+        };
 
         // mocks
         mockedCommandsDao.get = jest.fn().mockResolvedValueOnce([command]);
         mockedMessagesDao.saveMessage = jest.fn().mockResolvedValueOnce(undefined);
         const mockSendMessageResponse = new MockAWSPromise<AWS.SQS.SendMessageResult>();
         mockSendMessageResponse.response = {};
-        const mockSendMessage = mockedSQS.sendMessage = <any>(jest.fn((_params) => mockSendMessageResponse));
+        const mockSendMessage = (mockedSQS.sendMessage = <any>(
+            jest.fn((_params) => mockSendMessageResponse)
+        ));
 
         // execute
 
@@ -135,25 +143,25 @@ describe('MessagesService', () => {
         expect(sendMessageArgs.QueueUrl).toEqual('mocked-queue-url');
         expect(JSON.parse(sendMessageArgs.MessageBody)?.message?.id).toEqual(saved.id);
         expect(JSON.parse(sendMessageArgs.MessageBody)?.command?.id).toEqual(command.id);
-        expect(sendMessageArgs.MessageAttributes.messageType.StringValue).toEqual('Message::identifying_targets');
-
+        expect(sendMessageArgs.MessageAttributes.messageType.StringValue).toEqual(
+            'Message::identifying_targets',
+        );
     });
 
     it('create - failure path - missing payload params', async () => {
-
         // stubs
         const command: CommandItem = {
             id: 'c123',
-            payloadParams: ['foo', 'bar']
-        }
+            payloadParams: ['foo', 'bar'],
+        };
 
         const message: MessageItem = {
             commandId: command.id,
             payloadParamValues: {
-                foo: 'one'
+                foo: 'one',
                 // missing payload param `bar`
-            }
-        }
+            },
+        };
 
         // mocks
         mockedCommandsDao.get = jest.fn().mockResolvedValueOnce([command]);
@@ -162,36 +170,35 @@ describe('MessagesService', () => {
         // execute
         const functionUnderTest = async () => {
             await underTest.create(message);
-        }
-        await expect(functionUnderTest()).rejects.toThrow('FAILED_VALIDATION: value for command payload parameter \'bar\' not provided');
+        };
+        await expect(functionUnderTest()).rejects.toThrow(
+            "FAILED_VALIDATION: value for command payload parameter 'bar' not provided",
+        );
 
         // verify
         expect(mockedCommandsDao.get).toHaveBeenCalledWith([message.commandId]);
         expect(mockedMessagesDao.saveMessage).toHaveBeenCalledTimes(0);
-
-
     });
 
     it('processMessage - happy path', async () => {
-
         // stubs
         const command: CommandItem = {
             id: 'c123',
             deliveryMethod: {
                 type: 'TOPIC',
                 expectReply: true,
-                onlineOnly: true
-            }
-        }
+                onlineOnly: true,
+            },
+        };
 
         const message: MessageItem = {
             commandId: command.id,
             resolvedTargets: [
                 { id: 't1', correlationId: 'c1', status: 'success', type: 'thing' },
                 { id: 't2', correlationId: 'c2', status: 'success', type: 'thing' },
-                { id: 't3', correlationId: 'c3', status: 'success', type: 'thing' }
-            ]
-        }
+                { id: 't3', correlationId: 'c3', status: 'success', type: 'thing' },
+            ],
+        };
 
         // mocks
         const mockedAction = createMockInstance(TopicAction);
@@ -203,9 +210,11 @@ describe('MessagesService', () => {
 
         const batchProgress: TaskBatchProgress = {
             complete: 1,
-            total: 1
+            total: 1,
         };
-        mockedMessagesDao.incrementBatchesCompleted = jest.fn().mockResolvedValueOnce(batchProgress);
+        mockedMessagesDao.incrementBatchesCompleted = jest
+            .fn()
+            .mockResolvedValueOnce(batchProgress);
 
         mockedMessagesDao.getMessageById = jest.fn().mockResolvedValueOnce(message);
 
@@ -225,54 +234,53 @@ describe('MessagesService', () => {
 
         expect(mockedMessagesDao.getMessageById).toHaveBeenCalledTimes(1);
 
-        expect(mockedMessagesDao.updateMessage).toHaveBeenCalledTimes(2)
+        expect(mockedMessagesDao.updateMessage).toHaveBeenCalledTimes(2);
         const save1Args = mockedMessagesDao.updateMessage.mock.calls[0];
         expect(save1Args[0]).toBe(message);
 
-        expect(mockedMessagesDao.saveResolvedTargets).toHaveBeenCalledTimes(1)
+        expect(mockedMessagesDao.saveResolvedTargets).toHaveBeenCalledTimes(1);
 
         const save2Args = mockedMessagesDao.updateMessage.mock.calls[1];
         expect(save2Args[0].status).toBe('awaiting_replies');
 
-        expect(mockedMessagesDao.saveBatchProgress).toHaveBeenCalledTimes(1)
-
+        expect(mockedMessagesDao.saveBatchProgress).toHaveBeenCalledTimes(1);
     });
 
     it('processMessage - failure path', async () => {
-
         // stubs
         const command: CommandItem = {
             id: 'c123',
             deliveryMethod: {
                 type: 'TOPIC',
                 expectReply: true,
-                onlineOnly: true
-            }
-        }
+                onlineOnly: true,
+            },
+        };
 
         const message: MessageItem = {
             commandId: command.id,
             resolvedTargets: [
                 { id: 't1', correlationId: 'c1', status: 'pending', type: 'thing' },
                 { id: 't2', correlationId: 'c2', status: 'pending', type: 'thing' },
-                { id: 't3', correlationId: 'c3', status: 'pending', type: 'thing' }
-            ]
-        }
+                { id: 't3', correlationId: 'c3', status: 'pending', type: 'thing' },
+            ],
+        };
 
         // mocks
         const mockedAction = createMockInstance(TopicAction);
         mockedAction.process = jest.fn().mockResolvedValueOnce(false);
         mockedWorkflowFactory.getAction = jest.fn().mockReturnValueOnce([mockedAction]);
 
-
         mockedMessagesDao.updateMessage = jest.fn().mockResolvedValueOnce(undefined);
         mockedMessagesDao.saveResolvedTargets = jest.fn().mockResolvedValueOnce(undefined);
 
         const batchProgress: TaskBatchProgress = {
             complete: 1,
-            total: 1
+            total: 1,
         };
-        mockedMessagesDao.incrementBatchesCompleted = jest.fn().mockResolvedValueOnce(batchProgress);
+        mockedMessagesDao.incrementBatchesCompleted = jest
+            .fn()
+            .mockResolvedValueOnce(batchProgress);
 
         mockedMessagesDao.getMessageById = jest.fn().mockResolvedValueOnce(message);
 
@@ -292,18 +300,17 @@ describe('MessagesService', () => {
 
         expect(mockedMessagesDao.getMessageById).toHaveBeenCalledTimes(1);
 
-        expect(mockedMessagesDao.updateMessage).toHaveBeenCalledTimes(2)
+        expect(mockedMessagesDao.updateMessage).toHaveBeenCalledTimes(2);
         const save1Args = mockedMessagesDao.updateMessage.mock.calls[0];
         expect(save1Args[0]).toBe(message);
 
-        expect(mockedMessagesDao.saveResolvedTargets).toHaveBeenCalledTimes(1)
+        expect(mockedMessagesDao.saveResolvedTargets).toHaveBeenCalledTimes(1);
 
         const save2Args = mockedMessagesDao.updateMessage.mock.calls[1];
         expect(save2Args[0].status).toBe('failed');
         expect(save2Args[0].statusMessage).toBe('PROCESS_MESSAGE_FAILED');
 
-        expect(mockedMessagesDao.saveBatchProgress).toHaveBeenCalledTimes(1)
-
+        expect(mockedMessagesDao.saveBatchProgress).toHaveBeenCalledTimes(1);
     });
 });
 

@@ -17,7 +17,6 @@ import { MessageCompilerDao } from './messageCompiler.dao';
 import { MessageTemplates } from './messageCompiler.model';
 
 describe('MessageCompiler', () => {
-
     let mockedMessageCompilerDao: jest.Mocked<MessageCompilerDao>;
     let instance: MessageCompilerService;
 
@@ -26,26 +25,27 @@ describe('MessageCompiler', () => {
         instance = new MessageCompilerService(mockedMessageCompilerDao);
     });
 
-    it('message compiled succesfully', async() => {
-
+    it('message compiled succesfully', async () => {
         const eventId = 'event001';
         const attributes = {
             notUsedAttribute: 'something',
-            thingName: 'myDogBowl'
+            thingName: 'myDogBowl',
         };
 
         // mocks
-        const mockedResponse:MessageTemplates= {
+        const mockedResponse: MessageTemplates = {
             supportedTargets: {
                 mail: 'default',
-                sms: 'small'
+                sms: 'small',
             },
             templates: {
                 default: 'default {{=it.thingName}}',
-                small: 'small {{=it.thingName}}'
-            }
+                small: 'small {{=it.thingName}}',
+            },
         };
-        const mockedQuery = mockedMessageCompilerDao.getEventConfig = jest.fn().mockImplementationOnce(()=> mockedResponse);
+        const mockedQuery = (mockedMessageCompilerDao.getEventConfig = jest
+            .fn()
+            .mockImplementationOnce(() => mockedResponse));
 
         // execute
         const actual = await instance.compile(eventId, 'sms', attributes);
@@ -53,6 +53,5 @@ describe('MessageCompiler', () => {
         // verification
         expect(actual).toEqual('small myDogBowl');
         expect(mockedQuery).toBeCalledWith(eventId);
-
     });
 });

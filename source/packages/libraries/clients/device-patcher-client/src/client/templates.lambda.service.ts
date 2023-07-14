@@ -27,7 +27,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -36,7 +36,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
     async createTemplate(
         _template: CreatePatchTemplateParams,
-        _additionalHeaders?: RequestHeaders
+        _additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         // files cannot be passed via multipart/form-data with the direct lambda invocation.
         // This requires extension of the API to support the content-type=json header with file content passed as a buffer
@@ -45,7 +45,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
     async updateTemplate(
         _template: CreatePatchTemplateParams,
-        _additionalHeaders?: RequestHeaders
+        _additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         // files cannot be passed via multipart/form-data with the direct lambda invocation.
         // This requires extension of the API to support the content-type=json header with file content passed as a buffer

@@ -11,7 +11,7 @@
     "build": "npx tsc -b",
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
-   "dependencies": {
+  "dependencies": {
     "@awssolutions/cdf-client-request-signer": "^0.0.2",
     "@awssolutions/cdf-lambda-invoke": "^0.0.2",
     "@awssolutions/simple-cdf-logger": "^2.1.3",
@@ -54,8 +54,7 @@
     "@types/dotenv-flow": "~3.2.0"
   },
   "jest": {
-    "globals": {
-               },
+    "globals": {},
     "roots": [
       "<rootDir>/src"
     ],

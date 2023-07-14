@@ -28,7 +28,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -39,7 +39,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         category: CategoryEnum,
         templateId: string,
         status: StatusEnum,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<TypeResource> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -56,7 +56,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
     async createTemplate(
         resource: TypeResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(resource, 'resource', ow.object.nonEmpty);
         ow(resource.templateId, 'templateId', ow.string.nonEmpty);
@@ -80,7 +80,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
     async updateTemplate(
         resource: TypeResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(resource, 'resource', ow.object.nonEmpty);
         ow(resource.templateId, 'templateId', ow.string.nonEmpty);
@@ -103,7 +103,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     async publishTemplate(
         category: CategoryEnum,
         templateId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -119,7 +119,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     async deleteTemplate(
         category: CategoryEnum,
         templateId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -137,7 +137,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         status?: string,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<TypeResourceList> {
         ow(category, 'category', ow.string.nonEmpty);
 

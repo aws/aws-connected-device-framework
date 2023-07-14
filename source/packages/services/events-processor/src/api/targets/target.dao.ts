@@ -28,7 +28,7 @@ export class TargetDao {
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable: string,
         @inject(TYPES.CachableDocumentClientFactory)
-        cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
+        cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient,
     ) {
         this._cachedDc = cachableDocumentClientFactory();
     }
@@ -41,12 +41,12 @@ export class TargetDao {
         item: TargetItem,
         eventSourceId: string,
         principal: string,
-        principalValue: string
+        principalValue: string,
     ): DocumentClient.PutItemInputAttributeMap {
         logger.debug(
             `target.dao buildPutItemAttributeMap: item:${JSON.stringify(
-                item
-            )}, eventSourceId:${eventSourceId}, principal:${principal}, principalValue:${principalValue}`
+                item,
+            )}, eventSourceId:${eventSourceId}, principal:${principal}, principalValue:${principalValue}`,
         );
 
         const putItemAttributeMap: DocumentClient.PutItemInputAttributeMap = {
@@ -56,14 +56,14 @@ export class TargetDao {
                 PkType.EventSource,
                 eventSourceId,
                 principal,
-                principalValue
+                principalValue,
             ),
             gsi2Sort: createDelimitedAttribute(
                 PkType.Subscription,
                 item.subscriptionId,
                 PkType.SubscriptionTarget,
                 item.targetType,
-                item.getId()
+                item.getId(),
             ),
         };
 
@@ -75,7 +75,7 @@ export class TargetDao {
         }
 
         logger.debug(
-            `target.dao buildPutItemAttributeMap: exit:${JSON.stringify(putItemAttributeMap)}`
+            `target.dao buildPutItemAttributeMap: exit:${JSON.stringify(putItemAttributeMap)}`,
         );
         return putItemAttributeMap;
     }
@@ -89,12 +89,12 @@ export class TargetDao {
         item: TargetItem,
         eventSourceId: string,
         principal: string,
-        principalValue: string
+        principalValue: string,
     ): Promise<void> {
         logger.debug(
             `target.dao create: item:${JSON.stringify(
-                item
-            )}, eventSourceId:${eventSourceId}, principal:${principal}, principalValue:${principalValue}`
+                item,
+            )}, eventSourceId:${eventSourceId}, principal:${principal}, principalValue:${principalValue}`,
         );
 
         const putItemAttributeMap: DocumentClient.PutItemInputAttributeMap =
@@ -113,10 +113,10 @@ export class TargetDao {
     public async delete(
         subscriptionId: string,
         targetType: string,
-        targetId: string
+        targetId: string,
     ): Promise<void> {
         logger.debug(
-            `target.dao delete: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`
+            `target.dao delete: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`,
         );
 
         const pk = createDelimitedAttribute(PkType.Subscription, subscriptionId);
@@ -135,10 +135,10 @@ export class TargetDao {
     public async get<T extends TargetItem>(
         subscriptionId: string,
         targetType: string,
-        targetId: string
+        targetId: string,
     ): Promise<T> {
         logger.debug(
-            `target.dao get: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`
+            `target.dao get: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`,
         );
 
         const pk = createDelimitedAttribute(PkType.Subscription, subscriptionId);
@@ -163,7 +163,7 @@ export class TargetDao {
         const sk = createDelimitedAttribute(
             PkType.SubscriptionTarget,
             item.targetType,
-            item.getId()
+            item.getId(),
         );
         const params = {
             TableName: this.eventConfigTable,

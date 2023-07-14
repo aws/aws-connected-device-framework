@@ -19,15 +19,15 @@ import { logger } from '@awssolutions/simple-cdf-logger';
 import { Batch, Batcher, Batches } from '../batch.service';
 import { TypeCategory } from '../../types/constants';
 import { LabelsService } from '../../labels/labels.service';
-import {BatcherBase} from '../batcher.base';
+import { BatcherBase } from '../batcher.base';
 
 @injectable()
 export class CategoryBatcher extends BatcherBase implements Batcher {
     constructor(
         @inject(TYPES.LabelsService) private labelsService: LabelsService,
-        @inject('defaults.batch.size') private batchSize: number
+        @inject('defaults.batch.size') private batchSize: number,
     ) {
-        super()
+        super();
     }
 
     public async batch(): Promise<Batches> {
@@ -38,22 +38,20 @@ export class CategoryBatcher extends BatcherBase implements Batcher {
         return await this.getBatchesByCategories(typeCategories);
     }
 
-    private async getBatchesByCategories(categories:string[]): Promise<Batch[]> {
-        const batches:Batch[] = [];
-
+    private async getBatchesByCategories(categories: string[]): Promise<Batch[]> {
+        const batches: Batch[] = [];
 
         for (const category of categories) {
-
             const count = await this.labelsService.getObjectCount(category);
             const ranges = this.createRangesByCount(count.total, this.batchSize);
 
-            for(const range of ranges) {
+            for (const range of ranges) {
                 const batch = new Batch();
                 batch.id = generate();
                 batch.category = category;
                 batch.range = range;
                 batch.timestamp = Date.now();
-                batch.total = count.total
+                batch.total = count.total;
                 batches.push(batch);
             }
         }

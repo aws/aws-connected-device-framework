@@ -14,7 +14,7 @@ import { inject, injectable } from 'inversify';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
 
-import {CustomResourceEvent} from './customResource.model';
+import { CustomResourceEvent } from './customResource.model';
 import {
     LambdaInvokerService,
     LAMBDAINVOKE_TYPES,
@@ -25,15 +25,19 @@ import ow from 'ow';
 
 @injectable()
 export class AssetLibraryPolicyCustomResource implements CustomResource {
-
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService,
     ) {}
 
-    protected headers:{[key:string]:string};
+    protected headers: { [key: string]: string };
 
-    public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`AssetLibraryPolicyCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `AssetLibraryPolicyCustomResource: create: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
 
         const functionName = customResourceEvent.ResourceProperties.FunctionName;
         const contentType = customResourceEvent.ResourceProperties.ContentType;
@@ -58,7 +62,7 @@ export class AssetLibraryPolicyCustomResource implements CustomResource {
         let exists;
         try {
             const response = await this.lambdaInvoker.invoke(functionName, getEvent);
-            exists = (response.status === 200);
+            exists = response.status === 200;
         } catch (err) {
             if (err.status === 404) {
                 exists = false;
@@ -70,43 +74,47 @@ export class AssetLibraryPolicyCustomResource implements CustomResource {
         // if it does not exist, create it, else update the existing one
         let event;
         if (!exists) {
-           event = new LambdaApiGatewayEventBuilder()
+            event = new LambdaApiGatewayEventBuilder()
                 .setMethod('POST')
                 .setPath('/policies')
                 .setHeaders(headers)
                 .setBody(body);
         } else {
             event = new LambdaApiGatewayEventBuilder()
-                 .setMethod('PATCH')
-                 .setPath(path)
-                 .setHeaders(headers)
-                 .setBody(body);
+                .setMethod('PATCH')
+                .setPath(path)
+                .setHeaders(headers)
+                .setBody(body);
         }
         const res = await this.lambdaInvoker.invoke(functionName, event);
-        logger.debug(`AssetLibraryPolicyCustomResource: create: create/update res: ${JSON.stringify(res)}`);
+        logger.debug(
+            `AssetLibraryPolicyCustomResource: create: create/update res: ${JSON.stringify(res)}`,
+        );
 
         return res;
-
     }
 
-    public async update(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`AssetLibraryPolicyCustomResource: update: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `AssetLibraryPolicyCustomResource: update: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
         return await this.create(customResourceEvent);
     }
 
-    public async delete(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-         return {};
+    public async delete(_customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        return {};
     }
 
-    protected getHeaders(contentType:string): {[key:string]:string} {
-        if (this.headers===undefined) {
+    protected getHeaders(contentType: string): { [key: string]: string } {
+        if (this.headers === undefined) {
             const h = {
-                'Accept': contentType,
-                'Content-Type': contentType
+                Accept: contentType,
+                'Content-Type': contentType,
             };
-            this.headers = {...h};
+            this.headers = { ...h };
         }
         return this.headers;
     }
-
 }

@@ -17,5 +17,5 @@ export * from './client/activation.service';
 export * from './client/templates.model';
 export * from './client/templates.service';
 
-export {DEVICE_PATCHER_CLIENT_TYPES} from './di/types';
-export {devicePatcherContainerModule} from './di/inversify.config';
+export { DEVICE_PATCHER_CLIENT_TYPES } from './di/types';
+export { devicePatcherContainerModule } from './di/inversify.config';

@@ -41,6 +41,6 @@ export async function copy(options: CopyOptions) {
     await Promise.all(
         filesToCopy.map((file) => {
             return copyItem(path.resolve(from, file), path.resolve(to, file));
-        })
+        }),
     );
 }

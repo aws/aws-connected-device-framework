@@ -43,7 +43,7 @@ export class ThingsApigwService extends ThingsServiceBase implements ThingsServi
      */
     async provisionThing(
         provisioningRequest: ProvisionThingRequest,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<ProvisionThingResponse> {
         ow(provisioningRequest.provisioningTemplateId, ow.string.nonEmpty);
 
@@ -95,7 +95,7 @@ export class ThingsApigwService extends ThingsServiceBase implements ThingsServi
 
     async bulkProvisionThings(
         req: BulkProvisionThingsRequest,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<BulkProvisionThingsResponse> {
         ow(req, ow.object.nonEmpty);
         ow(req.provisioningTemplateId, ow.string.nonEmpty);
@@ -117,7 +117,7 @@ export class ThingsApigwService extends ThingsServiceBase implements ThingsServi
 
     async getBulkProvisionTask(
         taskId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<BulkProvisionThingsResponse> {
         ow(taskId, ow.string.nonEmpty);
 
@@ -137,7 +137,7 @@ export class ThingsApigwService extends ThingsServiceBase implements ThingsServi
     async updateThingCertificates(
         thingName: string,
         certificateStatus: CertificateStatus,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(thingName, ow.string.nonEmpty);
         ow(certificateStatus, ow.string.nonEmpty);

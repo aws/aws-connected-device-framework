@@ -40,7 +40,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
     async createGroup(
         body: Group10Resource | Group20Resource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(body, 'body', ow.object.nonEmpty);
 
@@ -65,7 +65,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
     async bulkCreateGroup(
         body: BulkLoadGroups,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<BulkLoadGroupsResponse> {
         ow(body, 'body', ow.object.nonEmpty);
 
@@ -107,7 +107,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
     async getGroup(
         groupPath: string,
         additionalHeaders?: RequestHeaders,
-        includeGroups?: boolean
+        includeGroups?: boolean,
     ): Promise<Group10Resource | Group20Resource> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
@@ -134,7 +134,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
         state?: DeviceState,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeviceResourceList> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
@@ -161,7 +161,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
         template?: string,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<GroupResourceList> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
@@ -187,7 +187,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
         groupPath: string,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<GroupResourceList> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
@@ -213,7 +213,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
         groupPath: string,
         body: Group10Resource | Group20Resource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(body, 'body', ow.object.nonEmpty);
@@ -241,7 +241,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
         sourceGroupPath: string,
         relationship: string,
         targetGroupPath: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(sourceGroupPath, 'sourceGroupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -250,7 +250,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
         const url = `${this.baseUrl}${super.groupAttachedGroupRelativeUrl(
             sourceGroupPath,
             relationship,
-            targetGroupPath
+            targetGroupPath,
         )}`;
         return await request
             .put(url)
@@ -268,7 +268,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
         sourceGroupPath: string,
         relationship: string,
         targetGroupPath: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(sourceGroupPath, 'sourceGroupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -277,7 +277,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
         const url = `${this.baseUrl}${super.groupAttachedGroupRelativeUrl(
             sourceGroupPath,
             relationship,
-            targetGroupPath
+            targetGroupPath,
         )}`;
 
         return await request
@@ -300,7 +300,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
         offset?: number,
         count?: number,
         sort?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<GroupResourceList> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -366,7 +366,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
         offset?: number,
         count?: number,
         sort?: string,
-        additionalHeaders: RequestHeaders = {}
+        additionalHeaders: RequestHeaders = {},
     ): Promise<DeviceResourceList> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);

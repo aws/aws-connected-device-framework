@@ -1,8 +1,6 @@
 import { load } from 'dotenv-flow';
 
-const fileLocations = [
-    __dirname + '/.env.defaults'
-];
+const fileLocations = [__dirname + '/.env.defaults'];
 
 load(fileLocations);
 

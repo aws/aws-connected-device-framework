@@ -27,7 +27,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -36,7 +36,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
 
     async createDeviceTask(
         task: NewDeviceTask,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(task, ow.object.nonEmpty);
         ow(task.type, ow.string.oneOf(['Create', 'Delete']));

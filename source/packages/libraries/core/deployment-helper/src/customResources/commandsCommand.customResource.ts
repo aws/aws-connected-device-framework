@@ -14,7 +14,7 @@ import { inject, injectable } from 'inversify';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
 
-import {CustomResourceEvent} from './customResource.model';
+import { CustomResourceEvent } from './customResource.model';
 import {
     LambdaInvokerService,
     LAMBDAINVOKE_TYPES,
@@ -25,15 +25,19 @@ import ow from 'ow';
 
 @injectable()
 export class CommandsCommandCustomResource implements CustomResource {
-
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService,
     ) {}
 
-    protected headers:{[key:string]:string};
+    protected headers: { [key: string]: string };
 
-    public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`CommandsCommandCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `CommandsCommandCustomResource: create: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
 
         const functionName = customResourceEvent.ResourceProperties.FunctionName;
         const contentType = customResourceEvent.ResourceProperties.ContentType;
@@ -63,37 +67,45 @@ export class CommandsCommandCustomResource implements CustomResource {
             .setPath(commandLocation)
             .setHeaders(headers)
             .setBody({
-                commandStatus: 'PUBLISHED'
+                commandStatus: 'PUBLISHED',
             });
 
         const publishRes = await this.lambdaInvoker.invoke(functionName, publishEvent);
-        logger.debug(`CommandsCommandCustomResource: create: publishRes: ${JSON.stringify(publishRes)}`);
+        logger.debug(
+            `CommandsCommandCustomResource: create: publishRes: ${JSON.stringify(publishRes)}`,
+        );
 
         return publishRes;
-
     }
 
-    public async update(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`CommandsCommandCustomResource: update: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `CommandsCommandCustomResource: update: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
         // no update
         return {};
     }
 
-    public async delete(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`CommandsCommandCustomResource: delete: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async delete(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `CommandsCommandCustomResource: delete: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
         // no deleet
-         return {};
+        return {};
     }
 
-    protected getHeaders(contentType:string): {[key:string]:string} {
-        if (this.headers===undefined) {
+    protected getHeaders(contentType: string): { [key: string]: string } {
+        if (this.headers === undefined) {
             const h = {
-                'Accept': contentType,
-                'Content-Type': contentType
+                Accept: contentType,
+                'Content-Type': contentType,
             };
-            this.headers = {...h};
+            this.headers = { ...h };
         }
         return this.headers;
     }
-
 }

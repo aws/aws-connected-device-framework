@@ -22,8 +22,8 @@ export class ExpressionParser {
     // Extract all properties of a string expression
     public extractKeys(): string[] {
         const propertiesMap = {};
-        this.expressions.forEach(expression => {
-            this.parseExpression(expression).forEach(k => {
+        this.expressions.forEach((expression) => {
+            this.parseExpression(expression).forEach((k) => {
                 propertiesMap[k] = k;
             });
         });
@@ -39,7 +39,7 @@ export class ExpressionParser {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const _traverse = (node: any) => {
             // If the node type is member Expression add the name or value of the property
-            if(node.type === 'MemberExpression') {
+            if (node.type === 'MemberExpression') {
                 keys.push(node.property.name || node.property.value);
             }
 
@@ -49,7 +49,7 @@ export class ExpressionParser {
             }
 
             // Recurse if there is a right node
-            if(node.right) {
+            if (node.right) {
                 _traverse(node.right);
             }
         };
@@ -57,7 +57,6 @@ export class ExpressionParser {
         _traverse(expTree);
         return keys;
     }
-
 }
 
 export class ExpressionSanitizer {
@@ -74,15 +73,14 @@ export class ExpressionSanitizer {
         const regex = new RegExp(this.pattern);
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let match:any;
+        let match: any;
 
         do {
             match = regex.exec(this.rawExpression);
 
-            if(match && match.length !== 0) {
+            if (match && match.length !== 0) {
                 sanitizedExpression.push(match[1].replace(/=/g, ''));
             }
-
         } while (match !== null);
 
         return sanitizedExpression;

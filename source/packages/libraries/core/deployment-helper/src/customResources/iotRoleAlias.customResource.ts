@@ -20,22 +20,25 @@ import ow from 'ow';
 
 @injectable()
 export class IotRoleAliasCustomResource implements CustomResource {
-
     private _iot: AWS.Iot;
 
-    constructor(
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
-    ) {
+    constructor(@inject(TYPES.IotFactory) iotFactory: () => AWS.Iot) {
         this._iot = iotFactory();
     }
 
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
-        logger.debug(`IotRoleAliasCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+        logger.debug(
+            `IotRoleAliasCustomResource: create: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
 
-        const tokenExchangeRoleNameArn = customResourceEvent?.ResourceProperties?.TokenExchangeRoleNameArn;
-        const tokenExchangeRoleAlias = customResourceEvent?.ResourceProperties?.TokenExchangeRoleAlias;
+        const tokenExchangeRoleNameArn =
+            customResourceEvent?.ResourceProperties?.TokenExchangeRoleNameArn;
+        const tokenExchangeRoleAlias =
+            customResourceEvent?.ResourceProperties?.TokenExchangeRoleAlias;
 
-        const tokenExchangeRolePolicy = `${tokenExchangeRoleAlias}-policy`
+        const tokenExchangeRolePolicy = `${tokenExchangeRoleAlias}-policy`;
 
         try {
             ow(tokenExchangeRoleNameArn, ow.string.nonEmpty);
@@ -44,49 +47,62 @@ export class IotRoleAliasCustomResource implements CustomResource {
             try {
                 await this._iot.deletePolicy({ policyName: tokenExchangeRolePolicy }).promise();
             } catch (Exception) {
-                logger.error(`IotRoleAliasCustomResource: create: error: cannot delete policy: ${Exception}`)
+                logger.error(
+                    `IotRoleAliasCustomResource: create: error: cannot delete policy: ${Exception}`,
+                );
             }
 
             try {
-                await this._iot.deleteRoleAlias({ roleAlias: tokenExchangeRoleAlias }).promise()
+                await this._iot.deleteRoleAlias({ roleAlias: tokenExchangeRoleAlias }).promise();
             } catch (Exception) {
-                logger.error(`IotRoleAliasCustomResource: create: error: cannot delete existing role alias: ${Exception}`)
+                logger.error(
+                    `IotRoleAliasCustomResource: create: error: cannot delete existing role alias: ${Exception}`,
+                );
             }
 
-            const createRoleAliasResult = await this._iot.createRoleAlias({
-                roleAlias: tokenExchangeRoleAlias,
-                roleArn: tokenExchangeRoleNameArn
-            }).promise()
-
-            const roleAliasArn = createRoleAliasResult.roleAliasArn
-
-            logger.info(`IotRoleAliasCustomResource: role: ${roleAliasArn} is created`)
-
-            await this._iot.createPolicy({
-                policyName: tokenExchangeRolePolicy,
-                policyDocument: JSON.stringify({
-                    "Version": "2012-10-17",
-                    "Statement": [
-                        {
-                            "Effect": "Allow",
-                            "Action": "iot:AssumeRoleWithCertificate",
-                            "Resource": roleAliasArn
-                        }
-                    ]
+            const createRoleAliasResult = await this._iot
+                .createRoleAlias({
+                    roleAlias: tokenExchangeRoleAlias,
+                    roleArn: tokenExchangeRoleNameArn,
                 })
-            }).promise()
+                .promise();
 
-            logger.info(`IotRoleAliasCustomResource: policy: ${tokenExchangeRolePolicy} is created`)
+            const roleAliasArn = createRoleAliasResult.roleAliasArn;
+
+            logger.info(`IotRoleAliasCustomResource: role: ${roleAliasArn} is created`);
+
+            await this._iot
+                .createPolicy({
+                    policyName: tokenExchangeRolePolicy,
+                    policyDocument: JSON.stringify({
+                        Version: '2012-10-17',
+                        Statement: [
+                            {
+                                Effect: 'Allow',
+                                Action: 'iot:AssumeRoleWithCertificate',
+                                Resource: roleAliasArn,
+                            },
+                        ],
+                    }),
+                })
+                .promise();
+
+            logger.info(
+                `IotRoleAliasCustomResource: policy: ${tokenExchangeRolePolicy} is created`,
+            );
             return {};
-
         } catch (err) {
-            logger.error(`IotRoleAliasCustomResource: error: ${JSON.stringify(err)}`)
-            return {}
+            logger.error(`IotRoleAliasCustomResource: error: ${JSON.stringify(err)}`);
+            return {};
         }
     }
 
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
-        logger.debug(`IotRoleAliasCustomResource: update: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+        logger.debug(
+            `IotRoleAliasCustomResource: update: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
         return await this.create(customResourceEvent);
     }
 

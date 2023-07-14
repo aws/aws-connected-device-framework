@@ -42,7 +42,7 @@ export class SubscriptionDao {
         @inject(TYPES.TargetDao) private targetDao: TargetDao,
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
         @inject(TYPES.CachableDocumentClientFactory)
-        cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
+        cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient,
     ) {
         this._cachedDc = cachableDocumentClientFactory();
     }
@@ -67,7 +67,7 @@ export class SubscriptionDao {
             PkType.EventSource,
             si.eventSource.id,
             si.eventSource.principal,
-            si.principalValue
+            si.principalValue,
         );
         const snsTopicArn = si?.sns?.topicArn;
 
@@ -103,7 +103,7 @@ export class SubscriptionDao {
                         PkType.Subscription,
                         si.id,
                         PkType.Event,
-                        si.event.id
+                        si.event.id,
                     ),
                 },
             },
@@ -121,7 +121,7 @@ export class SubscriptionDao {
                         PkType.Subscription,
                         si.id,
                         PkType.User,
-                        si.user.id
+                        si.user.id,
                     ),
                 },
             },
@@ -140,7 +140,7 @@ export class SubscriptionDao {
                         target,
                         si.eventSource.id,
                         si.eventSource.principal,
-                        si.principalValue
+                        si.principalValue,
                     );
                     params.RequestItems[this.eventConfigTable].push({
                         PutRequest: {
@@ -192,10 +192,10 @@ export class SubscriptionDao {
     public async listSubscriptionsForEventMessage(
         eventSourceId: string,
         principal: string,
-        principalValue: string
+        principalValue: string,
     ): Promise<SubscriptionItem[]> {
         logger.debug(
-            `subscription.dao listSubscriptionsForEventMessage: eventSourceId:${eventSourceId}, principal:${principal}, principalValue:${principalValue}`
+            `subscription.dao listSubscriptionsForEventMessage: eventSourceId:${eventSourceId}, principal:${principal}, principalValue:${principalValue}`,
         );
 
         const params: DocumentClient.QueryInput = {
@@ -212,7 +212,7 @@ export class SubscriptionDao {
                     PkType.EventSource,
                     eventSourceId,
                     principal,
-                    principalValue
+                    principalValue,
                 ),
             },
             Select: 'SPECIFIC_ATTRIBUTES',
@@ -237,23 +237,23 @@ export class SubscriptionDao {
 
         const subscriptions = this.assemble(items);
         const response: SubscriptionItem[] = Object.keys(subscriptions).map(
-            (k) => subscriptions[k]
+            (k) => subscriptions[k],
         );
 
         logger.debug(
-            `subscription.dao listSubscriptionsForEventMessage: exit:${JSON.stringify(response)}`
+            `subscription.dao listSubscriptionsForEventMessage: exit:${JSON.stringify(response)}`,
         );
         return response;
     }
 
     public async listSubscriptionsForEvent(
         eventId: string,
-        from?: PaginationKey
+        from?: PaginationKey,
     ): Promise<[SubscriptionItem[], PaginationKey]> {
         logger.debug(
             `subscription.dao listSubscriptionsForEvent: in: eventId:${eventId}, from:${JSON.stringify(
-                from
-            )}`
+                from,
+            )}`,
         );
 
         const params: DocumentClient.QueryInput = {
@@ -282,19 +282,19 @@ export class SubscriptionDao {
             return [undefined, undefined];
         }
         logger.debug(
-            `subscription.dao listSubscriptionsForEvent: results: ${JSON.stringify(results)}`
+            `subscription.dao listSubscriptionsForEvent: results: ${JSON.stringify(results)}`,
         );
 
         const lastEvaluatedKey = results.LastEvaluatedKey;
         const subscriptions = this.assemble(results.Items);
         const response: SubscriptionItem[] = Object.keys(subscriptions).map(
-            (k) => subscriptions[k]
+            (k) => subscriptions[k],
         );
 
         logger.debug(
             `subscription.dao listSubscriptionsForEvent: exit: response${JSON.stringify(
-                response
-            )}, lastEvaluatedKey:${JSON.stringify(lastEvaluatedKey)}`
+                response,
+            )}, lastEvaluatedKey:${JSON.stringify(lastEvaluatedKey)}`,
         );
         return [response, lastEvaluatedKey];
     }
@@ -302,7 +302,7 @@ export class SubscriptionDao {
     public async listSubscriptionIdsForUserPrincipal(
         userId: string,
         principal: string,
-        principalValue: string
+        principalValue: string,
     ): Promise<string[]> {
         logger.debug(`subscription.dao listSubscriptionIdsForUser: userId:${userId}`);
 
@@ -339,7 +339,7 @@ export class SubscriptionDao {
         }
 
         logger.debug(
-            `subscription.dao listSubscriptionsForUser: exit:${JSON.stringify(subscriptionIds)}`
+            `subscription.dao listSubscriptionsForUser: exit:${JSON.stringify(subscriptionIds)}`,
         );
         return subscriptionIds;
     }
@@ -376,7 +376,7 @@ export class SubscriptionDao {
         }
 
         logger.debug(
-            `subscription.dao listSubscriptionsForUser: exit:${JSON.stringify(subscriptionIds)}`
+            `subscription.dao listSubscriptionsForUser: exit:${JSON.stringify(subscriptionIds)}`,
         );
         return subscriptionIds;
     }
@@ -386,10 +386,10 @@ export class SubscriptionDao {
         eventId: string,
         principal: string,
         principalValue: string,
-        userId: string
+        userId: string,
     ): Promise<string[]> {
         logger.debug(
-            `subscription.dao listSubscriptionsForEventUserPrincipal: eventSourceId:${eventSourceId}, eventId:${eventId}, principal:${principal}, principalValue:${principalValue}, userId:${userId}`
+            `subscription.dao listSubscriptionsForEventUserPrincipal: eventSourceId:${eventSourceId}, eventId:${eventId}, principal:${principal}, principalValue:${principalValue}, userId:${userId}`,
         );
 
         // first return all subscription ids for the event source / event / principal combination
@@ -411,7 +411,7 @@ export class SubscriptionDao {
                     PkType.EventSource,
                     eventSourceId,
                     principal,
-                    principalValue
+                    principalValue,
                 ),
                 ':range': createDelimitedAttributePrefix(PkType.Subscription),
                 ':gsi1Sort': createDelimitedAttribute(PkType.Event, eventId),
@@ -432,7 +432,7 @@ export class SubscriptionDao {
         }
         if (items.length === 0) {
             logger.debug(
-                'subscription.dao listSubscriptionsForEventUserPrincipal: exit: undefined'
+                'subscription.dao listSubscriptionsForEventUserPrincipal: exit: undefined',
             );
             return undefined;
         }
@@ -463,7 +463,7 @@ export class SubscriptionDao {
         }
 
         logger.debug(
-            `subscription.dao listSubscriptionsForUserPrincipal: exit:${JSON.stringify(response)}`
+            `subscription.dao listSubscriptionsForUserPrincipal: exit:${JSON.stringify(response)}`,
         );
         return response;
     }
@@ -490,7 +490,7 @@ export class SubscriptionDao {
 
         const subscriptions = this.assemble(results.Items);
         const response: SubscriptionItem[] = Object.keys(subscriptions).map(
-            (k) => subscriptions[k]
+            (k) => subscriptions[k],
         );
 
         logger.debug(`subscription.dao get: exit:${JSON.stringify(response[0])}`);

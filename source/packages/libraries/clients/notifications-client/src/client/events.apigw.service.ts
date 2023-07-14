@@ -33,7 +33,7 @@ export class EventsApigwService extends EventsServiceBase implements EventsServi
     async createEvent(
         eventSourceId: string,
         event: EventResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(event, ow.object.nonEmpty);
         ow(eventSourceId, ow.string.nonEmpty);
@@ -107,7 +107,7 @@ export class EventsApigwService extends EventsServiceBase implements EventsServi
         eventSourceId: string,
         count?: number,
         fromEventId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<EventResourceList> {
         ow(eventSourceId, ow.string.nonEmpty);
 

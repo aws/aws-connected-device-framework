@@ -16,9 +16,15 @@ import { PathHelper } from '../utils/path.helper';
 import { CertificateBatchTaskWithChunks, RequestHeaders } from './certificates.models';
 
 export interface CertificatesService {
-    getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string[]|Buffer>;
-    getCertificatesTask(taskId:string, additionalHeaders?: RequestHeaders): Promise<CertificateBatchTaskWithChunks>;
-
+    getCertificates(
+        taskId: string,
+        downloadType: string,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<string[] | Buffer>;
+    getCertificatesTask(
+        taskId: string,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<CertificateBatchTaskWithChunks>;
 }
 
 @injectable()
@@ -49,7 +55,7 @@ export class CertificatesServiceBase {
         if (customHeaders !== undefined) {
             try {
                 const headersFromConfig: RequestHeaders = JSON.parse(
-                    customHeaders
+                    customHeaders,
                 ) as unknown as RequestHeaders;
                 headers = { ...headers, ...headersFromConfig };
             } catch (err) {

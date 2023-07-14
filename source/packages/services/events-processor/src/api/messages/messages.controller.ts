@@ -24,7 +24,7 @@ export class MessagesController implements interfaces.Controller {
     constructor(
         @inject(TYPES.DDBStreamTransformer) private transformer: DDBStreamTransformer,
         @inject(TYPES.FilterService) private filter: FilterService,
-        @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData
+        @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData,
     ) {
         this._iotData = iotDataFactory();
     }
@@ -37,7 +37,7 @@ export class MessagesController implements interfaces.Controller {
     @httpPost('/messages/invoke')
     public async simulateMessage(@requestBody() message: unknown): Promise<void> {
         logger.debug(
-            `messages.controller simulateMessage: in: message:${JSON.stringify(message)}`
+            `messages.controller simulateMessage: in: message:${JSON.stringify(message)}`,
         );
 
         // transform the message
@@ -58,10 +58,10 @@ export class MessagesController implements interfaces.Controller {
      */
     @httpPost('/messages/iotcore')
     public async simulateIoTCoreMessage(
-        @requestBody() message: SimulateIoTCoreMessageRequest
+        @requestBody() message: SimulateIoTCoreMessageRequest,
     ): Promise<void> {
         logger.debug(
-            `messages.controller simulateIoTCoreMessage: in: message:${JSON.stringify(message)}`
+            `messages.controller simulateIoTCoreMessage: in: message:${JSON.stringify(message)}`,
         );
         const params = {
             topic: message.topic,

@@ -15,7 +15,7 @@ import * as request from 'superagent';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
 
-import {CustomResourceEvent} from './customResource.model';
+import { CustomResourceEvent } from './customResource.model';
 import { CustomResource } from './customResource';
 
 // min supported versions
@@ -23,19 +23,17 @@ const minSupportedVersion = '1.2.0.0.R2';
 
 @injectable()
 export class NeptuneEngineVersionCustomResource implements CustomResource {
-
-    public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-
+    public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         const endpoint = customResourceEvent.ResourceProperties.DBClusterEndpoint;
 
         const result = await request.get(`https://${endpoint}:8182/status`);
         const dbEngineVersion = result.body.dbEngineVersion;
         return {
-            DBEngineVersion: dbEngineVersion
+            DBEngineVersion: dbEngineVersion,
         };
     }
 
-    public async update(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+    public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         const endpoint = customResourceEvent.ResourceProperties.DBClusterEndpoint;
 
         let result;
@@ -51,11 +49,11 @@ export class NeptuneEngineVersionCustomResource implements CustomResource {
         this.verifyVersion(dbEngineVersion, minSupportedVersion);
 
         return {
-            DBEngineVersion: dbEngineVersion
+            DBEngineVersion: dbEngineVersion,
         };
     }
 
-    public async delete(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+    public async delete(_customResourceEvent: CustomResourceEvent): Promise<unknown> {
         return {};
     }
 

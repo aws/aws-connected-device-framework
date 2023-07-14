@@ -11,24 +11,34 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Response } from 'express';
-import { inject } from "inversify";
-import { controller, httpDelete, httpGet, interfaces, queryParam, requestParam, response } from "inversify-express-utils";
-import { TYPES } from "../di/types";
-import { handleError } from "../utils/errors.util";
+import { inject } from 'inversify';
+import {
+    controller,
+    httpDelete,
+    httpGet,
+    interfaces,
+    queryParam,
+    requestParam,
+    response,
+} from 'inversify-express-utils';
+import { TYPES } from '../di/types';
+import { handleError } from '../utils/errors.util';
 import { logger } from '@awssolutions/simple-cdf-logger';
 import { DevicesAssembler } from './devices.assembler';
-import { DevicesService } from "./devices.service";
+import { DevicesService } from './devices.service';
 
 @controller('/devices')
 export class DevicesController implements interfaces.Controller {
-
-
     constructor(
         @inject(TYPES.DevicesService) private devicesService: DevicesService,
-        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler) { }
+        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+    ) {}
 
     @httpGet('/:name')
-    public async getDevice(@requestParam('name') name: string, @response() res: Response): Promise<void> {
+    public async getDevice(
+        @requestParam('name') name: string,
+        @response() res: Response,
+    ): Promise<void> {
         logger.info(`devices.controller getCore: in: name:${name}`);
 
         try {
@@ -47,12 +57,15 @@ export class DevicesController implements interfaces.Controller {
     }
 
     @httpDelete('/:name')
-    public async deleteDevice(@requestParam('name') name: string,
+    public async deleteDevice(
+        @requestParam('name') name: string,
         @queryParam('deprovision') deprovision = true,
         @queryParam('disassociateDeviceFromCore') disassociateDeviceFromCore = true,
-        @response() res: Response): Promise<void> {
-
-        logger.info(`devices.controller deleteDevice: in: name:${name}, deprovision:${deprovision}, disassociateDeviceFromCore:${disassociateDeviceFromCore}`);
+        @response() res: Response,
+    ): Promise<void> {
+        logger.info(
+            `devices.controller deleteDevice: in: name:${name}, deprovision:${deprovision}, disassociateDeviceFromCore:${disassociateDeviceFromCore}`,
+        );
 
         try {
             await this.devicesService.deleteDevice(name, deprovision, disassociateDeviceFromCore);

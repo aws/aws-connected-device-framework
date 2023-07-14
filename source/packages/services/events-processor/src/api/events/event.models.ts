@@ -36,10 +36,10 @@ export interface EventResourceList {
     results: EventResource[];
     pagination?: {
         offset: {
-            eventSourceId: string,
-            eventId: string
-        },
-        count: number
+            eventSourceId: string;
+            eventId: string;
+        };
+        count: number;
     };
 }
 
@@ -58,7 +58,6 @@ export interface EventItem {
     templateProperties?: string[];
 
     disableAlertThreshold?: boolean;
-
 }
 export interface EventConditions {
     all?: EventConditions | EventCondition[];
@@ -87,7 +86,7 @@ export class EventConditionsUtils {
                 parameters.push(...this.extractParameters(ec.all));
             } else {
                 for (const condition of ec.all) {
-                    const extractedParameter = this.extractParameter(condition)
+                    const extractedParameter = this.extractParameter(condition);
                     if (extractedParameter) {
                         parameters.push(extractedParameter);
                     }
@@ -100,7 +99,7 @@ export class EventConditionsUtils {
                 parameters.push(...this.extractParameters(ec.any));
             } else {
                 for (const condition of ec.any) {
-                    const extractedParameter = this.extractParameter(condition)
+                    const extractedParameter = this.extractParameter(condition);
                     if (extractedParameter) {
                         parameters.push(extractedParameter);
                     }
@@ -118,7 +117,10 @@ export class EventConditionsUtils {
         return undefined;
     }
 
-    public populateParameters(ec: EventConditions, valueMap: { [key: string]: string | boolean | number }): void {
+    public populateParameters(
+        ec: EventConditions,
+        valueMap: { [key: string]: string | boolean | number },
+    ): void {
         if (ec?.all) {
             if (isEventConditions(ec.all)) {
                 this.populateParameters(ec.all, valueMap);
@@ -139,7 +141,10 @@ export class EventConditionsUtils {
             }
         }
     }
-    public populateParameter(ec: EventCondition, valueMap: { [key: string]: string | boolean | number }): void {
+    public populateParameter(
+        ec: EventCondition,
+        valueMap: { [key: string]: string | boolean | number },
+    ): void {
         if (valueMap !== undefined) {
             for (const key of Object.keys(valueMap)) {
                 if (ec.value === `$${key}`) {
@@ -151,13 +156,23 @@ export class EventConditionsUtils {
     }
 }
 
-export enum EventTargetType { 'email', 'sms', 'mqtt', 'dynamodb', 'push_gcm', 'push_adm', 'push_apns' }
+export enum EventTargetType {
+    'email',
+    'sms',
+    'mqtt',
+    'dynamodb',
+    'push_gcm',
+    'push_adm',
+    'push_apns',
+}
 export type EventTargetTypeStrings = keyof typeof EventTargetType;
 
 export type TemplateMap = { [key: string]: string };
 export type TargetTemplateMap = { [key in EventTargetTypeStrings]: string };
 export type TemplatePropertiesData = { [key: string]: string | number | boolean };
 
-export function isEventConditions(conditions: EventConditions | EventCondition[]): conditions is EventConditions {
+export function isEventConditions(
+    conditions: EventConditions | EventCondition[],
+): conditions is EventConditions {
     return (<EventCondition[]>conditions).length === undefined;
 }

@@ -13,19 +13,19 @@
 import { CDFProvisioningTemplate } from '../templates/template.models';
 import { CdfProvisioningParameters } from '../things.models';
 export interface ProvisioningStepData {
-  template:CDFProvisioningTemplate;
-  parameters:{[key:string]:string};
-  cdfProvisioningParameters:CdfProvisioningParameters;
+    template: CDFProvisioningTemplate;
+    parameters: { [key: string]: string };
+    cdfProvisioningParameters: CdfProvisioningParameters;
 
-  state: StepState
+    state: StepState;
 }
 
 export interface StepState {
-	arns?: {
-    policyLogicalName: string;
-    certificate: string;
-    thing: string;
-  }
-  certificatePem?: string;
-	privateKey?: string;
+    arns?: {
+        policyLogicalName: string;
+        certificate: string;
+        thing: string;
+    };
+    certificatePem?: string;
+    privateKey?: string;
 }

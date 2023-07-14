@@ -1,8 +1,8 @@
-import { injectable } from "inversify";
-import { PathHelper } from "../utils/path.helper";
-import { RequestHeaders } from "./common.model";
-import { ClientServiceBase } from "./common.service";
-import { Device, DeviceTask, NewDeviceTask } from "./devices.model";
+import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
+import { RequestHeaders } from './common.model';
+import { ClientServiceBase } from './common.service';
+import { Device, DeviceTask, NewDeviceTask } from './devices.model';
 
 export interface DevicesService {
     createDeviceTask(task: NewDeviceTask, additionalHeaders?: RequestHeaders): Promise<string>;

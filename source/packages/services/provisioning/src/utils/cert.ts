@@ -1,19 +1,20 @@
 import { inject, injectable } from 'inversify';
-import { CertificateStatus, CertInfo } from "../things/things.models";
+import { CertificateStatus, CertInfo } from '../things/things.models';
 import { logger } from '@awssolutions/simple-cdf-logger';
 import * as pem from 'pem';
 import { TYPES } from '../di/types';
-import { DescribeCACertificateRequest, DescribeCACertificateResponse, RegisterCertificateWithoutCAResponse } from 'aws-sdk/clients/iot';
+import {
+    DescribeCACertificateRequest,
+    DescribeCACertificateResponse,
+    RegisterCertificateWithoutCAResponse,
+} from 'aws-sdk/clients/iot';
 import ow from 'ow';
 
 @injectable()
 export class CertUtils {
-
     private _iot: AWS.Iot;
 
-
-    public constructor(
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot) {
+    public constructor(@inject(TYPES.IotFactory) iotFactory: () => AWS.Iot) {
         this._iot = iotFactory();
     }
 
@@ -34,7 +35,9 @@ export class CertUtils {
 
     // generate certificate signing request
     public createCSR(privateKey: string, certInfo: CertInfo): Promise<string> {
-        logger.debug(`CertUtils: createCSR: in: privateKey: REDACTED, certInfo:${JSON.stringify(certInfo)}`);
+        logger.debug(
+            `CertUtils: createCSR: in: privateKey: REDACTED, certInfo:${JSON.stringify(certInfo)}`,
+        );
         /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve: any, reject: any) => {
             const csrOptions: pem.CSRCreationOptions = {
@@ -45,7 +48,7 @@ export class CertUtils {
                 state: certInfo.stateName,
                 country: certInfo.country,
                 emailAddress: certInfo.emailAddress,
-                clientKey: privateKey
+                clientKey: privateKey,
             };
             pem.createCSR(csrOptions, (err: any, data: any) => {
                 if (err) {
@@ -58,12 +61,15 @@ export class CertUtils {
         });
     }
 
-    public async registerCertificateWithoutCA(certificatePem: string, status: CertificateStatus): Promise<RegisterCertificateWithoutCAResponse> {
+    public async registerCertificateWithoutCA(
+        certificatePem: string,
+        status: CertificateStatus,
+    ): Promise<RegisterCertificateWithoutCAResponse> {
         logger.debug(`CertUtils: registerCertificateWithoutCA: in: ${certificatePem}`);
 
         const params: AWS.Iot.RegisterCertificateWithoutCARequest = {
             certificatePem,
-            status
+            status,
         };
 
         let result;
@@ -77,19 +83,21 @@ export class CertUtils {
         return result;
     }
 
-    public async getCaCertificate(caCertificateArn:string) : Promise<string> {
+    public async getCaCertificate(caCertificateArn: string): Promise<string> {
         logger.debug(`CertUtils getCaCertificate: in: caCertificateArn:${caCertificateArn}`);
         ow(caCertificateArn, ow.string.nonEmpty);
 
-        const certificateId = caCertificateArn.split('/')[1]
+        const certificateId = caCertificateArn.split('/')[1];
 
         const params: DescribeCACertificateRequest = {
-            certificateId
+            certificateId,
         };
 
-        let caCertificatePem:string;
+        let caCertificatePem: string;
         try {
-            const response:DescribeCACertificateResponse = await this._iot.describeCACertificate(params).promise();
+            const response: DescribeCACertificateResponse = await this._iot
+                .describeCACertificate(params)
+                .promise();
             caCertificatePem = response.certificateDescription.certificatePem;
         } catch (err) {
             logger.debug(`CertUtils getCaCertificate: err:${err}`);
@@ -99,5 +107,4 @@ export class CertUtils {
         logger.debug('CertUtils getCaCertificate: exit:');
         return caCertificatePem;
     }
-
 }

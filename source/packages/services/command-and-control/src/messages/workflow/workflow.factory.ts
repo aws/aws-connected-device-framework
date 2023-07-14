@@ -28,45 +28,45 @@ import { JobAction } from './workflow.job';
 
 @injectable()
 export class WorkflowFactory {
-
     constructor(
         @inject(TYPES.ResolveTargetsAction) private resolveTargetsAction: ResolveTargetsAction,
-        @inject(TYPES.BatchTargetsAction) private batchTargetsAction:BatchTargetsAction,
+        @inject(TYPES.BatchTargetsAction) private batchTargetsAction: BatchTargetsAction,
         @inject(TYPES.TopicAction) private topicAction: TopicAction,
         @inject(TYPES.ShadowAction) private shadowAction: ShadowAction,
         @inject(TYPES.JobAction) private jobAction: JobAction,
-        @inject(TYPES.InvalidTransitionAction) private invalidTransitionAction: InvalidTransitionAction) {
+        @inject(TYPES.InvalidTransitionAction)
+        private invalidTransitionAction: InvalidTransitionAction,
+    ) {}
 
-        }
-
-    getAction(message:MessageItem, command:CommandItem): WorkflowAction[] {
-        logger.debug(`workflow.factory getAction: message:${JSON.stringify(message)}, command:${JSON.stringify(command)}`);
+    getAction(message: MessageItem, command: CommandItem): WorkflowAction[] {
+        logger.debug(
+            `workflow.factory getAction: message:${JSON.stringify(
+                message,
+            )}, command:${JSON.stringify(command)}`,
+        );
 
         ow(message, ow.object.nonEmpty);
         ow(command?.deliveryMethod?.type, ow.string.oneOf(['TOPIC', 'SHADOW', 'JOB']));
 
         switch (message.status) {
-
             case 'identifying_targets': {
                 return [this.resolveTargetsAction, this.batchTargetsAction];
             }
 
             case 'sending': {
-
                 switch (command.deliveryMethod.type) {
                     case 'TOPIC': {
-                        return [this.topicAction ];
+                        return [this.topicAction];
                     }
                     case 'JOB': {
                         return [this.jobAction];
                     }
                     case 'SHADOW': {
-                        return [this.shadowAction ];
+                        return [this.shadowAction];
                     }
                     default:
                         return [this.invalidTransitionAction];
                 }
-
             }
 
             default:

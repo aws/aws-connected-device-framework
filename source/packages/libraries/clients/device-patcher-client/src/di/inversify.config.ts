@@ -30,39 +30,48 @@ import { TemplatesService } from '../client/templates.service';
 import { DEVICE_PATCHER_CLIENT_TYPES } from './types';
 
 import AWS = require('aws-sdk');
-export const devicePatcherContainerModule = new ContainerModule (
+export const devicePatcherContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind
+        _rebind: interfaces.Rebind,
     ) => {
-
         if (process.env.DEVICE_PATCHER_MODE === 'lambda') {
             bind<PatchService>(DEVICE_PATCHER_CLIENT_TYPES.PatchService).to(PatchLambdaService);
-            bind<ActivationService>(DEVICE_PATCHER_CLIENT_TYPES.ActivationService).to(ActivationLambdaService);
-            bind<TemplatesService>(DEVICE_PATCHER_CLIENT_TYPES.TemplatesService).to(TemplatesLambdaService);
+            bind<ActivationService>(DEVICE_PATCHER_CLIENT_TYPES.ActivationService).to(
+                ActivationLambdaService,
+            );
+            bind<TemplatesService>(DEVICE_PATCHER_CLIENT_TYPES.TemplatesService).to(
+                TemplatesLambdaService,
+            );
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 // always check to see if bound first incase it was bound by another client
-                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
+                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
+                    LambdaInvokerService,
+                );
                 decorate(injectable(), AWS.Lambda);
-                bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
-                    .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
-                        return () => {
-
-                            if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                                const lambda = new AWS.Lambda({region:process.env.AWS_REGION});
-                                bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
-                            }
-                            return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
-                        };
-                    });
+                bind<interfaces.Factory<AWS.Lambda>>(
+                    LAMBDAINVOKE_TYPES.LambdaFactory,
+                ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
+                    return () => {
+                        if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
+                            const lambda = new AWS.Lambda({ region: process.env.AWS_REGION });
+                            bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
+                        }
+                        return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
+                    };
+                });
             }
         } else {
             bind<PatchService>(DEVICE_PATCHER_CLIENT_TYPES.PatchService).to(PatchApigwService);
-            bind<ActivationService>(DEVICE_PATCHER_CLIENT_TYPES.ActivationService).to(ActivationApigwService);
-            bind<TemplatesService>(DEVICE_PATCHER_CLIENT_TYPES.TemplatesService).to(TemplatesApigwService);
+            bind<ActivationService>(DEVICE_PATCHER_CLIENT_TYPES.ActivationService).to(
+                ActivationApigwService,
+            );
+            bind<TemplatesService>(DEVICE_PATCHER_CLIENT_TYPES.TemplatesService).to(
+                TemplatesApigwService,
+            );
         }
-    }
+    },
 );

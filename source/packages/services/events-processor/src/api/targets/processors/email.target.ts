@@ -24,14 +24,14 @@ export class EmailTarget extends SNSTarget implements SNSTargetCreation {
     constructor(
         @inject('aws.region') region: string,
         @inject('aws.accountId') accountId: string,
-        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS
+        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS,
     ) {
         super(region, accountId, snsFactory);
     }
 
     public async create(config: EmailTargetItem, topicArn: string): Promise<string> {
         logger.debug(
-            `email.target create: in: config:${JSON.stringify(config)}, topicArn:${topicArn}`
+            `email.target create: in: config:${JSON.stringify(config)}, topicArn:${topicArn}`,
         );
 
         // validate input

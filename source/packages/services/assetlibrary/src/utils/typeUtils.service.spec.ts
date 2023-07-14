@@ -22,16 +22,16 @@ describe('typeUtils', () => {
 
     it('happy path', () => {
         executeAndVerifySuccess(1, 1);
-    });    
-    
+    });
+
     it('character', () => {
         executeAndVerifySuccess('x', undefined);
-    });   
-    
+    });
+
     it('number as string', () => {
         executeAndVerifySuccess('1', 1);
-    });    
-    
+    });
+
     it('undefined', () => {
         executeAndVerifySuccess(undefined, undefined);
     });
@@ -48,13 +48,11 @@ describe('typeUtils', () => {
         executeAndVerifySuccess(' ', undefined);
     });
 
-    function executeAndVerifySuccess(input:unknown, expected:number) {
-
+    function executeAndVerifySuccess(input: unknown, expected: number) {
         // Make the call
         const result = instance.parseInt(input as string);
 
         // Finally, verify the results
         expect(result).toEqual(expected);
     }
-
 });

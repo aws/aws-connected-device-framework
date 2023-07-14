@@ -14,7 +14,7 @@ import { inject, injectable } from 'inversify';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
 
-import {CustomResourceEvent} from './customResource.model';
+import { CustomResourceEvent } from './customResource.model';
 import {
     LambdaInvokerService,
     LAMBDAINVOKE_TYPES,
@@ -25,15 +25,19 @@ import ow from 'ow';
 
 @injectable()
 export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
-
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService,
     ) {}
 
-    protected headers:{[key:string]:string};
+    protected headers: { [key: string]: string };
 
-    public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`AssetLibraryBulkGroupsCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `AssetLibraryBulkGroupsCustomResource: create: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
 
         const functionName = customResourceEvent?.ResourceProperties?.FunctionName;
         const contentType = customResourceEvent?.ResourceProperties?.ContentType;
@@ -47,43 +51,53 @@ export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
         const path = '/bulkgroups';
         const body = JSON.parse(rawBody);
 
-        if ( (body.groups?.length??0) === 0) {
-            return {}
+        if ((body.groups?.length ?? 0) === 0) {
+            return {};
         }
 
         const event = new LambdaApiGatewayEventBuilder()
-                .setMethod('POST')
-                .setPath(path)
-                .setHeaders(headers)
-                .setBody(body);
+            .setMethod('POST')
+            .setPath(path)
+            .setHeaders(headers)
+            .setBody(body);
         const res = await this.lambdaInvoker.invoke(functionName, event);
 
-
-        const bulkGroupsRes = res.body
+        const bulkGroupsRes = res.body;
 
         // check if there are errors,
-        if (bulkGroupsRes && bulkGroupsRes.errors && Object.keys(bulkGroupsRes.errors).length > 0) {
-
-            const failedGroupPaths = Object.keys(bulkGroupsRes.errors)
+        if (
+            bulkGroupsRes &&
+            bulkGroupsRes.errors &&
+            Object.keys(bulkGroupsRes.errors).length > 0
+        ) {
+            const failedGroupPaths = Object.keys(bulkGroupsRes.errors);
 
             for (const groupPath of failedGroupPaths) {
-                const error = bulkGroupsRes.errors[groupPath]
+                const error = bulkGroupsRes.errors[groupPath];
 
                 if (error.statusCode === 499) {
-                    const group = body.groups.filter((group:{[key:string]: string}) => {
-                        const _groupPath = (group.parentPath === '/')
-                            ? '/' + group.name.toLowerCase()
-                            : `${group.parentPath}/${group.name.toLowerCase()}`;
-                        return _groupPath === groupPath
-                    })[0]
+                    const group = body.groups.filter((group: { [key: string]: string }) => {
+                        const _groupPath =
+                            group.parentPath === '/'
+                                ? '/' + group.name.toLowerCase()
+                                : `${group.parentPath}/${group.name.toLowerCase()}`;
+                        return _groupPath === groupPath;
+                    })[0];
 
                     try {
-                        const patchRes =  await this.patchGroup(functionName, headers, group)
-                        logger.debug(`AssetLibraryBulkGroupsCustomResource: pathGroup: response: ${JSON.stringify(patchRes)}`);
+                        const patchRes = await this.patchGroup(functionName, headers, group);
+                        logger.debug(
+                            `AssetLibraryBulkGroupsCustomResource: pathGroup: response: ${JSON.stringify(
+                                patchRes,
+                            )}`,
+                        );
                     } catch (err) {
-                        logger.error(`AssetLibraryBulkGroupsCustomResource: patchGroup: ${JSON.stringify(err)}`);
+                        logger.error(
+                            `AssetLibraryBulkGroupsCustomResource: patchGroup: ${JSON.stringify(
+                                err,
+                            )}`,
+                        );
                     }
-
                 }
             }
         }
@@ -92,43 +106,57 @@ export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
         return {};
     }
 
-    public async update(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`AssetLibraryBulkGroupsCustomResource: update: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `AssetLibraryBulkGroupsCustomResource: update: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent,
+            )}`,
+        );
         return await this.create(customResourceEvent);
     }
 
-    public async delete(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-         return {};
+    public async delete(_customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        return {};
     }
 
-    protected getHeaders(contentType:string): {[key:string]:string} {
-        if (this.headers===undefined) {
+    protected getHeaders(contentType: string): { [key: string]: string } {
+        if (this.headers === undefined) {
             const h = {
-                'Accept': contentType,
-                'Content-Type': contentType
+                Accept: contentType,
+                'Content-Type': contentType,
             };
-            this.headers = {...h};
+            this.headers = { ...h };
         }
         return this.headers;
     }
 
-    protected async patchGroup(functionName: string, headers: {[key:string]: string}, group:{[key:string]: string}): Promise<any> {
-        logger.debug(`AssetLibraryBulkGroupsCustomResource: patchGroup: in: functionName:${functionName}, group:${JSON.stringify(group)}`);
-        const groupPath = (group.parentPath === '/')
-            ? '/' + group.name.toLowerCase()
-            : `${group.parentPath}/${group.name.toLowerCase()}`;
+    protected async patchGroup(
+        functionName: string,
+        headers: { [key: string]: string },
+        group: { [key: string]: string },
+    ): Promise<any> {
+        logger.debug(
+            `AssetLibraryBulkGroupsCustomResource: patchGroup: in: functionName:${functionName}, group:${JSON.stringify(
+                group,
+            )}`,
+        );
+        const groupPath =
+            group.parentPath === '/'
+                ? '/' + group.name.toLowerCase()
+                : `${group.parentPath}/${group.name.toLowerCase()}`;
 
-        const path = `/groups/${encodeURIComponent(groupPath)}`
+        const path = `/groups/${encodeURIComponent(groupPath)}`;
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('PATCH')
             .setPath(path)
             .setHeaders(headers)
-            .setBody(group)
+            .setBody(group);
 
         const res = await this.lambdaInvoker.invoke(functionName, event);
-        logger.debug(`AssetLibraryBulkGroupsCustomResource: patchGroup: exit: ${JSON.stringify(res)}`);
+        logger.debug(
+            `AssetLibraryBulkGroupsCustomResource: patchGroup: exit: ${JSON.stringify(res)}`,
+        );
 
         return res;
     }
-
 }

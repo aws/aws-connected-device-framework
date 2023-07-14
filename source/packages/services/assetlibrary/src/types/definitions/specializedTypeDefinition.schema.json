@@ -1,112 +1,108 @@
 {
-    "$id": "http://aws.com/cdf/schemas/specializedTypeDefinition.json",
-    "type": "object",
-    
-    "properties": {
+  "$id": "http://aws.com/cdf/schemas/specializedTypeDefinition.json",
+  "type": "object",
 
-        "properties": {
-            "type": "object",
-            "patternProperties": {
-                "^.*$": {
+  "properties": {
+    "properties": {
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": ["number", "integer", "boolean", "string", "null"]
+                },
+                {
+                  "type": "array",
+                  "maxItems": 6,
+                  "items": {
+                    "type": "string",
+                    "enum": ["number", "integer", "boolean", "string", "null"]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+
+    "required": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+
+    "relations": {
+      "type": "object",
+      "properties": {
+        "in": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
                     "type": "object",
                     "properties": {
-                        "type": {
-                            "oneOf": [
-                                {
-                                    "type": "string",
-                                    "enum": ["number", "integer", "boolean", "string", "null"]
-                                },
-                                {
-                                    "type": "array",
-                                    "maxItems": 6,
-                                    "items": {
-                                        "type": "string",
-                                        "enum": ["number", "integer", "boolean", "string", "null"]
-                                    }
-                                }
-                            ]
-                        }
+                      "name": {
+                        "type": "string"
+                      },
+                      "includeInAuthCheck": {
+                        "type": "boolean"
+                      }
                     }
-                }
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
             }
+          }
         },
 
-        "required": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            }
-        },
-
-        "relations": {
-            "type": "object",
-            "properties": {
-                "in": {
+        "out": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
                     "type": "object",
-                    "patternProperties": {
-                        "^.*$": {
-                            "type": "array",
-                            "items": {
-                                "oneOf": [
-                                    {
-                                        "type": "object",
-                                        "properties":{ 
-                                            "name": {
-                                                "type": "string"
-                                            },
-                                            "includeInAuthCheck": {
-                                                "type": "boolean"
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "type": "string"
-                                    }
-                                ]
-                            }
-                        }
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "includeInAuthCheck": {
+                        "type": "boolean"
+                      }
                     }
-                },
-
-                "out": {
-                    "type": "object",
-                    "patternProperties": {
-                        "^.*$": {
-                            "type": "array",
-                            "items": {
-                                "oneOf": [
-                                    {
-                                        "type": "object",
-                                        "properties":{ 
-                                            "name": {
-                                                "type": "string"
-                                            },
-                                            "includeInAuthCheck": {
-                                                "type": "boolean"
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "type": "string"
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
-
-            },
-            "additionalProperties": false
-        },
-
-        "components": {
-            "type": "array",
-            "items": {
-                "type": "string"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
             }
+          }
         }
-
+      },
+      "additionalProperties": false
     },
-    "additionalProperties": false
 
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
 }

@@ -27,37 +27,42 @@ import { TemplatesService } from '../client/templates.service';
 import { COMMANDS_CLIENT_TYPES } from './types';
 
 import AWS = require('aws-sdk');
-export const commandsContainerModule = new ContainerModule (
+export const commandsContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind
+        _rebind: interfaces.Rebind,
     ) => {
         if (process.env.COMMANDS_MODE === 'lambda') {
             bind<CommandsService>(COMMANDS_CLIENT_TYPES.CommandsService).to(CommandsLambdaService);
-            bind<TemplatesService>(COMMANDS_CLIENT_TYPES.TemplatesService).to(TemplatesLambdaService);
+            bind<TemplatesService>(COMMANDS_CLIENT_TYPES.TemplatesService).to(
+                TemplatesLambdaService,
+            );
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 // always check to see if bound first incase it was bound by another client
-                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
+                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
+                    LambdaInvokerService,
+                );
                 decorate(injectable(), AWS.Lambda);
-                bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
-                    .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
-                        return () => {
-
-                            if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                                const lambda = new AWS.Lambda({region:process.env.AWS_REGION});
-                                bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
-                            }
-                            return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
-                        };
-                    });
+                bind<interfaces.Factory<AWS.Lambda>>(
+                    LAMBDAINVOKE_TYPES.LambdaFactory,
+                ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
+                    return () => {
+                        if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
+                            const lambda = new AWS.Lambda({ region: process.env.AWS_REGION });
+                            bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
+                        }
+                        return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
+                    };
+                });
             }
-
         } else {
             bind<CommandsService>(COMMANDS_CLIENT_TYPES.CommandsService).to(CommandsApigwService);
-            bind<TemplatesService>(COMMANDS_CLIENT_TYPES.TemplatesService).to(TemplatesApigwService);
+            bind<TemplatesService>(COMMANDS_CLIENT_TYPES.TemplatesService).to(
+                TemplatesApigwService,
+            );
         }
-    }
+    },
 );

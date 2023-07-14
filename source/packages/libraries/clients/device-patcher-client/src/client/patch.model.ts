@@ -58,13 +58,13 @@ export enum patchStatus {
 }
 
 export class ListPatchResponse {
-	patches: PatchResponse[];
-	pagination?: {
-		lastEvaluated?: PatchListPaginationKey,
-		count?:number,
-	};
+    patches: PatchResponse[];
+    pagination?: {
+        lastEvaluated?: PatchListPaginationKey;
+        count?: number;
+    };
 }
 
 export declare type PatchListPaginationKey = {
-	nextToken: string;
-}
+    nextToken: string;
+};

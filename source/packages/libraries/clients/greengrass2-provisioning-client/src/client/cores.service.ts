@@ -29,7 +29,7 @@ export interface CoresService {
 
     listDeploymentsByCore(
         coreName: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeploymentList>;
 }
 

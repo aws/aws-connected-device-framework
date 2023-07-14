@@ -26,19 +26,26 @@ describe('EventAssembler', () => {
 
     it('should parse out the templates', async () => {
         const EventConfig = {
-            'supportedTargets': {
-                'sms': 'default',
-                'email': 'default',
-                'dynamodb': 'default'
+            supportedTargets: {
+                sms: 'default',
+                email: 'default',
+                dynamodb: 'default',
             },
-            'templates': {
-                'default': 'The device {{=it.principalValue}} has exceeded the threshold event.',
-                'default2': 'The device {{=it[\'pneumatic.air_pressure_threshold__1\']}} has exceeded the threshold event.',
-                'default3': 'The device {{=it[\'pneumatic.air_pressure_threshold__1\'] || =it.foo && =it[\'fizzbuzz\'] || =it.principalValue}}',
-            }
+            templates: {
+                default: 'The device {{=it.principalValue}} has exceeded the threshold event.',
+                default2:
+                    "The device {{=it['pneumatic.air_pressure_threshold__1']}} has exceeded the threshold event.",
+                default3:
+                    "The device {{=it['pneumatic.air_pressure_threshold__1'] || =it.foo && =it['fizzbuzz'] || =it.principalValue}}",
+            },
         };
 
-        const expectedKeys = ['principalValue', 'pneumatic.air_pressure_threshold__1', 'foo', 'fizzbuzz'];
+        const expectedKeys = [
+            'principalValue',
+            'pneumatic.air_pressure_threshold__1',
+            'foo',
+            'fizzbuzz',
+        ];
 
         // @ts-ignore
         const templateKeys = await instance.extractTemplateProperties(EventConfig.templates);
@@ -48,7 +55,7 @@ describe('EventAssembler', () => {
 
     it('should gracefully handle if templates is undefined', async () => {
         const EventConfig = {
-            'supportedTargets': {}
+            supportedTargets: {},
         };
 
         // @ts-ignore
@@ -59,8 +66,8 @@ describe('EventAssembler', () => {
 
     it('should gracefully handle if templates are null', async () => {
         const EventConfig = {
-            'supportedTargets': {},
-            'templates': {}
+            supportedTargets: {},
+            templates: {},
         };
 
         // @ts-ignore
@@ -68,5 +75,4 @@ describe('EventAssembler', () => {
 
         expect(templateKeys).toEqual([]);
     });
-
 });

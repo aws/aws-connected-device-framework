@@ -21,7 +21,6 @@ import { S3Utils } from '../utils/s3.util';
 
 @injectable()
 export class BatchService implements Batcher {
-
     private readonly PROMISE_CONCURRENCY_LIMIT = 10;
 
     private batchers = {};
@@ -41,7 +40,7 @@ export class BatchService implements Batcher {
 
     public async batch(): Promise<Batches> {
         const batches = await this.batchers[this.batchBy].batch();
-        const s3Saves:Promise<AWS.S3.PutObjectOutput>[] = [];
+        const s3Saves: Promise<AWS.S3.PutObjectOutput>[] = [];
 
         const limit = pLimit(this.PROMISE_CONCURRENCY_LIMIT);
 
@@ -50,7 +49,7 @@ export class BatchService implements Batcher {
         for (const index in batches) {
             const batch = batches[index];
             batch.id = index;
-            const key = `${this.exportKeyPrefix}_temp/${batch.id}`
+            const key = `${this.exportKeyPrefix}_temp/${batch.id}`;
             s3Saves.push(limit(() => this.s3Utils.save(this.exportBucket, key, batch)));
         }
         // concurrently save the individual batches to s3
@@ -58,7 +57,6 @@ export class BatchService implements Batcher {
 
         return batches;
     }
-
 }
 
 export interface Batches extends Array<Batch> {
@@ -70,7 +68,7 @@ export class Batch {
     category: string;
     type?: string;
     range?: [number, number];
-    total?:number;
+    total?: number;
     items: string[];
     timestamp: number;
 }

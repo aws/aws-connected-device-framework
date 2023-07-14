@@ -25,7 +25,6 @@ import {
 
 @injectable()
 export class CommandsAssembler {
-
     public toResource(item: CommandItem): CommandResource {
         logger.debug(`commands.assembler toResource: in: item:${JSON.stringify(item)}`);
 
@@ -39,7 +38,7 @@ export class CommandsAssembler {
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
             tags: item.tags,
-        }
+        };
 
         logger.debug(`commands.assembler toResource: exit:${JSON.stringify(resource)}`);
         return resource;
@@ -54,7 +53,7 @@ export class CommandsAssembler {
             payloadParams: resource.payloadParams,
             enabled: resource.enabled,
             tags: resource.tags,
-        }
+        };
 
         let deliveryMethod: TopicDeliveryMethod | ShadowDeliveryMethod | JobDeliveryMethod;
         switch (resource.deliveryMethod?.type) {
@@ -89,29 +88,35 @@ export class CommandsAssembler {
                     };
                     if (res.jobExecutionsRolloutConfig.exponentialRate) {
                         deliveryMethod.jobExecutionsRolloutConfig.exponentialRate = {
-                            baseRatePerMinute: res.jobExecutionsRolloutConfig.exponentialRate.baseRatePerMinute,
-                            incrementFactor: res.jobExecutionsRolloutConfig.exponentialRate.incrementFactor,
+                            baseRatePerMinute:
+                                res.jobExecutionsRolloutConfig.exponentialRate.baseRatePerMinute,
+                            incrementFactor:
+                                res.jobExecutionsRolloutConfig.exponentialRate.incrementFactor,
                             rateIncreaseCriteria: {
-                                numberOfNotifiedThings: res.jobExecutionsRolloutConfig.exponentialRate.rateIncreaseCriteria.numberOfNotifiedThings,
-                                numberOfSucceededThings: res.jobExecutionsRolloutConfig.exponentialRate.rateIncreaseCriteria.numberOfSucceededThings,
-                            }
+                                numberOfNotifiedThings:
+                                    res.jobExecutionsRolloutConfig.exponentialRate
+                                        .rateIncreaseCriteria.numberOfNotifiedThings,
+                                numberOfSucceededThings:
+                                    res.jobExecutionsRolloutConfig.exponentialRate
+                                        .rateIncreaseCriteria.numberOfSucceededThings,
+                            },
                         };
                     }
                 }
                 if (res.abortConfig) {
                     deliveryMethod.abortConfig = {
-                        criteriaList: res.abortConfig.criteriaList?.map(c => ({
+                        criteriaList: res.abortConfig.criteriaList?.map((c) => ({
                             failureType: c.failureType,
                             action: c.action,
                             thresholdPercentage: c.thresholdPercentage,
                             minNumberOfExecutedThings: c.minNumberOfExecutedThings,
                         })),
-                    }
+                    };
                 }
                 if (res.timeoutConfig) {
                     deliveryMethod.timeoutConfig = {
                         inProgressTimeoutInMinutes: res.timeoutConfig.inProgressTimeoutInMinutes,
-                    }
+                    };
                 }
                 break;
             }
@@ -119,17 +124,23 @@ export class CommandsAssembler {
         }
         item.deliveryMethod = deliveryMethod;
 
-
-
         logger.debug(`commands.assembler toItem: exit:${JSON.stringify(item)}`);
         return item;
     }
 
-    public toResourceList(commands: CommandItem[], count?: number, paginateFrom?: CommandListPaginationKey): CommandResourceList {
-        logger.debug(`commands.assembler toResourceList: in: commands:${JSON.stringify(commands)}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`);
+    public toResourceList(
+        commands: CommandItem[],
+        count?: number,
+        paginateFrom?: CommandListPaginationKey,
+    ): CommandResourceList {
+        logger.debug(
+            `commands.assembler toResourceList: in: commands:${JSON.stringify(
+                commands,
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+        );
 
         const list: CommandResourceList = {
-            commands: []
+            commands: [],
         };
 
         if (count !== undefined || paginateFrom !== undefined) {
@@ -142,16 +153,15 @@ export class CommandsAssembler {
 
         if (paginateFrom !== undefined) {
             list.pagination.lastEvaluated = {
-                commandId: paginateFrom?.commandId
+                commandId: paginateFrom?.commandId,
             };
         }
 
         if ((commands?.length ?? 0) > 0) {
-            list.commands = commands.map(c => this.toResource(c));
+            list.commands = commands.map((c) => this.toResource(c));
         }
 
         logger.debug(`commands.assembler toResourceList: exit: ${JSON.stringify(list)}`);
         return list;
-
     }
 }

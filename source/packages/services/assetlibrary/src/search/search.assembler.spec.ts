@@ -19,12 +19,11 @@ import { GroupsAssembler } from '../groups/groups.assembler';
 import { TypeUtils } from '../utils/typeUtils';
 
 describe('SearchServiceAssembler', () => {
-
     let instance: SearchAssembler;
     let mockedDeviceAssembler: jest.Mocked<DevicesAssembler>;
     let mockedGroupAssembler: jest.Mocked<GroupsAssembler>;
     let mockedTypeUtils: jest.Mocked<TypeUtils>;
-    
+
     let mockedSearchRequest: {
         types: string | string[] | undefined;
         ntypes: string | string[] | undefined;
@@ -47,7 +46,11 @@ describe('SearchServiceAssembler', () => {
         mockedDeviceAssembler = createMockInstance(DevicesAssembler);
         mockedGroupAssembler = createMockInstance(GroupsAssembler);
         mockedTypeUtils = createMockInstance(TypeUtils);
-        instance = new SearchAssembler(mockedDeviceAssembler, mockedGroupAssembler, mockedTypeUtils);
+        instance = new SearchAssembler(
+            mockedDeviceAssembler,
+            mockedGroupAssembler,
+            mockedTypeUtils,
+        );
     });
 
     it('happy path to convert one search param to a search request model', async () => {
@@ -86,7 +89,7 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.containses,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
-            mockedSearchRequest.facetField
+            mockedSearchRequest.facetField,
         );
 
         expect(searchRequestModel).toBeDefined();
@@ -138,7 +141,7 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.containses,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
-            mockedSearchRequest.facetField
+            mockedSearchRequest.facetField,
         );
 
         expect(searchRequestModel).toBeDefined();
@@ -217,7 +220,7 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.containses,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
-            mockedSearchRequest.facetField
+            mockedSearchRequest.facetField,
         );
 
         expect(searchRequestModel).toBeDefined();
@@ -229,7 +232,7 @@ describe('SearchServiceAssembler', () => {
         expect(searchRequestModel.eq[0].traversals[0].direction).toEqual('out');
         expect(searchRequestModel.eq[0].field).toEqual('name');
         expect(searchRequestModel.eq[0].value).toEqual(
-            'ap-northeast-1:55f70ca4-faaa-4aa0-8778-99a102174740'
+            'ap-northeast-1:55f70ca4-faaa-4aa0-8778-99a102174740',
         );
     });
 
@@ -269,7 +272,7 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.containses,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
-            mockedSearchRequest.facetField
+            mockedSearchRequest.facetField,
         );
 
         expect(searchRequestModel).toBeDefined();
@@ -278,7 +281,7 @@ describe('SearchServiceAssembler', () => {
         expect(searchRequestModel.eq).toHaveLength(1);
         expect(searchRequestModel.eq[0].field).toEqual('name');
         expect(searchRequestModel.eq[0].value).toEqual(
-            'ap-northeast-1:55f70ca4-faaa-4aa0-8778-99a102174740'
+            'ap-northeast-1:55f70ca4-faaa-4aa0-8778-99a102174740',
         );
     });
 });

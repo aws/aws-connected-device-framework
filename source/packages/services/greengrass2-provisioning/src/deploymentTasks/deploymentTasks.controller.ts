@@ -13,24 +13,43 @@
 import { Response } from 'express';
 import { inject } from 'inversify';
 import {
-    controller, httpGet, httpPost, interfaces, queryParam, requestBody, requestParam, response
+    controller,
+    httpGet,
+    httpPost,
+    interfaces,
+    queryParam,
+    requestBody,
+    requestParam,
+    response,
 } from 'inversify-express-utils';
 import { Deployment } from '../deployments/deployments.models';
 
 import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors.util';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { CoreDeploymentList, DeploymentTask, DeploymentTaskList, NewDeploymentTask } from './deploymentTasks.models';
+import {
+    CoreDeploymentList,
+    DeploymentTask,
+    DeploymentTaskList,
+    NewDeploymentTask,
+} from './deploymentTasks.models';
 import { DeploymentTasksService } from './deploymentTasks.service';
 
 @controller('/deploymentTasks')
 export class DeploymentTasksController implements interfaces.Controller {
-
-    constructor(@inject(TYPES.DeploymentTasksService) private deploymentTasksService: DeploymentTasksService) { }
+    constructor(
+        @inject(TYPES.DeploymentTasksService)
+        private deploymentTasksService: DeploymentTasksService,
+    ) {}
 
     @httpPost('')
-    public async createDeploymentTask(@requestBody() task: NewDeploymentTask, @response() res: Response): Promise<void> {
-        logger.debug(`deploymentTasks.controller createDeploymentTask: in: task: ${JSON.stringify(task)}`);
+    public async createDeploymentTask(
+        @requestBody() task: NewDeploymentTask,
+        @response() res: Response,
+    ): Promise<void> {
+        logger.debug(
+            `deploymentTasks.controller createDeploymentTask: in: task: ${JSON.stringify(task)}`,
+        );
         try {
             const taskId = await this.deploymentTasksService.create(task);
             res.location(`/deploymentTasks/${taskId}`)
@@ -44,7 +63,10 @@ export class DeploymentTasksController implements interfaces.Controller {
     }
 
     @httpGet('/:taskId')
-    public async getDeploymentTask(@requestParam('taskId') taskId: string, @response() res: Response): Promise<void> {
+    public async getDeploymentTask(
+        @requestParam('taskId') taskId: string,
+        @response() res: Response,
+    ): Promise<void> {
         logger.info(`deploymentTasks.controller getDeploymentTask: in: taskId:${taskId}`);
 
         let result: DeploymentTask;
@@ -54,7 +76,11 @@ export class DeploymentTasksController implements interfaces.Controller {
                 logger.debug(`deploymentTasks.controller getDeploymentTask: exit: 404`);
                 res.status(404).send();
             } else {
-                logger.debug(`deploymentTasks.controller getDeploymentTask: exit: ${JSON.stringify(result)}`);
+                logger.debug(
+                    `deploymentTasks.controller getDeploymentTask: exit: ${JSON.stringify(
+                        result,
+                    )}`,
+                );
                 res.status(200).send(result);
             }
         } catch (e) {
@@ -63,21 +89,31 @@ export class DeploymentTasksController implements interfaces.Controller {
     }
 
     @httpGet('')
-    public async listDeploymentTasks(@queryParam('count') count: number, @queryParam('exclusiveStartTaskId') exclusiveStartTaskId: string, @response() res: Response): Promise<void> {
-        logger.info(`deploymentTasks.controller listDeploymentTasks: in: count:${count}, exclusiveStartTaskId:${exclusiveStartTaskId}`);
+    public async listDeploymentTasks(
+        @queryParam('count') count: number,
+        @queryParam('exclusiveStartTaskId') exclusiveStartTaskId: string,
+        @response() res: Response,
+    ): Promise<void> {
+        logger.info(
+            `deploymentTasks.controller listDeploymentTasks: in: count:${count}, exclusiveStartTaskId:${exclusiveStartTaskId}`,
+        );
 
         let result: DeploymentTaskList;
         try {
-            const [items, paginationKey] = await this.deploymentTasksService.list(count, { taskId: exclusiveStartTaskId });
+            const [items, paginationKey] = await this.deploymentTasksService.list(count, {
+                taskId: exclusiveStartTaskId,
+            });
 
             result = {
                 deploymentTasks: items,
                 pagination: {
                     count,
-                    lastEvaluated: paginationKey
-                }
-            }
-            logger.debug(`deploymentTasks.controller listDeploymentTasks: exit: ${JSON.stringify(result)}`);
+                    lastEvaluated: paginationKey,
+                },
+            };
+            logger.debug(
+                `deploymentTasks.controller listDeploymentTasks: exit: ${JSON.stringify(result)}`,
+            );
             res.status(200).send(result);
         } catch (e) {
             handleError(e, res);
@@ -85,8 +121,14 @@ export class DeploymentTasksController implements interfaces.Controller {
     }
 
     @httpGet('/:taskId/cores/:coreName')
-    public async getCoreDeploymentStatus(@requestParam('taskId') taskId: string, @requestParam('coreName') coreName: string, @response() res: Response): Promise<void> {
-        logger.info(`deploymentTasks.controller getCoreDeploymentStatus: in: taskId:${taskId}, coreName:${coreName}`);
+    public async getCoreDeploymentStatus(
+        @requestParam('taskId') taskId: string,
+        @requestParam('coreName') coreName: string,
+        @response() res: Response,
+    ): Promise<void> {
+        logger.info(
+            `deploymentTasks.controller getCoreDeploymentStatus: in: taskId:${taskId}, coreName:${coreName}`,
+        );
 
         let result: Deployment;
         try {
@@ -95,7 +137,11 @@ export class DeploymentTasksController implements interfaces.Controller {
                 logger.debug(`deploymentTasks.controller getCoreDeploymentStatus: exit: 404`);
                 res.status(404).send();
             } else {
-                logger.debug(`deploymentTasks.controller getCoreDeploymentStatus: exit: ${JSON.stringify(result)}`);
+                logger.debug(
+                    `deploymentTasks.controller getCoreDeploymentStatus: exit: ${JSON.stringify(
+                        result,
+                    )}`,
+                );
                 res.status(200).send(result);
             }
         } catch (e) {
@@ -103,27 +149,39 @@ export class DeploymentTasksController implements interfaces.Controller {
         }
     }
 
-
     @httpGet('/:taskId/cores')
-    public async listCoresByDeploymentTaskId(@requestParam('taskId') taskId: string, @queryParam('count') count: number, @queryParam('exclusiveStartThingName') exclusiveStartThingName: string, @response() res: Response): Promise<void> {
-        logger.info(`deploymentTasks.controller listCoresByDeploymentTaskId: in: count:${count}, exclusiveStartThingName:${exclusiveStartThingName}`);
+    public async listCoresByDeploymentTaskId(
+        @requestParam('taskId') taskId: string,
+        @queryParam('count') count: number,
+        @queryParam('exclusiveStartThingName') exclusiveStartThingName: string,
+        @response() res: Response,
+    ): Promise<void> {
+        logger.info(
+            `deploymentTasks.controller listCoresByDeploymentTaskId: in: count:${count}, exclusiveStartThingName:${exclusiveStartThingName}`,
+        );
 
         let result: CoreDeploymentList;
         try {
-            const [items, paginationKey] = await this.deploymentTasksService.listCoresByDeploymentTask(taskId, count, { thingName: exclusiveStartThingName });
+            const [items, paginationKey] =
+                await this.deploymentTasksService.listCoresByDeploymentTask(taskId, count, {
+                    thingName: exclusiveStartThingName,
+                });
 
             result = {
                 cores: items,
                 pagination: {
                     count,
-                    lastEvaluated: paginationKey
-                }
-            }
-            logger.debug(`deploymentTasks.controller listCoresByDeploymentTaskId: exit: ${JSON.stringify(result)}`);
+                    lastEvaluated: paginationKey,
+                },
+            };
+            logger.debug(
+                `deploymentTasks.controller listCoresByDeploymentTaskId: exit: ${JSON.stringify(
+                    result,
+                )}`,
+            );
             res.status(200).send(result);
         } catch (e) {
             handleError(e, res);
         }
     }
-
 }

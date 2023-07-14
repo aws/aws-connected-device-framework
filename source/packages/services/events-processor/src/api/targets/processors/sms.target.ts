@@ -24,14 +24,14 @@ export class SMSTarget extends SNSTarget implements SNSTargetCreation {
     constructor(
         @inject('aws.region') region: string,
         @inject('aws.accountId') accountId: string,
-        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS
+        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS,
     ) {
         super(region, accountId, snsFactory);
     }
 
     public async create(config: SMSTargetItem, topicArn: string): Promise<string> {
         logger.debug(
-            `sms.target create: in: config:${JSON.stringify(config)}, topicArn:${topicArn}`
+            `sms.target create: in: config:${JSON.stringify(config)}, topicArn:${topicArn}`,
         );
 
         // validate input

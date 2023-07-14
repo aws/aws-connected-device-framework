@@ -12,8 +12,6 @@
  *********************************************************************************************************************/
 
 export const BULKCERTS_CLIENT_TYPES = {
-
     CertificatesTaskService: Symbol.for('BulkCertsClient_CertificatesTaskService'),
-    CertificatesService: Symbol.for('BulkCertsClient_CertificatesService')
-
+    CertificatesService: Symbol.for('BulkCertsClient_CertificatesService'),
 };

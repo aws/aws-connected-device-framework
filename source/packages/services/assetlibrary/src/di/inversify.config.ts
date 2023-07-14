@@ -30,7 +30,7 @@ import AWS = require('aws-sdk');
 // Load everything needed to the Container
 export const container = new Container();
 
-if (process.env.MODE==='lite') {
+if (process.env.MODE === 'lite') {
     container.load(lite.LiteContainerModule);
 } else {
     container.load(full.FullContainerModule);
@@ -57,17 +57,17 @@ container.bind<NodeAssembler>(TYPES.NodeAssembler).to(NodeAssembler).inSingleton
 
 // for 3rd party objects, we need to use factory injectors
 decorate(injectable(), AWS.IotData);
-container.bind<interfaces.Factory<AWS.IotData>>(TYPES.IotDataFactory)
+container
+    .bind<interfaces.Factory<AWS.IotData>>(TYPES.IotDataFactory)
     .toFactory<AWS.IotData>(() => {
-    return () => {
-
-        if (!container.isBound(TYPES.IotData)) {
-            const iotData = new AWS.IotData({
-                region: process.env.AWS_REGION,
-                endpoint: `https://${process.env.AWS_IOT_ENDPOINT}`,
-            });
-            container.bind<AWS.IotData>(TYPES.IotData).toConstantValue(iotData);
-        }
-        return container.get<AWS.IotData>(TYPES.IotData);
-    };
-});
+        return () => {
+            if (!container.isBound(TYPES.IotData)) {
+                const iotData = new AWS.IotData({
+                    region: process.env.AWS_REGION,
+                    endpoint: `https://${process.env.AWS_IOT_ENDPOINT}`,
+                });
+                container.bind<AWS.IotData>(TYPES.IotData).toConstantValue(iotData);
+            }
+            return container.get<AWS.IotData>(TYPES.IotData);
+        };
+    });

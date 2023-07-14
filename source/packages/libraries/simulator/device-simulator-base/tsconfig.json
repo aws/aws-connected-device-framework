@@ -1,19 +1,17 @@
 {
-    "extends": "../../tsconfig.libraries.json",
-    "compilerOptions": {
-        "outDir": "dist",
-        "rootDir": "src",
-		"esModuleInterop": true
+  "extends": "../../tsconfig.libraries.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "esModuleInterop": true
+  },
+  "references": [
+    {
+      "path": "../../core/errors"
     },
-    "references": [
-        {
-            "path": "../../core/errors"
-        },
-        {
-            "path": "../../core/logger"
-        }
-    ],
-    "include": [
-        "src"
-    ]
+    {
+      "path": "../../core/logger"
+    }
+  ],
+  "include": ["src"]
 }

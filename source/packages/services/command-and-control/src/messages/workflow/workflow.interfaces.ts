@@ -14,5 +14,5 @@ import { MessageItem } from '../messages.models';
 import { CommandItem } from '../../commands/commands.models';
 
 export interface WorkflowAction {
-    process(message:MessageItem,command:CommandItem):Promise<boolean>;
+    process(message: MessageItem, command: CommandItem): Promise<boolean>;
 }

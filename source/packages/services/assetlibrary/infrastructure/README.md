@@ -8,7 +8,7 @@
 
 ## Deployment Steps
 
-The following describes to most basic of deployments.  Refer to the `./infrastructure/package.bash` and `./infrastructure/deply.bash` files details on more advanced options available.
+The following describes to most basic of deployments. Refer to the `./infrastructure/package.bash` and `./infrastructure/deply.bash` files details on more advanced options available.
 
 - Initialize and build the project
 
@@ -26,11 +26,10 @@ e.g.
 ```
 
 - Deploy the CloudFormation template
+
 ```sh
 ./infrastructure/deploy.bash -e {ENVIRONMENT_NAME} -c {APPLICATION_CONFIGURATION_OVERRIDES}
 
 e.g.
 ./infrastructure/deploy.bash -e development -c ../cdf-infrastructure-{customer}/assetlibrary/development-config.json
 ```
-
-

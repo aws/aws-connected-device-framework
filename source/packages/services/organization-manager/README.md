@@ -45,7 +45,7 @@ resources: # List of resources
 `Organization Manager` can be deployed with this following options:
 
 | Features              |                                                                                      Details                                                                                       |
-|-----------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| --------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | deleteAccountsEnabled | setting this to `true` will move the AWS account into `OU:suspended`(OU created to contain AWS accounts that have been closed and are waiting to be deleted from the organization) |
 | createAccountsEnabled |                               setting this to `true` will trigger the creation of AWS account using Control Tower's provided Service Catalog product                               |
 | createOUsEnabled      |                                   setting this to `true` will allow `Organization Manager` to create Organizational Unit using AWS Organizations                                   |

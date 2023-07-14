@@ -36,7 +36,7 @@ export class SearchDaoFull extends BaseDaoFull {
         @inject('enableDfeOptimization') private enableDfeOptimization: boolean,
         @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
         @inject(TYPES.NodeAssembler) private assembler: NodeAssembler,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -44,12 +44,12 @@ export class SearchDaoFull extends BaseDaoFull {
     private buildSearchTraverser(
         conn: NeptuneConnection,
         request: SearchRequestModel,
-        authorizedPaths: string[]
+        authorizedPaths: string[],
     ): process.GraphTraversal {
         logger.debug(
             `search.full.dao buildSearchTraverser: in: request: ${JSON.stringify(
-                request
-            )}, authorizedPaths:${authorizedPaths}`
+                request,
+            )}, authorizedPaths:${authorizedPaths}`,
         );
 
         let source: process.GraphTraversalSource = conn.traversal;
@@ -170,16 +170,16 @@ export class SearchDaoFull extends BaseDaoFull {
             traverser
                 .local(
                     __.until(__.hasId(process.P.within(authorizedPathIds))).repeat(
-                        __.outE().has('isAuthCheck', true).otherV().simplePath().dedup()
-                    )
+                        __.outE().has('isAuthCheck', true).otherV().simplePath().dedup(),
+                    ),
                 )
                 .as('authorization');
         }
 
         logger.debug(
             `search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(
-                traverser.toString()
-            )}`
+                traverser.toString(),
+            )}`,
         );
 
         return traverser.select('a').dedup();
@@ -187,7 +187,7 @@ export class SearchDaoFull extends BaseDaoFull {
 
     private buildSearchFilterVBase(
         filter: SearchRequestFilter | SearchRequestFacet,
-        traverser: process.GraphTraversal
+        traverser: process.GraphTraversal,
     ): void {
         if (filter.traversals) {
             filter.traversals.forEach((t) => {
@@ -202,7 +202,7 @@ export class SearchDaoFull extends BaseDaoFull {
 
     private buildSearchFilterEBase(
         filter: SearchRequestFilter | SearchRequestFacet,
-        traverser: process.GraphTraversal
+        traverser: process.GraphTraversal,
     ): void {
         if (filter.traversals) {
             filter.traversals.forEach((t) => {
@@ -220,7 +220,7 @@ export class SearchDaoFull extends BaseDaoFull {
         filter: SearchRequestFilter | SearchRequestFacet,
         traverser: process.GraphTraversal,
         field: unknown,
-        value: unknown
+        value: unknown,
     ): void {
         if (filter.traversals) {
             const nested: process.GraphTraversal = __.select('a');
@@ -240,8 +240,8 @@ export class SearchDaoFull extends BaseDaoFull {
     public async search(request: SearchRequestModel, authorizedPaths: string[]): Promise<Node[]> {
         logger.debug(
             `search.full.dao search: in: request: ${JSON.stringify(
-                request
-            )}, authorizedPaths:${authorizedPaths}`
+                request,
+            )}, authorizedPaths:${authorizedPaths}`,
         );
 
         let results;
@@ -263,7 +263,7 @@ export class SearchDaoFull extends BaseDaoFull {
             const countAsInt = this.typeUtils.parseInt(request.count);
             if (typeof offsetAsInt !== 'number' || typeof countAsInt !== 'number') {
                 throw new ArgumentError(
-                    `Invalid offset or count, offset ${request.offset}, count ${request.count}`
+                    `Invalid offset or count, offset ${request.offset}, count ${request.count}`,
                 );
             }
             traverser
@@ -272,7 +272,7 @@ export class SearchDaoFull extends BaseDaoFull {
                 .with_(process.withOptions.tokens);
 
             logger.debug(
-                `search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`
+                `search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`,
             );
 
             results = await traverser.toList();
@@ -306,14 +306,14 @@ export class SearchDaoFull extends BaseDaoFull {
     public async delete(request: SearchRequestModel, authorizedPaths: string[]): Promise<void> {
         logger.debug(
             `search.full.dao delete: in: request: ${JSON.stringify(
-                request
-            )}, authorizedPaths:${authorizedPaths}`
+                request,
+            )}, authorizedPaths:${authorizedPaths}`,
         );
         const conn = super.getConnection();
         try {
             const traverser = this.buildSearchTraverser(conn, request, authorizedPaths).union(
                 __.hasLabel('group'),
-                __.has('deviceId')
+                __.has('deviceId'),
             );
             logger.debug(`search.full.dao delete: in: traverser: ${traverser.toString()}`);
             await traverser.drop().iterate();
@@ -324,12 +324,12 @@ export class SearchDaoFull extends BaseDaoFull {
 
     public async facet(
         request: SearchRequestModel,
-        authorizedPaths: string[]
+        authorizedPaths: string[],
     ): Promise<FacetResults> {
         logger.debug(
             `search.full.dao facet: in: request: ${JSON.stringify(
-                request
-            )}, authorizedPaths:${authorizedPaths}`
+                request,
+            )}, authorizedPaths:${authorizedPaths}`,
         );
 
         let results;
@@ -351,8 +351,8 @@ export class SearchDaoFull extends BaseDaoFull {
             }
             logger.debug(
                 `search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(
-                    traverser.toString()
-                )}`
+                    traverser.toString(),
+                )}`,
             );
             results = await traverser.next();
         } finally {
@@ -375,8 +375,8 @@ export class SearchDaoFull extends BaseDaoFull {
     public async summary(request: SearchRequestModel, authorizedPaths: string[]): Promise<number> {
         logger.debug(
             `search.full.dao summarize: in: request: ${JSON.stringify(
-                request
-            )}, authorizedPaths:${authorizedPaths}`
+                request,
+            )}, authorizedPaths:${authorizedPaths}`,
         );
 
         const conn = super.getConnection();

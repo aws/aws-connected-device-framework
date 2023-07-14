@@ -11,36 +11,40 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
-import { NoOpEventPublisher, CDFEventPublisher, EventBridgePublisher, } from "../index";
+import { NoOpEventPublisher, CDFEventPublisher, EventBridgePublisher } from '../index';
 import { EVENT_PUBLISHER_TYPES } from './types';
-import { EventBridgeClient } from "@aws-sdk/client-eventbridge";
-
+import { EventBridgeClient } from '@aws-sdk/client-eventbridge';
 
 export const eventPublisherContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind
+        _rebind: interfaces.Rebind,
     ) => {
-
         if (process.env.ENABLE_PUBLISH_EVENTS == 'true') {
-            bind<CDFEventPublisher>(EVENT_PUBLISHER_TYPES.CDFEventPublisher).to(EventBridgePublisher).inSingletonScope();
+            bind<CDFEventPublisher>(EVENT_PUBLISHER_TYPES.CDFEventPublisher)
+                .to(EventBridgePublisher)
+                .inSingletonScope();
         } else {
-            bind<CDFEventPublisher>(EVENT_PUBLISHER_TYPES.CDFEventPublisher).to(NoOpEventPublisher).inSingletonScope();
+            bind<CDFEventPublisher>(EVENT_PUBLISHER_TYPES.CDFEventPublisher)
+                .to(NoOpEventPublisher)
+                .inSingletonScope();
         }
 
         decorate(injectable(), EventBridgeClient);
-        bind<interfaces.Factory<EventBridgeClient>>(EVENT_PUBLISHER_TYPES.EventBridgeFactory)
-            .toFactory<EventBridgeClient>((ctx: interfaces.Context) => {
-                return (region?: string) => {
-                    if (!isBound(EVENT_PUBLISHER_TYPES.EventBridge)) {
-
-                        const eventBridgeClient = new EventBridgeClient({ region });
-                        bind<EventBridgeClient>(EVENT_PUBLISHER_TYPES.EventBridge).toConstantValue(eventBridgeClient);
-                    }
-                    return ctx.container.get<EventBridgeClient>(EVENT_PUBLISHER_TYPES.EventBridge);
+        bind<interfaces.Factory<EventBridgeClient>>(
+            EVENT_PUBLISHER_TYPES.EventBridgeFactory,
+        ).toFactory<EventBridgeClient>((ctx: interfaces.Context) => {
+            return (region?: string) => {
+                if (!isBound(EVENT_PUBLISHER_TYPES.EventBridge)) {
+                    const eventBridgeClient = new EventBridgeClient({ region });
+                    bind<EventBridgeClient>(EVENT_PUBLISHER_TYPES.EventBridge).toConstantValue(
+                        eventBridgeClient,
+                    );
                 }
-            });
-    }
+                return ctx.container.get<EventBridgeClient>(EVENT_PUBLISHER_TYPES.EventBridge);
+            };
+        });
+    },
 );

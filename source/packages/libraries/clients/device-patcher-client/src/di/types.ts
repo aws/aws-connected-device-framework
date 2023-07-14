@@ -11,12 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const DEVICE_PATCHER_CLIENT_TYPES = {
-
     PatchService: Symbol.for('DevicePatcherClient_PatchService'),
     ActivationService: Symbol.for('DevicePatcherClient_ActivationService'),
     TemplatesService: Symbol.for('DevicePatcherClient_TemplatesService'),
 
     RestClient: Symbol.for('DevicePatcherClient_RestClient'),
-    RestClientFactory: Symbol.for('Factory<DevicePatcherClient_RestClient>')
-
+    RestClientFactory: Symbol.for('Factory<DevicePatcherClient_RestClient>'),
 };

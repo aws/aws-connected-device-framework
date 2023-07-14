@@ -6,7 +6,6 @@
   "scripts": {
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
-
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
     "test": "rushx lint && NODE_ENV= jest --silent --maxWorkers=$JEST_MAX_WORKERS",
     "bundle": "../../../infrastructure/bundle-package.bash auth-devicecert"
@@ -26,14 +25,11 @@
   },
   "devDependencies": {
     "@types/pem": "1.9.5",
-
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
-
     "nodemon": "2.0.20",
     "nyc": "15.1.0",
     "shx": "0.3.3",
-
     "@types/jest": "26.0.23",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",

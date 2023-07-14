@@ -20,14 +20,11 @@ import { LabelsDao } from './labels.dao';
 
 @injectable()
 export class LabelsService {
-
-    constructor(
-        @inject(TYPES.LabelsDao) private labelsDao: LabelsDao ,
-    ) {}
+    constructor(@inject(TYPES.LabelsDao) private labelsDao: LabelsDao) {}
 
     public async getObjectCount(label: string): Promise<{
-        label:string,
-        total:number
+        label: string;
+        total: number;
     }> {
         logger.debug(`labels.service:getObjectCount: in: ${label}`);
 
@@ -39,21 +36,21 @@ export class LabelsService {
 
         return {
             label,
-            total: result.total
+            total: result.total,
         };
     }
 
-    public async getIdsByRange(label:string, range:[number, number]): Promise<string[]> {
+    public async getIdsByRange(label: string, range: [number, number]): Promise<string[]> {
         logger.debug(`labels.service: getIdsByRange: in: ${label}, range: ${range}`);
 
         ow(label, 'label', ow.string.nonEmpty);
         ow(range, 'range', ow.array.nonEmpty);
 
         const idObjects = await this.labelsDao.listIdObjectsByLabel(label, range);
-        const ids = idObjects.map(e => e.id);
+        const ids = idObjects.map((e) => e.id);
 
         logger.debug(`labels.service: getIdsByRange: out: ${ids}`);
 
-        return ids
+        return ids;
     }
 }

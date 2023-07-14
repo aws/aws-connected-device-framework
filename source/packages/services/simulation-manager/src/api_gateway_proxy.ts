@@ -11,9 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import * as awsServerlessExpress from 'aws-serverless-express';
-import {serverInstance} from './app' ;
+import { serverInstance } from './app';
 import { Context } from 'aws-lambda';
 
 const server = awsServerlessExpress.createServer(serverInstance);
 
-exports.handler = (event: unknown, context: Context) => awsServerlessExpress.proxy(server, event, context);
+exports.handler = (event: unknown, context: Context) =>
+    awsServerlessExpress.proxy(server, event, context);

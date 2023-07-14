@@ -15,9 +15,10 @@ export enum TypeCategory {
     Device = 'device',
     Component = 'component',
     Policy = 'policy',
-    Profile = 'profile'
+    Profile = 'profile',
 }
 
 export enum Operation {
-    UPDATE, CREATE
+    UPDATE,
+    CREATE,
 }

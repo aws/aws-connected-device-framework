@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -12,34 +13,32 @@
 #-----------------------------------------------------------------------------------------------------------------------
 openapi: 3.0.0
 info:
-  title: "AWS Connected Device Framework: Bulk Certs"
+  title: 'AWS Connected Device Framework: Bulk Certs'
   description: REST API for creating device certificates in bulk.
   version: 1.0.0
 
 tags:
-- name: 'Bulk Certificate Creation'
-  description: |
-    Allows for the asynchronous creation of device certifcates in bulk.  
-    
-    Optionally, the certificates may be registered with AWS IoT.  This allows for scenarios such as JITP (just-in-time provisioning).
+  - name: 'Bulk Certificate Creation'
+    description: |
+      Allows for the asynchronous creation of device certifcates in bulk.  
+
+      Optionally, the certificates may be registered with AWS IoT.  This allows for scenarios such as JITP (just-in-time provisioning).
 
 paths:
-
   /certificates/{taskId}:
-  
     parameters:
       - $ref: '#/components/parameters/taskId'
-        
+
     get:
-      tags: 
+      tags:
         - Bulk Certificate Creation
       summary: Retrieve a batch of pre-generated certificates (the outcome of a batch certificate creation task) either as a downloadable zip file (default) or as a list of pre-signed urls.
       operationId: getCertificates
       parameters:
         - $ref: '#/components/parameters/downloadType'
-      
+
       responses:
-        "200":
+        '200':
           description: OK. Either a zip file as the response (default), or a list of s3 presigned urls (when ?downloadType=signedUrl).
           content:
             application/vnd.aws-cdf-v1.0+json:
@@ -51,129 +50,118 @@ paths:
               schema:
                 type: string
                 format: binary
-        "303": 
+        '303':
           description: If certificate creation is still in progress, a redirect to the certificate task status endpoint.
-        "404":
-          $ref: "#/components/responses/NotFound"
-
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /certificates/{taskId}/task:
-  
     parameters:
       - $ref: '#/components/parameters/taskId'
-        
+
     get:
-      tags: 
+      tags:
         - Bulk Certificate Creation
       summary: Retrieve status of a create certificates task.
       operationId: getCertificatesTask
-      
+
       responses:
-        "200":
+        '200':
           description: OK.
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/CertificateBatchTaskStatus"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/CertificateBatchTaskStatus'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /supplier/{supplierId}/certificates:
-  
     parameters:
       - $ref: '#/components/parameters/supplierId'
 
     post:
       tags:
-      - Bulk Certificate Creation
+        - Bulk Certificate Creation
       summary: Creates a batch of device certificates for a specific supplier.
-        
-      operationId: "createSupplierCertificates"
+
+      operationId: 'createSupplierCertificates'
       requestBody:
         required: true
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/CertificateBatchRequest"
+              $ref: '#/components/schemas/CertificateBatchRequest'
             examples:
               simple:
-                summary:
-                  Create a batch of certificates using application defaults set at deployment time.
+                summary: Create a batch of certificates using application defaults set at deployment time.
                 value:
                   quantity: 2
               custom_cert_info:
-                summary:
-                  Create a batch of certificates, specifying certificate values to set.
+                summary: Create a batch of certificates, specifying certificate values to set.
                 value:
                   quantity: 2
                   certInfo:
                     country: US
               common_name_list_generator:
-                summary:
-                  Create a batch of certificates, auto-generating common name based on a provided list in commonNameList.
-                value:                  
-                  certInfo: 
-                    commonName: "`templateFoo::`${list}" 
+                summary: Create a batch of certificates, auto-generating common name based on a provided list in commonNameList.
+                value:
+                  certInfo:
+                    commonName: '`templateFoo::`${list}'
                     commonNameList:
-                      - AB1CD79EF1 
-                      - AB1CD79EF2 
+                      - AB1CD79EF1
+                      - AB1CD79EF2
                       - AB1CD79EF3
-                    organization: "AWS Connected Device Framework"
-                    organizationalUnit: "CDF"
-                    locality: "Denver"
-                    stateName: "CO"
-                    country: "US"
-                    emailAddress: "info@connecteddeviceframework.com"
-                    distinguishedNameQualifier: ""
-                    includeCA: true   
-                  quantity: 100 
+                    organization: 'AWS Connected Device Framework'
+                    organizationalUnit: 'CDF'
+                    locality: 'Denver'
+                    stateName: 'CO'
+                    country: 'US'
+                    emailAddress: 'info@connecteddeviceframework.com'
+                    distinguishedNameQualifier: ''
+                    includeCA: true
+                  quantity: 100
 
               common_name_static_generator:
-                summary:
-                  Create a batch of certificates, auto-generating static common name.
+                summary: Create a batch of certificates, auto-generating static common name.
                 value:
-                  certInfo: 
-                    commonName: "`templateFoo::`AB1CD79EF${static}" 
-                    organization: "AWS Connected Device Framework"
-                    organizationalUnit: "CDF"
-                    locality: "Denver"
-                    stateName: "CO"
-                    country: "US"
-                    emailAddress: "info@connecteddeviceframework.com"
-                    distinguishedNameQualifier: ""
-                    includeCA: true   
-                  quantity: 100 
+                  certInfo:
+                    commonName: '`templateFoo::`AB1CD79EF${static}'
+                    organization: 'AWS Connected Device Framework'
+                    organizationalUnit: 'CDF'
+                    locality: 'Denver'
+                    stateName: 'CO'
+                    country: 'US'
+                    emailAddress: 'info@connecteddeviceframework.com'
+                    distinguishedNameQualifier: ''
+                    includeCA: true
+                  quantity: 100
 
               common_name_increment_generator:
-                summary:
-                  Create a batch of certificates, auto-generating incremental common names.
+                summary: Create a batch of certificates, auto-generating incremental common names.
                 value:
-                  certInfo: 
-                    commonName: "`templateFoo::`AB1CD79EF${increment(100)}" 
-                    organization: "AWS Connected Device Framework"
-                    organizationalUnit: "CDF"
-                    locality: "Denver"
-                    stateName: "CO"
-                    country: "US"
-                    emailAddress: "info@connecteddeviceframework.com"
-                    distinguishedNameQualifier: ""
+                  certInfo:
+                    commonName: '`templateFoo::`AB1CD79EF${increment(100)}'
+                    organization: 'AWS Connected Device Framework'
+                    organizationalUnit: 'CDF'
+                    locality: 'Denver'
+                    stateName: 'CO'
+                    country: 'US'
+                    emailAddress: 'info@connecteddeviceframework.com'
+                    distinguishedNameQualifier: ''
                     includeCA: true
-                  quantity: 100 
+                  quantity: 100
 
-              
       responses:
-        "202":
+        '202':
           description: Acceptd.
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/CertificateBatchTask"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-
+                $ref: '#/components/schemas/CertificateBatchTask'
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
 components:
-
   parameters:
     taskId:
       in: path
@@ -201,7 +189,6 @@ components:
         type: string
 
   responses:
-  
     Created:
       description: Created successfully
       headers:
@@ -213,16 +200,15 @@ components:
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
     NotFound:
       description: Not found
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
-            
+            $ref: '#/components/schemas/Error'
+
   schemas:
-  
     CertificateBatchTask:
       type: object
       properties:
@@ -246,7 +232,7 @@ components:
               type: number
             chunksTotal:
               type: number
-    
+
     CertificateBatchRequest:
       type: object
       properties:
@@ -261,7 +247,7 @@ components:
           $ref: '#/components/schemas/CertInfo'
       required:
         - quantity
-            
+
     CertInfo:
       type: object
       properties:
@@ -302,14 +288,14 @@ components:
         daysExpiry:
           type: number
           description: SSL Certificate Max validity period. The maximum validity period of TLS/SSL certificates is 825 days (2 years, 3 month, and 5 days).
-        
+
     CommonNameGenerator:
       type: object
       description: |
         Will Auto-generates the common name based on the properties provided in the command structure "\`prefix\`commonNameStart${generator(quantity)}".
-        
+
         As an example the following command "\`templateFoo::\`AB1CD79EF${incement(5)}" will generate 5 incremental commonNames starting from templateFoo:AB1CD79EF1 to templateFoo:AB1CD79EF5 
-        
+
         Please refer to the bellow documentation for guidance on each of the properties in the command
       properties:
         generator:
@@ -317,9 +303,9 @@ components:
           description: |
 
             If `increment`, the commonName will be generated by combining the prefix and the incremented commonNameStart hexadecimal value.
-            
+
             If `list`, the commonName will be generated by combining the prefix and the values provided in the commonNameList. Please note that in this mode the number of elements in the array determines the number of certificates being generated and not the quantity value
-            
+
             If `static`, a static value will be generated by combining the prefix and commanNameStart.
           enum:
             - increment
@@ -332,9 +318,9 @@ components:
           description: A hexadecimal string that can be used where incremental generator is requiered.
           type: string
         quantity:
-          description: A numerical value, representing the number of certificates that are to be genrated 
+          description: A numerical value, representing the number of certificates that are to be genrated
           type: number
-          
+
     Error:
       type: object
       properties:

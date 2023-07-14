@@ -55,7 +55,7 @@ export const owCheckUnprintableChar = (inputStr: string, label: string): void =>
         ow.string.validate((s) => ({
             validator: [...s].every((c) => !UNPRINTABLE_UTF_CHAR.has(c)),
             message: (l) => `Expected ${l} to not have unprintable string, got ${inputStr}`,
-        }))
+        })),
     );
 };
 
@@ -65,15 +65,20 @@ export const owCheckOversizeString = (inputStr: string, size: number, label: str
         label,
         ow.number
             .lessThanOrEqual(size)
-            .message((v, l) => `Expected ${l} to not exceed ${size}, got ${v}`)
+            .message((v, l) => `Expected ${l} to not exceed ${size}, got ${v}`),
     );
 };
 
-export const owCheckOptionalNumber = (num: any, minSize: number, maxSize: number, label: string): void => {
+export const owCheckOptionalNumber = (
+    num: any,
+    minSize: number,
+    maxSize: number,
+    label: string,
+): void => {
     if (num === undefined) {
         return;
     }
     const numToCheck = Number(num);
     ow(numToCheck, label, ow.number.greaterThanOrEqual(minSize));
     ow(numToCheck, label, ow.number.lessThanOrEqual(maxSize));
-}
+};

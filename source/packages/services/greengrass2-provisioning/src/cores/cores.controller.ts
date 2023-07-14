@@ -13,7 +13,12 @@
 import { Response } from 'express';
 import { inject } from 'inversify';
 import {
-    controller, httpGet, interfaces, queryParam, requestParam, response
+    controller,
+    httpGet,
+    interfaces,
+    queryParam,
+    requestParam,
+    response,
 } from 'inversify-express-utils';
 import { DeploymentList } from '../deploymentTasks/deploymentTasks.models';
 import { TYPES } from '../di/types';
@@ -24,13 +29,16 @@ import { CoresService } from './cores.service';
 
 @controller('')
 export class CoresController implements interfaces.Controller {
-
     constructor(
         @inject(TYPES.CoresService) private coresService: CoresService,
-        @inject(TYPES.CoresAssembler) private coresAssembler: CoresAssembler) { }
+        @inject(TYPES.CoresAssembler) private coresAssembler: CoresAssembler,
+    ) {}
 
     @httpGet('/cores/:name')
-    public async getCore(@requestParam('name') name: string, @response() res: Response): Promise<void> {
+    public async getCore(
+        @requestParam('name') name: string,
+        @response() res: Response,
+    ): Promise<void> {
         logger.info(`cores.controller getCore: in: name:${name}`);
 
         try {
@@ -50,21 +58,31 @@ export class CoresController implements interfaces.Controller {
 
     @httpGet('/cores/:coreName/deployments')
     public async listDeploymentsByCore(
-        @requestParam('coreName') coreName: string, @queryParam('count') count: number, @queryParam('exclusiveStartTaskId') exclusiveStartTaskId: string,
-        @response() res: Response): Promise<void> {
-
-        logger.debug(`cores.controller listDeploymentsByCore: in: coreName:${coreName}, count:${exclusiveStartTaskId}, exclusiveStartTaskId:${exclusiveStartTaskId}`);
+        @requestParam('coreName') coreName: string,
+        @queryParam('count') count: number,
+        @queryParam('exclusiveStartTaskId') exclusiveStartTaskId: string,
+        @response() res: Response,
+    ): Promise<void> {
+        logger.debug(
+            `cores.controller listDeploymentsByCore: in: coreName:${coreName}, count:${exclusiveStartTaskId}, exclusiveStartTaskId:${exclusiveStartTaskId}`,
+        );
 
         try {
-            const [items, paginationKey] = await this.coresService.listDeploymentsByCore(coreName, count, { taskId: exclusiveStartTaskId });
+            const [items, paginationKey] = await this.coresService.listDeploymentsByCore(
+                coreName,
+                count,
+                { taskId: exclusiveStartTaskId },
+            );
             const result: DeploymentList = {
                 deployments: items,
                 pagination: {
                     count,
-                    lastEvaluated: paginationKey
-                }
-            }
-            logger.debug(`cores.controller listDeploymentsByCore: exit: ${JSON.stringify(result)}`);
+                    lastEvaluated: paginationKey,
+                },
+            };
+            logger.debug(
+                `cores.controller listDeploymentsByCore: exit: ${JSON.stringify(result)}`,
+            );
             res.status(200).send(result);
         } catch (e) {
             handleError(e, res);
@@ -73,16 +91,26 @@ export class CoresController implements interfaces.Controller {
 
     @httpGet('/cores')
     public async listCores(
-        @queryParam('templateName') templateName: string, @queryParam('templateVersion') templateVersion: number, @queryParam('failedOnly') failedOnly: boolean,
-        @queryParam('count') count: number, @queryParam('exclusiveStartThingName') exclusiveStartThingName: string,
-        @response() res: Response): Promise<void> {
+        @queryParam('templateName') templateName: string,
+        @queryParam('templateVersion') templateVersion: number,
+        @queryParam('failedOnly') failedOnly: boolean,
+        @queryParam('count') count: number,
+        @queryParam('exclusiveStartThingName') exclusiveStartThingName: string,
+        @response() res: Response,
+    ): Promise<void> {
+        logger.debug(
+            `cores.controller listCores: in: templateName:${templateName}, templateVersion:${templateVersion}, failedOnly:${failedOnly}, count:${count}, exclusiveStartThingName:${exclusiveStartThingName}`,
+        );
 
-        logger.debug(`cores.controller listCores: in: templateName:${templateName}, templateVersion:${templateVersion}, failedOnly:${failedOnly}, count:${count}, exclusiveStartThingName:${exclusiveStartThingName}`);
-
-        failedOnly = ((failedOnly + '').toLowerCase() === 'true');
+        failedOnly = (failedOnly + '').toLowerCase() === 'true';
         try {
-
-            const [items, paginationKey] = await this.coresService.list(templateName, templateVersion, failedOnly, count, { thingName: exclusiveStartThingName });
+            const [items, paginationKey] = await this.coresService.list(
+                templateName,
+                templateVersion,
+                failedOnly,
+                count,
+                { thingName: exclusiveStartThingName },
+            );
             const resources = this.coresAssembler.toListResource(items, count, paginationKey);
             logger.debug(`cores.controller listTasks: exit: ${JSON.stringify(resources)}`);
             res.status(200).send(resources);
@@ -90,5 +118,4 @@ export class CoresController implements interfaces.Controller {
             handleError(e, res);
         }
     }
-
 }

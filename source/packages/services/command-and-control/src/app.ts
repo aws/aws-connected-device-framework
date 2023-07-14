@@ -91,7 +91,7 @@ server.setConfig((app) => {
     // app.use(XRayExpress.closeSegment());
 });
 
-export const serverInstance:Application = server.build();
+export const serverInstance: Application = server.build();
 serverInstance.listen(PORT);
 
 logger.info(`Server started on port ${PORT} :)`);

@@ -12,46 +12,50 @@
  *********************************************************************************************************************/
 import { getRequestIdFromContext, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
 import { handleError } from './utils/errors';
-import {container} from './di/inversify.config';
+import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
 import { CertificateService } from './certificates/certificates.service';
 import { Action, CertificateRequestModel } from './certificates/certificates.models';
 import ow from 'ow';
 
-let service:CertificateService;
+let service: CertificateService;
 
 exports.handler = async (event: CertificateRequestModel, _context: unknown) => {
-  logger.debug(`handler: event: ${JSON.stringify(event)}`);
+    logger.debug(`handler: event: ${JSON.stringify(event)}`);
 
-  // apply the awsRequestId to the logger so all logs reflect the requestId
-  setRequestId(getRequestIdFromContext(_context));
+    // apply the awsRequestId to the logger so all logs reflect the requestId
+    setRequestId(getRequestIdFromContext(_context));
 
-  try {
-    ow(event.deviceId, ow.string.nonEmpty);
-    ow(event.action, ow.string.nonEmpty);
-    ow(event.certId, ow.string.nonEmpty);
+    try {
+        ow(event.deviceId, ow.string.nonEmpty);
+        ow(event.action, ow.string.nonEmpty);
+        ow(event.certId, ow.string.nonEmpty);
 
-    if (service===undefined) {
-      service = container.get(TYPES.CertificateService);
+        if (service === undefined) {
+            service = container.get(TYPES.CertificateService);
+        }
+
+        if (event.action === Action.get) {
+            if (event.csr !== undefined) {
+                ow(event.csr, ow.string.nonEmpty);
+                const previousCertificateId = event?.previousCertificateId
+                    ? event?.previousCertificateId
+                    : null;
+                await service.getWithCsr(event.deviceId, event.csr, previousCertificateId);
+            } else {
+                await service.get(event.deviceId);
+            }
+        } else if (event.action === Action.ack) {
+            const previousCertificateId = event?.previousCertificateId
+                ? event?.previousCertificateId
+                : null;
+            await service.ack(event.deviceId, event.certId, previousCertificateId);
+        } else {
+            logger.error(`Unrecognized action: ${event.action}`);
+        }
+    } catch (e) {
+        handleError(e);
     }
 
-    if (event.action===Action.get) {
-      if (event.csr !== undefined) {
-        ow(event.csr, ow.string.nonEmpty);
-        const previousCertificateId = (event?.previousCertificateId) ? event?.previousCertificateId : null
-        await service.getWithCsr(event.deviceId, event.csr, previousCertificateId);
-      } else {
-        await service.get(event.deviceId);
-      }
-    } else if (event.action===Action.ack) {
-      const previousCertificateId = (event?.previousCertificateId) ? event?.previousCertificateId : null
-      await service.ack(event.deviceId, event.certId, previousCertificateId);
-    } else {
-      logger.error(`Unrecognized action: ${event.action}`);
-    }
-  } catch (e) {
-    handleError(e);
-  }
-
-  logger.debug('handler: exit:');
+    logger.debug('handler: exit:');
 };

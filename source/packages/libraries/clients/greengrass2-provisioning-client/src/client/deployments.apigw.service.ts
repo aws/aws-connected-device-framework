@@ -31,7 +31,7 @@ export class DeploymentsApigwService extends DeploymentsServiceBase implements D
 
     async createDeploymentTask(
         task: NewDeploymentTask,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(task?.template?.name, 'template name', ow.string.nonEmpty);
         ow(task.targets, 'targets', ow.object.nonEmpty);
@@ -53,7 +53,7 @@ export class DeploymentsApigwService extends DeploymentsServiceBase implements D
 
     async getDeploymentTask(
         taskId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeploymentTask> {
         ow(taskId, ow.string.nonEmpty);
 
@@ -71,4 +71,3 @@ export class DeploymentsApigwService extends DeploymentsServiceBase implements D
             });
     }
 }
-

@@ -11,27 +11,48 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Response } from 'express';
-import { interfaces, controller, response, requestBody, requestParam, httpPost, httpGet, httpDelete, httpPatch } from 'inversify-express-utils';
+import {
+    interfaces,
+    controller,
+    response,
+    requestBody,
+    requestParam,
+    httpPost,
+    httpGet,
+    httpDelete,
+    httpPatch,
+} from 'inversify-express-utils';
 import { inject } from 'inversify';
-import { ProvisionThingRequest, ProvisionThingResponse, ThingDetailModel, PatchCertificateRequest } from './things.models';
+import {
+    ProvisionThingRequest,
+    ProvisionThingResponse,
+    ThingDetailModel,
+    PatchCertificateRequest,
+} from './things.models';
 import { ThingsService } from './things.service';
-import {TYPES} from '../di/types';
-import {logger} from '@awssolutions/simple-cdf-logger';
-import {handleError} from '../utils/errors';
+import { TYPES } from '../di/types';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { handleError } from '../utils/errors';
 import ow from 'ow';
 
 @controller('/things')
 export class ThingsController implements interfaces.Controller {
-
-    constructor( @inject(TYPES.ThingsService) private thingsService: ThingsService) {}
+    constructor(@inject(TYPES.ThingsService) private thingsService: ThingsService) {}
 
     @httpPost('')
-    public async provisionThing(@requestBody() request: ProvisionThingRequest, @response() res: Response) : Promise<ProvisionThingResponse> {
+    public async provisionThing(
+        @requestBody() request: ProvisionThingRequest,
+        @response() res: Response,
+    ): Promise<ProvisionThingResponse> {
         logger.info(`things.controller provisionThing: in: request: ${JSON.stringify(request)}`);
         try {
             ow(request.provisioningTemplateId, ow.string.nonEmpty);
 
-            const thing = await this.thingsService.provision(request.provisioningTemplateId, request.parameters, request.cdfProvisioningParameters);
+            const thing = await this.thingsService.provision(
+                request.provisioningTemplateId,
+                request.parameters,
+                request.cdfProvisioningParameters,
+            );
             res.status(201);
             return thing;
         } catch (e) {
@@ -42,8 +63,10 @@ export class ThingsController implements interfaces.Controller {
     }
 
     @httpGet('/:thingName')
-    public async getThing(@requestParam('thingName') thingName: string, @response() res: Response): Promise<ThingDetailModel> {
-
+    public async getThing(
+        @requestParam('thingName') thingName: string,
+        @response() res: Response,
+    ): Promise<ThingDetailModel> {
         logger.info(`things.controller get: in: thingName: ${thingName}`);
         try {
             const model = await this.thingsService.getThing(thingName);
@@ -56,8 +79,10 @@ export class ThingsController implements interfaces.Controller {
     }
 
     @httpDelete('/:thingName')
-    public async deleteThing(@requestParam('thingName') thingName: string, @response() res: Response): Promise<void> {
-
+    public async deleteThing(
+        @requestParam('thingName') thingName: string,
+        @response() res: Response,
+    ): Promise<void> {
         logger.info(`things.controller delete: in: thingName: ${thingName}`);
         try {
             const deleted = await this.thingsService.deleteThing(thingName);
@@ -69,17 +94,25 @@ export class ThingsController implements interfaces.Controller {
     }
 
     @httpPatch('/:thingName/certificates')
-    public async updateThingCertificates(@requestParam('thingName') thingName: string, @requestBody() request: PatchCertificateRequest,
-        @response() res: Response) : Promise<void> {
-
-        logger.info(`things.controller updateThingCertificates: in: thingName:${thingName}, request:${JSON.stringify(request)}`);
+    public async updateThingCertificates(
+        @requestParam('thingName') thingName: string,
+        @requestBody() request: PatchCertificateRequest,
+        @response() res: Response,
+    ): Promise<void> {
+        logger.info(
+            `things.controller updateThingCertificates: in: thingName:${thingName}, request:${JSON.stringify(
+                request,
+            )}`,
+        );
         try {
             ow(request.certificateStatus, ow.string.nonEmpty);
-            await this.thingsService.updateThingCertificatesStatus(thingName, request.certificateStatus);
+            await this.thingsService.updateThingCertificatesStatus(
+                thingName,
+                request.certificateStatus,
+            );
             res.status(204);
         } catch (e) {
             handleError(e, res);
         }
-
     }
 }

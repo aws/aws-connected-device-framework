@@ -64,4 +64,3 @@ export class PatchTemplateList {
         count: number;
     };
 }
-

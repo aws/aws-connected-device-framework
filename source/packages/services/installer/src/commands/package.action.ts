@@ -1,32 +1,28 @@
-import chalk from "chalk";
-import { Listr, ListrTask } from "listr2";
-import { loadModules } from "../models/modules";
-import { topologicallySortModules } from "../prompts/modules.prompt";
-import { AnswersStorage } from "../utils/answersStorage";
+import chalk from 'chalk';
+import { Listr, ListrTask } from 'listr2';
+import { loadModules } from '../models/modules';
+import { topologicallySortModules } from '../prompts/modules.prompt';
+import { AnswersStorage } from '../utils/answersStorage';
 
-async function packageAction(
-    pathToConfigFile: string,
-    options: unknown
-): Promise<void> {
-
+async function packageAction(pathToConfigFile: string, options: unknown): Promise<void> {
     const answers = await AnswersStorage.loadFromFile(pathToConfigFile);
     const modules = loadModules(answers.environment);
 
     /**
-    * start the template packaging
-    **/
+     * start the template packaging
+     **/
     const startedAt = new Date().getTime();
 
-    console.log(chalk.green("\nStarting the packaging...\n"));
+    console.log(chalk.green('\nStarting the packaging...\n'));
 
     const grouped = topologicallySortModules(
         modules,
         answers.modules.expandedIncludingOptional,
-        false
+        false,
     );
 
-    answers.s3.optionalDeploymentBucket = options["bucket"]
-    answers.s3.optionalDeploymentPrefix = options["prefix"]
+    answers.s3.optionalDeploymentBucket = options['bucket'];
+    answers.s3.optionalDeploymentPrefix = options['prefix'];
 
     for (const layer of grouped) {
         const layerTasks: ListrTask[] = [];
@@ -36,7 +32,10 @@ async function packageAction(
                 throw new Error(`Module ${name} not found!`);
             }
             if (m.package) {
-                if (answers.modules.expandedMandatory.includes(m.name) || answers.modules.list.includes(m.name)) {
+                if (
+                    answers.modules.expandedMandatory.includes(m.name) ||
+                    answers.modules.list.includes(m.name)
+                ) {
                     const [_, subTasks] = await m.package(answers);
                     if (subTasks?.length > 0) {
                         layerTasks.push({

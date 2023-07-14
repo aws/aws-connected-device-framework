@@ -11,7 +11,13 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-export type AccountStatus = 'CREATING' | 'ACTIVE' | 'PROVISIONED' | 'SUSPENDED' | 'PENDING' | 'ERROR'
+export type AccountStatus =
+    | 'CREATING'
+    | 'ACTIVE'
+    | 'PROVISIONED'
+    | 'SUSPENDED'
+    | 'PENDING'
+    | 'ERROR';
 
 export interface AccountResource {
     accountId?: string;
@@ -47,4 +53,3 @@ export type AccountUpdateRequest = {
     accountId?: string;
     status?: string;
 };
-

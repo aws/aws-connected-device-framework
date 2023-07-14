@@ -28,7 +28,7 @@ import { PatchItem } from './patch.model';
 export class PatchTaskService {
     constructor(
         @inject(TYPES.PatchTaskDao) private patchTaskDao: PatchTaskDao,
-        @inject(TYPES.PatchService) private patchService: PatchService
+        @inject(TYPES.PatchService) private patchService: PatchService,
     ) {}
 
     public async create(task: PatchTaskItem): Promise<PatchTaskItem> {
@@ -74,7 +74,7 @@ export class PatchTaskService {
     public async getPatches(
         taskId: string,
         count?: number,
-        exclusiveStartKey?: PatchListPaginationKey
+        exclusiveStartKey?: PatchListPaginationKey,
     ): Promise<[PatchItem[], PatchListPaginationKey]> {
         logger.debug(`PatchTaskService getPatchs: in: taskId: ${taskId}`);
 

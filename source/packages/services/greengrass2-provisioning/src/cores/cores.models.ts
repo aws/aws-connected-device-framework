@@ -23,7 +23,7 @@ export interface CoreResource extends NewCoreResource {
     statusMessage?: string;
 
     artifacts?: {
-        [key: string]: Artifact
+        [key: string]: Artifact;
     };
 
     device?: Device;
@@ -37,9 +37,9 @@ export interface CoreListResource {
     cores: CoreResource[];
     pagination?: {
         lastEvaluated?: {
-            thingName: string
-        },
-        count?: number
+            thingName: string;
+        };
+        count?: number;
     };
 }
 
@@ -56,7 +56,7 @@ export interface CoreItem {
     statusMessage?: string;
 
     artifacts?: {
-        [key: string]: Artifact
+        [key: string]: Artifact;
     };
 
     device?: Device;
@@ -96,7 +96,7 @@ interface Template {
         deploymentStatus: string;
         deploymentStatusMessage: string;
         jobStatus: string;
-    }
+    };
 }
 
 export interface Artifact {
@@ -125,8 +125,11 @@ export interface EffectiveDeployment {
 
 export type CoreTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';
 
-
-export type CdfProvisioningParameters = CreateDeviceCertificateParameters | RegisterDeviceCertificateWithoutCAParameters | UseACMPCAParameters | undefined;
+export type CdfProvisioningParameters =
+    | CreateDeviceCertificateParameters
+    | RegisterDeviceCertificateWithoutCAParameters
+    | UseACMPCAParameters
+    | undefined;
 
 export interface CreateDeviceCertificateParameters {
     caId: string;
@@ -139,7 +142,7 @@ export interface RegisterDeviceCertificateWithoutCAParameters {
 
 export enum CertificateStatus {
     ACTIVE = 'ACTIVE',
-    INACTIVE = 'INACTIVE'
+    INACTIVE = 'INACTIVE',
 }
 
 export interface UseACMPCAParameters {
@@ -172,13 +175,13 @@ export type ConfigGeneratorEvent = {
     provisioningTemplate?: string;
     templateParameters?: { [key: string]: string };
     cdfProvisioningParameters?: CdfProvisioningParameters;
-}
+};
 
-export const CoreCreatedEvent = 'Core Created Event'
+export const CoreCreatedEvent = 'Core Created Event';
 
-export const CoreDeletedEvent = 'Core Deleted Event'
+export const CoreDeletedEvent = 'Core Deleted Event';
 
-export const CoreTemplateUpdatedEvent = 'Core Template Updated Event'
+export const CoreTemplateUpdatedEvent = 'Core Template Updated Event';
 
 export type CoreTaskId = string;
 
@@ -187,21 +190,18 @@ export type DeploymentTaskId = string;
 export type CoreBasePayload = {
     coreName: string;
     taskId: CoreTaskId;
-    status: 'success' | 'failed'
+    status: 'success' | 'failed';
     message?: string;
-}
+};
 
-export type CoreCreatedPayload = CoreBasePayload
+export type CoreCreatedPayload = CoreBasePayload;
 
-export type CoreDeletedPayload = CoreBasePayload
+export type CoreDeletedPayload = CoreBasePayload;
 
-export type CoreTemplateUpdatedPayload = Omit<CoreBasePayload, 'taskId'> &
-{
-    deploymentId: string,
-    deploymentTaskId: DeploymentTaskId,
+export type CoreTemplateUpdatedPayload = Omit<CoreBasePayload, 'taskId'> & {
+    deploymentId: string;
+    deploymentTaskId: DeploymentTaskId;
     jobId: string;
-    templateName: string,
-    templateVersion: number,
-}
-
-
+    templateName: string;
+    templateVersion: number;
+};

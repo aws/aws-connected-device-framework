@@ -31,7 +31,7 @@ export class SearchAssembler {
     constructor(
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
-        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils
+        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
     ) {}
 
     public toSearchRequestModel(
@@ -53,7 +53,7 @@ export class SearchAssembler {
         facetField?: string,
         offset?: number,
         count?: number,
-        sort?: string
+        sort?: string,
     ): SearchRequestModel {
         const req = new SearchRequestModel();
         if (types !== undefined) {
@@ -153,7 +153,7 @@ export class SearchAssembler {
 
     public toSearchResultsResource(
         items: (DeviceItem | GroupItem)[],
-        version: string
+        version: string,
     ): SearchResultsResource {
         if (items === undefined) {
             return undefined;
@@ -166,11 +166,11 @@ export class SearchAssembler {
         items.forEach((item) => {
             if (determineIfDeviceItem(item)) {
                 (<(GroupBaseResource | DeviceBaseResource)[]>resources.results).push(
-                    this.devicesAssembler.toDeviceResource(item, version)
+                    this.devicesAssembler.toDeviceResource(item, version),
                 );
             } else if (determineIfGroupItem(item)) {
                 (<(GroupBaseResource | DeviceBaseResource)[]>resources.results).push(
-                    this.groupsAssembler.toGroupResource(item, version)
+                    this.groupsAssembler.toGroupResource(item, version),
                 );
             }
         });

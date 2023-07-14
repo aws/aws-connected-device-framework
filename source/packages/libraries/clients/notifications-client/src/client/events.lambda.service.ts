@@ -27,7 +27,7 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -37,7 +37,7 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
     async createEvent(
         eventSourceId: string,
         event: EventResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(event, ow.object.nonEmpty);
         ow(eventSourceId, ow.string.nonEmpty);
@@ -94,7 +94,7 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
         eventSourceId: string,
         count?: number,
         fromEventId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<EventResourceList> {
         ow(eventSourceId, ow.string.nonEmpty);
 

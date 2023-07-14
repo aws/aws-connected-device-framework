@@ -14,7 +14,7 @@ import { injectable, inject } from 'inversify';
 import ow from 'ow';
 
 import { TYPES } from '../di/types';
-import {logger} from '@awssolutions/simple-cdf-logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 import { GroupItemList } from './groups.models';
 import { GroupsAssembler } from './groups.assembler';
@@ -22,10 +22,9 @@ import { GroupsDao } from './groups.dao';
 
 @injectable()
 export class GroupsService {
-
     constructor(
-        @inject(TYPES.GroupsDao) private groupsDao: GroupsDao ,
-        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler
+        @inject(TYPES.GroupsDao) private groupsDao: GroupsDao,
+        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
     ) {}
 
     public async getBulk(groupPaths: string[]): Promise<GroupItemList> {
@@ -34,13 +33,12 @@ export class GroupsService {
         ow(groupPaths, ow.array.nonEmpty);
 
         // any ids need to be lowercase
-        groupPaths = groupPaths.map(g => g.toLowerCase());
+        groupPaths = groupPaths.map((g) => g.toLowerCase());
 
-        const result  = await this.groupsDao.get(groupPaths);
+        const result = await this.groupsDao.get(groupPaths);
 
         const model = this.groupsAssembler.toGroupItems(result);
         logger.debug(`groups.full.service get: exit: model: ${JSON.stringify(model)}`);
-        return {results: model};
+        return { results: model };
     }
-
 }

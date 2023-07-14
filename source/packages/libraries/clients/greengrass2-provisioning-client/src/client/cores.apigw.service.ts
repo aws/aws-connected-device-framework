@@ -110,7 +110,7 @@ export class CoresApigwService extends CoresServiceBase implements CoresService 
 
     async listDeploymentsByCore(
         name: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeploymentList> {
         ow(name, ow.string.nonEmpty);
         const url = `${this.baseUrl}${super.deploymentsByCoreRelativeUrl(name)}`;

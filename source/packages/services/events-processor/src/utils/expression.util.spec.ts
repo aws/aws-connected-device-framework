@@ -26,11 +26,12 @@ describe('ExpressionParserUtil', () => {
     it('should parse a complex expression and return properties list and also exclude duplicates', () => {
         const testExpressions = [
             'it.principalValue',
-            'it[\'roller.left_proximity_position_threshold__1\'] || it.foobar && it.principalValue'
+            "it['roller.left_proximity_position_threshold__1'] || it.foobar && it.principalValue",
         ];
-        const testExpressionKeys = [ 'principalValue',
+        const testExpressionKeys = [
+            'principalValue',
             'roller.left_proximity_position_threshold__1',
-            'foobar'
+            'foobar',
         ];
         const parser = new ExpressionParser(testExpressions);
 
@@ -47,7 +48,6 @@ describe('ExpressionParserUtil', () => {
         } catch (err) {
             expect(err).toBeDefined();
         }
-
     });
 });
 
@@ -62,8 +62,8 @@ describe('ExpressionSanitizerUtil', () => {
     });
 
     it('should sanitize an expression template', () => {
-        const testRawExpressionTemplate = '{{=it.foo || =it.bar && =it[\'foobar\']}}';
-        const expectedExpression = ['it.foo || it.bar && it[\'foobar\']'];
+        const testRawExpressionTemplate = "{{=it.foo || =it.bar && =it['foobar']}}";
+        const expectedExpression = ["it.foo || it.bar && it['foobar']"];
         const sanitizer = new ExpressionSanitizer(testRawExpressionTemplate);
         const sanitizedExpression = sanitizer.sanitize();
 
@@ -72,8 +72,12 @@ describe('ExpressionSanitizerUtil', () => {
 
     // Need more complext Regex to extract templates within templates, will skip for now
     it('should sanitize a nested expression template', () => {
-        const testRawExpressionTemplate = 'The device {{=it.principalValue}} {{=it[\'roller.left_proximity_position_threshold__1\'] || =it.foobar}}';
-        const expectedExpression = ['it.principalValue', 'it[\'roller.left_proximity_position_threshold__1\'] || it.foobar'];
+        const testRawExpressionTemplate =
+            "The device {{=it.principalValue}} {{=it['roller.left_proximity_position_threshold__1'] || =it.foobar}}";
+        const expectedExpression = [
+            'it.principalValue',
+            "it['roller.left_proximity_position_threshold__1'] || it.foobar",
+        ];
         const sanitizer = new ExpressionSanitizer(testRawExpressionTemplate);
         const sanitizedExpression = sanitizer.sanitize();
 

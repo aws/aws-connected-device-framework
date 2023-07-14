@@ -19,7 +19,7 @@ export interface GreengrassNucleusConfig {
         /**
          * The proxy to which to connect.
          */
-        proxy: {    
+        proxy: {
             /**
              * The URL of the proxy server in the format scheme://userinfo@host:port.
 
@@ -41,7 +41,7 @@ export interface GreengrassNucleusConfig {
              * (Optional) The password that authenticates the proxy server.
              */
             password?: string;
-        }
+        };
     };
 
     /**
@@ -49,7 +49,7 @@ export interface GreengrassNucleusConfig {
      */
     mqtt?: {
         /**
-         * (Optional) The port to use for MQTT connections. 
+         * (Optional) The port to use for MQTT connections.
          * Default: 8883.
          */
         port?: number;
@@ -103,8 +103,8 @@ export interface GreengrassNucleusConfig {
                 Default: false
              */
             keepQos0WhenOffline?: boolean;
-        }
-    }
+        };
+    };
 
     /**
      * (Optional) The JVM options to use to run the AWS IoT Greengrass Core software.
@@ -162,7 +162,7 @@ export interface GreengrassNucleusConfig {
              * The maximum amount of RAM (in kilobytes) that each component's processes can use on the core device.
              */
             memory: number;
-        }
+        };
     };
 
     /**
@@ -170,7 +170,6 @@ export interface GreengrassNucleusConfig {
      * Default: INFO
      */
     logging?: {
-        
         level?: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
 
         /**
@@ -218,7 +217,6 @@ export interface GreengrassNucleusConfig {
         This object contains the following information:
      */
     fleetstatus?: {
-
         /**
          * (Optional) The amount of time (in seconds) between which the core device publishes device status to the AWS Cloud.
             Minimum: 86400
@@ -231,7 +229,6 @@ export interface GreengrassNucleusConfig {
      * (Optional) The system health telemetry configuration for the core device
      */
     telemetry?: {
-
         /**
          * (Optional) You can enable or disable telemetry.
             Default: true
@@ -273,7 +270,5 @@ export interface GreengrassNucleusConfig {
         */
     platformOverride?: {
         [key: string]: string;
-    }
+    };
 }
-
-

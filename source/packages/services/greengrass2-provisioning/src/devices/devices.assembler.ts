@@ -17,7 +17,6 @@ import { DeviceItem, DeviceResource } from './devices.model';
 
 @injectable()
 export class DevicesAssembler {
-
     public toResource(item: DeviceItem): DeviceResource {
         logger.debug(`devices.assembler toResource: in: item:${JSON.stringify(item)}`);
 
@@ -32,12 +31,11 @@ export class DevicesAssembler {
             artifacts: item.artifacts,
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
-        }
+        };
 
         logger.debug(`devices.assembler toResource: exit:${JSON.stringify(resource)}`);
         return resource;
     }
-
 
     public toResourceArray(items: DeviceItem[]): DeviceResource[] {
         logger.debug(`devices.assembler toResourceArray: in: items:${JSON.stringify(items)}`);
@@ -45,11 +43,10 @@ export class DevicesAssembler {
         const reources: DeviceResource[] = [];
 
         if ((items?.length ?? 0) > 0) {
-            items.forEach(i => reources.push(this.toResource(i)));
+            items.forEach((i) => reources.push(this.toResource(i)));
         }
 
         logger.debug(`devices.assembler toResourceArray: exit: ${JSON.stringify(reources)}`);
         return reources;
-
     }
 }

@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,7 +11,7 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Certificate Vendor Service
@@ -20,7 +21,7 @@ Parameters:
     Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
   BucketName:
@@ -65,35 +66,32 @@ Parameters:
     Default: ''
 
 Conditions:
-  ThingGroupNameProvided: !Not [ !Equals [ !Ref ThingGroupName, "" ]]
-  KmsKeyProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ]]
-  KmsKeyNotProvided: !Equals [ !Ref KmsKeyId, "" ]
+  ThingGroupNameProvided: !Not [!Equals [!Ref ThingGroupName, '']]
+  KmsKeyProvided: !Not [!Equals [!Ref KmsKeyId, '']]
+  KmsKeyNotProvided: !Equals [!Ref KmsKeyId, '']
 
 Resources:
-
   MQTTGetRule:
-    Type: "AWS::IoT::TopicRule"
+    Type: 'AWS::IoT::TopicRule'
     Properties:
       TopicRulePayload:
         Actions:
-          -
-            Lambda:
+          - Lambda:
               FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction}'
-        Description: "Certificate requests (CDF Certificate Vendor service)"
-        AwsIotSqlVersion: "2016-03-23"
+        Description: 'Certificate requests (CDF Certificate Vendor service)'
+        AwsIotSqlVersion: '2016-03-23'
         RuleDisabled: false
         Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, principal() as certId, * FROM '${MQTTGetTopic}'"
 
   MQTTAckRule:
-    Type: "AWS::IoT::TopicRule"
+    Type: 'AWS::IoT::TopicRule'
     Properties:
       TopicRulePayload:
         Actions:
-          -
-            Lambda:
+          - Lambda:
               FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction}'
-        Description: "Certificate acknowledgements (CDF Certificate Vendor service)"
-        AwsIotSqlVersion: "2016-03-23"
+        Description: 'Certificate acknowledgements (CDF Certificate Vendor service)'
+        AwsIotSqlVersion: '2016-03-23'
         RuleDisabled: false
         Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, principal() as certId, * FROM '${MQTTAckTopic}'"
 
@@ -127,7 +125,7 @@ Resources:
               - lambda.amazonaws.com
               - iot.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
         - arn:aws:iam::aws:policy/AWSLambdaExecute
@@ -147,7 +145,7 @@ Resources:
               - lambda.amazonaws.com
               - iot.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
         - !Ref ApplicationCsrPolicies
@@ -161,52 +159,52 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W13
-            reason: "Lambda provided permissions to manage iot Core and s3 bucket"
+            reason: 'Lambda provided permissions to manage iot Core and s3 bucket'
     Properties:
       Description: 'cdf-certificatvendor application policies'
-      Path: "/"
+      Path: '/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Sid: "iot"
+          - Sid: 'iot'
             Action:
-              - "iot:UpdateCertificate"
+              - 'iot:UpdateCertificate'
             Effect: Allow
             Resource:
-                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
-          - Sid: "iotgroup"
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*'
+          - Sid: 'iotgroup'
             Action:
-              - "iot:RemoveThingFromThingGroup"
+              - 'iot:RemoveThingFromThingGroup'
             Effect: Allow
             Resource:
-                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*"
-                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
-          - Sid: "iotthing"
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*'
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*'
+          - Sid: 'iotthing'
             Action:
-              - "iot:DescribeThing"
-              - "iot:UpdateThing"
+              - 'iot:DescribeThing'
+              - 'iot:UpdateThing'
             Effect: Allow
             Resource:
-                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
-          - Sid: "s3bucket"
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*'
+          - Sid: 's3bucket'
             Action:
               - 's3:ListBucket'
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:s3:::${BucketName}'
-          - Sid: "s3objects"
+          - Sid: 's3objects'
             Action:
               - 's3:Get*'
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:s3:::${BucketName}/*'
-          - Sid: "mqtt"
+          - Sid: 'mqtt'
             Action:
               - 'iot:Publish'
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/cdf/certificates/*'
-          - Sid: "lambda"
+          - Sid: 'lambda'
             Action:
               - 'lambda:InvokeFunction'
               - 'lambda:Invoke'
@@ -221,29 +219,29 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W13
-            reason: "Policy needs to apply to IoT artifacts that are created by the CDF"
+            reason: 'Policy needs to apply to IoT artifacts that are created by the CDF'
     Properties:
       Description: 'cdf-certificatvendor policies needed to generate certificates with a CSR'
-      Path: "/"
+      Path: '/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Sid: "ssm"
+          - Sid: 'ssm'
             Action:
               - 'ssm:GetParameter*'
             Effect: Allow
-            Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-ca-key-*"
-          - Sid: "kms"
+            Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-ca-key-*'
+          - Sid: 'kms'
             Action:
               - 'kms:Decrypt'
             Effect: Allow
-            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
-          - Sid: "iotca"
+            Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}'
+          - Sid: 'iotca'
             Action:
               - 'iot:DescribeCaCertificate'
             Effect: Allow
-            Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cacert/*"
-          - Sid: "iot"
+            Resource: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cacert/*'
+          - Sid: 'iot'
             Action:
               - 'iot:RegisterCertificate'
               - 'iot:AttachThingPrincipal'
@@ -252,8 +250,8 @@ Resources:
               - 'iot:ListPrincipalThings'
               - 'iot:ListAttachedPolicies'
             Effect: Allow
-            Resource: "*"
-          - Sid: "iotcert"
+            Resource: '*'
+          - Sid: 'iotcert'
             Action:
               - 'iot:AttachPolicy'
               - 'iot:DetachPolicy'
@@ -261,7 +259,7 @@ Resources:
               - 'iot:DeleteCertificate'
               - 'iot:GetEffectivePolicies'
             Effect: Allow
-            Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
+            Resource: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*'
 
   LambdaFunction:
     Type: AWS::Serverless::Function
@@ -272,7 +270,12 @@ Resources:
       Layers:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 128
-      Role: !If [KmsKeyProvided, !GetAtt LambdaExecutionRoleWithCsr.Arn, !GetAtt LambdaExecutionRole.Arn]
+      Role:
+        !If [
+          KmsKeyProvided,
+          !GetAtt LambdaExecutionRoleWithCsr.Arn,
+          !GetAtt LambdaExecutionRole.Arn,
+        ]
       Runtime: nodejs16.x
       Timeout: 30
       Environment:
@@ -286,7 +289,7 @@ Resources:
           POLICIES_ROTATEDCERTIFICATEPOLICY: !Ref RotatedCertificatePolicy
           AWS_ACCOUNTID: !Ref AWS::AccountId
       Tracing: Active
-  
+
   IotEndpoint:
     Type: Custom::IotEndpoint
     Version: 1.0
@@ -309,5 +312,5 @@ Resources:
       CommandsFunctionName: !Ref CommandsFunctionName
       ThingGroupArn: !GetAtt IotThingGroup.thingGroupArn
       MQTTGetTopic: !Ref MQTTGetTopic
-      MQTTAckTopic: !Ref MQTTAckTopic  
+      MQTTAckTopic: !Ref MQTTAckTopic
     Condition: ThingGroupNameProvided

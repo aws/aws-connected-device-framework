@@ -3,6 +3,7 @@
 This log was last generated on Thu, 04 Aug 2022 18:39:36 GMT and should not be manually modified.
 
 ## 1.3.1
+
 Thu, 04 Aug 2022 18:39:36 GMT
 
 ### Patches
@@ -10,6 +11,7 @@ Thu, 04 Aug 2022 18:39:36 GMT
 - fix installer issue when specifying PCA alias
 
 ## 1.3.0
+
 Fri, 29 Jul 2022 02:59:14 GMT
 
 ### Minor changes
@@ -17,6 +19,7 @@ Fri, 29 Jul 2022 02:59:14 GMT
 - add organization-manager module to installer
 
 ## 1.2.2
+
 Tue, 26 Jul 2022 14:46:23 GMT
 
 ### Patches
@@ -24,6 +27,7 @@ Tue, 26 Jul 2022 14:46:23 GMT
 - fixed issue where PCA alias was not being updated
 
 ## 1.2.1
+
 Thu, 21 Jul 2022 15:32:08 GMT
 
 ### Patches
@@ -31,6 +35,7 @@ Thu, 21 Jul 2022 15:32:08 GMT
 - removed authJwt dependency when lambdaRequest or LambdaToken authorizer is specified
 
 ## 1.2.0
+
 Fri, 15 Jul 2022 15:57:02 GMT
 
 ### Minor changes
@@ -38,6 +43,7 @@ Fri, 15 Jul 2022 15:57:02 GMT
 - added installer steps to add cross region support for provisioning with ACMPCA
 
 ## 1.1.1
+
 Wed, 13 Jul 2022 23:37:54 GMT
 
 ### Patches
@@ -45,6 +51,7 @@ Wed, 13 Jul 2022 23:37:54 GMT
 - added additional steps for the certificatevendor installer
 
 ## 1.1.0
+
 Wed, 13 Jul 2022 02:04:06 GMT
 
 ### Minor changes
@@ -52,6 +59,7 @@ Wed, 13 Jul 2022 02:04:06 GMT
 - add new question to enable/disable events publishing for greengrass2-provisioning module
 
 ## 1.0.2
+
 Tue, 05 Jul 2022 04:26:27 GMT
 
 ### Patches
@@ -59,6 +67,7 @@ Tue, 05 Jul 2022 04:26:27 GMT
 - cdf-cli can now be run from any subdirectory
 
 ## 1.0.1
+
 Tue, 05 Jul 2022 01:23:08 GMT
 
 ### Patches
@@ -66,13 +75,15 @@ Tue, 05 Jul 2022 01:23:08 GMT
 - correctly export APP_CONFIG in cdf-cli generate-local-config
 
 ## 1.0.0
+
 Fri, 01 Jul 2022 21:16:11 GMT
 
 ### Breaking changes
 
--  removed deprecated config-to-env, and cleaned up and renamed cloud-to-env to generate-local-config.
+- removed deprecated config-to-env, and cleaned up and renamed cloud-to-env to generate-local-config.
 
 ## 0.12.0
+
 Fri, 01 Jul 2022 05:48:17 GMT
 
 ### Minor changes
@@ -80,6 +91,7 @@ Fri, 01 Jul 2022 05:48:17 GMT
 - Updated bulkcert installer to support ACMPCA
 
 ## 0.11.0
+
 Thu, 30 Jun 2022 21:32:50 GMT
 
 ### Minor changes
@@ -87,13 +99,15 @@ Thu, 30 Jun 2022 21:32:50 GMT
 - added new cloud-to-env command that given the name of an existing deployed cdf environment will generate the necessary application configuration to run locally.
 
 ## 0.10.0
+
 Thu, 30 Jun 2022 00:07:08 GMT
 
 ### Minor changes
 
--  updated ACM PCA integration to support registering certificates using CA's
+- updated ACM PCA integration to support registering certificates using CA's
 
 ## 0.9.0
+
 Wed, 29 Jun 2022 00:56:16 GMT
 
 ### Minor changes
@@ -101,6 +115,7 @@ Wed, 29 Jun 2022 00:56:16 GMT
 - update the command function reference for certificate vendor to point to command and control stack
 
 ## 0.8.1
+
 Tue, 21 Jun 2022 00:47:55 GMT
 
 ### Patches
@@ -108,6 +123,7 @@ Tue, 21 Jun 2022 00:47:55 GMT
 - update to node 16.x
 
 ## 0.8.0
+
 Wed, 15 Jun 2022 16:42:34 GMT
 
 ### Minor changes
@@ -115,6 +131,7 @@ Wed, 15 Jun 2022 16:42:34 GMT
 - make greengrass config generators configurable
 
 ## 0.7.2
+
 Wed, 15 Jun 2022 03:43:04 GMT
 
 ### Patches
@@ -122,6 +139,7 @@ Wed, 15 Jun 2022 03:43:04 GMT
 - when creating installer, it will uses pnpm installer by rush
 
 ## 0.7.1
+
 Fri, 10 Jun 2022 03:02:06 GMT
 
 ### Patches
@@ -129,6 +147,7 @@ Fri, 10 Jun 2022 03:02:06 GMT
 - fix issues where SNS topic is not being retrieved from the right stack
 
 ## 0.7.0
+
 Thu, 02 Jun 2022 00:45:32 GMT
 
 ### Minor changes
@@ -136,6 +155,7 @@ Thu, 02 Jun 2022 00:45:32 GMT
 - Added support for creating and registering AWS IoT device certificates using AWS ACM PCA.
 
 ## 0.6.0
+
 Tue, 24 May 2022 04:06:34 GMT
 
 ### Minor changes
@@ -143,6 +163,7 @@ Tue, 24 May 2022 04:06:34 GMT
 - introduce package only command
 
 ## 0.5.1
+
 Tue, 17 May 2022 00:04:26 GMT
 
 ### Patches
@@ -150,6 +171,7 @@ Tue, 17 May 2022 00:04:26 GMT
 - all unhandled rejection will now return exit code 1
 
 ## 0.5.0
+
 Mon, 16 May 2022 03:04:28 GMT
 
 ### Minor changes
@@ -157,6 +179,7 @@ Mon, 16 May 2022 03:04:28 GMT
 - allow users to specify TTL for DAX query and item cache
 
 ## 0.4.3
+
 Fri, 13 May 2022 01:29:37 GMT
 
 ### Patches
@@ -164,6 +187,7 @@ Fri, 13 May 2022 01:29:37 GMT
 - minor bug fix, to fix issue where installer would fail due to empty answers
 
 ## 0.4.2
+
 Thu, 12 May 2022 21:12:39 GMT
 
 ### Patches
@@ -171,6 +195,7 @@ Thu, 12 May 2022 21:12:39 GMT
 - minor updates for device-patcher deployment
 
 ## 0.4.1
+
 Thu, 12 May 2022 03:51:07 GMT
 
 ### Patches
@@ -178,6 +203,7 @@ Thu, 12 May 2022 03:51:07 GMT
 - minor bug fix, to fix issue where installer would fail due to empty answers
 
 ## 0.4.0
+
 Thu, 12 May 2022 01:58:21 GMT
 
 ### Minor changes
@@ -185,6 +211,7 @@ Thu, 12 May 2022 01:58:21 GMT
 - Added the capability to the installer to create/modify supplier CA
 
 ## 0.3.4
+
 Thu, 05 May 2022 01:48:19 GMT
 
 ### Patches
@@ -192,6 +219,7 @@ Thu, 05 May 2022 01:48:19 GMT
 - fix installer not allowing zero custom tags
 
 ## 0.3.3
+
 Wed, 27 Apr 2022 09:56:58 GMT
 
 ### Patches
@@ -199,6 +227,7 @@ Wed, 27 Apr 2022 09:56:58 GMT
 - authJwt is not being considered in topological sort
 
 ## 0.3.2
+
 Wed, 27 Apr 2022 08:32:22 GMT
 
 ### Patches
@@ -206,6 +235,7 @@ Wed, 27 Apr 2022 08:32:22 GMT
 - refactoring the prompt works to make sure that optional module questions only being asked when needed
 
 ## 0.3.1
+
 Wed, 27 Apr 2022 06:44:55 GMT
 
 ### Patches
@@ -213,6 +243,7 @@ Wed, 27 Apr 2022 06:44:55 GMT
 - remove the packaging of openssl from installer
 
 ## 0.3.0
+
 Tue, 26 Apr 2022 03:49:33 GMT
 
 ### Minor changes
@@ -220,6 +251,7 @@ Tue, 26 Apr 2022 03:49:33 GMT
 - tag all CDF resources with two mandatory and arbitrary optional tags
 
 ## 0.2.3
+
 Thu, 14 Apr 2022 04:49:09 GMT
 
 ### Patches
@@ -227,6 +259,7 @@ Thu, 14 Apr 2022 04:49:09 GMT
 - docs: remove duplication of calling rush install followed by rush bundle
 
 ## 0.2.2
+
 Wed, 13 Apr 2022 15:53:28 GMT
 
 ### Patches
@@ -234,6 +267,7 @@ Wed, 13 Apr 2022 15:53:28 GMT
 - fix installer flow when specifying existing KMS key by ID
 
 ## 0.2.1
+
 Fri, 08 Apr 2022 07:03:46 GMT
 
 ### Patches
@@ -241,6 +275,7 @@ Fri, 08 Apr 2022 07:03:46 GMT
 - corrected the naming of command-and-control environment variables
 
 ## 0.2.0
+
 Fri, 25 Mar 2022 03:55:57 GMT
 
 ### Minor changes
@@ -248,6 +283,7 @@ Fri, 25 Mar 2022 03:55:57 GMT
 - adding command and control to installer
 
 ## 0.1.8
+
 Thu, 17 Mar 2022 21:52:07 GMT
 
 ### Patches
@@ -255,6 +291,7 @@ Thu, 17 Mar 2022 21:52:07 GMT
 - Fixes issue where installer creates new KMS key on every run
 
 ## 0.1.7
+
 Thu, 17 Mar 2022 05:13:05 GMT
 
 ### Patches
@@ -262,6 +299,7 @@ Thu, 17 Mar 2022 05:13:05 GMT
 - Fix dependency between apigw.cloudFormationTemplate and apigw.type default value
 
 ## 0.1.6
+
 Tue, 15 Mar 2022 18:37:51 GMT
 
 ### Patches
@@ -269,6 +307,7 @@ Tue, 15 Mar 2022 18:37:51 GMT
 - Assetlibrary installer: Display list of available Neptune instance types
 
 ## 0.1.5
+
 Thu, 10 Mar 2022 00:24:53 GMT
 
 ### Patches
@@ -276,6 +315,7 @@ Thu, 10 Mar 2022 00:24:53 GMT
 - Parts of the installer were still assuming the installer had been ran from with the installer package dir rather than from within anywhere within the monorepo as supported by cdf-cli.
 
 ## 0.1.4
+
 Fri, 18 Feb 2022 17:44:18 GMT
 
 ### Patches
@@ -283,6 +323,7 @@ Fri, 18 Feb 2022 17:44:18 GMT
 - The monorepo root was not correctly identified when installing using the cdf-cli command run from outside the installer module directory.
 
 ## 0.1.3
+
 Fri, 18 Feb 2022 03:10:00 GMT
 
 ### Patches
@@ -290,6 +331,7 @@ Fri, 18 Feb 2022 03:10:00 GMT
 - rollback the cdf-openssl stack name to make it backward compatible
 
 ## 0.1.2
+
 Thu, 17 Feb 2022 11:16:43 GMT
 
 ### Patches
@@ -297,7 +339,7 @@ Thu, 17 Feb 2022 11:16:43 GMT
 - fix the filename for cfn-assetlibrary-export.yaml
 
 ## 0.1.1
+
 Thu, 17 Feb 2022 09:27:38 GMT
 
 _Initial release_
-

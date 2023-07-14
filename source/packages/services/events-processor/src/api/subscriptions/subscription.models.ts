@@ -11,7 +11,18 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { EventConditions } from '../events/event.models';
-import { EmailTargetResource, SMSTargetResource, MQTTTargetResource, DynamodDBTargetResource, PushTargetResource, EmailTargetItem, SMSTargetItem, MQTTTargetItem, DynamodDBTargetItem, PushTargetItem } from '../targets/targets.models';
+import {
+    EmailTargetResource,
+    SMSTargetResource,
+    MQTTTargetResource,
+    DynamodDBTargetResource,
+    PushTargetResource,
+    EmailTargetItem,
+    SMSTargetItem,
+    MQTTTargetItem,
+    DynamodDBTargetItem,
+    PushTargetItem,
+} from '../targets/targets.models';
 
 export abstract class SubscriptionBaseResource {
     id: string;
@@ -31,7 +42,10 @@ export abstract class SubscriptionBaseResource {
     alerted?: boolean;
 }
 
-export type UpdateSubcriptionRequest = Pick<SubscriptionBaseResource, "enabled" | "ruleParameterValues"> & { id?: string }
+export type UpdateSubcriptionRequest = Pick<
+    SubscriptionBaseResource,
+    'enabled' | 'ruleParameterValues'
+> & { id?: string };
 
 export class SubscriptionV1Resource extends SubscriptionBaseResource {
     targets?: TargetsV1Resource;
@@ -75,9 +89,9 @@ export interface SubscriptionResourceList {
     results: SubscriptionV1Resource[] | SubscriptionV2Resource[];
     pagination?: {
         offset: {
-            eventId: string,
-            subscriptionId: string
-        }
+            eventId: string;
+            subscriptionId: string;
+        };
     };
 }
 

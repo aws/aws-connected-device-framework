@@ -17,23 +17,24 @@ import AWS = require('aws-sdk');
 
 @injectable()
 export class SNSTarget {
-
     private _sns: AWS.SNS;
 
-    public constructor(
-	    @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS
-    ) {
+    public constructor(@inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS) {
         this._sns = snsFactory();
     }
 
-    public async send(topicArn:string, subject:string, messages:SNSMessages) : Promise<void> {
-        logger.debug(`sns.target send: in: topicArn:${topicArn}, subject:${subject}, messages:${JSON.stringify(messages.toJson())}`);
+    public async send(topicArn: string, subject: string, messages: SNSMessages): Promise<void> {
+        logger.debug(
+            `sns.target send: in: topicArn:${topicArn}, subject:${subject}, messages:${JSON.stringify(
+                messages.toJson(),
+            )}`,
+        );
 
-        const params:AWS.SNS.Types.PublishInput = {
+        const params: AWS.SNS.Types.PublishInput = {
             TopicArn: topicArn,
             Subject: subject,
             Message: JSON.stringify(messages.toJson()),
-            MessageStructure: 'json'
+            MessageStructure: 'json',
         };
 
         try {
@@ -43,13 +44,12 @@ export class SNSTarget {
         }
 
         logger.debug('sns.target send: exit:');
-
     }
 }
 
 export class SNSMessages {
-    default='';
-    email?:string;
+    default = '';
+    email?: string;
     emailJson?: string;
     http?: string;
     https?: string;
@@ -58,7 +58,7 @@ export class SNSMessages {
     ADM?: string;
     APNS?: string;
 
-    public toJson():unknown {
+    public toJson(): unknown {
         return {
             default: this.default,
             email: this.email,
@@ -68,20 +68,21 @@ export class SNSMessages {
             sqs: this.sqs,
             GCM: this.GCM,
             ADM: this.ADM,
-            APNS: this.APNS
+            APNS: this.APNS,
         };
     }
 
-    public hasMessage() : boolean {
-        return (this.default!==undefined) ||
-            (this.email!==undefined) ||
-            (this.emailJson!==undefined) ||
-            (this.http!==undefined) ||
-            (this.https!==undefined) ||
-            (this.sqs!==undefined) ||
-            (this.GCM!==undefined) ||
-            (this.ADM!==undefined) ||
-            (this.APNS!==undefined);
+    public hasMessage(): boolean {
+        return (
+            this.default !== undefined ||
+            this.email !== undefined ||
+            this.emailJson !== undefined ||
+            this.http !== undefined ||
+            this.https !== undefined ||
+            this.sqs !== undefined ||
+            this.GCM !== undefined ||
+            this.ADM !== undefined ||
+            this.APNS !== undefined
+        );
     }
-
 }

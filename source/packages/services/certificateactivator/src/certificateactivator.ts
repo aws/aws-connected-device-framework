@@ -11,48 +11,47 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger, setRequestId, getRequestIdFromContext } from '@awssolutions/simple-cdf-logger';
-import {container} from './di/inversify.config';
+import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
 import { ActivationService } from './activation/activation.service';
 import { RegistrationEvent } from './activation/activation.models';
 import ow from 'ow';
 
-let service:ActivationService;
+let service: ActivationService;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 exports.handler = async (event: any, _context: any) => {
-  logger.debug(`handler: event: ${JSON.stringify(event)}`);
-  setRequestId(getRequestIdFromContext(_context));
+    logger.debug(`handler: event: ${JSON.stringify(event)}`);
+    setRequestId(getRequestIdFromContext(_context));
 
-  try {
-    ow(event.certificateId, ow.string.nonEmpty);
-    ow(event.caCertificateId, ow.string.nonEmpty);
-    ow(event.timestamp, ow.number.integer);
-    ow(event.awsAccountId, ow.string.nonEmpty);
+    try {
+        ow(event.certificateId, ow.string.nonEmpty);
+        ow(event.caCertificateId, ow.string.nonEmpty);
+        ow(event.timestamp, ow.number.integer);
+        ow(event.awsAccountId, ow.string.nonEmpty);
+    } catch (e) {
+        // validation errors shoudn't be retried by Lambda, so
+        // log an error and then return something instead of passing the error up
+        logger.error(`Validation error ${JSON.stringify(e)} on event: ${JSON.stringify(event)}`);
+        return { status: 'error', message: 'VALIDATION_ERROR' };
+    }
 
-  } catch (e) {
-    // validation errors shoudn't be retried by Lambda, so
-    // log an error and then return something instead of passing the error up
-    logger.error(`Validation error ${JSON.stringify(e)} on event: ${JSON.stringify(event)}`);
-    return {'status':'error','message':'VALIDATION_ERROR'};
-  }
+    let registrationMessage: RegistrationEvent;
+    try {
+        registrationMessage = JSON.parse(JSON.stringify(event));
+        logger.debug(`registrationMessage: ${JSON.stringify(registrationMessage)}`);
+    } catch (e) {
+        // parsing errors shoudn't be retried by Lambda, so
+        // log an error and then return something instead of passing the error up
+        logger.error(`Error ${JSON.stringify(e)} parsing event: ${JSON.stringify(event)}`);
+        return { status: 'error', message: 'PARSING_ERROR' };
+    }
 
-  let registrationMessage:RegistrationEvent;
-  try {
-    registrationMessage = JSON.parse(JSON.stringify(event));
-    logger.debug(`registrationMessage: ${JSON.stringify(registrationMessage)}`);
-  } catch(e) {
-    // parsing errors shoudn't be retried by Lambda, so
-    // log an error and then return something instead of passing the error up
-    logger.error(`Error ${JSON.stringify(e)} parsing event: ${JSON.stringify(event)}`);
-    return {'status':'error','message':'PARSING_ERROR'};
-  }
+    if (service === undefined) {
+        service = container.get(TYPES.ActivationService);
+    }
 
-  if (service===undefined) {
-    service = container.get(TYPES.ActivationService);
-  }
+    await service.activate(registrationMessage);
 
-  await service.activate(registrationMessage);
-
-  logger.debug('handler: exit:');
-  return {'status':'success'};
+    logger.debug('handler: exit:');
+    return { status: 'success' };
 };

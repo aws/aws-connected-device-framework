@@ -21,49 +21,71 @@ import {
 } from './events.model';
 
 export interface EventsService {
-    listObjectEvents(req: ObjectEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
+    listObjectEvents(
+        req: ObjectEventsRequest,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<Events>;
 
-    listDeviceEvents(req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
+    listDeviceEvents(
+        req: CategoryEventsRequest,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<Events>;
 
-    listGroupEvents(req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
+    listGroupEvents(
+        req: CategoryEventsRequest,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<Events>;
 
-    listDeviceTemplateEvents(req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
+    listDeviceTemplateEvents(
+        req: CategoryEventsRequest,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<Events>;
 
-    listGroupTemplateEvents(req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
+    listGroupTemplateEvents(
+        req: CategoryEventsRequest,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<Events>;
 
-    listPolicyEvents(req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
+    listPolicyEvents(
+        req: CategoryEventsRequest,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<Events>;
 
-    listCategoryEvents(category: Category, req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
+    listCategoryEvents(
+        category: Category,
+        req: CategoryEventsRequest,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<Events>;
 }
 
 @injectable()
 export class EventsServiceBase {
-
     protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
     protected _headers: RequestHeaders = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
+        Accept: this.MIME_TYPE,
+        'Content-Type': this.MIME_TYPE,
     };
 
-    protected objectEventsRelativeUrl(category:string, objectId:string) : string {
+    protected objectEventsRelativeUrl(category: string, objectId: string): string {
         return PathHelper.encodeUrl(category, objectId);
     }
 
-    protected eventsRelativeUrl(category:string) : string {
+    protected eventsRelativeUrl(category: string): string {
         return PathHelper.encodeUrl(category);
     }
 
-    protected buildHeaders(additionalHeaders:RequestHeaders)  : RequestHeaders {
-
+    protected buildHeaders(additionalHeaders: RequestHeaders): RequestHeaders {
         let headers: RequestHeaders = Object.assign({}, this._headers);
 
         const customHeaders = process.env.ASSETLIBRARYHISTORY_HEADERS;
         if (customHeaders !== undefined) {
             try {
-                const headersFromConfig: RequestHeaders = JSON.parse(customHeaders) as unknown as RequestHeaders;
-                headers = {...headers, ...headersFromConfig};
-            } catch (err) { 
+                const headersFromConfig: RequestHeaders = JSON.parse(
+                    customHeaders,
+                ) as unknown as RequestHeaders;
+                headers = { ...headers, ...headersFromConfig };
+            } catch (err) {
                 const wrappedErr = `Failed to parse configuration parameter ASSETLIBRARYHISTORY_HEADERS as JSON with error: ${err}`;
                 console.log(wrappedErr);
                 throw new Error(wrappedErr);
@@ -71,17 +93,16 @@ export class EventsServiceBase {
         }
 
         if (additionalHeaders !== null && additionalHeaders !== undefined) {
-            headers = {...headers, ...additionalHeaders};
+            headers = { ...headers, ...additionalHeaders };
         }
 
         const keys = Object.keys(headers);
-        keys.forEach(k=> {
-            if (headers[k]===undefined || headers[k]===null) {
+        keys.forEach((k) => {
+            if (headers[k] === undefined || headers[k] === null) {
                 delete headers[k];
             }
         });
 
         return headers;
     }
-
 }

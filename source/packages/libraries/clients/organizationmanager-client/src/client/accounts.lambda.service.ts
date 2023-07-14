@@ -28,7 +28,7 @@ export class AccountsLambdaService extends AccountsServiceBase implements Accoun
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -37,7 +37,7 @@ export class AccountsLambdaService extends AccountsServiceBase implements Accoun
 
     async listAccounts(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<AccountResourceList> {
         ow(organizationalUnitId, ow.string.nonEmpty);
         const event = new LambdaApiGatewayEventBuilder()
@@ -51,7 +51,7 @@ export class AccountsLambdaService extends AccountsServiceBase implements Accoun
 
     async getAccount(
         accountId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<AccountResource> {
         ow(accountId, ow.string.nonEmpty);
         const event = new LambdaApiGatewayEventBuilder()
@@ -64,7 +64,7 @@ export class AccountsLambdaService extends AccountsServiceBase implements Accoun
     }
     async createAccount(
         account: AccountCreationRequest,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(account, ow.object.nonEmpty);
         ow(account.accountId, ow.string.nonEmpty);

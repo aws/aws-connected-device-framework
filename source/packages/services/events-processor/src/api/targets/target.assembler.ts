@@ -25,12 +25,12 @@ export class TargetAssembler {
     public toItems<R extends TargetResource, I extends TargetItem>(
         subscriptionId: string,
         resources: R[],
-        targetType: TargetTypeStrings
+        targetType: TargetTypeStrings,
     ): I[] {
         logger.debug(
             `target.assembler toItems: in: subscriptionId:${subscriptionId}, resources:${JSON.stringify(
-                resources
-            )}, targetType:${targetType}`
+                resources,
+            )}, targetType:${targetType}`,
         );
 
         if (resources === undefined) {
@@ -49,12 +49,12 @@ export class TargetAssembler {
     public toItem<R extends TargetResource, I extends TargetItem>(
         subscriptionId: string,
         resource: R,
-        targetType: TargetTypeStrings
+        targetType: TargetTypeStrings,
     ): I {
         logger.debug(
             `target.assembler toItem: in: subscriptionId:${subscriptionId}, resource:${JSON.stringify(
-                resource
-            )}, targetType:${targetType}`
+                resource,
+            )}, targetType:${targetType}`,
         );
 
         if (resource === undefined) {

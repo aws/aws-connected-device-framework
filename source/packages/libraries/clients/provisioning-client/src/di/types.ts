@@ -11,10 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const PROVISIONING_CLIENT_TYPES = {
-
     ThingsService: Symbol.for('ProvisioningClient_ThingsService'),
 
     RestClient: Symbol.for('ProvisioningClient_RestClient'),
-    RestClientFactory: Symbol.for('Factory<ProvisioningClient_RestClient>')
-
+    RestClientFactory: Symbol.for('Factory<ProvisioningClient_RestClient>'),
 };

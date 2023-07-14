@@ -16,26 +16,25 @@ import ow from 'ow';
 import { Simulation } from './simulation';
 
 exports.handler = async (event: any, _context: any) => {
-  logger.debug(`handler: event: ${JSON.stringify(event)}`);
+    logger.debug(`handler: event: ${JSON.stringify(event)}`);
 
-  ow(event, ow.object.nonEmpty);
-  ow(event.Records, ow.array.nonEmpty);
-  ow(event.Records[0].EventSource, ow.string.equals('aws:sns'));
+    ow(event, ow.object.nonEmpty);
+    ow(event.Records, ow.array.nonEmpty);
+    ow(event.Records[0].EventSource, ow.string.equals('aws:sns'));
 
-  const region = process.env.AWS_REGION;
-  const request = JSON.parse(event.Records[0].Sns.Message);
+    const region = process.env.AWS_REGION;
+    const request = JSON.parse(event.Records[0].Sns.Message);
 
-  ow(region, ow.string.nonEmpty);
-  ow(request.simulationId, ow.string.nonEmpty);
-  ow(request.instances, ow.number.greaterThan(0));
-  ow(request.s3RootKey, ow.string.nonEmpty);
+    ow(region, ow.string.nonEmpty);
+    ow(request.simulationId, ow.string.nonEmpty);
+    ow(request.instances, ow.number.greaterThan(0));
+    ow(request.s3RootKey, ow.string.nonEmpty);
 
-  const simulator = new Simulation(region);
-  await simulator.launch({
-    simulationId: request.simulationId,
-    instances: request.instances,
-    s3RootKey: request.s3RootKey,
-    taskOverrides: request.taskOverrides
-  });
-
+    const simulator = new Simulation(region);
+    await simulator.launch({
+        simulationId: request.simulationId,
+        instances: request.instances,
+        s3RootKey: request.s3RootKey,
+        taskOverrides: request.taskOverrides,
+    });
 };

@@ -24,7 +24,7 @@ export interface SubscriptionBaseResource {
     id?: string;
 
     principalValue?: string;
-    ruleParameterValues?: { [key: string] : string};
+    ruleParameterValues?: { [key: string]: string };
     event?: {
         id: string;
         name?: string;
@@ -72,8 +72,8 @@ export interface SubscriptionResourceList {
     results: SubscriptionV1Resource[] | SubscriptionV2Resource[];
     pagination?: {
         offset: {
-            eventId: string,
-            subscriptionId: string
-        }
+            eventId: string;
+            subscriptionId: string;
+        };
     };
 }

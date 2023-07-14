@@ -13,7 +13,7 @@
 import { injectable, inject } from 'inversify';
 import ow from 'ow';
 
-import {logger} from '@awssolutions/simple-cdf-logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 
 import { DeviceItemList } from './devices.models';
@@ -22,24 +22,34 @@ import { DevicesDao } from './devices.dao';
 
 @injectable()
 export class DevicesService {
-
     constructor(
         @inject(TYPES.DevicesDao) private devicesDao: DevicesDao,
-        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler
+        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
     ) {}
 
-    public async getBulk(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean) : Promise<DeviceItemList> {
-        logger.debug(`device.service getBulk: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}}`);
+    public async getBulk(
+        deviceIds: string[],
+        expandComponents: boolean,
+        attributes: string[],
+        includeGroups: boolean,
+    ): Promise<DeviceItemList> {
+        logger.debug(
+            `device.service getBulk: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}}`,
+        );
 
         ow(deviceIds, ow.array.nonEmpty);
 
-        deviceIds = deviceIds.map(d => d.toLowerCase());
+        deviceIds = deviceIds.map((d) => d.toLowerCase());
 
-        const result  = await this.devicesDao.get(deviceIds, expandComponents, attributes, includeGroups);
+        const result = await this.devicesDao.get(
+            deviceIds,
+            expandComponents,
+            attributes,
+            includeGroups,
+        );
 
         const model = this.devicesAssembler.toDeviceItems(result);
         logger.debug(`device.service get: exit: model: ${JSON.stringify(model)}`);
-        return {results: model};
+        return { results: model };
     }
-
 }

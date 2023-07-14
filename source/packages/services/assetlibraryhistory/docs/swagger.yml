@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -12,69 +13,67 @@
 #-----------------------------------------------------------------------------------------------------------------------
 swagger: '2.0'
 info:
-  title: "AWS Connected Device Framework: Asset Library History"
+  title: 'AWS Connected Device Framework: Asset Library History'
   description: |
     The Asset Library History service tracks changes to all devices, groups, policies, and templates within the Asset Library.
 
   version: 1.0.0
 
-
 consumes:
-- application/vnd.aws-cdf-v1.0+json
+  - application/vnd.aws-cdf-v1.0+json
 produces:
-- application/vnd.aws-cdf-v1.0+json
+  - application/vnd.aws-cdf-v1.0+json
 
 paths:
-
   /{category}:
     parameters:
-    - name: category
-      in: path
-      description: Asset Library category
-      required: true
-      type: string
-      enum: [device, group, policy, groupTemplate, deviceTemplate]
-      
+      - name: category
+        in: path
+        description: Asset Library category
+        required: true
+        type: string
+        enum: [device, group, policy, groupTemplate, deviceTemplate]
+
     get:
       summary: List all events of a given category
       description: List all events of a given category
-      operationId: "listCategoryEvents"
+      operationId: 'listCategoryEvents'
       parameters:
-      - name: timeFrom
-        in: query
-        description: Only display category events since this time
-        type: string
-        format: date-time
-      - name: timeTo
-        in: query
-        description: Only display category events prior to this time
-        type: string
-        format: date-time
-      - name: user
-        in: query
-        description: Only display category events authored by this user
-        type: string
-      - name: event
-        in: query
-        description: Only display category events of this type
-        type: string
-        enum: [create, modify, delete]
-      - name: sort
-        in: query
-        description: Sort order
-        type: string
-        enum: [asc, desc]
-        default: desc
-      - name: token
-        in: query
-        description: Pagination token
-        type: string
-        format: binary
-      - name: limit
-        in: query
-        description: Maximum no. events to return
-        type: number
-        format: int32
+        - name: timeFrom
+          in: query
+          description: Only display category events since this time
+          type: string
+          format: date-time
+        - name: timeTo
+          in: query
+          description: Only display category events prior to this time
+          type: string
+          format: date-time
+        - name: user
+          in: query
+          description: Only display category events authored by this user
+          type: string
+        - name: event
+          in: query
+          description: Only display category events of this type
+          type: string
+          enum: [create, modify, delete]
+        - name: sort
+          in: query
+          description: Sort order
+          type: string
+          enum: [asc, desc]
+          default: desc
+        - name: token
+          in: query
+          description: Pagination token
+          type: string
+          format: binary
+        - name: limit
+          in: query
+          description: Maximum no. events to return
+          type: number
+          format: int32
 
       responses:
         200:
@@ -88,63 +87,63 @@ paths:
 
   /{category}/{objectId}:
     parameters:
-    - name: category
-      in: path
-      description: Asset Library category
-      required: true
-      type: string
-      enum: [device, group, policy, groupTemplate, deviceTemplate]
-    - name: objectId
-      in: path
-      description: Asset Library object id (deviceId, groupPath, policyId, or templateId)
-      required: true
-      type: string
-      
+      - name: category
+        in: path
+        description: Asset Library category
+        required: true
+        type: string
+        enum: [device, group, policy, groupTemplate, deviceTemplate]
+      - name: objectId
+        in: path
+        description: Asset Library object id (deviceId, groupPath, policyId, or templateId)
+        required: true
+        type: string
+
     get:
       summary: List all events of a specific Asset Library object
       description: List all events of a specific Asset Library object
-      operationId: "listObjectEvents"
+      operationId: 'listObjectEvents'
       parameters:
-      - name: timeAt
-        in: query
-        description: Return the known state of a specific object at this time
-        type: string
-        format: date-time
-      - name: timeFrom
-        in: query
-        description: Only display category events since this time
-        type: string
-        format: date-time
-      - name: timeTo
-        in: query
-        description: Only display category events prior to this time
-        type: string
-        format: date-time
-      - name: user
-        in: query
-        description: Only display category events authored by this user
-        type: string
-      - name: event
-        in: query
-        description: Only display category events of this type
-        type: string
-        enum: [create, modify, delete]
-      - name: sort
-        in: query
-        description: Sort order
-        type: string
-        enum: [asc, desc]
-        default: desc
-      - name: token
-        in: query
-        description: Pagination token
-        type: string
-        format: binary
-      - name: limit
-        in: query
-        description: Maximum no. events to return
-        type: number
-        format: int32
+        - name: timeAt
+          in: query
+          description: Return the known state of a specific object at this time
+          type: string
+          format: date-time
+        - name: timeFrom
+          in: query
+          description: Only display category events since this time
+          type: string
+          format: date-time
+        - name: timeTo
+          in: query
+          description: Only display category events prior to this time
+          type: string
+          format: date-time
+        - name: user
+          in: query
+          description: Only display category events authored by this user
+          type: string
+        - name: event
+          in: query
+          description: Only display category events of this type
+          type: string
+          enum: [create, modify, delete]
+        - name: sort
+          in: query
+          description: Sort order
+          type: string
+          enum: [asc, desc]
+          default: desc
+        - name: token
+          in: query
+          description: Pagination token
+          type: string
+          format: binary
+        - name: limit
+          in: query
+          description: Maximum no. events to return
+          type: number
+          format: int32
 
       responses:
         200:
@@ -157,13 +156,12 @@ paths:
           $ref: '#/responses/NotFound'
 
 definitions:
-
   Event:
     type: object
     properties:
       objectId:
         type: string
-        description: DeviceId, groupPath, policyId or templateId of the object.  
+        description: DeviceId, groupPath, policyId or templateId of the object.
       type:
         type: string
         description: category of object.
@@ -183,7 +181,7 @@ definitions:
         type: object
         additionalProperties: true
         description: Full json representation of the object (e.g. a Device) at the time the change was made.
-     
+
   Events:
     type: object
     properties:
@@ -199,14 +197,14 @@ definitions:
             format: binary
           limit:
             type: integer
-      
+
   Error:
     type: object
     properties:
       message:
         type: string
 
-responses:          
+responses:
   Created:
     description: Created successfully
     headers:

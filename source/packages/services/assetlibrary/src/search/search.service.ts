@@ -16,7 +16,7 @@ import { FacetResults, SearchRequestModel } from './search.models';
 
 export interface SearchService {
     search(
-        model: SearchRequestModel
+        model: SearchRequestModel,
     ): Promise<[(GroupItem | DeviceItem)[], number | string, number]>;
 
     delete(model: SearchRequestModel): Promise<void>;

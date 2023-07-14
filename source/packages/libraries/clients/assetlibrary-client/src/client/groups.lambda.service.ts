@@ -35,7 +35,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -45,7 +45,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
     async createGroup(
         body: Group10Resource | Group20Resource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(body, 'body', ow.object.nonEmpty);
 
@@ -65,7 +65,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
     async bulkCreateGroup(
         body: BulkLoadGroups,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<BulkLoadGroupsResponse> {
         ow(body, 'body', ow.object.nonEmpty);
 
@@ -96,7 +96,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
     async getGroup(
         groupPath: string,
         additionalHeaders?: RequestHeaders,
-        includeGroups?: boolean
+        includeGroups?: boolean,
     ): Promise<Group10Resource | Group20Resource> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
@@ -116,7 +116,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         state?: DeviceState,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeviceResourceList> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
@@ -140,7 +140,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         template?: string,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<GroupResourceList> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
@@ -162,7 +162,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         groupPath: string,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<GroupResourceList> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
@@ -183,7 +183,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         groupPath: string,
         body: Group10Resource | Group20Resource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(body, 'body', ow.object.nonEmpty);
@@ -204,7 +204,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         sourceGroupPath: string,
         relationship: string,
         targetGroupPath: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(sourceGroupPath, 'sourceGroupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -213,7 +213,11 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('PUT')
             .setPath(
-                super.groupAttachedGroupRelativeUrl(sourceGroupPath, relationship, targetGroupPath)
+                super.groupAttachedGroupRelativeUrl(
+                    sourceGroupPath,
+                    relationship,
+                    targetGroupPath,
+                ),
             )
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -224,7 +228,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         sourceGroupPath: string,
         relationship: string,
         targetGroupPath: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(sourceGroupPath, 'sourceGroupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -233,7 +237,11 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('DELETE')
             .setPath(
-                super.groupAttachedGroupRelativeUrl(sourceGroupPath, relationship, targetGroupPath)
+                super.groupAttachedGroupRelativeUrl(
+                    sourceGroupPath,
+                    relationship,
+                    targetGroupPath,
+                ),
             )
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -248,7 +256,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         offset?: number,
         count?: number,
         sort?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<GroupResourceList> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -292,7 +300,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         offset?: number,
         count?: number,
         sort?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeviceResourceList> {
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);

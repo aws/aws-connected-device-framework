@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,7 +11,7 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Provisioning Service
@@ -25,10 +26,10 @@ Parameters:
     Type: String
 
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
-    
+
   TemplateSnippetS3UriBase:
     Description: |
       S3 uri of directory where template snippets are stored for the account.
@@ -114,19 +115,19 @@ Parameters:
     Default: ''
 
 Conditions:
-  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
-  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
-  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
-  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
-  ACMPCACrossAccountAccessRequired:  !Not [ !Equals [ !Ref ACMPCACrossAccountRoleArn, "" ] ] 
+  KmsKeyIdProvided: !Not [!Equals [!Ref KmsKeyId, '']]
+  DeployInVPC: !Not [!Equals [!Ref VpcId, 'N/A']]
+  DeployWithLambdaAuth:
+    !Or [!Equals [!Ref AuthType, 'LambdaRequest'], !Equals [!Ref AuthType, 'LambdaToken']]
+  EnableApiGatewayAccessLogs: !Equals [!Ref EnableApiGatewayAccessLogs, 'true']
+  ACMPCACrossAccountAccessRequired: !Not [!Equals [!Ref ACMPCACrossAccountRoleArn, '']]
 
 Resources:
-
   ApiGatewayApi:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+        Location: !Sub '${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}'
     DependsOn:
       - LambdaFunction
 
@@ -135,7 +136,7 @@ Resources:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+        Location: !Sub '${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml'
     DependsOn:
       - LambdaFunction
 
@@ -153,13 +154,13 @@ Resources:
         Statement:
           Effect: Allow
           Principal:
-            Service: 
+            Service:
               - lambda.amazonaws.com
               - iot.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
-        - !If [KmsKeyIdProvided, !Ref SSMPolicy, !Ref "AWS::NoValue"]
+        - !If [KmsKeyIdProvided, !Ref SSMPolicy, !Ref 'AWS::NoValue']
         - !Ref BulkProvisioningPolicy
         - !Ref ACMPolicy
         - arn:aws:iam::aws:policy/AWSLambdaExecute
@@ -171,51 +172,51 @@ Resources:
   BulkProvisioningPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      Description: "cdf-provisioning policy for enabling bulk provisioning"
-      Path: "/cdf/provisioning/"
+      Description: 'cdf-provisioning policy for enabling bulk provisioning'
+      Path: '/cdf/provisioning/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
               - 'iam:PassRole'
             Effect: Allow
-            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-provisioning-*"
+            Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/cdf-provisioning-*'
           - Action:
               - 'iot:RegisterCertificateWithoutCA'
             Effect: Allow
-            Resource: !Sub "*"
+            Resource: !Sub '*'
 
   SSMPolicy:
     Type: AWS::IAM::ManagedPolicy
     Condition: KmsKeyIdProvided
     Properties:
-      Description: "cdf-provisioning policy for accessing SSM and KMS"
-      Path: "/cdf/provisioning/"
+      Description: 'cdf-provisioning policy for accessing SSM and KMS'
+      Path: '/cdf/provisioning/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
               - 'ssm:GetParameter*'
             Effect: Allow
-            Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-ca-key-*"
+            Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-ca-key-*'
           - Action:
               - 'kms:Decrypt'
             Effect: Allow
-            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+            Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}'
 
   ACMPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      Description: "cdf-bulkcerts policy for accessing ACM PCA"
-      Path: "/cdf/provisioning/"
+      Description: 'cdf-bulkcerts policy for accessing ACM PCA'
+      Path: '/cdf/provisioning/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
               - 'acm-pca:IssueCertificate'
               - 'acm-pca:GetCertificate'
             Effect: Allow
-            Resource: "*"
+            Resource: '*'
 
           # optional cross-account role access for ACM PCA
           - Fn::If:
@@ -292,4 +293,3 @@ Outputs:
     Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
     Export:
       Name: !Sub 'cdf-provisioning-${Environment}-apigatewayhost'
-

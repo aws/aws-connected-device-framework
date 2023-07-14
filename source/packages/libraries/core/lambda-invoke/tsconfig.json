@@ -4,14 +4,7 @@
     "outDir": "dist",
     "rootDir": "src"
   },
-  "references": [
-
-  ],
-  "include": [
-    "src"
-  ],
-  "exclude": [
-      "node_modules",
-      "dist"
-  ]
+  "references": [],
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -28,7 +28,7 @@ export class SearchLambdaService extends SearchServiceBase implements SearchServ
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -39,7 +39,7 @@ export class SearchLambdaService extends SearchServiceBase implements SearchServ
         searchRequest: SearchRequestModel,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<SearchResultsModel> {
         ow(searchRequest, ow.object.nonEmpty);
 
@@ -70,14 +70,14 @@ export class SearchLambdaService extends SearchServiceBase implements SearchServ
 
     public async delete(
         searchRequest: SearchRequestModel,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(searchRequest, ow.object.nonEmpty);
 
         const req = new SearchRequestModel();
         req.clone(searchRequest);
 
-        const qs = req.toLambdaMultiValueQueryString()
+        const qs = req.toLambdaMultiValueQueryString();
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.searchRelativeUrl())

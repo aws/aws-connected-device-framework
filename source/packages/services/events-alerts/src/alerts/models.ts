@@ -11,9 +11,9 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface RawAlert {
-    version: { N: string};
+    version: { N: string };
 
-    time: { S: string};
+    time: { S: string };
 
     targets?: {
         M: {
@@ -22,118 +22,118 @@ export interface RawAlert {
                 L?: [
                     {
                         M: {
-                            address: { S: string }
-                        }
-                    }
-                ],
+                            address: { S: string };
+                        };
+                    },
+                ];
                 // single email target is v1.0
                 M?: {
-                    address: { S: string }
-                }
-            },
+                    address: { S: string };
+                };
+            };
             sms: {
                 // multiple sms targets is supported in v2.0 and above
                 L?: [
                     {
                         M: {
-                            phoneNumber: { S: string }
-                        }
-                    }
-                ],
+                            phoneNumber: { S: string };
+                        };
+                    },
+                ];
                 // single sms target is v1.0
                 M?: {
-                    phoneNumber: { S: string }
-                }
-            },
+                    phoneNumber: { S: string };
+                };
+            };
             mqtt: {
                 // multiple mqtt targets is supported in v2.0 and above
                 L?: [
                     {
                         M: {
-                            topic: { S: string }
-                        }
-                    }
-                ],
+                            topic: { S: string };
+                        };
+                    },
+                ];
                 // single mqtt target is v1.0
                 M?: {
-                    topic: { S: string }
-                }
-            },
+                    topic: { S: string };
+                };
+            };
             dynamodb: {
                 // multiple dynamodb targets is supported in v2.0 and above
                 L?: [
                     {
                         M: {
-                            tableName: { S: string },
+                            tableName: { S: string };
                             attributeMapping: {
                                 M: {
-                                    [key: string]: { S: string};
-                                }
-                            }
-                        }
-                    }
-                ],
+                                    [key: string]: { S: string };
+                                };
+                            };
+                        };
+                    },
+                ];
                 // single dynamodb target is v1.0
                 M?: {
-                    tableName: { S: string },
+                    tableName: { S: string };
                     attributeMapping: {
                         M: {
-                            [key: string]: { S: string};
-                        }
-                    }
-                }
-            },
+                            [key: string]: { S: string };
+                        };
+                    };
+                };
+            };
             push_gcm: {
                 // multiple push_gcm targets is supported in v2.0 and above
                 L?: [
                     {
                         M: {
-                            platformEndpointArn: { S: string }
-                        }
-                    }
-                ],
+                            platformEndpointArn: { S: string };
+                        };
+                    },
+                ];
                 // single push_gcm target is v1.0
                 M?: {
-                    platformEndpointArn: { S: string }
-                }
-            },
+                    platformEndpointArn: { S: string };
+                };
+            };
             push_adm: {
                 // multiple push_adm targets is supported in v2.0 and above
                 L?: [
                     {
                         M: {
-                            platformEndpointArn: { S: string }
-                        }
-                    }
-                ],
+                            platformEndpointArn: { S: string };
+                        };
+                    },
+                ];
                 // single push_adm target is v1.0
                 M?: {
-                    platformEndpointArn: { S: string }
-                }
-            },
+                    platformEndpointArn: { S: string };
+                };
+            };
             push_apns: {
                 // multiple push_apns targets is supported in v2.0 and above
                 L?: [
                     {
                         M: {
-                            platformEndpointArn: { S: string }
-                        }
-                    }
-                ],
+                            platformEndpointArn: { S: string };
+                        };
+                    },
+                ];
                 // single push_apns target is v1.0
                 M?: {
-                    platformEndpointArn: { S: string }
-                }
-            }
-        }
+                    platformEndpointArn: { S: string };
+                };
+            };
+        };
     };
 
-    snsTopicArn: { S: string};
+    snsTopicArn: { S: string };
 
-    eventId: { S: string};
-    eventName: { S: string};
+    eventId: { S: string };
+    eventName: { S: string };
 
-    userId: { S: string};
+    userId: { S: string };
 
     templatePropertiesData: {
         M: {
@@ -141,7 +141,7 @@ export interface RawAlert {
                 S?: string;
                 N?: number;
             };
-        }
+        };
     };
 }
 
@@ -154,7 +154,7 @@ export interface AssembledAlert {
     eventName: string;
     userId: string;
     templatePropertiesData?: {
-        [key: string]: string | number | boolean
+        [key: string]: string | number | boolean;
     };
 }
 
@@ -172,7 +172,7 @@ export interface EmailTargetItem {
     address: string;
 }
 
-export interface SMSTargetItem  {
+export interface SMSTargetItem {
     phoneNumber: string;
 }
 
@@ -181,10 +181,10 @@ export interface MQTTTargetItem {
 }
 
 export interface DynamodDBTargetItem {
-    tableName:string;
-    attributeMapping: { [key: string] : string};
+    tableName: string;
+    attributeMapping: { [key: string]: string };
 }
 
 export interface PushTargetItem {
-    platformEndpointArn? : string;
+    platformEndpointArn?: string;
 }

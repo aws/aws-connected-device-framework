@@ -24,14 +24,13 @@ import { FullAssembler } from '../data/full.assembler';
 import { TypesService } from '../types/types.service';
 import { TypesDao } from '../types/types.dao';
 
-export const FullContainerModule = new ContainerModule (
+export const FullContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         _isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind
+        _rebind: interfaces.Rebind,
     ) => {
-
         bind<TypesService>(TYPES.TypesService).to(TypesService).inSingletonScope();
         bind<TypesDao>(TYPES.TypesDao).to(TypesDao).inSingletonScope();
 
@@ -44,13 +43,12 @@ export const FullContainerModule = new ContainerModule (
         bind<GroupsDao>(TYPES.GroupsDao).to(GroupsDao).inSingletonScope();
 
         decorate(injectable(), structure.Graph);
-        bind<interfaces.Factory<structure.Graph>>(TYPES.GraphSourceFactory)
-            .toFactory<structure.Graph>((_ctx: interfaces.Context) => {
+        bind<interfaces.Factory<structure.Graph>>(
+            TYPES.GraphSourceFactory,
+        ).toFactory<structure.Graph>((_ctx: interfaces.Context) => {
             return () => {
-
                 return new structure.Graph();
-
             };
         });
-    }
+    },
 );

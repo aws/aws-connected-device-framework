@@ -47,16 +47,16 @@ export class TypesController implements interfaces.Controller {
         @requestParam('category') category: TypeCategory,
         @requestParam('templateId') templateId: string,
         @queryParam('status') status: string,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<TypeResource> {
         logger.info(
-            `types.controller: getTemplate: in: category:${category}, templateId:${templateId}, status:${status}`
+            `types.controller: getTemplate: in: category:${category}, templateId:${templateId}, status:${status}`,
         );
         try {
             const model = await this.typesService.get(
                 templateId,
                 category,
-                TypeDefinitionStatus[status]
+                TypeDefinitionStatus[status],
             );
             logger.debug(`controller exit: ${JSON.stringify(model)}`);
 
@@ -85,12 +85,12 @@ export class TypesController implements interfaces.Controller {
         @requestParam('category') category: TypeCategory,
         @requestParam('templateId') templateId: string,
         @requestBody() definition: TypeDefinitionModel,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<void> {
         logger.info(
             `types.controller: createTemplate: in: category:${category}, templateId:${templateId}, definition:${JSON.stringify(
-                definition
-            )}`
+                definition,
+            )}`,
         );
 
         try {
@@ -111,12 +111,12 @@ export class TypesController implements interfaces.Controller {
         @requestParam('category') category: TypeCategory,
         @requestParam('templateId') templateId: string,
         @requestBody() definition: TypeDefinitionModel,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<void> {
         logger.info(
             `types.controller: updateTemplate: in: category:${category}, templateId:${templateId}, definition:${JSON.stringify(
-                definition
-            )}`
+                definition,
+            )}`,
         );
         try {
             const result = await this.typesService.update(templateId, category, definition);
@@ -134,10 +134,10 @@ export class TypesController implements interfaces.Controller {
     public async publishTemplate(
         @requestParam('category') category: TypeCategory,
         @requestParam('templateId') templateId: string,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<void> {
         logger.info(
-            `types.controller: publishTemplate: in: category:${category}, templateId:${templateId}`
+            `types.controller: publishTemplate: in: category:${category}, templateId:${templateId}`,
         );
         try {
             await this.typesService.publish(templateId, category);
@@ -153,10 +153,10 @@ export class TypesController implements interfaces.Controller {
     public async deleteTemplate(
         @requestParam('category') category: TypeCategory,
         @requestParam('templateId') templateId: string,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<void> {
         logger.info(
-            `types.controller deleteTemplate: in: category:${category}, templateId:${templateId}`
+            `types.controller deleteTemplate: in: category:${category}, templateId:${templateId}`,
         );
         try {
             await this.typesService.delete(templateId, category);
@@ -173,10 +173,10 @@ export class TypesController implements interfaces.Controller {
         @queryParam('offset') offset: number,
         @queryParam('count') count: number,
         @queryParam('sort') sort: string | string[],
-        @response() res: Response
+        @response() res: Response,
     ): Promise<TypeResourceList> {
         logger.info(
-            `types.controller: listTemplates: in: category:${category}, status:${status}, offset:${offset}, count:${count}, sort:${sort}`
+            `types.controller: listTemplates: in: category:${category}, status:${status}, offset:${offset}, count:${count}, sort:${sort}`,
         );
 
         const r: TypeResourceList = { results: [] };
@@ -193,7 +193,7 @@ export class TypesController implements interfaces.Controller {
                 TypeDefinitionStatus[status],
                 offset,
                 count,
-                sortKeys
+                sortKeys,
             );
 
             if (results === undefined) {

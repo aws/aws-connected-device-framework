@@ -13,13 +13,13 @@
 export class MessageTemplates {
     supportedTargets: SupportedTargets = {};
     templates: Templates = {};
-    templateProperties:string[] = [];
+    templateProperties: string[] = [];
 }
 
-export type AttributeMapping = { [key: string] : string};
-export type SupportedTargets = {[key:string]:string};
-export type Templates = {[key:string]:string};
+export type AttributeMapping = { [key: string]: string };
+export type SupportedTargets = { [key: string]: string };
+export type Templates = { [key: string]: string };
 
 export type TemplateCache = {
-    [key: string]: MessageTemplates
+    [key: string]: MessageTemplates;
 };

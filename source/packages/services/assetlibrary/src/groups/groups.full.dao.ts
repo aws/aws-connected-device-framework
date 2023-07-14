@@ -37,7 +37,7 @@ const __ = process.statics;
 const associateRels = (
     traversal: process.GraphTraversal,
     rels: RelatedEntityArrayMap,
-    direction: RelationDirection
+    direction: RelationDirection,
 ) => {
     if (Object.keys(rels ?? {}).length > 0) {
         Object.entries(rels).forEach(([rel, entities]) => {
@@ -61,7 +61,7 @@ const associateRels = (
 const disassociateRels = (
     dropTraversals: process.GraphTraversal[],
     rels: RelatedEntityArrayMap,
-    direction: RelationDirection
+    direction: RelationDirection,
 ) => {
     console.debug('groups.full.dao disassociateRels:', JSON.stringify({ rels, direction }));
     if (Object.keys(rels ?? {}).length > 0) {
@@ -89,7 +89,7 @@ export class GroupsDaoFull extends BaseDaoFull {
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
-        @inject('authorization.enabled') private isAuthzEnabled: boolean
+        @inject('authorization.enabled') private isAuthzEnabled: boolean,
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -150,7 +150,7 @@ export class GroupsDaoFull extends BaseDaoFull {
                 : traverser.union(relatedIn, relatedOut, groupProps);
 
             logger.debug(
-                `groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`
+                `groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`,
             );
             results = await traverser.toList();
             logger.debug(`groups.full.dao get: result: ${JSON.stringify(results)}`);
@@ -190,7 +190,7 @@ export class GroupsDaoFull extends BaseDaoFull {
         const dbIds = groupPaths.map((d) => `group___${d}`);
         const result = await this.commonDao.getLabels(dbIds);
         Object.entries(result).forEach(
-            ([path, labels]) => (result[path] = labels.filter((l) => l !== 'group'))
+            ([path, labels]) => (result[path] = labels.filter((l) => l !== 'group')),
         );
         logger.debug(`groups.full.dao getLabels: result: ${JSON.stringify(result)}`);
         return result;
@@ -198,7 +198,7 @@ export class GroupsDaoFull extends BaseDaoFull {
 
     public async create(n: Node, groups: DirectionToRelatedEntityArrayMap): Promise<string> {
         logger.debug(
-            `groups.full.dao create: in: n:${JSON.stringify(n)}, groups:${JSON.stringify(groups)}`
+            `groups.full.dao create: in: n:${JSON.stringify(n)}, groups:${JSON.stringify(groups)}`,
         );
 
         const id = `group___${n.attributes['groupPath']}`;
@@ -260,8 +260,8 @@ export class GroupsDaoFull extends BaseDaoFull {
                 // relationships be dropped where specified and new relations created.
                 logger.info(
                     `groups.full.dao update groups relations specified as part of update: ${JSON.stringify(
-                        { groups: groups }
-                    )}`
+                        { groups: groups },
+                    )}`,
                 );
                 const result = await this.get([`${n.attributes['groupPath']}`], true);
                 let currentGroup: GroupItem;
@@ -312,12 +312,12 @@ export class GroupsDaoFull extends BaseDaoFull {
         filterRelatedBy: { [key: string]: ModelAttributeValue },
         offset: number,
         count: number,
-        sort: SortKeys
+        sort: SortKeys,
     ): Promise<Node> {
         logger.debug(
             `groups.full.dao listRelated: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(
-                filterRelatedBy
-            )}, offset:${offset}, count:${count}, sort:${sort}`
+                filterRelatedBy,
+            )}, offset:${offset}, count:${count}, sort:${sort}`,
         );
 
         const id = `group___${groupPath}`;
@@ -336,7 +336,7 @@ export class GroupsDaoFull extends BaseDaoFull {
             offset,
             count,
             sort,
-            authorizedPaths
+            authorizedPaths,
         );
     }
 
@@ -356,8 +356,8 @@ export class GroupsDaoFull extends BaseDaoFull {
                         __.repeat(__.out('parent').simplePath().dedup())
                             .emit()
                             .valueMap()
-                            .with_(process.withOptions.tokens)
-                    )
+                            .with_(process.withOptions.tokens),
+                    ),
                 )
                 .toList();
         } finally {
@@ -399,10 +399,10 @@ export class GroupsDaoFull extends BaseDaoFull {
         sourceGroupPath: string,
         relationship: string,
         targetGroupPath: string,
-        isAuthCheck: boolean
+        isAuthCheck: boolean,
     ): Promise<void> {
         logger.debug(
-            `groups.full.dao attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}, isAuthCheck:${isAuthCheck}`
+            `groups.full.dao attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}, isAuthCheck:${isAuthCheck}`,
         );
 
         const sourceId = `group___${sourceGroupPath}`;
@@ -435,10 +435,10 @@ export class GroupsDaoFull extends BaseDaoFull {
     public async detachFromGroup(
         sourceGroupPath: string,
         relationship: string,
-        targetGroupPath: string
+        targetGroupPath: string,
     ): Promise<void> {
         logger.debug(
-            `groups.full.dao detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`
+            `groups.full.dao detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`,
         );
 
         const sourceId = `group___${sourceGroupPath}`;

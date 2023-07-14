@@ -47,7 +47,7 @@ server.setConfig((app) => {
         const customDomainPath = process.env.CUSTOM_DOMAIN_BASE_PATH;
         if (customDomainPath) {
             req.url = normalisePath(req.url, customDomainPath);
-            logger.silly(`${customDomainPath} is removed from the request url`)
+            logger.silly(`${customDomainPath} is removed from the request url`);
         }
         next();
     });
@@ -72,7 +72,7 @@ server.setConfig((app) => {
     if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
         const c = cors({
             origin: corsAllowedOrigin,
-            exposedHeaders
+            exposedHeaders,
         });
         app.use(c);
     }

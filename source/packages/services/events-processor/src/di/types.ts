@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const TYPES = {
-
     DDBStreamTransformer: Symbol.for('DDBStreamTransformer'),
 
     EventSourceService: Symbol.for('EventSourceService'),
@@ -51,27 +50,27 @@ export const TYPES = {
 
     DynamoDbUtils: Symbol.for('DynamoDbUtils'),
 
-    DocumentClient:  Symbol.for('DocumentClient'),
-    DocumentClientFactory:  Symbol.for('Factory<DocumentClient>'),
+    DocumentClient: Symbol.for('DocumentClient'),
+    DocumentClientFactory: Symbol.for('Factory<DocumentClient>'),
 
-    CachableDocumentClient:  Symbol.for('CachableDocumentClient'),
-    CachableDocumentClientFactory:  Symbol.for('Factory<CachableDocumentClient>'),
+    CachableDocumentClient: Symbol.for('CachableDocumentClient'),
+    CachableDocumentClientFactory: Symbol.for('Factory<CachableDocumentClient>'),
 
-    DynamoDB:  Symbol.for('DynamoDB'),
-    DynamoDBFactory:  Symbol.for('Factory<DynamoDB>'),
+    DynamoDB: Symbol.for('DynamoDB'),
+    DynamoDBFactory: Symbol.for('Factory<DynamoDB>'),
 
-    Lambda:  Symbol.for('Lambda'),
-    LambdaFactory:  Symbol.for('Factory<Lambda>'),
+    Lambda: Symbol.for('Lambda'),
+    LambdaFactory: Symbol.for('Factory<Lambda>'),
 
-    SNS:  Symbol.for('SNS'),
-    SNSFactory:  Symbol.for('Factory<SNS>'),
+    SNS: Symbol.for('SNS'),
+    SNSFactory: Symbol.for('Factory<SNS>'),
 
     IotData: Symbol.for('IotData'),
     IotDataFactory: Symbol.for('Factory<IotData>'),
 
-    Iot:  Symbol.for('Iot'),
-    IotFactory:  Symbol.for('Factory<Iot>'),
+    Iot: Symbol.for('Iot'),
+    IotFactory: Symbol.for('Factory<Iot>'),
 
     SQS: Symbol.for('SQS'),
-    SQSFactory: Symbol.for('Factory<SQS>')
+    SQSFactory: Symbol.for('Factory<SQS>'),
 };

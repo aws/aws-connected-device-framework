@@ -23,22 +23,26 @@ import { CertUtils } from '../../utils/cert';
 
 @injectable()
 export class RegisterDeviceCertificateWithoutCAStepProcessor implements ProvisioningStepProcessor {
-
-    public constructor(
-        @inject(TYPES.CertUtils) private certUtils: CertUtils
-    ) {
-    }
+    public constructor(@inject(TYPES.CertUtils) private certUtils: CertUtils) {}
 
     public async process(stepData: ProvisioningStepData): Promise<void> {
-        logger.debug(`RegisterDeviceCertificateWithoutCAStepProcessor: process: in: stepData: ${JSON.stringify(stepData)}`);
+        logger.debug(
+            `RegisterDeviceCertificateWithoutCAStepProcessor: process: in: stepData: ${JSON.stringify(
+                stepData,
+            )}`,
+        );
 
-        const cdfParams = stepData?.cdfProvisioningParameters as RegisterDeviceCertificateWithoutCAParameters;
+        const cdfParams =
+            stepData?.cdfProvisioningParameters as RegisterDeviceCertificateWithoutCAParameters;
         ow(cdfParams?.certificatePem, 'certificate pem', ow.string.nonEmpty);
         ow(cdfParams?.certificateStatus, 'certificate status', ow.string.nonEmpty);
 
-        const r = await this.certUtils.registerCertificateWithoutCA(cdfParams.certificatePem, cdfParams.certificateStatus);
+        const r = await this.certUtils.registerCertificateWithoutCA(
+            cdfParams.certificatePem,
+            cdfParams.certificateStatus,
+        );
 
-        if (stepData.parameters===undefined) {
+        if (stepData.parameters === undefined) {
             stepData.parameters = {};
         }
         stepData.parameters.CertificateId = r.certificateId;

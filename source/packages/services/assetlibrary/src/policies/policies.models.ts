@@ -11,20 +11,19 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export class PolicyModel {
-	policyId: string;
-	type: string;
-	description: string;
-	appliesTo:string[]=[];
-	document:string;
-
+    policyId: string;
+    type: string;
+    description: string;
+    appliesTo: string[] = [];
+    document: string;
 }
 
 export interface PolicyListModel {
     results: PolicyModel[];
-	pagination?: {
-		offset:number;
-		count: number;
-	};
+    pagination?: {
+        offset: number;
+        count: number;
+    };
 }
 
 export class Policy {
@@ -36,13 +35,13 @@ export class Policy {
         document: string[];
     };
     groups: {
-        id:string;
-        label:string;
+        id: string;
+        label: string;
     }[];
 }
 export class AttachedPolicy extends Policy {
     policyGroups: {
-        id:string;
-        label:string
+        id: string;
+        label: string;
     }[];
 }

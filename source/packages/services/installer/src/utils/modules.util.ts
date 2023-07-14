@@ -10,15 +10,21 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Modules } from "../models/answers";
-import { ModuleName } from "../models/modules";
+import { Modules } from '../models/answers';
+import { ModuleName } from '../models/modules';
 
-const includeOptionalModule = (moduleName: ModuleName, { list, expandedMandatory }: Modules, conditionToCheck: boolean): void => {
-  if (conditionToCheck && !list.includes(moduleName) && !expandedMandatory.includes(moduleName)) {
-    expandedMandatory.push(moduleName)
-  }
-}
+const includeOptionalModule = (
+    moduleName: ModuleName,
+    { list, expandedMandatory }: Modules,
+    conditionToCheck: boolean,
+): void => {
+    if (
+        conditionToCheck &&
+        !list.includes(moduleName) &&
+        !expandedMandatory.includes(moduleName)
+    ) {
+        expandedMandatory.push(moduleName);
+    }
+};
 
-export {
-  includeOptionalModule
-}
+export { includeOptionalModule };

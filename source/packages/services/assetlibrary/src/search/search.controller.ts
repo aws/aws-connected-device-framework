@@ -32,7 +32,7 @@ import { SearchService } from './search.service';
 export class SearchController implements interfaces.Controller {
     constructor(
         @inject(TYPES.SearchAssembler) private searchAssembler: SearchAssembler,
-        @inject(TYPES.SearchService) private searchService: SearchService
+        @inject(TYPES.SearchService) private searchService: SearchService,
     ) {}
 
     @httpGet('/search')
@@ -58,10 +58,10 @@ export class SearchController implements interfaces.Controller {
         @queryParam('count') count: number,
         @queryParam('sort') sort: string,
         @request() req: Request,
-        @response() res: Response
+        @response() res: Response,
     ): Promise<SearchResultsResource> {
         logger.debug(
-            `search.controller search: in: types:${types}, ancestorPath:${ancestorPath}, eqs:${eqs}, neqs:${neqs}, lts:${lts}, ltes:${ltes}, gts:${gts}, gtes:${gtes}, startsWiths:${startsWiths}, endsWiths:${endsWiths}, containses:${containses}, exists:${exists}, nexists:${nexists}, facetField:${facetField}, summarize:${summarize}, offset:${offset}, count:${count}, sort:${sort}`
+            `search.controller search: in: types:${types}, ancestorPath:${ancestorPath}, eqs:${eqs}, neqs:${neqs}, lts:${lts}, ltes:${ltes}, gts:${gts}, gtes:${gtes}, startsWiths:${startsWiths}, endsWiths:${endsWiths}, containses:${containses}, exists:${exists}, nexists:${nexists}, facetField:${facetField}, summarize:${summarize}, offset:${offset}, count:${count}, sort:${sort}`,
         );
 
         const r: SearchResultsResource = { results: [] };
@@ -86,7 +86,7 @@ export class SearchController implements interfaces.Controller {
                 facetField,
                 offset,
                 count,
-                sort
+                sort,
             );
 
             if (summarize === 'true') {
@@ -97,7 +97,7 @@ export class SearchController implements interfaces.Controller {
                 r.results = facets;
             } else {
                 const [items, actualOffset, actualCount] = await this.searchService.search(
-                    searchRequest
+                    searchRequest,
                 );
                 r.pagination = {
                     offset: actualOffset,
@@ -108,7 +108,7 @@ export class SearchController implements interfaces.Controller {
                 } else {
                     r.results = this.searchAssembler.toSearchResultsResource(
                         items,
-                        req['version']
+                        req['version'],
                     ).results;
                 }
             }
@@ -137,10 +137,10 @@ export class SearchController implements interfaces.Controller {
         @queryParam('contains') containses: string | string[],
         @queryParam('exist') exists: string | string[],
         @queryParam('nexist') nexists: string | string[],
-        @response() res: Response
+        @response() res: Response,
     ): Promise<void> {
         logger.debug(
-            `search.controller delete: in: types:${types}, ancestorPath:${ancestorPath}, eqs:${eqs}, neqs:${neqs}, lts:${lts}, ltes:${ltes}, gts:${gts}, gtes:${gtes}, startsWiths:${startsWiths}, endsWiths:${endsWiths}, containses:${containses}, exists:${exists}, nexists:${nexists}`
+            `search.controller delete: in: types:${types}, ancestorPath:${ancestorPath}, eqs:${eqs}, neqs:${neqs}, lts:${lts}, ltes:${ltes}, gts:${gts}, gtes:${gtes}, startsWiths:${startsWiths}, endsWiths:${endsWiths}, containses:${containses}, exists:${exists}, nexists:${nexists}`,
         );
 
         const searchRequest = this.searchAssembler.toSearchRequestModel(
@@ -158,7 +158,7 @@ export class SearchController implements interfaces.Controller {
             endsWiths,
             containses,
             exists,
-            nexists
+            nexists,
         );
 
         try {

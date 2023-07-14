@@ -14,42 +14,39 @@ import { injectable } from 'inversify';
 
 @injectable()
 export class BatcherBase {
-
     // This function creates exclusive ranges for a given limit (count) and size (batchSize).
     // The function return ranges as sets i.e. input:100, 10,  output: [[0,10] [10, 20] ...]
     // These ranges will be used to query labels form Neptune. Neptune, works with exclusive ranges,
     // where the end of one range is the begining of the next one. i.e. [0,10] [10, 20]
-    public createRangesByCount(count:number, batchSize:number):Array<[number, number]> {
-
+    public createRangesByCount(count: number, batchSize: number): Array<[number, number]> {
         // count/batch ratio, rounded to whole number, to calculate the batches
         const batches = Math.trunc(count / batchSize);
 
         // check if there is a remainder, since we rounded the batches to a whole number
-        const hasRemainder = (count % batchSize) > 0
+        const hasRemainder = count % batchSize > 0;
 
-        const result = []
-        let start = 0
+        const result = [];
+        let start = 0;
         let end = 0;
 
         // generate ranges, i.e. [0,10] [10, 20] ...
-        for(let i=0; i<=batches; i++) {
+        for (let i = 0; i <= batches; i++) {
             start = end;
             end = end + batchSize;
 
-            if(end <= count) {
-                const range:[number, number] = [start, end];
+            if (end <= count) {
+                const range: [number, number] = [start, end];
                 result.push(range);
             }
         }
 
         // if there is a remainder, then add the remaining items in the batch
-        if(hasRemainder) {
-            const remainder = count % batchSize
-            const range:[number, number] = [start, start + remainder];
+        if (hasRemainder) {
+            const remainder = count % batchSize;
+            const range: [number, number] = [start, start + remainder];
             result.push(range);
         }
 
-        return result
+        return result;
     }
-
 }

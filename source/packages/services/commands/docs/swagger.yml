@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -12,56 +13,51 @@
 #-----------------------------------------------------------------------------------------------------------------------
 swagger: '2.0'
 info:
-  title: "AWS Connected Device Framework: Commands Service"
+  title: 'AWS Connected Device Framework: Commands Service'
   description: |
 
   version: 1.0.0
 
-
 consumes:
-- application/vnd.aws-cdf-v1.0+json
+  - application/vnd.aws-cdf-v1.0+json
 produces:
-- application/vnd.aws-cdf-v1.0+json
-
- 
+  - application/vnd.aws-cdf-v1.0+json
 
 tags:
-- name: Templates
-  description: |
-    A `Template` represents a command template that is used to manage what needs defining for any particular command as well as how to execute the command.
-    
-    The main component to a template is its `document`, a json document that is broadcast to all recipients (devices) of a command.  
-    
-    The `document` may contain tokens to reference parameters.  These are added to the `document` in the format of `${name}`.  In addition the parameters should be defined as part of `requiredDocumentParameters` which enforces all `Commands` of the template to provide.
-    
-    A `document` may also reference files.  These are added to the `document` in the format of `${cdf:file:name}`, and in addition added to `requiredFiles`.  The files required for the template must be uploaded to the `Command` before it can be published.  Once the job has been created, these tokens are replaced with pre-signed S3 url's.
-    
-- name: Commands
-  description: |
-    A `Command` represents a command (as defined by a specific template) sent to a device or groups of devices for local execution.
-    
-    A `Command` must have any parameters and files configured that have been defined as part of the `Template` before it can be published.
-    
-- name: Executions
-  description: |
-    An `Execution` represents a specific local execution of a command at the device.
+  - name: Templates
+    description: |
+      A `Template` represents a command template that is used to manage what needs defining for any particular command as well as how to execute the command.
 
+      The main component to a template is its `document`, a json document that is broadcast to all recipients (devices) of a command.  
+
+      The `document` may contain tokens to reference parameters.  These are added to the `document` in the format of `${name}`.  In addition the parameters should be defined as part of `requiredDocumentParameters` which enforces all `Commands` of the template to provide.
+
+      A `document` may also reference files.  These are added to the `document` in the format of `${cdf:file:name}`, and in addition added to `requiredFiles`.  The files required for the template must be uploaded to the `Command` before it can be published.  Once the job has been created, these tokens are replaced with pre-signed S3 url's.
+
+  - name: Commands
+    description: |
+      A `Command` represents a command (as defined by a specific template) sent to a device or groups of devices for local execution.
+
+      A `Command` must have any parameters and files configured that have been defined as part of the `Template` before it can be published.
+
+  - name: Executions
+    description: |
+      An `Execution` represents a specific local execution of a command at the device.
 
 paths:
-
   /templates:
     post:
       tags:
-      - Templates
+        - Templates
       summary: |
         Registers a new job template.
-      operationId: "createTemplate"
+      operationId: 'createTemplate'
       parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/Template'
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Template'
       responses:
         201:
           $ref: '#/responses/Created'
@@ -73,12 +69,12 @@ paths:
             $ref: '#/responses/Conflict'
         500:
           $ref: '#/responses/ServerError'
-          
+
     get:
       tags:
-      - Templates
+        - Templates
       summary: Returns a list of all job templates
-      operationId: "listTemplates"
+      operationId: 'listTemplates'
       responses:
         200:
           description: Success
@@ -86,21 +82,20 @@ paths:
             $ref: '#/definitions/TemplateList'
         500:
           $ref: '#/responses/ServerError'
-  
 
   /templates/{templateId}:
     parameters:
-    - name: templateId
-      in: path
-      description: ID of job template
-      required: true
-      type: string
-      
+      - name: templateId
+        in: path
+        description: ID of job template
+        required: true
+        type: string
+
     get:
       tags:
-      - Templates
+        - Templates
       summary: Returns a specific template
-      operationId: "getTemplate"
+      operationId: 'getTemplate'
       responses:
         200:
           description: Success
@@ -112,18 +107,18 @@ paths:
           $ref: '#/responses/NotFound'
         500:
           $ref: '#/responses/ServerError'
-      
+
     patch:
       tags:
-      - Templates
+        - Templates
       summary: Updates a specific template
-      operationId: "patchTemplate"
+      operationId: 'patchTemplate'
       parameters:
-      - name: body
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/Template'
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Template'
       responses:
         204:
           description: Success
@@ -133,12 +128,12 @@ paths:
           $ref: '#/responses/NotFound'
         500:
           $ref: '#/responses/ServerError'
-      
+
     delete:
       tags:
-      - Templates
+        - Templates
       summary: Deleets a specific template
-      operationId: "deleteTemplate"
+      operationId: 'deleteTemplate'
       responses:
         204:
           description: Success
@@ -146,20 +141,20 @@ paths:
           $ref: '#/responses/BadRequest'
         500:
           $ref: '#/responses/ServerError'
-      
+
   /commands:
     post:
       tags:
-      - Commands
+        - Commands
       summary: |
         Submits a new command.
-      operationId: "createCommand"
+      operationId: 'createCommand'
       parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/Command'
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Command'
       responses:
         201:
           $ref: '#/responses/Created'
@@ -167,13 +162,13 @@ paths:
           $ref: '#/responses/BadRequest'
     get:
       tags:
-      - Commands
+        - Commands
       summary: Returns a list of all commands
-      operationId: "listCommands"
+      operationId: 'listCommands'
       parameters:
-      - name: status
-        in: query
-        type: string
+        - name: status
+          in: query
+          type: string
       responses:
         200:
           description: OK
@@ -183,21 +178,20 @@ paths:
           $ref: '#/responses/BadRequest'
         404:
           $ref: '#/responses/NotFound'
-  
 
   /commands/{commandId}:
     parameters:
-    - name: commandId
-      in: path
-      description: ID of command
-      required: true
-      type: string
-      
+      - name: commandId
+        in: path
+        description: ID of command
+        required: true
+        type: string
+
     get:
       tags:
-      - Commands
+        - Commands
       summary: Returns a specific command
-      operationId: "getCommand"
+      operationId: 'getCommand'
       responses:
         200:
           description: OK
@@ -207,18 +201,18 @@ paths:
           $ref: '#/responses/BadRequest'
         404:
           $ref: '#/responses/NotFound'
-      
+
     patch:
       tags:
-      - Commands
+        - Commands
       summary: Updates a specific command, including setting its status to `in_progress` to start the command.
-      operationId: "patchCommand"
+      operationId: 'patchCommand'
       parameters:
-      - name: body
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/Command'
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Command'
       responses:
         204:
           description: OK
@@ -227,45 +221,42 @@ paths:
         404:
           $ref: '#/responses/NotFound'
 
-  
-
   /commands/{commandId}/files/{fileId}:
     parameters:
-    - name: commandId
-      in: path
-      description: ID of command
-      required: true
-      type: string
-    - name: fileId
-      in: path
-      description: ID of file as defined in the templates `requiredFiles` attribute
-      required: true
-      type: string
-      
+      - name: commandId
+        in: path
+        description: ID of command
+        required: true
+        type: string
+      - name: fileId
+        in: path
+        description: ID of file as defined in the templates `requiredFiles` attribute
+        required: true
+        type: string
+
     put:
       tags:
-      - Commands
-      summary: 
-        Uploads a file required for the command
-      operationId: "uploadCommandFile"
+        - Commands
+      summary: Uploads a file required for the command
+      operationId: 'uploadCommandFile'
       consumes:
-      - multipart/form-data
+        - multipart/form-data
       parameters:
-      - in: formData
-        name: file
-        type: file
+        - in: formData
+          name: file
+          type: file
       responses:
         201:
           $ref: '#/responses/Created'
         400:
           $ref: '#/responses/BadRequest'
-      
+
     delete:
       tags:
-      - Commands
+        - Commands
       summary: |
         Removes a file from the command
-      operationId: "removeCommandFile"
+      operationId: 'removeCommandFile'
       responses:
         204:
           description: OK
@@ -273,26 +264,24 @@ paths:
           $ref: '#/responses/BadRequest'
         404:
           $ref: '#/responses/NotFound'
-    
-  
 
   /commands/{commandId}/executions:
     parameters:
-    - name: commandId
-      in: path
-      description: ID of command
-      required: true
-      type: string
-      
+      - name: commandId
+        in: path
+        description: ID of command
+        required: true
+        type: string
+
     get:
       tags:
-      - Executions
+        - Executions
       summary: Lists the executions of a command
-      operationId: "listExecutions"
+      operationId: 'listExecutions'
       parameters:
-      - name: status
-        in: query
-        type: string
+        - name: status
+          in: query
+          type: string
       responses:
         200:
           description: OK
@@ -302,26 +291,25 @@ paths:
           $ref: '#/responses/BadRequest'
         404:
           $ref: '#/responses/NotFound'
-  
 
   /commands/{commandId}/executions/{thingName}:
     parameters:
-    - name: commandId
-      in: path
-      description: ID of command
-      required: true
-      type: string
-    - name: thingName
-      in: path
-      description: Name of thing
-      required: true
-      type: string
-      
+      - name: commandId
+        in: path
+        description: ID of command
+        required: true
+        type: string
+      - name: thingName
+        in: path
+        description: Name of thing
+        required: true
+        type: string
+
     get:
       tags:
-      - Executions
+        - Executions
       summary: Returns execution details of a specific command for a specific thing
-      operationId: "getThingExecution"
+      operationId: 'getThingExecution'
       responses:
         200:
           description: OK
@@ -331,12 +319,12 @@ paths:
           $ref: '#/responses/BadRequest'
         404:
           $ref: '#/responses/NotFound'
-      
+
     delete:
       tags:
-      - Executions
+        - Executions
       summary: Cancels an execution for a specific thing
-      operationId: "deleteThingExecution"
+      operationId: 'deleteThingExecution'
       responses:
         204:
           description: OK
@@ -344,12 +332,8 @@ paths:
           $ref: '#/responses/BadRequest'
         404:
           $ref: '#/responses/NotFound'
-      
-    
-
 
 definitions:
-
   TemplateSummary:
     type: object
     properties:
@@ -400,17 +384,17 @@ definitions:
             type: number
           nextToken:
             type: string
-            
+
   Command:
     type: object
     properties:
       commandId:
         type: string
-      templateId: 
+      templateId:
         type: string
       status:
         type: string
-        enum: [draft,in_progress,cancelled,deleted,completed]
+        enum: [draft, in_progress, cancelled, deleted, completed]
       targets:
         type: array
         items:
@@ -536,14 +520,14 @@ definitions:
                   type: string
                 value:
                   type: string
-          
+
       documentParameters:
         type: object
-        additionalProperties: 
+        additionalProperties:
           type: string
       files:
         type: object
-        additionalProperties: 
+        additionalProperties:
           type: string
       type:
         type: string
@@ -571,7 +555,7 @@ definitions:
             type: integer
           count:
             type: integer
-            
+
   Execution:
     type: object
     properties:
@@ -589,7 +573,7 @@ definitions:
         type: string
       percentComplete:
         type: number
-        
+
   ExecutionList:
     type: object
     properties:
@@ -597,7 +581,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Execution'
-            
+
   ExecutionSummary:
     type: object
     properties:
@@ -605,7 +589,7 @@ definitions:
         type: string
       status:
         type: string
-        
+
   ExecutionSummaryList:
     type: object
     properties:
@@ -613,7 +597,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ExecutionSummary'
-        
+
   JobExecutionsRolloutConfig:
     type: object
     properties:
@@ -666,7 +650,7 @@ definitions:
       error:
         type: string
 
-responses:          
+responses:
   Created:
     description: Created successfully
     headers:

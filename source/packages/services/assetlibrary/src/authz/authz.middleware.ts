@@ -24,11 +24,10 @@ als.enable();
 
 export function setClaims(): RequestHandler {
     return (req: Request, res: Response, next: NextFunction) => {
-
         logger.debug(`authz.middleware setClaims in:`);
 
         if (req.method === 'OPTIONS') {
-            next()
+            next();
         } else {
             // decodes the JWT, extracts the claims, and serializes as an object in a ThreadLocal
             // to make it easier for the service/dao layers to obtain.
@@ -58,10 +57,13 @@ export function setClaims(): RequestHandler {
 
                     next();
                 } catch (ex) {
-                    logger.warn(`authz.middleware setClaims failed to parse claims:${JSON.stringify(header)}`);
+                    logger.warn(
+                        `authz.middleware setClaims failed to parse claims:${JSON.stringify(
+                            header,
+                        )}`,
+                    );
                     res.sendStatus(403);
                 }
-
             } else {
                 res.sendStatus(403);
             }

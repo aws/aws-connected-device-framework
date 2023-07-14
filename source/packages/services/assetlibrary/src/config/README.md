@@ -1,6 +1,6 @@
 ## The following env config needs defining per environment:
 
-```ini
+````ini
 AWS_REGION=
 
 ## Required if running in full mode (the default):
@@ -20,4 +20,4 @@ DEFAULTS_DEVICES_STATE=unprovisioned
 DEFAULTS_GROUPS_VALIDATEALLOWEDPARENTPATHS=false
 LOGGING_LEVEL=info
 MODE=full
-```
+````

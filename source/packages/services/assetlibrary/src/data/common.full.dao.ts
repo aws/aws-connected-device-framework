@@ -29,7 +29,7 @@ export class CommonDaoFull extends BaseDaoFull {
         @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -43,14 +43,14 @@ export class CommonDaoFull extends BaseDaoFull {
         offset: number,
         count: number,
         sort: SortKeys,
-        authorizedPaths: string[]
+        authorizedPaths: string[],
     ): Promise<Node> {
         logger.debug(
             `common.full.dao listRelated: in: entityDbId:${entityDbId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(
-                filterRelatedBy
+                filterRelatedBy,
             )}, offset:${offset}, count:${count}, ${JSON.stringify(
-                sort
-            )}, authorizedPaths:${authorizedPaths}`
+                sort,
+            )}, authorizedPaths:${authorizedPaths}`,
         );
 
         // define the traversers that handle finding associated edges/vertices
@@ -81,11 +81,11 @@ export class CommonDaoFull extends BaseDaoFull {
                 t
                     .local(
                         __.until(__.hasId(process.P.within(authorizedPathIds))).repeat(
-                            __.outE().has('isAuthCheck', true).otherV().simplePath().dedup()
-                        )
+                            __.outE().has('isAuthCheck', true).otherV().simplePath().dedup(),
+                        ),
                     )
                     .as('authorization')
-                    .select('v')
+                    .select('v'),
             );
 
             // Find exactly one initial edge for each authorized vertex and save it as 'e'
@@ -109,7 +109,7 @@ export class CommonDaoFull extends BaseDaoFull {
 
         // return the info we need to understand about each relation
         [relatedIn, relatedOut].forEach((t) =>
-            t.valueMap().with_(process.withOptions.tokens).as('vProps')
+            t.valueMap().with_(process.withOptions.tokens).as('vProps'),
         );
         relatedIn.constant('in').as('dir');
         relatedOut.constant('out').as('dir');
@@ -133,7 +133,7 @@ export class CommonDaoFull extends BaseDaoFull {
                 // sort using an attribute from the connected vertices, with a failsafe incase the attribute is undefined
                 relatedUnion.by(
                     __.coalesce(__.select('v').values(s.field), __.constant('')),
-                    order
+                    order,
                 );
             });
         }
@@ -156,12 +156,12 @@ export class CommonDaoFull extends BaseDaoFull {
                 .as('main')
                 .union(
                     relatedUnion,
-                    __.select('main').valueMap().with_(process.withOptions.tokens)
+                    __.select('main').valueMap().with_(process.withOptions.tokens),
                 );
 
             // execute and retrieve the results
             logger.debug(
-                `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`
+                `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`,
             );
             results = await traverser.toList();
             logger.debug(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);

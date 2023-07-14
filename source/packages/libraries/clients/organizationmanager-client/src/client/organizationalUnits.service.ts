@@ -11,21 +11,31 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { injectable } from "inversify";
-import { PathHelper } from "../utils/path.helper";
-import { RequestHeaders } from "./common.model";
-import { OrganizationalUnitResource } from "./organizationalUnits.model";
+import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
+import { RequestHeaders } from './common.model';
+import { OrganizationalUnitResource } from './organizationalUnits.model';
 
 export interface OrganizationalUnitsService {
-    createOrganizationalUnit(organizationalUnit: OrganizationalUnitResource, additionalHeaders?: RequestHeaders): Promise<string>
+    createOrganizationalUnit(
+        organizationalUnit: OrganizationalUnitResource,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<string>;
 
-    getOrganizationalUnit(organizationalUnitId: string, additionalHeaders?: RequestHeaders): Promise<OrganizationalUnitResource>
-    
-    deleteOrganizationalUnit(organizationalUnitId: string, additionalHeaders?: RequestHeaders): Promise<void>
+    getOrganizationalUnit(
+        organizationalUnitId: string,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<OrganizationalUnitResource>;
 
-    listOrganizationalUnits(additionalHeaders?: RequestHeaders): Promise<OrganizationalUnitResource[]>
+    deleteOrganizationalUnit(
+        organizationalUnitId: string,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<void>;
+
+    listOrganizationalUnits(
+        additionalHeaders?: RequestHeaders,
+    ): Promise<OrganizationalUnitResource[]>;
 }
-
 
 @injectable()
 export class OrganizationalUnitsServiceBase {

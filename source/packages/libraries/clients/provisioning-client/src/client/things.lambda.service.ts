@@ -35,7 +35,7 @@ export class ThingsLambdaService extends ThingsServiceBase implements ThingsServ
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -49,7 +49,7 @@ export class ThingsLambdaService extends ThingsServiceBase implements ThingsServ
      */
     public async provisionThing(
         provisioningRequest: ProvisionThingRequest,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<ProvisionThingResponse> {
         ow(provisioningRequest.provisioningTemplateId, ow.string.nonEmpty);
         const event = new LambdaApiGatewayEventBuilder()
@@ -76,7 +76,7 @@ export class ThingsLambdaService extends ThingsServiceBase implements ThingsServ
 
     public async deleteThing(
         thingName: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(thingName, ow.string.nonEmpty);
 
@@ -90,7 +90,7 @@ export class ThingsLambdaService extends ThingsServiceBase implements ThingsServ
 
     public async bulkProvisionThings(
         req: BulkProvisionThingsRequest,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<BulkProvisionThingsResponse> {
         ow(req, ow.object.nonEmpty);
         ow(req.provisioningTemplateId, ow.string.nonEmpty);
@@ -108,7 +108,7 @@ export class ThingsLambdaService extends ThingsServiceBase implements ThingsServ
 
     public async getBulkProvisionTask(
         taskId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<BulkProvisionThingsResponse> {
         ow(taskId, ow.string.nonEmpty);
 
@@ -124,7 +124,7 @@ export class ThingsLambdaService extends ThingsServiceBase implements ThingsServ
     public async updateThingCertificates(
         thingName: string,
         certificateStatus: CertificateStatus,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(thingName, ow.string.nonEmpty);
         ow(certificateStatus, ow.string.nonEmpty);

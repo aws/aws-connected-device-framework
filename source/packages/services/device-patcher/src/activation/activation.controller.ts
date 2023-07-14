@@ -12,7 +12,16 @@
  *********************************************************************************************************************/
 import { Response } from 'express';
 import { inject } from 'inversify';
-import { interfaces, controller, response, requestBody, requestParam, httpPost, httpGet, httpDelete } from 'inversify-express-utils';
+import {
+    interfaces,
+    controller,
+    response,
+    requestBody,
+    requestParam,
+    httpPost,
+    httpGet,
+    httpDelete,
+} from 'inversify-express-utils';
 
 import { handleError } from '../utils/errors';
 import { logger } from '@awssolutions/simple-cdf-logger';
@@ -24,26 +33,26 @@ import { ActivationResource } from './activation.model';
 
 @controller('')
 export class ActivationController implements interfaces.Controller {
-
     public constructor(
         @inject(TYPES.ActivationService) private activationService: ActivationService,
-        @inject(TYPES.ActivationAssembler) private activationAssembler: ActivationAssembler
+        @inject(TYPES.ActivationAssembler) private activationAssembler: ActivationAssembler,
     ) {}
 
     @httpPost('/activations')
     public async createActivation(
         @requestBody() activation: ActivationResource,
-        @response() res: Response
-    ) : Promise<ActivationResource> {
+        @response() res: Response,
+    ): Promise<ActivationResource> {
+        logger.info(
+            `Activation.controller createActivation: in: item:${JSON.stringify(activation)}`,
+        );
 
-        logger.info(`Activation.controller createActivation: in: item:${JSON.stringify(activation)}`);
-
-        let resource: ActivationResource
+        let resource: ActivationResource;
 
         try {
             let item = this.activationAssembler.fromResource(activation);
             item = await this.activationService.createActivation(item);
-            resource = this.activationAssembler.toResource(item)
+            resource = this.activationAssembler.toResource(item);
         } catch (err) {
             handleError(err, res);
         }
@@ -56,7 +65,7 @@ export class ActivationController implements interfaces.Controller {
     @httpGet('/activations/:activationId')
     public async getActivation(
         @response() res: Response,
-        @requestParam('activationId') activationId: string
+        @requestParam('activationId') activationId: string,
     ): Promise<ActivationResource> {
         logger.debug(`activation.controller getActivation: in: activationId:${activationId}`);
 
@@ -73,11 +82,10 @@ export class ActivationController implements interfaces.Controller {
         return activation;
     }
 
-
     @httpDelete('/activations/:activationId')
     public async deleteActivation(
         @response() res: Response,
-        @requestParam('activationId') activationId: string
+        @requestParam('activationId') activationId: string,
     ): Promise<void> {
         logger.debug(`activation.controller: in: activationId: ${activationId}`);
 

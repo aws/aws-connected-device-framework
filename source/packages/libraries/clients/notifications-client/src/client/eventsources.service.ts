@@ -19,20 +19,20 @@ import { EventSourceDetailResource, EventSourceResourceList } from './eventsourc
 export interface EventsourcesService {
     createEventSource(
         eventSource: EventSourceDetailResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string>;
 
     listEventSources(additionalHeaders?: RequestHeaders): Promise<EventSourceResourceList>;
 
     getEventSource(
         eventSourceId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<EventSourceDetailResource>;
 
     updateEventSource(
         eventSourceId: string,
         eventSource: EventSourceDetailResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void>;
 
     deleteEventSource(eventSourceId: string, additionalHeaders?: RequestHeaders): Promise<void>;

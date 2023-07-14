@@ -11,23 +11,22 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export class SnsToApiGatewayEvents {
-
-    public buildApiGatewayEventFromSnsEvent(snsMessage:unknown): unknown {
-        const apiGatewayEvent:unknown = {
-            'resource': '/{proxy+}',
-            'path': '/bulkcertificates',
-            'httpMethod': 'POST',
-            'headers': {
-                'Accept': 'application/vnd.aws-cdf-v1.0+json',
-                'Content-Type': 'application/vnd.aws-cdf-v1.0+json'
+    public buildApiGatewayEventFromSnsEvent(snsMessage: unknown): unknown {
+        const apiGatewayEvent: unknown = {
+            resource: '/{proxy+}',
+            path: '/bulkcertificates',
+            httpMethod: 'POST',
+            headers: {
+                Accept: 'application/vnd.aws-cdf-v1.0+json',
+                'Content-Type': 'application/vnd.aws-cdf-v1.0+json',
             },
-            'queryStringParameters': null,
-            'pathParameters': {
-                'proxy': 'bulkcertificates'
+            queryStringParameters: null,
+            pathParameters: {
+                proxy: 'bulkcertificates',
             },
-            'stageVariables': null,
-            'requestContext': null,
-            'body': JSON.stringify(snsMessage)
+            stageVariables: null,
+            requestContext: null,
+            body: JSON.stringify(snsMessage),
         };
 
         return apiGatewayEvent;

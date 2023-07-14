@@ -16,14 +16,18 @@ import { ClientServiceBase } from './common.service';
 import { SearchRequestModel, SearchResultsModel } from './search.model';
 
 export interface SearchService {
-    search(searchRequest: SearchRequestModel, offset?: number, count?: number, additionalHeaders?: RequestHeaders) : Promise<SearchResultsModel>;
+    search(
+        searchRequest: SearchRequestModel,
+        offset?: number,
+        count?: number,
+        additionalHeaders?: RequestHeaders,
+    ): Promise<SearchResultsModel>;
 
     delete(searchRequest: SearchRequestModel, additionalHeaders?: RequestHeaders): Promise<void>;
 }
 
 @injectable()
 export class SearchServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }

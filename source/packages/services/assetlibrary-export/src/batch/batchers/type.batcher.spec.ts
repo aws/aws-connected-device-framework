@@ -18,7 +18,6 @@ import { LabelsService } from '../../labels/labels.service';
 import { TypesService } from '../../types/types.service';
 
 describe('TypeBatcher', () => {
-
     let mockedLabelsService: jest.Mocked<LabelsService>;
     let mockedTypesService: jest.Mocked<TypesService>;
     let instance: TypeBatcher;
@@ -33,47 +32,56 @@ describe('TypeBatcher', () => {
     });
 
     it('should create batches by types', async () => {
-
         const mockedRequest1 = {
-            'label': 'devicetype1',
-            'total': 500
+            label: 'devicetype1',
+            total: 500,
         };
 
         const mockedRequest2 = {
-            'label': 'devicetype2',
-            'total': 500
+            label: 'devicetype2',
+            total: 500,
         };
 
         const mockedRequest3 = {
-            'label': 'grouptype2',
-            'total': 500
+            label: 'grouptype2',
+            total: 500,
         };
 
         const mockedRequest4 = {
-            'label': 'grouptype2',
-            'total': 500
+            label: 'grouptype2',
+            total: 500,
         };
 
-        const mockedDeviceTypes = [{
-            templateId: 'devicetype1'
-        }, {
-            templateId: 'devicetype2'
-        }];
+        const mockedDeviceTypes = [
+            {
+                templateId: 'devicetype1',
+            },
+            {
+                templateId: 'devicetype2',
+            },
+        ];
 
-        const mockedGroupTypes = [{
-            templateId: 'grouptype1'
-        }, {
-            templateId: 'grouptype2'
-        }];
+        const mockedGroupTypes = [
+            {
+                templateId: 'grouptype1',
+            },
+            {
+                templateId: 'grouptype2',
+            },
+        ];
 
-        mockedTypesService.list = jest.fn().mockReturnValueOnce(mockedDeviceTypes).mockReturnValueOnce(mockedGroupTypes);
-        mockedLabelsService.getObjectCount = jest.fn()
+        mockedTypesService.list = jest
+            .fn()
+            .mockReturnValueOnce(mockedDeviceTypes)
+            .mockReturnValueOnce(mockedGroupTypes);
+        mockedLabelsService.getObjectCount = jest
+            .fn()
             .mockReturnValueOnce(mockedRequest1)
             .mockReturnValueOnce(mockedRequest2)
             .mockReturnValueOnce(mockedRequest3)
             .mockReturnValueOnce(mockedRequest4);
 
-        const response =  await instance.batch();
+        const response = await instance.batch();
 
         expect(response.length).toEqual(20);
 
@@ -82,7 +90,5 @@ describe('TypeBatcher', () => {
         expect(response[0]).toHaveProperty('id');
         expect(response[0]).toHaveProperty('range');
         expect(response[0]).toHaveProperty('type');
-
     });
-
 });

@@ -23,7 +23,6 @@ export interface FleetService {
 
 @injectable()
 export class FleetServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }

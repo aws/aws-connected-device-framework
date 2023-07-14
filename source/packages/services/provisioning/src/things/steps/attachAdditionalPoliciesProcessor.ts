@@ -17,22 +17,22 @@ import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../../di/types';
 import AWS = require('aws-sdk');
 import ow from 'ow';
-import {generate} from 'shortid';
-
+import { generate } from 'shortid';
 
 @injectable()
 export class AttachAdditionalPoliciesProcessor implements ProvisioningStepProcessor {
+    private _iot: AWS.Iot;
 
-  private _iot: AWS.Iot;
-
-  public constructor(
-    @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot) {
-
-      this._iot = iotFactory();
-  }
+    public constructor(@inject(TYPES.IotFactory) iotFactory: () => AWS.Iot) {
+        this._iot = iotFactory();
+    }
 
     public async process(stepData: ProvisioningStepData): Promise<void> {
-        logger.debug(`attachAdditionalPoliciesProcessor: process: in: stepInput: ${JSON.stringify(stepData)}`);
+        logger.debug(
+            `attachAdditionalPoliciesProcessor: process: in: stepInput: ${JSON.stringify(
+                stepData,
+            )}`,
+        );
 
         const policies = stepData?.template?.CDF?.attachAdditionalPolicies;
         ow(policies, ow.array.minLength(1));
@@ -45,22 +45,29 @@ export class AttachAdditionalPoliciesProcessor implements ProvisioningStepProces
 
         for (const p of policies) {
             let policyName = p.name;
-            if (p.document!==undefined) {
+            if (p.document !== undefined) {
                 policyName += `_${generate()}`;
-                logger.debug(`attachAdditionalPoliciesProcessor: process: creating policy: ${policyName}`);
-                await this._iot.createPolicy({
-                    policyName,
-                    policyDocument: p.document
-                }).promise();
+                logger.debug(
+                    `attachAdditionalPoliciesProcessor: process: creating policy: ${policyName}`,
+                );
+                await this._iot
+                    .createPolicy({
+                        policyName,
+                        policyDocument: p.document,
+                    })
+                    .promise();
             }
-            logger.debug(`attachAdditionalPoliciesProcessor: process: attaching policy: ${policyName} to target: ${certificateArn}`);
-            await this._iot.attachPolicy({
-                policyName,
-                target: certificateArn
-            }).promise();
+            logger.debug(
+                `attachAdditionalPoliciesProcessor: process: attaching policy: ${policyName} to target: ${certificateArn}`,
+            );
+            await this._iot
+                .attachPolicy({
+                    policyName,
+                    target: certificateArn,
+                })
+                .promise();
         }
 
         logger.debug('attachAdditionalPoliciesProcessor: process: exit:');
     }
-
 }

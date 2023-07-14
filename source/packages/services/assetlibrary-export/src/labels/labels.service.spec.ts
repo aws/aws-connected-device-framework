@@ -16,7 +16,6 @@ import { LabelsDao } from './labels.dao';
 import { LabelsService } from './labels.service';
 
 describe('LabelsService', () => {
-
     let mockedLabelsDao: LabelsDao;
     let instance: LabelsService;
 
@@ -30,10 +29,12 @@ describe('LabelsService', () => {
 
         const mockedLabelsDaoResponse = {
             label: 'someDeviceType',
-            total: 500
+            total: 500,
         };
 
-        mockedLabelsDao.getObjectCountByLabel = jest.fn().mockReturnValueOnce(mockedLabelsDaoResponse);
+        mockedLabelsDao.getObjectCountByLabel = jest
+            .fn()
+            .mockReturnValueOnce(mockedLabelsDaoResponse);
 
         const response = await instance.getObjectCount(request);
 
@@ -41,34 +42,37 @@ describe('LabelsService', () => {
         expect(response).toHaveProperty('total');
         expect(response.label).toEqual('someDeviceType');
         expect(response.total).toEqual(500);
-
-
     });
 
     it('should get ids for a label and range', async () => {
         const label = 'deviceType1';
-        const range:[number, number] = [0,3];
+        const range: [number, number] = [0, 3];
 
-        const mockedLabelsDaoResponse = [{
-            id: 'device001',
-            type: 'deviceType1',
-            category: 'device'
-        },{
-            id: 'device012',
-            type: 'deviceType1',
-            category: 'device'
-        },{
-            id: 'device044',
-            type: 'deviceType1',
-            category: 'device'
-        }];
+        const mockedLabelsDaoResponse = [
+            {
+                id: 'device001',
+                type: 'deviceType1',
+                category: 'device',
+            },
+            {
+                id: 'device012',
+                type: 'deviceType1',
+                category: 'device',
+            },
+            {
+                id: 'device044',
+                type: 'deviceType1',
+                category: 'device',
+            },
+        ];
 
-        mockedLabelsDao.listIdObjectsByLabel = jest.fn().mockReturnValueOnce(mockedLabelsDaoResponse);
+        mockedLabelsDao.listIdObjectsByLabel = jest
+            .fn()
+            .mockReturnValueOnce(mockedLabelsDaoResponse);
 
         const response = await instance.getIdsByRange(label, range);
 
         expect(response.length).toEqual(3);
         expect(response[0]).toEqual('device001');
-
     });
 });

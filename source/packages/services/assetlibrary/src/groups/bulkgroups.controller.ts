@@ -11,68 +11,91 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Response, Request } from 'express';
-import { interfaces, controller, response, request, requestBody, httpPost, httpGet,queryParam } from 'inversify-express-utils';
+import {
+    interfaces,
+    controller,
+    response,
+    request,
+    requestBody,
+    httpPost,
+    httpGet,
+    queryParam,
+} from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { BulkGroupsResource, BulkGroupsResult, GroupMemberResourceList } from './groups.models';
 import { GroupsService } from './groups.service';
-import {TYPES} from '../di/types';
-import {logger} from '@awssolutions/simple-cdf-logger';
-import {InvalidQueryStringError, handleError} from '../utils/errors';
+import { TYPES } from '../di/types';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { InvalidQueryStringError, handleError } from '../utils/errors';
 import { GroupsAssembler } from './groups.assembler';
 
 @controller('/bulkgroups')
 export class BulkGroupsController implements interfaces.Controller {
-
-    constructor( @inject(TYPES.GroupsService) private groupsService: GroupsService,
-        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler) {}
+    constructor(
+        @inject(TYPES.GroupsService) private groupsService: GroupsService,
+        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
+    ) {}
 
     @httpPost('')
-    public async bulkCreateGroups(@requestBody() groups: BulkGroupsResource, @response() res: Response, @queryParam('applyProfile') applyProfile?:string) : Promise<BulkGroupsResult> {
-        logger.info(`bulkgroups.controller  bulkCreateGroups: in: groups:${JSON.stringify(groups)}, applyProfile:${applyProfile}`);
+    public async bulkCreateGroups(
+        @requestBody() groups: BulkGroupsResource,
+        @response() res: Response,
+        @queryParam('applyProfile') applyProfile?: string,
+    ): Promise<BulkGroupsResult> {
+        logger.info(
+            `bulkgroups.controller  bulkCreateGroups: in: groups:${JSON.stringify(
+                groups,
+            )}, applyProfile:${applyProfile}`,
+        );
         try {
             const items = this.groupsAssembler.fromBulkGroupsResource(groups);
             const result = await this.groupsService.createBulk(items, applyProfile);
             res.status(201);
             return result;
         } catch (e) {
-            handleError(e,res);
+            handleError(e, res);
         }
         return null;
     }
 
     @httpGet('')
     public async bulkGetGroups(
-            @queryParam('groupPaths') groupPaths: string,
-            @queryParam('includeGroups') groups: string,
-            @request() req: Request,
-            @response() res: Response
-        ) : Promise<GroupMemberResourceList> {
-            logger.info(`bulkgroups.controller bulkGetGroups: in: groupPaths:${groupPaths}`);
-            try {
-                const includeGroups = (groups!=='false');
-                let groupPathsAsArray: string[];
-                if (groupPaths) {
-                    if (Array.isArray(groupPaths)) {
-                        groupPathsAsArray = groupPaths;
-                    } else if (typeof groupPaths === 'string') {
-                        groupPathsAsArray = groupPaths.split(',').filter(gp => gp !== '');
-                    }
-                } else {
-                    // throw a 400 error if no `groupPaths` is provided
-                    const errorMessage = 'Missing required query parameter `groupPaths`.';
-                    res.statusMessage = errorMessage;
-                    throw new InvalidQueryStringError(errorMessage);                    
+        @queryParam('groupPaths') groupPaths: string,
+        @queryParam('includeGroups') groups: string,
+        @request() req: Request,
+        @response() res: Response,
+    ): Promise<GroupMemberResourceList> {
+        logger.info(`bulkgroups.controller bulkGetGroups: in: groupPaths:${groupPaths}`);
+        try {
+            const includeGroups = groups !== 'false';
+            let groupPathsAsArray: string[];
+            if (groupPaths) {
+                if (Array.isArray(groupPaths)) {
+                    groupPathsAsArray = groupPaths;
+                } else if (typeof groupPaths === 'string') {
+                    groupPathsAsArray = groupPaths.split(',').filter((gp) => gp !== '');
                 }
-                // remove duplicate group paths if any
-                groupPathsAsArray = groupPathsAsArray.filter((item, index) => groupPathsAsArray.indexOf(item) === index);
-
-                const items = await this.groupsService.getBulk(groupPathsAsArray, includeGroups);
-                const resources = this.groupsAssembler.toGroupMemberResourceList(items, req['version']);
-                res.status(200);
-                return resources;
-            } catch (e) {
-                handleError(e, res);
+            } else {
+                // throw a 400 error if no `groupPaths` is provided
+                const errorMessage = 'Missing required query parameter `groupPaths`.';
+                res.statusMessage = errorMessage;
+                throw new InvalidQueryStringError(errorMessage);
             }
-            return null;
+            // remove duplicate group paths if any
+            groupPathsAsArray = groupPathsAsArray.filter(
+                (item, index) => groupPathsAsArray.indexOf(item) === index,
+            );
+
+            const items = await this.groupsService.getBulk(groupPathsAsArray, includeGroups);
+            const resources = this.groupsAssembler.toGroupMemberResourceList(
+                items,
+                req['version'],
+            );
+            res.status(200);
+            return resources;
+        } catch (e) {
+            handleError(e, res);
         }
+        return null;
+    }
 }

@@ -21,10 +21,8 @@ import { Extracted, Extractor } from '../extract.service';
 import { GroupsService } from '../../groups/groups.service';
 import { TypeCategory } from '../../types/constants';
 
-
 @injectable()
 export class GroupExtractor implements Extractor {
-
     @inject(TYPES.GroupsService) private groupsService: GroupsService;
 
     public async extract(batch: Batch): Promise<Extracted> {
@@ -39,13 +37,12 @@ export class GroupExtractor implements Extractor {
 
         const groupItemList = await this.groupsService.getBulk(batch.items);
 
-
         const extracted = {
             id: batch.id,
             category: TypeCategory.Group,
             type: batch.type,
             items: groupItemList.results,
-            timestamp: batch.timestamp
+            timestamp: batch.timestamp,
         };
 
         logger.debug(`GroupExtractor: extract: out`);

@@ -18,7 +18,11 @@ import {
 } from '@awssolutions/cdf-lambda-invoke';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { CertificateBatchRequest, CertificateBatchTask, RequestHeaders } from './certificatestask.models';
+import {
+    CertificateBatchRequest,
+    CertificateBatchTask,
+    RequestHeaders,
+} from './certificatestask.models';
 import { CertificatesTaskService, CertificatesTaskServiceBase } from './certificatestask.service';
 
 @injectable()
@@ -29,7 +33,7 @@ export class CertificatesTaskLambdaService
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -39,7 +43,7 @@ export class CertificatesTaskLambdaService
     async createCertificateTask(
         batchRequest: CertificateBatchRequest,
         caAlias: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<CertificateBatchTask> {
         ow(caAlias, ow.string.nonEmpty);
 

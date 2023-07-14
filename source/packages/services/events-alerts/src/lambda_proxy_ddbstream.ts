@@ -33,7 +33,6 @@ exports.handler = async (event: any, _context: unknown) => {
 
     // review all the incoming records
     for (const rec of event.Records) {
-
         const rawAlert = rec.dynamodb.NewImage as RawAlert;
 
         // not interested in anything other than new images with target info
@@ -46,12 +45,18 @@ exports.handler = async (event: any, _context: unknown) => {
         // hoist remaining attributes that may be useful for message compilation later
         const alertAttributes: { [key: string]: string } = {};
         Object.keys(alert)
-            .filter(key => key !== 'targets' && key !== 'gsi2Key' && key !== 'gsi2Sort' && key !== 'version')
-            .forEach(key => alertAttributes[key] = alert[key]);
+            .filter(
+                (key) =>
+                    key !== 'targets' &&
+                    key !== 'gsi2Key' &&
+                    key !== 'gsi2Sort' &&
+                    key !== 'version',
+            )
+            .forEach((key) => (alertAttributes[key] = alert[key]));
 
         // Merge template property data for use by message compilation
         if (alertAttributes.templatePropertiesData) {
-            Object.keys(alertAttributes.templatePropertiesData).forEach(k => {
+            Object.keys(alertAttributes.templatePropertiesData).forEach((k) => {
                 alertAttributes[k] = alertAttributes.templatePropertiesData[k];
             });
         }
@@ -67,8 +72,8 @@ exports.handler = async (event: any, _context: unknown) => {
     }
 };
 
-function shouldDiscard(r:RawAlert): boolean {
-    if (r.targets===undefined) {
+function shouldDiscard(r: RawAlert): boolean {
+    if (r.targets === undefined) {
         return true;
     }
     if (Object.keys(r.targets.M).length === 0) {
@@ -77,23 +82,27 @@ function shouldDiscard(r:RawAlert): boolean {
     return false;
 }
 
-async function processSnsTargets(eventId:string, targets:TargetItems, alertAttributes:{ [key: string]: string } ): Promise<void> {
+async function processSnsTargets(
+    eventId: string,
+    targets: TargetItems,
+    alertAttributes: { [key: string]: string },
+): Promise<void> {
     // build the messages for each target type
     const messages = new SNSMessages();
 
-    if (targets?.email?.length>0) {
+    if (targets?.email?.length > 0) {
         messages.email = await messageCompiler.compile(eventId, 'email', alertAttributes);
     }
-    if (targets?.sms?.length>0) {
+    if (targets?.sms?.length > 0) {
         messages.default = await messageCompiler.compile(eventId, 'sms', alertAttributes);
     }
-    if (targets?.push_gcm?.length>0) {
+    if (targets?.push_gcm?.length > 0) {
         messages.GCM = await messageCompiler.compile(eventId, 'push_gcm', alertAttributes);
     }
-    if (targets?.push_adm?.length>0) {
+    if (targets?.push_adm?.length > 0) {
         messages.ADM = await messageCompiler.compile(eventId, 'push_adm', alertAttributes);
     }
-    if (targets?.push_apns?.length>0) {
+    if (targets?.push_apns?.length > 0) {
         messages.APNS = await messageCompiler.compile(eventId, 'push_apns', alertAttributes);
     }
     // TODO: add rest of sns destination types when we support them
@@ -104,23 +113,35 @@ async function processSnsTargets(eventId:string, targets:TargetItems, alertAttri
     }
 }
 
-async function processDynamoDbTargets(eventId:string, targets:TargetItems, alertAttributes:{ [key: string]: string }) : Promise<void> {
+async function processDynamoDbTargets(
+    eventId: string,
+    targets: TargetItems,
+    alertAttributes: { [key: string]: string },
+): Promise<void> {
     // Process dynamodb target
-    if (targets?.dynamodb?.length>0) {
-        for(const ddb of targets.dynamodb) {
-            if(ddb.tableName === undefined) {
-                logger.error(`handler: unknown dynamodb tablename for eventId: ${eventId} ignoring...`);
+    if (targets?.dynamodb?.length > 0) {
+        for (const ddb of targets.dynamodb) {
+            if (ddb.tableName === undefined) {
+                logger.error(
+                    `handler: unknown dynamodb tablename for eventId: ${eventId} ignoring...`,
+                );
                 return;
             }
 
             // Check if attribute mapping exists, otherwise ignore
-            if(ddb.attributeMapping === undefined) {
-                logger.error(`handler: unknown dynamodb attribute mapping for eventId: ${eventId} ignoring...`);
+            if (ddb.attributeMapping === undefined) {
+                logger.error(
+                    `handler: unknown dynamodb attribute mapping for eventId: ${eventId} ignoring...`,
+                );
                 return;
             }
 
             // Construct ddb record by using attribute mapping
-            const finalRecord = await messageCompiler.compileDynamodbRecord(eventId, alertAttributes, ddb.attributeMapping);
+            const finalRecord = await messageCompiler.compileDynamodbRecord(
+                eventId,
+                alertAttributes,
+                ddb.attributeMapping,
+            );
 
             // Write record to target table
             if (finalRecord) {

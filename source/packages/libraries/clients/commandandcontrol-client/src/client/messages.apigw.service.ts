@@ -39,7 +39,7 @@ export class MessagesApigwService extends MessagesServiceBase implements Message
 
     async createMessage(
         message: NewMessageResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<string> {
         ow(message, ow.object.nonEmpty);
 
@@ -58,7 +58,7 @@ export class MessagesApigwService extends MessagesServiceBase implements Message
 
     async getMessage(
         messageId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<MessageResource> {
         const url = `${this.baseUrl}${super.messageRelativeUrl(messageId)}`;
         return await request
@@ -77,7 +77,7 @@ export class MessagesApigwService extends MessagesServiceBase implements Message
         commandId: string,
         count?: number,
         fromCreatedAtExclusive?: number,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<MessageList> {
         let url = `${this.baseUrl}${super.commandMessagesRelativeUrl(commandId)}`;
         const queryString = QSHelper.getQueryString({ count, fromCreatedAtExclusive });
@@ -99,7 +99,7 @@ export class MessagesApigwService extends MessagesServiceBase implements Message
     async getRecipient(
         messageId: string,
         thingName: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<Recipient> {
         const url = `${this.baseUrl}${super.messageRecipientRelativeUrl(messageId, thingName)}`;
         return await request
@@ -118,7 +118,7 @@ export class MessagesApigwService extends MessagesServiceBase implements Message
         messageId: string,
         fromThingNameExclusive?: string,
         count?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<RecipientList> {
         let url = `${this.baseUrl}${super.messageRecipientsRelativeUrl(messageId)}`;
         const queryString = QSHelper.getQueryString({ count, fromThingNameExclusive });
@@ -143,7 +143,7 @@ export class MessagesApigwService extends MessagesServiceBase implements Message
         thingName: string,
         fromReceivedAtExclusive?: number,
         count?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<ReplyList> {
         let url = `${this.baseUrl}${super.messageRepliesRelativeUrl(messageId, thingName)}`;
         const queryString = QSHelper.getQueryString({ count, fromReceivedAtExclusive });

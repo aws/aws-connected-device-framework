@@ -21,14 +21,13 @@ import { GroupExtractor } from './extractors/group.extractor';
 import { Batch } from '../batch/batch.service';
 import { TypeCategory } from '../types/constants';
 
-
 @injectable()
 export class ExtractService implements Extractor {
     private readonly extractors: Extractors = {};
 
     constructor(
         @inject(TYPES.DeviceExtractor) protected deviceExtractor: DeviceExtractor,
-        @inject(TYPES.GroupExtractor) protected groupExtractor: GroupExtractor
+        @inject(TYPES.GroupExtractor) protected groupExtractor: GroupExtractor,
     ) {
         this.extractors[TypeCategory.Device] = deviceExtractor;
         this.extractors[TypeCategory.Group] = groupExtractor;
@@ -40,7 +39,6 @@ export class ExtractService implements Extractor {
 
         return await this.extractors[batch.category].extract(batch);
     }
-
 }
 
 export interface Extractor {

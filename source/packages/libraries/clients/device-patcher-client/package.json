@@ -56,8 +56,7 @@
     "@types/node": "16.11.7"
   },
   "jest": {
-    "globals": {
-               },
+    "globals": {},
     "roots": [
       "<rootDir>/src"
     ],

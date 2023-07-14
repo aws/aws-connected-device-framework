@@ -51,7 +51,6 @@ describe('AuthzMiddleware', () => {
         } catch (err) {
             expect(err.message).toBe('Failed to parse claims');
         }
-
     });
 
     it('should send 403 response if fails to validate headers', async () => {
@@ -67,5 +66,5 @@ describe('AuthzMiddleware', () => {
 });
 
 const createAuthToken = (claims: any) => {
-    return sign({cdf_al: claims}, 'shared-secret');
+    return sign({ cdf_al: claims }, 'shared-secret');
 };

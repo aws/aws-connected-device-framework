@@ -11,16 +11,24 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { injectable, inject } from "inversify";
-import { TYPES } from "../di/types";
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { AccountResource, AccountCreationRequest, AccountUpdateRequest, AccountComponentModel, AccountRegionUpdateRequest, AccountListPaginationKey, AccountsItem } from "./accounts.models";
-import ow from "ow";
-import { ProvisionProductInput } from "aws-sdk/clients/servicecatalog";
-import { AccountsDao } from "./accounts.dao";
-import { AccountsAssembler } from "./accounts.assembler";
-import { ComponentResourceList } from "../components/components.model";
-import { OrganizationalUnitsDao } from "../organizationalUnits/organizationalUnits.dao";
+import {
+    AccountResource,
+    AccountCreationRequest,
+    AccountUpdateRequest,
+    AccountComponentModel,
+    AccountRegionUpdateRequest,
+    AccountListPaginationKey,
+    AccountsItem,
+} from './accounts.models';
+import ow from 'ow';
+import { ProvisionProductInput } from 'aws-sdk/clients/servicecatalog';
+import { AccountsDao } from './accounts.dao';
+import { AccountsAssembler } from './accounts.assembler';
+import { ComponentResourceList } from '../components/components.model';
+import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';
 import { owCheckUnprintableChar, owCheckOversizeString } from '../utils/inputValidation.util';
 
 @injectable()
@@ -29,14 +37,14 @@ export class AccountsService {
     private _organizations: AWS.Organizations;
 
     constructor(
-        @inject("featureToggle.accounts.create")
+        @inject('featureToggle.accounts.create')
         private createAccountInControlTower: boolean,
-        @inject("featureToggle.accounts.delete")
+        @inject('featureToggle.accounts.delete')
         private deleteAccountInControlTower: boolean,
-        @inject("aws.organizations.suspendedOU") private suspendedOU: string,
-        @inject("aws.servicecatalog.product.owner")
+        @inject('aws.organizations.suspendedOU') private suspendedOU: string,
+        @inject('aws.servicecatalog.product.owner')
         private accountFactoryProductOwner: string,
-        @inject("aws.servicecatalog.product.name")
+        @inject('aws.servicecatalog.product.name')
         private accountFactoryProductName: string,
         @inject(TYPES.AccountsDao) private accountsDao: AccountsDao,
         @inject(TYPES.OrganizationalUnitsDao)
@@ -46,7 +54,7 @@ export class AccountsService {
         @inject(TYPES.ServiceCatalogFactory)
         serviceCatalogFactory: () => AWS.ServiceCatalog,
         @inject(TYPES.OrganizationsFactory)
-        organizationsFactory: () => AWS.Organizations
+        organizationsFactory: () => AWS.Organizations,
     ) {
         this._serviceCatalog = serviceCatalogFactory();
         this._organizations = organizationsFactory();
@@ -61,10 +69,12 @@ export class AccountsService {
 
         const { organizationalUnitId, status } = accountResource;
 
-        ow(status, ow.string.oneOf(["ACTIVE", "PROVISIONED", "FAILED", "SUSPENDED"]));
+        ow(status, ow.string.oneOf(['ACTIVE', 'PROVISIONED', 'FAILED', 'SUSPENDED']));
 
         if (this.deleteAccountInControlTower) {
-            logger.debug(`accounts.service delete: in: moving account ${accountId} from ${organizationalUnitId} to ${this.suspendedOU}`);
+            logger.debug(
+                `accounts.service delete: in: moving account ${accountId} from ${organizationalUnitId} to ${this.suspendedOU}`,
+            );
             await this._organizations
                 .moveAccount({
                     AccountId: accountResource.accountId,
@@ -78,8 +88,15 @@ export class AccountsService {
         logger.debug(`accounts.service delete: exit`);
     }
 
-    public async areAllComponentsDeployed(accountId: string, components: ComponentResourceList): Promise<boolean> {
-        logger.debug(`accounts.service areAllComponentsDeployed: in: accountId:${accountId}, components:${JSON.stringify(components)}`);
+    public async areAllComponentsDeployed(
+        accountId: string,
+        components: ComponentResourceList,
+    ): Promise<boolean> {
+        logger.debug(
+            `accounts.service areAllComponentsDeployed: in: accountId:${accountId}, components:${JSON.stringify(
+                components,
+            )}`,
+        );
 
         ow(accountId, ow.string.nonEmpty);
         ow(components, ow.array.nonEmpty);
@@ -92,25 +109,37 @@ export class AccountsService {
 
         const { regions } = accountResource;
 
-        const deployedComponents = (await this.accountsDao.listComponentsByAccount(accountId)).filter((o) => o.status === "CREATED");
+        const deployedComponents = (
+            await this.accountsDao.listComponentsByAccount(accountId)
+        ).filter((o) => o.status === 'CREATED');
 
         let allComponentsAreDeployed = true;
 
         for (const componentToCheck of requireComponentsToCheck) {
             for (const regionToCheck of regions) {
-                if (deployedComponents.find((o) => o.componentName === componentToCheck.name && o.region === regionToCheck) === undefined) {
+                if (
+                    deployedComponents.find(
+                        (o) =>
+                            o.componentName === componentToCheck.name &&
+                            o.region === regionToCheck,
+                    ) === undefined
+                ) {
                     allComponentsAreDeployed = false;
                     break;
                 }
             }
         }
 
-        logger.debug(`accounts.service areAllComponentsDeployed: exit: allComponentsAreDeployed: ${allComponentsAreDeployed}`);
+        logger.debug(
+            `accounts.service areAllComponentsDeployed: exit: allComponentsAreDeployed: ${allComponentsAreDeployed}`,
+        );
         return allComponentsAreDeployed;
     }
 
     public async updateComponentByAccount(request: AccountComponentModel): Promise<void> {
-        logger.debug(`accounts.service updateComponentStatus: in: request:${JSON.stringify(request)}`);
+        logger.debug(
+            `accounts.service updateComponentStatus: in: request:${JSON.stringify(request)}`,
+        );
 
         const { accountId, componentName, status, region } = request;
 
@@ -137,12 +166,18 @@ export class AccountsService {
 
         const accountResource = this.accountsAssembler.toResource(accountItem);
 
-        logger.debug(`accounts.service getAccountById: out: account : ${JSON.stringify(accountResource)}`);
+        logger.debug(
+            `accounts.service getAccountById: out: account : ${JSON.stringify(accountResource)}`,
+        );
 
         return accountResource;
     }
 
-    public async getAccountsInOu(ouName: string, count?: number, exclusiveStart?: AccountListPaginationKey): Promise<[AccountsItem[], AccountListPaginationKey]> {
+    public async getAccountsInOu(
+        ouName: string,
+        count?: number,
+        exclusiveStart?: AccountListPaginationKey,
+    ): Promise<[AccountsItem[], AccountListPaginationKey]> {
         logger.debug(`accounts.service getAccountsInOu: in: ouName : ${ouName}`);
 
         ow(ouName, ow.string.nonEmpty);
@@ -162,37 +197,57 @@ export class AccountsService {
         const accountItem = await this.accountsDao.getAccountByName(accountName);
 
         if (accountItem === undefined) {
-            throw new Error("NOT_FOUND");
+            throw new Error('NOT_FOUND');
         }
 
         const accountResource = this.accountsAssembler.toResource(accountItem);
 
-        logger.debug(`accounts.service getAccountByName: out: account : ${JSON.stringify(accountResource)}`);
+        logger.debug(
+            `accounts.service getAccountByName: out: account : ${JSON.stringify(accountResource)}`,
+        );
 
         return accountResource;
     }
 
-    private async convertRequestToServiceCatalogParameter(request: AccountCreationRequest): Promise<ProvisionProductInput> {
+    private async convertRequestToServiceCatalogParameter(
+        request: AccountCreationRequest,
+    ): Promise<ProvisionProductInput> {
         const searchProductsAsAdminResponse = await this._serviceCatalog
             .searchProductsAsAdmin({
                 Filters: { Owner: [this.accountFactoryProductOwner] },
             })
             .promise();
-        const productId = searchProductsAsAdminResponse.ProductViewDetails.find((o) => o.ProductViewSummary.Name === this.accountFactoryProductName)?.ProductViewSummary?.ProductId;
+        const productId = searchProductsAsAdminResponse.ProductViewDetails.find(
+            (o) => o.ProductViewSummary.Name === this.accountFactoryProductName,
+        )?.ProductViewSummary?.ProductId;
 
         if (productId === undefined) {
-            throw new Error("no control tower product exists in this account");
+            throw new Error('no control tower product exists in this account');
         }
 
-        const listProvisioningArtifactsResponse = await this._serviceCatalog.listProvisioningArtifacts({ ProductId: productId }).promise();
+        const listProvisioningArtifactsResponse = await this._serviceCatalog
+            .listProvisioningArtifacts({ ProductId: productId })
+            .promise();
         // This is the way the product is being versioned, we want to make sure we're using the active provisioning artifact
-        const provisioningArtifactId = listProvisioningArtifactsResponse.ProvisioningArtifactDetails.find((o) => o.Active)?.Id;
+        const provisioningArtifactId =
+            listProvisioningArtifactsResponse.ProvisioningArtifactDetails.find((o) => o.Active)
+                ?.Id;
 
         if (provisioningArtifactId === undefined) {
-            throw new Error("no active control tower service catalog product exists in this account");
+            throw new Error(
+                'no active control tower service catalog product exists in this account',
+            );
         }
 
-        const { ssoEmail, ssoFirstName, ssoLastName, createAccountRequestId: createRequestToken, name: accountName, email: accountEmail, organizationalUnitId: organizationalUnit } = request;
+        const {
+            ssoEmail,
+            ssoFirstName,
+            ssoLastName,
+            createAccountRequestId: createRequestToken,
+            name: accountName,
+            email: accountEmail,
+            organizationalUnitId: organizationalUnit,
+        } = request;
 
         return {
             ProductId: productId,
@@ -201,27 +256,27 @@ export class AccountsService {
             ProvisionedProductName: `${accountName}`,
             ProvisioningParameters: [
                 {
-                    Key: "AccountEmail",
+                    Key: 'AccountEmail',
                     Value: accountEmail,
                 },
                 {
-                    Key: "ManagedOrganizationalUnit",
+                    Key: 'ManagedOrganizationalUnit',
                     Value: organizationalUnit,
                 },
                 {
-                    Key: "AccountName",
+                    Key: 'AccountName',
                     Value: accountName,
                 },
                 {
-                    Key: "SSOUserEmail",
+                    Key: 'SSOUserEmail',
                     Value: ssoEmail,
                 },
                 {
-                    Key: "SSOUserFirstName",
+                    Key: 'SSOUserFirstName',
                     Value: ssoFirstName,
                 },
                 {
-                    Key: "SSOUserLastName",
+                    Key: 'SSOUserLastName',
                     Value: ssoLastName,
                 },
             ],
@@ -229,7 +284,9 @@ export class AccountsService {
     }
 
     public async updateAccountStatus(updateModel: AccountUpdateRequest): Promise<void> {
-        logger.debug(`accounts.service updateAccountStatus: in: updateModel:${JSON.stringify(updateModel)}`);
+        logger.debug(
+            `accounts.service updateAccountStatus: in: updateModel:${JSON.stringify(updateModel)}`,
+        );
 
         ow(updateModel, ow.object.nonEmpty);
         ow(updateModel.organizationalUnitId, ow.string.nonEmpty);
@@ -245,17 +302,25 @@ export class AccountsService {
             status,
         });
 
-        if (status === "ACTIVE") {
+        if (status === 'ACTIVE') {
             const accountResource = await this.getAccountByName(name);
             const { regions } = accountResource;
-            await this.accountsDao.updateRegionsMappingForAccount(organizationalUnitId, accountId, regions);
+            await this.accountsDao.updateRegionsMappingForAccount(
+                organizationalUnitId,
+                accountId,
+                regions,
+            );
         }
 
         logger.debug(`accounts.service updateAccountStatus: exit:`);
     }
 
     public async updateAccountRegions(updateModel: AccountRegionUpdateRequest): Promise<void> {
-        logger.debug(`accounts.service updateAccountRegions: in: updateModel:${JSON.stringify(updateModel)}`);
+        logger.debug(
+            `accounts.service updateAccountRegions: in: updateModel:${JSON.stringify(
+                updateModel,
+            )}`,
+        );
 
         ow(updateModel, ow.object.nonEmpty);
         ow(updateModel.accountId, ow.string.nonEmpty);
@@ -269,7 +334,11 @@ export class AccountsService {
             organizationalUnitId,
             regions,
         });
-        await this.accountsDao.updateRegionsMappingForAccount(organizationalUnitId, accountId, regions);
+        await this.accountsDao.updateRegionsMappingForAccount(
+            organizationalUnitId,
+            accountId,
+            regions,
+        );
 
         logger.debug(`accounts.service updateAccountRegions: exit:`);
     }
@@ -294,21 +363,25 @@ export class AccountsService {
 
         let accountResource;
 
-        const organizationalUnitIds = (await this.organizationalUnitsDao.getOrganizationalUnits()).map(ou => ou.id);
+        const organizationalUnitIds = (
+            await this.organizationalUnitsDao.getOrganizationalUnits()
+        ).map((ou) => ou.id);
 
         if (!organizationalUnitIds.includes(account.organizationalUnitId)) {
-            throw new Error("FAILED_VALIDATION");
+            throw new Error('FAILED_VALIDATION');
         }
 
         if (this.createAccountInControlTower) {
             ow(createAccountRequestId, ow.string.nonEmpty);
             ow(tags, ow.object.nonEmpty);
-            const provisionProductRequest = await this.convertRequestToServiceCatalogParameter(account);
+            const provisionProductRequest = await this.convertRequestToServiceCatalogParameter(
+                account,
+            );
             await this._serviceCatalog.provisionProduct(provisionProductRequest).promise();
             accountResource = await this.accountsDao.createAccount({
                 ...accountItem,
                 accountId,
-                status: "CREATING",
+                status: 'CREATING',
             });
         } else {
             ow(accountId, ow.string.nonEmpty);
@@ -317,9 +390,13 @@ export class AccountsService {
             accountResource = await this.accountsDao.createAccount({
                 ...accountItem,
                 accountId,
-                status: "ACTIVE",
+                status: 'ACTIVE',
             });
-            await this.accountsDao.updateRegionsMappingForAccount(account.organizationalUnitId, accountId, account.regions);
+            await this.accountsDao.updateRegionsMappingForAccount(
+                account.organizationalUnitId,
+                accountId,
+                account.regions,
+            );
         }
 
         logger.debug(`accounts.service createAccount: out: accountResource:${accountResource}`);

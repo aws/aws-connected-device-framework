@@ -11,15 +11,13 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface RunItem {
-
     id?: string;
     simulationId: string;
-    deviceCount:number;
-    status?:RunStatus;
-
+    deviceCount: number;
+    status?: RunStatus;
 }
 
 export enum RunStatus {
-    preparing='preparing',
-    running='running'
+    preparing = 'preparing',
+    running = 'running',
 }

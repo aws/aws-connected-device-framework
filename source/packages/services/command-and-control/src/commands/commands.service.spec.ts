@@ -24,7 +24,6 @@ import { CommandsValidator } from './commands.validator';
 import { CommandListIdsByTagPaginationKey } from './commands.models';
 
 describe('CommandsService', () => {
-
     let mockedDao: jest.Mocked<CommandsDao>;
     let mockedValidator: jest.Mocked<CommandsValidator>;
     let mockedMessagesService: jest.Mocked<MessagesService>;
@@ -34,15 +33,21 @@ describe('CommandsService', () => {
     beforeEach(() => {
         mockedDao = createMockInstance(CommandsDao);
         mockedValidator = createMockInstance(CommandsValidator);
-        mockedSQS = new SQS;
+        mockedSQS = new SQS();
         const mockedSQSFactory = () => {
             return mockedSQS;
         };
-        underTest = new CommandsService(10, 'queueUrl', mockedValidator, mockedDao, mockedMessagesService, mockedSQSFactory);
+        underTest = new CommandsService(
+            10,
+            'queueUrl',
+            mockedValidator,
+            mockedDao,
+            mockedMessagesService,
+            mockedSQSFactory,
+        );
     });
 
     it('update - happy path', async () => {
-
         // stubs
         const existing: CommandItem = {
             id: 'tLKhjhcuQ',
@@ -52,16 +57,17 @@ describe('CommandsService', () => {
                 type: 'JOB',
                 targetSelection: 'SNAPSHOT',
             },
-            payloadTemplate: "{\"package\": \"${aws:iot:s3-presigned-url:https://s3.us-west-2.amazonaws.com/cdf-xxxxxxxx-us-west-2/testfile.zip}\"}",
+            payloadTemplate:
+                '{"package": "${aws:iot:s3-presigned-url:https://s3.us-west-2.amazonaws.com/cdf-xxxxxxxx-us-west-2/testfile.zip}"}',
             createdAt: new Date(),
-            updatedAt: new Date()
-        }
+            updatedAt: new Date(),
+        };
 
         const updated: CommandItem = {
             id: 'tLKhjhcuQ',
-            payloadTemplate: "{\"package\": \"${aws:iot:s3-presigned-url:${s3Location}}\"}",
-            payloadParams: ['s3Location']
-        }
+            payloadTemplate: '{"package": "${aws:iot:s3-presigned-url:${s3Location}}"}',
+            payloadParams: ['s3Location'],
+        };
 
         // mocks
         mockedDao.get = jest.fn().mockResolvedValueOnce([existing]);
@@ -85,8 +91,7 @@ describe('CommandsService', () => {
         expect(new Date(merged.updatedAt)).not.toEqual(existing.updatedAt);
     });
 
-    it('update - don\'t merge arrays', async () => {
-
+    it("update - don't merge arrays", async () => {
         // stubs
         const existing: CommandItem = {
             id: '12tLKhjhcuQ3',
@@ -96,18 +101,21 @@ describe('CommandsService', () => {
                 expectReply: true,
                 targetSelection: 'SNAPSHOT',
                 abortConfig: {
-                    criteriaList: [{
-                        action: 'ABORT',
-                        failureType: 'TIMEOUT',
-                        minNumberOfExecutedThings: 1,
-                        thresholdPercentage: 0.5
-                    }],
+                    criteriaList: [
+                        {
+                            action: 'ABORT',
+                            failureType: 'TIMEOUT',
+                            minNumberOfExecutedThings: 1,
+                            thresholdPercentage: 0.5,
+                        },
+                    ],
                 },
             },
-            payloadTemplate: "{\"package\": \"${aws:iot:s3-presigned-url:https://s3.us-west-2.amazonaws.com/cdf-xxxxxxxx-us-west-2/testfile.zip}\"}",
+            payloadTemplate:
+                '{"package": "${aws:iot:s3-presigned-url:https://s3.us-west-2.amazonaws.com/cdf-xxxxxxxx-us-west-2/testfile.zip}"}',
             createdAt: new Date(),
-            updatedAt: new Date()
-        }
+            updatedAt: new Date(),
+        };
 
         const updated: CommandItem = {
             id: 'tLKhjhcuQ',
@@ -116,15 +124,17 @@ describe('CommandsService', () => {
                 expectReply: true,
                 targetSelection: 'SNAPSHOT',
                 abortConfig: {
-                    criteriaList: [{
-                        action: 'ABORT',
-                        failureType: 'TIMEOUT',
-                        minNumberOfExecutedThings: 2,
-                        thresholdPercentage: 0.75
-                    }],
+                    criteriaList: [
+                        {
+                            action: 'ABORT',
+                            failureType: 'TIMEOUT',
+                            minNumberOfExecutedThings: 2,
+                            thresholdPercentage: 0.75,
+                        },
+                    ],
                 },
             },
-        }
+        };
 
         // mocks
         mockedDao.get = jest.fn().mockResolvedValueOnce([existing]);
@@ -143,14 +153,21 @@ describe('CommandsService', () => {
         expect(mergedDeliveryMethod.expectReply).toEqual(existing.deliveryMethod.expectReply);
         expect(mergedDeliveryMethod.abortConfig?.criteriaList?.length).toEqual(1);
         const updatedDeliveryMethod = updated.deliveryMethod as JobDeliveryMethod;
-        expect(mergedDeliveryMethod.abortConfig?.criteriaList?.[0].action).toEqual(updatedDeliveryMethod.abortConfig.criteriaList[0].action);
-        expect(mergedDeliveryMethod.abortConfig?.criteriaList?.[0].failureType).toEqual(updatedDeliveryMethod.abortConfig.criteriaList[0].failureType);
-        expect(mergedDeliveryMethod.abortConfig?.criteriaList?.[0].minNumberOfExecutedThings).toEqual(updatedDeliveryMethod.abortConfig.criteriaList[0].minNumberOfExecutedThings);
-        expect(mergedDeliveryMethod.abortConfig?.criteriaList?.[0].thresholdPercentage).toEqual(updatedDeliveryMethod.abortConfig.criteriaList[0].thresholdPercentage);
+        expect(mergedDeliveryMethod.abortConfig?.criteriaList?.[0].action).toEqual(
+            updatedDeliveryMethod.abortConfig.criteriaList[0].action,
+        );
+        expect(mergedDeliveryMethod.abortConfig?.criteriaList?.[0].failureType).toEqual(
+            updatedDeliveryMethod.abortConfig.criteriaList[0].failureType,
+        );
+        expect(
+            mergedDeliveryMethod.abortConfig?.criteriaList?.[0].minNumberOfExecutedThings,
+        ).toEqual(updatedDeliveryMethod.abortConfig.criteriaList[0].minNumberOfExecutedThings);
+        expect(mergedDeliveryMethod.abortConfig?.criteriaList?.[0].thresholdPercentage).toEqual(
+            updatedDeliveryMethod.abortConfig.criteriaList[0].thresholdPercentage,
+        );
     });
 
     it('update - changing deliveryMethod type is not allowed', async () => {
-
         // stubs
         const existing: CommandItem = {
             id: '12tLKhjhcuQ3',
@@ -158,20 +175,20 @@ describe('CommandsService', () => {
             deliveryMethod: {
                 type: 'JOB',
                 expectReply: true,
-                targetSelection: 'SNAPSHOT'
+                targetSelection: 'SNAPSHOT',
             },
-            payloadTemplate: "{\"something\": \"xyz\"}",
-            createdAt: new Date()
-        }
+            payloadTemplate: '{"something": "xyz"}',
+            createdAt: new Date(),
+        };
 
         const updated: CommandItem = {
             id: 'tLKhjhcuQ',
             deliveryMethod: {
                 type: 'TOPIC',
                 expectReply: true,
-                onlineOnly: true
+                onlineOnly: true,
             },
-        }
+        };
 
         // mocks
         mockedDao.get = jest.fn().mockResolvedValueOnce([existing]);
@@ -179,22 +196,22 @@ describe('CommandsService', () => {
         // execute and verify
         const functionUnderTest = async () => {
             await underTest.update(updated);
-        }
-        await expect(functionUnderTest()).rejects.toThrow('FAILED_VALIDATION: updating delivery method type is not allowed');
-
+        };
+        await expect(functionUnderTest()).rejects.toThrow(
+            'FAILED_VALIDATION: updating delivery method type is not allowed',
+        );
     });
 
     it('update - existing command not found throws error', async () => {
-
         // stubs
         const updated: CommandItem = {
             id: 'tLKhjhcuQ',
             deliveryMethod: {
                 type: 'TOPIC',
                 expectReply: true,
-                onlineOnly: true
+                onlineOnly: true,
             },
-        }
+        };
 
         // mocks
         mockedDao.get = jest.fn().mockResolvedValueOnce(undefined);
@@ -202,14 +219,11 @@ describe('CommandsService', () => {
         // execute and verify
         const functionUnderTest = async () => {
             await underTest.update(updated);
-        }
+        };
         await expect(functionUnderTest()).rejects.toThrow('NOT_FOUND');
-
     });
 
-
     it('listIds - happy path', async () => {
-
         // mocks
         const idsForTagAPage1 = ['c01', 'c02', 'c03', 'c04', 'c05', 'c06', 'c07', 'c08'];
         const idsForTagAPage2 = ['c09', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16'];
@@ -217,36 +231,48 @@ describe('CommandsService', () => {
         const idsForTagBPage2 = ['c12', 'c13', 'c14'];
         const idsForTagCPage1 = ['c02', 'c04', 'c06', 'c08', 'c10', 'c12', 'c14'];
 
-        mockedDao.listIds = jest.fn().mockImplementation((tagKey: string, tagValue: string, exclusiveStart?: CommandListIdsByTagPaginationKey, _count?: number): Promise<[string[], CommandListIdsByTagPaginationKey]> => {
-            let result: [string[], CommandListIdsByTagPaginationKey] = [undefined, undefined];
-            switch (tagKey) {
-                case 'A':
-                    if (exclusiveStart?.commandId === undefined) {
-                        result = [idsForTagAPage1, { tagKey, tagValue, commandId: 'c08' }];
-                    } else if (exclusiveStart.commandId === 'c08') {
-                        result = [idsForTagAPage2, undefined];
+        mockedDao.listIds = jest
+            .fn()
+            .mockImplementation(
+                (
+                    tagKey: string,
+                    tagValue: string,
+                    exclusiveStart?: CommandListIdsByTagPaginationKey,
+                    _count?: number,
+                ): Promise<[string[], CommandListIdsByTagPaginationKey]> => {
+                    let result: [string[], CommandListIdsByTagPaginationKey] = [
+                        undefined,
+                        undefined,
+                    ];
+                    switch (tagKey) {
+                        case 'A':
+                            if (exclusiveStart?.commandId === undefined) {
+                                result = [idsForTagAPage1, { tagKey, tagValue, commandId: 'c08' }];
+                            } else if (exclusiveStart.commandId === 'c08') {
+                                result = [idsForTagAPage2, undefined];
+                            }
+                            break;
+                        case 'B':
+                            if (exclusiveStart?.commandId === undefined) {
+                                result = [idsForTagBPage1, { tagKey, tagValue, commandId: 'c11' }];
+                            } else if (exclusiveStart.commandId === 'c11') {
+                                result = [idsForTagBPage2, undefined];
+                            }
+                            break;
+                        case 'C':
+                            if (exclusiveStart?.commandId === undefined) {
+                                result = [idsForTagCPage1, undefined];
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                    break;
-                case 'B':
-                    if (exclusiveStart?.commandId === undefined) {
-                        result = [idsForTagBPage1, { tagKey, tagValue, commandId: 'c11' }];
-                    } else if (exclusiveStart.commandId === 'c11') {
-                        result = [idsForTagBPage2, undefined];
-                    }
-                    break;
-                case 'C':
-                    if (exclusiveStart?.commandId === undefined) {
-                        result = [idsForTagCPage1, undefined];
-                    }
-                    break;
-                default:
-                    break;
-            }
-            return Promise.resolve(result);
-        });
+                    return Promise.resolve(result);
+                },
+            );
 
         // execute
-        const [ids, _pagination] = await underTest.listIds({ 'A': '1', 'B': '2', 'C': '3' });
+        const [ids, _pagination] = await underTest.listIds({ A: '1', B: '2', C: '3' });
 
         expect(ids).toBeDefined();
         expect(ids.length).toEqual(6);
@@ -256,11 +282,9 @@ describe('CommandsService', () => {
         expect(ids[3]).toEqual('c10');
         expect(ids[4]).toEqual('c12');
         expect(ids[5]).toEqual('c14');
-
     });
 
     it('listIds - happy path (paginated - 1st page)', async () => {
-
         // mocks
         const idsForTagAPage1 = ['c01', 'c02', 'c03', 'c04'];
         const idsForTagAPage2 = ['c05', 'c06', 'c07', 'c08'];
@@ -272,44 +296,60 @@ describe('CommandsService', () => {
         const idsForTagCPage1 = ['c02', 'c04', 'c06', 'c08'];
         const idsForTagCPage2 = ['c10', 'c12', 'c14'];
 
-        mockedDao.listIds = jest.fn().mockImplementation((tagKey: string, tagValue: string, exclusiveStart?: CommandListIdsByTagPaginationKey, _count?: number): Promise<[string[], CommandListIdsByTagPaginationKey]> => {
-            let result: [string[], CommandListIdsByTagPaginationKey] = [undefined, undefined];
-            switch (tagKey) {
-                case 'A':
-                    if (exclusiveStart?.commandId === undefined) {
-                        result = [idsForTagAPage1, { tagKey, tagValue, commandId: 'c04' }];
-                    } else if (exclusiveStart?.commandId === 'c04') {
-                        result = [idsForTagAPage2, { tagKey, tagValue, commandId: 'c08' }];
-                    } else if (exclusiveStart?.commandId === 'c08') {
-                        result = [idsForTagAPage3, { tagKey, tagValue, commandId: 'c12' }];
-                    } else if (exclusiveStart?.commandId === 'c12') {
-                        result = [idsForTagAPage4, { tagKey, tagValue, commandId: 'c16' }];
+        mockedDao.listIds = jest
+            .fn()
+            .mockImplementation(
+                (
+                    tagKey: string,
+                    tagValue: string,
+                    exclusiveStart?: CommandListIdsByTagPaginationKey,
+                    _count?: number,
+                ): Promise<[string[], CommandListIdsByTagPaginationKey]> => {
+                    let result: [string[], CommandListIdsByTagPaginationKey] = [
+                        undefined,
+                        undefined,
+                    ];
+                    switch (tagKey) {
+                        case 'A':
+                            if (exclusiveStart?.commandId === undefined) {
+                                result = [idsForTagAPage1, { tagKey, tagValue, commandId: 'c04' }];
+                            } else if (exclusiveStart?.commandId === 'c04') {
+                                result = [idsForTagAPage2, { tagKey, tagValue, commandId: 'c08' }];
+                            } else if (exclusiveStart?.commandId === 'c08') {
+                                result = [idsForTagAPage3, { tagKey, tagValue, commandId: 'c12' }];
+                            } else if (exclusiveStart?.commandId === 'c12') {
+                                result = [idsForTagAPage4, { tagKey, tagValue, commandId: 'c16' }];
+                            }
+                            break;
+                        case 'B':
+                            if (exclusiveStart?.commandId === undefined) {
+                                result = [idsForTagBPage1, { tagKey, tagValue, commandId: 'c07' }];
+                            } else if (exclusiveStart?.commandId === 'c07') {
+                                result = [idsForTagBPage2, { tagKey, tagValue, commandId: 'c11' }];
+                            } else if (exclusiveStart?.commandId === 'c11') {
+                                result = [idsForTagBPage3, undefined];
+                            }
+                            break;
+                        case 'C':
+                            if (exclusiveStart?.commandId === undefined) {
+                                result = [idsForTagCPage1, { tagKey, tagValue, commandId: 'c08' }];
+                            } else if (exclusiveStart?.commandId === 'c08') {
+                                result = [idsForTagCPage2, undefined];
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                    break;
-                case 'B':
-                    if (exclusiveStart?.commandId === undefined) {
-                        result = [idsForTagBPage1, { tagKey, tagValue, commandId: 'c07' }];
-                    } else if (exclusiveStart?.commandId === 'c07') {
-                        result = [idsForTagBPage2, { tagKey, tagValue, commandId: 'c11' }];
-                    } else if (exclusiveStart?.commandId === 'c11') {
-                        result = [idsForTagBPage3, undefined];
-                    }
-                    break;
-                case 'C':
-                    if (exclusiveStart?.commandId === undefined) {
-                        result = [idsForTagCPage1, { tagKey, tagValue, commandId: 'c08' }];
-                    } else if (exclusiveStart?.commandId === 'c08') {
-                        result = [idsForTagCPage2, undefined];
-                    }
-                    break;
-                default:
-                    break;
-            }
-            return Promise.resolve(result);
-        });
+                    return Promise.resolve(result);
+                },
+            );
 
         // execute
-        const [ids, pagination] = await underTest.listIds({ 'A': '1', 'B': '2', 'C': '3' }, undefined, 4);
+        const [ids, pagination] = await underTest.listIds(
+            { A: '1', B: '2', C: '3' },
+            undefined,
+            4,
+        );
 
         expect(ids).toBeDefined();
         expect(ids.length).toEqual(4);
@@ -321,9 +361,7 @@ describe('CommandsService', () => {
         expect(pagination.commandId).toEqual('c10');
     });
 
-
     it('listIds - happy path (paginated - 2nd page)', async () => {
-
         // mocks
         const idsForTagAPage1 = ['c05', 'c06', 'c07', 'c08'];
         const idsForTagAPage2 = ['c09', 'c10', 'c11', 'c12'];
@@ -334,42 +372,58 @@ describe('CommandsService', () => {
         const idsForTagCPage1 = ['c06', 'c08', 'c10', 'c12'];
         const idsForTagCPage2 = ['c14'];
 
-        mockedDao.listIds = jest.fn().mockImplementation((tagKey: string, tagValue: string, exclusiveStart?: CommandListIdsByTagPaginationKey, _count?: number): Promise<[string[], CommandListIdsByTagPaginationKey]> => {
-            let result: [string[], CommandListIdsByTagPaginationKey] = [undefined, undefined];
-            switch (tagKey) {
-                case 'A':
-                    if (exclusiveStart?.commandId === 'c04') {
-                        result = [idsForTagAPage1, { tagKey, tagValue, commandId: 'c08' }];
-                    } else if (exclusiveStart?.commandId === 'c08') {
-                        result = [idsForTagAPage2, { tagKey, tagValue, commandId: 'c12' }];
-                    } else if (exclusiveStart?.commandId === 'c12') {
-                        result = [idsForTagAPage3, { tagKey, tagValue, commandId: 'c16' }];
+        mockedDao.listIds = jest
+            .fn()
+            .mockImplementation(
+                (
+                    tagKey: string,
+                    tagValue: string,
+                    exclusiveStart?: CommandListIdsByTagPaginationKey,
+                    _count?: number,
+                ): Promise<[string[], CommandListIdsByTagPaginationKey]> => {
+                    let result: [string[], CommandListIdsByTagPaginationKey] = [
+                        undefined,
+                        undefined,
+                    ];
+                    switch (tagKey) {
+                        case 'A':
+                            if (exclusiveStart?.commandId === 'c04') {
+                                result = [idsForTagAPage1, { tagKey, tagValue, commandId: 'c08' }];
+                            } else if (exclusiveStart?.commandId === 'c08') {
+                                result = [idsForTagAPage2, { tagKey, tagValue, commandId: 'c12' }];
+                            } else if (exclusiveStart?.commandId === 'c12') {
+                                result = [idsForTagAPage3, { tagKey, tagValue, commandId: 'c16' }];
+                            }
+                            break;
+                        case 'B':
+                            if (exclusiveStart?.commandId === 'c04') {
+                                result = [idsForTagBPage1, { tagKey, tagValue, commandId: 'c08' }];
+                            } else if (exclusiveStart?.commandId === 'c08') {
+                                result = [idsForTagBPage2, { tagKey, tagValue, commandId: 'c12' }];
+                            } else if (exclusiveStart?.commandId === 'c12') {
+                                result = [idsForTagBPage3, undefined];
+                            }
+                            break;
+                        case 'C':
+                            if (exclusiveStart?.commandId === 'c04') {
+                                result = [idsForTagCPage1, { tagKey, tagValue, commandId: 'c12' }];
+                            } else if (exclusiveStart?.commandId === 'c12') {
+                                result = [idsForTagCPage2, undefined];
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                    break;
-                case 'B':
-                    if (exclusiveStart?.commandId === 'c04') {
-                        result = [idsForTagBPage1, { tagKey, tagValue, commandId: 'c08' }];
-                    } else if (exclusiveStart?.commandId === 'c08') {
-                        result = [idsForTagBPage2, { tagKey, tagValue, commandId: 'c12' }];
-                    } else if (exclusiveStart?.commandId === 'c12') {
-                        result = [idsForTagBPage3, undefined];
-                    }
-                    break;
-                case 'C':
-                    if (exclusiveStart?.commandId === 'c04') {
-                        result = [idsForTagCPage1, { tagKey, tagValue, commandId: 'c12' }];
-                    } else if (exclusiveStart?.commandId === 'c12') {
-                        result = [idsForTagCPage2, undefined];
-                    }
-                    break;
-                default:
-                    break;
-            }
-            return Promise.resolve(result);
-        });
+                    return Promise.resolve(result);
+                },
+            );
 
         // execute
-        const [ids, pagination] = await underTest.listIds({ 'A': '1', 'B': '2', 'C': '3' }, { commandId: 'c04' }, 4);
+        const [ids, pagination] = await underTest.listIds(
+            { A: '1', B: '2', C: '3' },
+            { commandId: 'c04' },
+            4,
+        );
 
         expect(ids).toBeDefined();
         expect(ids.length).toEqual(4);
@@ -380,5 +434,4 @@ describe('CommandsService', () => {
         expect(pagination).toBeDefined();
         expect(pagination.commandId).toEqual('c12');
     });
-
 });

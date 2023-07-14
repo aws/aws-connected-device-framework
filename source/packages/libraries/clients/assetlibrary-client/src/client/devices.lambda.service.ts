@@ -32,7 +32,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        private lambdaInvoker: LambdaInvokerService,
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -43,7 +43,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         deviceId: string,
         relationship: string,
         otherDeviceId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -62,7 +62,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         relationship: string,
         direction: string,
         otherDeviceId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -75,8 +75,8 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
                     deviceId,
                     relationship,
                     direction,
-                    otherDeviceId
-                )
+                    otherDeviceId,
+                ),
             )
             .setMethod('PUT')
             .setHeaders(super.buildHeaders(additionalHeaders));
@@ -88,7 +88,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         deviceId: string,
         relationship: string,
         groupPath: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -107,7 +107,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         relationship: string,
         direction: string,
         groupPath: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -120,8 +120,8 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
                     deviceId,
                     relationship,
                     direction,
-                    groupPath
-                )
+                    groupPath,
+                ),
             )
             .setMethod('PUT')
             .setHeaders(super.buildHeaders(additionalHeaders));
@@ -132,7 +132,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
     async createComponent(
         deviceId: string,
         body: Device10Resource | Device20Resource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(body, 'body', ow.object.nonEmpty);
@@ -149,7 +149,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
     async createDevice(
         body: Device10Resource | Device20Resource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(body, 'body', ow.object.nonEmpty);
 
@@ -166,7 +166,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
     async bulkCreateDevice(
         body: BulkDevicesResource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<BulkDevicesResult> {
         ow(body, 'body', ow.object.nonEmpty);
 
@@ -184,7 +184,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
     async bulkUpdateDevice(
         body: BulkDevicesResource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(body, 'body', ow.object.nonEmpty);
 
@@ -202,7 +202,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
     async deleteComponent(
         deviceId: string,
         componentId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(componentId, 'componentId', ow.string.nonEmpty);
@@ -230,7 +230,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         deviceId: string,
         relationship: string,
         otherDeviceId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -247,7 +247,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
     async detachFromDevices(
         deviceId: string,
         relationship: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         if (relationship === undefined) {
@@ -264,7 +264,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
 
     async detachFromAllDevices(
         deviceId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         await this.detachFromDevices(deviceId, undefined, additionalHeaders);
     }
@@ -274,7 +274,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         relationship: string,
         direction: string,
         otherDeviceId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -287,8 +287,8 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
                     deviceId,
                     relationship,
                     direction,
-                    otherDeviceId
-                )
+                    otherDeviceId,
+                ),
             )
             .setMethod('DELETE')
             .setHeaders(super.buildHeaders(additionalHeaders));
@@ -300,7 +300,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         deviceId: string,
         relationship: string,
         groupPath: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -317,7 +317,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
     async detachFromGroups(
         deviceId: string,
         relationship: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         if (relationship === undefined) {
@@ -334,7 +334,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
 
     async detachFromAllGroups(
         deviceId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         await this.detachFromGroups(deviceId, undefined, additionalHeaders);
     }
@@ -344,7 +344,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         relationship: string,
         direction: string,
         groupPath: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -357,8 +357,8 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
                     deviceId,
                     relationship,
                     direction,
-                    groupPath
-                )
+                    groupPath,
+                ),
             )
             .setMethod('DELETE')
             .setHeaders(super.buildHeaders(additionalHeaders));
@@ -371,7 +371,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         expandComponents?: boolean,
         attributes?: string[],
         groups?: string[],
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<Device10Resource | Device20Resource> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
@@ -396,7 +396,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         deviceId: string,
         componentId: string,
         body: Device10Resource | Device20Resource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(componentId, 'componentId', ow.string.nonEmpty);
@@ -415,7 +415,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         deviceId: string,
         body: Device10Resource | Device20Resource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(body, 'body', ow.object.nonEmpty);
@@ -437,7 +437,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         expandComponents?: boolean,
         attributes?: string[],
         groups?: string[],
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<DeviceResourceList> {
         ow(deviceIds, 'deviceIds', ow.array.nonEmpty.minLength(1));
 

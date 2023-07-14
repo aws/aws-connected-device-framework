@@ -11,24 +11,28 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { injectable } from "inversify";
-import { PathHelper } from "../utils/path.helper";
-import { RequestHeaders } from "./common.model";
-import { BulkComponentsResource, BulkComponentsResult, ComponentResource } from "./components.model";
+import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
+import { RequestHeaders } from './common.model';
+import {
+    BulkComponentsResource,
+    BulkComponentsResult,
+    ComponentResource,
+} from './components.model';
 
 export interface BulkComponentsService {
     bulkCreateComponents(
         organizationalUnitId: string,
         bulkComponentsResource: BulkComponentsResource,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<BulkComponentsResult>;
     bulkGetComponents(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<ComponentResource[]>;
     bulkDeleteComponents(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders
+        additionalHeaders?: RequestHeaders,
     ): Promise<void>;
 }
 

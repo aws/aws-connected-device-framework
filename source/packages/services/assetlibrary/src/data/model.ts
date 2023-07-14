@@ -62,27 +62,27 @@ export function assembleSortKeys(sort?: string | string[]): SortKeys {
     return sk;
 }
 
-export function safeExtractLabels(rawLabelAttribute:NodeAttributeValue) : string[] {
+export function safeExtractLabels(rawLabelAttribute: NodeAttributeValue): string[] {
     let labels: string[] = [];
-    if (Array.isArray(rawLabelAttribute) && rawLabelAttribute.length>=2) {
-        labels.push(... <string[]> rawLabelAttribute);
+    if (Array.isArray(rawLabelAttribute) && rawLabelAttribute.length >= 2) {
+        labels.push(...(<string[]>rawLabelAttribute));
     } else if (Array.isArray(rawLabelAttribute)) {
         labels.push(...(<string>rawLabelAttribute[0]).split('::'));
     } else {
-        labels = (<string> rawLabelAttribute).split('::');
+        labels = (<string>rawLabelAttribute).split('::');
     }
     return labels;
 }
 
 export interface EntityTypeMap {
-    [id: string] : string[];
+    [id: string]: string[];
 }
 
-export type RelationDirection = 'in'|'out';
-export type OmniRelationDirection = RelationDirection|'both';
+export type RelationDirection = 'in' | 'out';
+export type OmniRelationDirection = RelationDirection | 'both';
 
 export interface RelatedEntityIdentifer {
-    relationship:string;
-    direction:RelationDirection;
-    targetId:string;
+    relationship: string;
+    direction: RelationDirection;
+    targetId: string;
 }
