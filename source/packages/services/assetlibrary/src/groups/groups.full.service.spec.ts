@@ -69,7 +69,7 @@ describe('GroupsService', () => {
             mockedProfilesService,
             mockedSchemaValidatorService,
             mockedTypesService,
-            mockedTypeUtils,
+            mockedTypeUtils
         );
     });
 
@@ -120,7 +120,7 @@ describe('GroupsService', () => {
         // execute
         const actual = await (<GroupsServiceFull>instance).___test___applyProfile(
             model,
-            profileId,
+            profileId
         );
 
         // verify
@@ -189,7 +189,7 @@ describe('GroupsService', () => {
         // execute
         const actual = await (<GroupsServiceFull>instance).___test___applyProfile(
             original,
-            profileId,
+            profileId
         );
 
         // verify
@@ -267,12 +267,12 @@ describe('GroupsService', () => {
         expect(mockedTypesService.get).toBeCalledWith(
             'testtemplate',
             TypeCategory.Group,
-            TypeDefinitionStatus.published,
+            TypeDefinitionStatus.published
         );
         expect(mockedSchemaValidatorService.validateSubType).toBeCalledWith(
             mockedTemplate,
             group,
-            Operation.CREATE,
+            Operation.CREATE
         );
 
         const expectedValidateRelationshipsByPathArg: DirectionToRelatedEntityArrayMap = {
@@ -288,7 +288,7 @@ describe('GroupsService', () => {
         expect(mockedSchemaValidatorService.validateRelationshipsByIds).toBeCalledWith(
             mockedTemplate,
             expectedValidateRelationshipsByPathArg,
-            undefined,
+            undefined
         );
         expect(mockedDao.get).toBeCalledWith(['/aparent'], false);
         expect(mockedDao.create).toBeCalledWith(mockedNode, group.groups);
@@ -307,7 +307,7 @@ describe('GroupsService', () => {
             mockedProfilesService,
             mockedSchemaValidatorService,
             mockedTypesService,
-            mockedTypeUtils,
+            mockedTypeUtils
         );
 
         // stubs
@@ -375,12 +375,12 @@ describe('GroupsService', () => {
         expect(mockedTypesService.get).toBeCalledWith(
             'testtemplate',
             TypeCategory.Group,
-            TypeDefinitionStatus.published,
+            TypeDefinitionStatus.published
         );
         expect(mockedSchemaValidatorService.validateSubType).toBeCalledWith(
             mockedTemplate,
             group,
-            Operation.CREATE,
+            Operation.CREATE
         );
 
         const expectedValidateRelationshipsByPathArg: DirectionToRelatedEntityArrayMap = {
@@ -393,7 +393,7 @@ describe('GroupsService', () => {
         expect(mockedSchemaValidatorService.validateRelationshipsByIds).toBeCalledWith(
             mockedTemplate,
             expectedValidateRelationshipsByPathArg,
-            undefined,
+            undefined
         );
         expect(mockedDao.get).toBeCalledWith(['/aparent'], false);
         expect(mockedDao.create).toBeCalledWith(mockedNode, group.groups);

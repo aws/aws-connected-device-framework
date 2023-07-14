@@ -54,7 +54,7 @@ export class EventBridgePublisher implements CDFEventPublisher {
 
     constructor(
         @inject(EVENT_PUBLISHER_TYPES.EventBridgeFactory)
-        eventBridgeFactory: (region?: string) => EventBridgeClient,
+        eventBridgeFactory: (region?: string) => EventBridgeClient
     ) {
         this.eventBridge = eventBridgeFactory();
 
@@ -82,13 +82,13 @@ export class EventBridgePublisher implements CDFEventPublisher {
                     DetailType: name,
                     TraceHeader: traceHeader,
                 };
-            },
+            }
         );
 
         logger.debug(
             `cdfEventPublisher: emitEvents: exit: assembledEvents:${JSON.stringify(
-                assembledEvents,
-            )}`,
+                assembledEvents
+            )}`
         );
         return assembledEvents;
     }
@@ -101,7 +101,7 @@ export class EventBridgePublisher implements CDFEventPublisher {
         await this.eventBridge.send(
             new PutEventsCommand({
                 Entries: assembledEvents,
-            }),
+            })
         );
 
         logger.debug(`cdfEventPublisher: emitEvents: exit:`);

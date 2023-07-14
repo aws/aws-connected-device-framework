@@ -19,14 +19,14 @@ import { RequestHeaders } from './common.model';
 export interface AccountsService {
     listAccounts(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<AccountResourceList>;
 
     getAccount(accountId: string, additionalHeaders?: RequestHeaders): Promise<AccountResource>;
 
     createAccount(
         account: AccountCreationRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string>;
 
     deleteAccount(accountId: string, additionalHeaders?: RequestHeaders): Promise<void>;

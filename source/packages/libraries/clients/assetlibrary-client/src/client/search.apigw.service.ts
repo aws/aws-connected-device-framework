@@ -33,7 +33,7 @@ export class SearchApigwService extends SearchServiceBase implements SearchServi
         searchRequest: SearchRequestModel,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<SearchResultsModel> {
         ow(searchRequest, ow.object.nonEmpty);
 
@@ -64,7 +64,7 @@ export class SearchApigwService extends SearchServiceBase implements SearchServi
 
     public async delete(
         searchRequest: SearchRequestModel,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(searchRequest, ow.object.nonEmpty);
 

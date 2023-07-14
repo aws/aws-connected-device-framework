@@ -94,7 +94,7 @@ describe('modules', () => {
         // execute
         const actual = topologicallySortModules(
             modules,
-            modules.map((m) => m.name),
+            modules.map((m) => m.name)
         );
 
         // verify

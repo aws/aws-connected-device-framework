@@ -23,7 +23,7 @@ import { InitService } from './init.service';
 export class InitServiceFull implements InitService {
     constructor(
         @inject(TYPES.InitDao) private initDao: InitDaoFull,
-        @inject(TYPES.TypesService) private typesService: TypesService,
+        @inject(TYPES.TypesService) private typesService: TypesService
     ) {}
 
     public async init(): Promise<void> {

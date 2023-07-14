@@ -33,7 +33,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         category: CategoryEnum,
         templateId: string,
         status: StatusEnum,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<TypeResource> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -56,7 +56,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
     async createTemplate(
         resource: TypeResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(resource, 'resource', ow.object.nonEmpty);
         ow(resource.templateId, 'templateId', ow.string.nonEmpty);
@@ -64,7 +64,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(
             resource.category,
-            resource.templateId,
+            resource.templateId
         )}`;
 
         const body = Object.assign({}, resource);
@@ -86,7 +86,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
     async updateTemplate(
         resource: TypeResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(resource, 'resource', ow.object.nonEmpty);
         ow(resource.templateId, 'templateId', ow.string.nonEmpty);
@@ -94,7 +94,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(
             resource.category,
-            resource.templateId,
+            resource.templateId
         )}`;
 
         const body = Object.assign({}, resource);
@@ -117,7 +117,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
     async publishTemplate(
         category: CategoryEnum,
         templateId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -139,7 +139,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
     async deleteTemplate(
         category: CategoryEnum,
         templateId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -162,7 +162,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         status?: string,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<TypeResourceList> {
         ow(category, 'category', ow.string.nonEmpty);
 

@@ -31,7 +31,7 @@ export class DevicesDao {
     private dbc: DynamoDBDocumentClient;
 
     public constructor(
-        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient,
+        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient
     ) {
         this.dbc = ddcFactory();
     }
@@ -167,12 +167,12 @@ export class DevicesDao {
     public async list(
         failedOnly: boolean,
         count: number,
-        exclusiveStart: DeviceListPaginationKey,
+        exclusiveStart: DeviceListPaginationKey
     ): Promise<[DeviceItem[], DeviceListPaginationKey]> {
         logger.debug(
             `devices.dao list: in: failedOnly:${failedOnly}, count:${count}, exclusiveStart:${JSON.stringify(
-                exclusiveStart,
-            )}`,
+                exclusiveStart
+            )}`
         );
 
         let params: QueryCommandInput;
@@ -195,7 +195,7 @@ export class DevicesDao {
         let paginationKey: DeviceListPaginationKey;
         if (results.LastEvaluatedKey) {
             const lastEvaluatedThingName = expandDelimitedAttribute(
-                results.LastEvaluatedKey.pk,
+                results.LastEvaluatedKey.pk
             )[1];
             paginationKey = {
                 thingName: lastEvaluatedThingName,
@@ -204,15 +204,15 @@ export class DevicesDao {
 
         logger.debug(
             `cores.dao list: exit: response:${JSON.stringify(
-                response,
-            )}, paginationKey:${paginationKey}`,
+                response
+            )}, paginationKey:${paginationKey}`
         );
         return [response, paginationKey];
     }
 
     private generateListQuery(
         count?: number,
-        exclusiveStart?: DeviceListPaginationKey,
+        exclusiveStart?: DeviceListPaginationKey
     ): QueryCommandInput {
         let exclusiveStartKey: DynamoDbPaginationKey;
         if (exclusiveStart?.thingName) {
@@ -243,11 +243,11 @@ export class DevicesDao {
 
     private generateListFilteredByFailedDeployments(
         count?: number,
-        exclusiveStart?: DeviceListPaginationKey,
+        exclusiveStart?: DeviceListPaginationKey
     ): QueryCommandInput {
         const thingNameDbId = createDelimitedAttribute(
             PkType.ClientDevice,
-            exclusiveStart.thingName,
+            exclusiveStart.thingName
         );
 
         let exclusiveStartKey: DynamoDbPaginationKey;

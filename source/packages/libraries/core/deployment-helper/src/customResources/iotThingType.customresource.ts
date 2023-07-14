@@ -29,8 +29,8 @@ export class IotThingTypeCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `IotThingTypeCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const thingTypeName = customResourceEvent.ResourceProperties.ThingTypeName;
@@ -50,8 +50,8 @@ export class IotThingTypeCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `IotThingTypeCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         return await this.create(customResourceEvent);
     }

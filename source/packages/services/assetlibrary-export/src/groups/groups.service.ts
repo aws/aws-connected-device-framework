@@ -24,7 +24,7 @@ import { GroupItemList } from './groups.models';
 export class GroupsService {
     constructor(
         @inject(TYPES.GroupsDao) private groupsDao: GroupsDao,
-        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
+        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler
     ) {}
 
     public async getBulk(groupPaths: string[]): Promise<GroupItemList> {

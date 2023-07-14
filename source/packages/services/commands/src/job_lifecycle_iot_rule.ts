@@ -21,7 +21,7 @@ let iot: AWS.Iot;
 
 exports.job_lifecycle_rule_handler = async (
     event: Event,
-    _context: unknown,
+    _context: unknown
 ): Promise<HandlerResponse> => {
     logger.debug(`job_lifecycle_rule_handler: event: ${JSON.stringify(event)}`);
 

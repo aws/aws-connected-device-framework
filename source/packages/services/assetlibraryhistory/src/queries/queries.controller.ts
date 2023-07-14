@@ -41,10 +41,10 @@ export class QueryController implements interfaces.Controller {
         @queryParam('event') event: string,
         @queryParam('sort') sort: SortDirection,
         @queryParam('token') token: string,
-        @queryParam('limit') limit: number,
+        @queryParam('limit') limit: number
     ): Promise<StateHistoryListModel> {
         logger.info(
-            `queries.controller listCategoryEvents: in: category:${category}, timeFrom:${timeFrom}, timeTo:${timeTo}, user:${user}, event:${event}, category:${category}, sort:${sort}, token:${token}, limit:${limit}`,
+            `queries.controller listCategoryEvents: in: category:${category}, timeFrom:${timeFrom}, timeTo:${timeTo}, user:${user}, event:${event}, category:${category}, sort:${sort}, token:${token}, limit:${limit}`
         );
         try {
             const params: ListCategoryEventsArgs = {
@@ -83,10 +83,10 @@ export class QueryController implements interfaces.Controller {
         @queryParam('event') event: string,
         @queryParam('sort') sort: SortDirection,
         @queryParam('token') token: string,
-        @queryParam('limit') limit: number,
+        @queryParam('limit') limit: number
     ): Promise<StateHistoryListModel> {
         logger.info(
-            `queries.controller listObjectEvents: in: category:${category}, objectId:${objectId}, timeAt:${timeAt}, timeFrom:${timeFrom}, timeTo:${timeTo}, user:${user}, event:${event}, category:${category}, sort:${sort}, token:${token}, limit:${limit}`,
+            `queries.controller listObjectEvents: in: category:${category}, objectId:${objectId}, timeAt:${timeAt}, timeFrom:${timeFrom}, timeTo:${timeTo}, user:${user}, event:${event}, category:${category}, sort:${sort}, token:${token}, limit:${limit}`
         );
         try {
             const params: ListObjectEventsArgs = {

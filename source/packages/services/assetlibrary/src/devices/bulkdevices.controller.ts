@@ -34,19 +34,19 @@ import { DevicesService } from './devices.service';
 export class BulkDevicesController implements interfaces.Controller {
     constructor(
         @inject(TYPES.DevicesService) private devicesService: DevicesService,
-        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler
     ) {}
 
     @httpPost('')
     public async bulkCreateDevices(
         @requestBody() devices: BulkDevicesResource,
         @response() res: Response,
-        @queryParam('applyProfile') applyProfile?: string,
+        @queryParam('applyProfile') applyProfile?: string
     ): Promise<BulkDevicesResult> {
         logger.info(
             `bulkdevices.controller  bulkCreateDevices: in: devices: ${JSON.stringify(
-                devices,
-            )}, applyProfile:${applyProfile}`,
+                devices
+            )}, applyProfile:${applyProfile}`
         );
         try {
             const items = this.devicesAssembler.fromBulkDevicesResource(devices);
@@ -63,12 +63,12 @@ export class BulkDevicesController implements interfaces.Controller {
     public async bulkUpdateDevices(
         @requestBody() devices: BulkDevicesResource,
         @response() res: Response,
-        @queryParam('applyProfile') applyProfile?: string,
+        @queryParam('applyProfile') applyProfile?: string
     ): Promise<BulkDevicesResult> {
         logger.info(
             `bulkdevices.controller  bulkUpdateDevices: in: devices: ${JSON.stringify(
-                devices,
-            )}, applyProfile:${applyProfile}`,
+                devices
+            )}, applyProfile:${applyProfile}`
         );
         try {
             const items = this.devicesAssembler.fromBulkDevicesResource(devices);
@@ -88,10 +88,10 @@ export class BulkDevicesController implements interfaces.Controller {
         @queryParam('attributes') attributes: string,
         @queryParam('includeGroups') groups: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<DeviceResourceList> {
         logger.info(
-            `bulkdevices.controller  bulkGetDevices: in: deviceIds:${deviceIds}, components:${components}, attributes:${attributes}, groups:${groups}`,
+            `bulkdevices.controller  bulkGetDevices: in: deviceIds:${deviceIds}, components:${components}, attributes:${attributes}, groups:${groups}`
         );
         try {
             let deviceIdsAsArray: string[];
@@ -109,7 +109,7 @@ export class BulkDevicesController implements interfaces.Controller {
             }
             // remove duplicate deviceIds if any
             deviceIdsAsArray = deviceIdsAsArray.filter(
-                (item, index) => deviceIdsAsArray.indexOf(item) === index,
+                (item, index) => deviceIdsAsArray.indexOf(item) === index
             );
 
             const expandComponents = components === 'true';
@@ -128,7 +128,7 @@ export class BulkDevicesController implements interfaces.Controller {
                 deviceIdsAsArray,
                 expandComponents,
                 attributesArray,
-                includeGroups,
+                includeGroups
             );
             const resources = this.devicesAssembler.toDeviceResourceList(items, req['version']);
             res.status(200);

@@ -19,14 +19,14 @@ export interface DevicesService {
         deviceId: string,
         expandComponents?: boolean,
         attributes?: string[],
-        includeGroups?: boolean,
+        includeGroups?: boolean
     ): Promise<DeviceItem>;
 
     getBulk(
         deviceIds: string[],
         expandComponents: boolean,
         attributes: string[],
-        includeGroups: boolean,
+        includeGroups: boolean
     ): Promise<DeviceItemList>;
 
     createBulk(devices: DeviceItem[], applyProfile?: string): Promise<BulkDevicesResult>;
@@ -43,42 +43,42 @@ export interface DevicesService {
         deviceId: string,
         relationship: string,
         direction: string,
-        groupPath: string,
+        groupPath: string
     ): Promise<void>;
 
     detachFromGroup(
         deviceId: string,
         relationship: string,
         direction: string,
-        groupPath: string,
+        groupPath: string
     ): Promise<void>;
 
     detachFromGroups(
         deviceId: string,
         template?: string,
         relationship?: string,
-        direction?: string,
+        direction?: string
     ): Promise<void>;
 
     attachToDevice(
         deviceId: string,
         relationship: string,
         direction: string,
-        otherDeviceId: string,
+        otherDeviceId: string
     ): Promise<void>;
 
     detachFromDevice(
         deviceId: string,
         relationship: string,
         direction: string,
-        otherDeviceId: string,
+        otherDeviceId: string
     ): Promise<void>;
 
     detachFromDevices(
         deviceId: string,
         template?: string,
         relationship?: string,
-        direction?: string,
+        direction?: string
     ): Promise<void>;
 
     updateComponent(deviceId: string, componentId: string, model: DeviceItem): Promise<void>;
@@ -95,7 +95,7 @@ export interface DevicesService {
         state: string,
         offset: number,
         count: number,
-        sort: SortKeys,
+        sort: SortKeys
     ): Promise<DeviceItemList>;
 
     listRelatedGroups(
@@ -105,6 +105,6 @@ export interface DevicesService {
         template: string,
         offset: number,
         count: number,
-        sort: SortKeys,
+        sort: SortKeys
     ): Promise<GroupItemList>;
 }

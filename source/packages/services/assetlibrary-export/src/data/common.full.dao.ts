@@ -29,7 +29,7 @@ export class CommonDaoFull extends BaseDaoFull {
         @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -42,12 +42,12 @@ export class CommonDaoFull extends BaseDaoFull {
         filterRelatedBy: { [key: string]: ModelAttributeValue },
         offset: number,
         count: number,
-        sort: SortKeys,
+        sort: SortKeys
     ): Promise<Node> {
         logger.debug(
             `common.full.dao listRelated: in: entityDbId:${entityDbId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(
-                filterRelatedBy,
-            )}, offset:${offset}, count:${count}, ${JSON.stringify(sort)}`,
+                filterRelatedBy
+            )}, offset:${offset}, count:${count}, ${JSON.stringify(sort)}`
         );
 
         // define the traversers that handle finding associated edges/vertices
@@ -74,7 +74,7 @@ export class CommonDaoFull extends BaseDaoFull {
 
         // return the info we need to understand about each relation
         [relatedIn, relatedOut].forEach((t) =>
-            t.valueMap().with_(process.withOptions.tokens).as('vProps'),
+            t.valueMap().with_(process.withOptions.tokens).as('vProps')
         );
         relatedIn.constant('in').as('dir');
         relatedOut.constant('out').as('dir');
@@ -98,7 +98,7 @@ export class CommonDaoFull extends BaseDaoFull {
                 // sort using an attribute from the connected vertices, with a failsafe incase the attribute is undefined
                 relatedUnion.by(
                     __.coalesce(__.select('v').values(s.field), __.constant('')),
-                    order,
+                    order
                 );
             });
         }
@@ -121,12 +121,12 @@ export class CommonDaoFull extends BaseDaoFull {
                 .as('main')
                 .union(
                     relatedUnion,
-                    __.select('main').valueMap().with_(process.withOptions.tokens),
+                    __.select('main').valueMap().with_(process.withOptions.tokens)
                 );
 
             // execute and retrieve the results
             logger.debug(
-                `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`,
+                `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`
             );
             results = await traverser.toList();
             logger.debug(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
@@ -177,7 +177,7 @@ export class CommonDaoFull extends BaseDaoFull {
                 const splitLabels: string[] = labels[0].split('::');
                 if (splitLabels.length < 2) {
                     logger.error(
-                        `common.full.dao getLabels: entityDbId ${entityDbId} does not have correct labels`,
+                        `common.full.dao getLabels: entityDbId ${entityDbId} does not have correct labels`
                     );
                     throw new Error('INVALID_LABELS');
                 }

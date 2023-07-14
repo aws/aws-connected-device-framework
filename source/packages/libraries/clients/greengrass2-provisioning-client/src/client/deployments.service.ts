@@ -20,7 +20,7 @@ import { DeploymentTask, NewDeploymentTask } from './deployments.model';
 export interface DeploymentsService {
     createDeploymentTask(
         task: NewDeploymentTask,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string>;
 
     getDeploymentTask(taskId: string, additionalHeaders?: RequestHeaders): Promise<DeploymentTask>;

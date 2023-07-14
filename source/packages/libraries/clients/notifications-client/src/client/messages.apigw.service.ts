@@ -34,7 +34,7 @@ export class MessagesDebugApigwService
 
     async simulateIoTCoreMessage(
         message: SimulateIoTCoreMessageRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(message, ow.object.nonEmpty);
         ow(message.topic, ow.string.nonEmpty);

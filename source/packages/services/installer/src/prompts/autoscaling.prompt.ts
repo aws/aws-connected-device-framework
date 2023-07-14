@@ -31,7 +31,7 @@ export function enableAutoScaling(moduleName: ModuleName, answers: Answers): Que
 
 export function provisionedConcurrentExecutions(
     moduleName: ModuleName,
-    answers: Answers,
+    answers: Answers
 ): Question {
     return {
         message: 'The no. of desired concurrent executions to  provision.  Set to 0 to disable.',

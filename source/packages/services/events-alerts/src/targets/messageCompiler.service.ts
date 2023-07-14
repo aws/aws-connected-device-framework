@@ -24,18 +24,18 @@ export class MessageCompilerService {
     private _templateMap: { [eventId: string]: { [target: string]: dot.RenderFunction } } = {};
 
     public constructor(
-        @inject(TYPES.MessageCompilerDao) private messageCompilerDao: MessageCompilerDao,
+        @inject(TYPES.MessageCompilerDao) private messageCompilerDao: MessageCompilerDao
     ) {}
 
     public async compile(
         eventId: string,
         targetType: string,
-        attributes: { [key: string]: string | number },
+        attributes: { [key: string]: string | number }
     ): Promise<string> {
         logger.debug(
             `messageCompiler.service compile: in: eventId:${eventId}, targetType:${targetType}, attributes:${JSON.stringify(
-                attributes,
-            )}`,
+                attributes
+            )}`
         );
 
         // do we already have the requested template compiled and cached?
@@ -45,11 +45,11 @@ export class MessageCompilerService {
         if (eventTemplateFns === undefined) {
             // Retrieve event config from db
             const eventConfig: MessageTemplates = await this.messageCompilerDao.getEventConfig(
-                eventId,
+                eventId
             );
             if (eventConfig === undefined) {
                 logger.error(
-                    `messageCompiler.service compile: unknown eventId: ${eventId} ignoring...`,
+                    `messageCompiler.service compile: unknown eventId: ${eventId} ignoring...`
                 );
                 return null;
             }
@@ -57,7 +57,7 @@ export class MessageCompilerService {
             eventTemplateFns = {};
             Object.keys(eventConfig.supportedTargets).forEach((k) => {
                 eventTemplateFns[k] = dot.template(
-                    eventConfig.templates[eventConfig.supportedTargets[k]],
+                    eventConfig.templates[eventConfig.supportedTargets[k]]
                 );
             });
 
@@ -86,12 +86,12 @@ export class MessageCompilerService {
     public async compileDynamodbRecord(
         eventId: string,
         data: AttributeMapping,
-        ddbAttrMapping: AttributeMapping,
+        ddbAttrMapping: AttributeMapping
     ): Promise<AttributeMapping> {
         logger.info(
             `messageCompiler.service compileDynamodbRecord: in: eventId:${eventId}, data: ${JSON.stringify(
-                data,
-            )}, ddbAttributeMapping: ${JSON.stringify(ddbAttrMapping)} `,
+                data
+            )}, ddbAttributeMapping: ${JSON.stringify(ddbAttrMapping)} `
         );
 
         // Validate inputs
@@ -101,7 +101,7 @@ export class MessageCompilerService {
 
         // Retrieve event config from db
         const eventConfig: MessageTemplates = await this.messageCompilerDao.getEventConfig(
-            eventId,
+            eventId
         );
 
         // do we already have the requested template compiled and cached for attribute mapping?
@@ -130,7 +130,7 @@ export class MessageCompilerService {
         });
 
         logger.debug(
-            `messageCompiler.service compileDynamodbRecord: exit:${JSON.stringify(recordAttrMap)}`,
+            `messageCompiler.service compileDynamodbRecord: exit:${JSON.stringify(recordAttrMap)}`
         );
         return recordAttrMap;
     }

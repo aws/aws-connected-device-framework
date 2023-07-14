@@ -35,14 +35,14 @@ export class WorkflowFactory {
         @inject(TYPES.ShadowAction) private shadowAction: ShadowAction,
         @inject(TYPES.JobAction) private jobAction: JobAction,
         @inject(TYPES.InvalidTransitionAction)
-        private invalidTransitionAction: InvalidTransitionAction,
+        private invalidTransitionAction: InvalidTransitionAction
     ) {}
 
     getAction(message: MessageItem, command: CommandItem): WorkflowAction[] {
         logger.debug(
             `workflow.factory getAction: message:${JSON.stringify(
-                message,
-            )}, command:${JSON.stringify(command)}`,
+                message
+            )}, command:${JSON.stringify(command)}`
         );
 
         ow(message, ow.object.nonEmpty);

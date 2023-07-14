@@ -36,17 +36,17 @@ describe('ThingsService', () => {
         mockIot = new AWS.Iot();
         mockS3 = new AWS.S3();
         mockClientIdEnforcementPolicyStepProcessor = createMockInstance(
-            ClientIdEnforcementPolicyStepProcessor,
+            ClientIdEnforcementPolicyStepProcessor
         );
         mockCreateDeviceCertificateStepProcessor = createMockInstance(
-            CreateDeviceCertificateStepProcessor,
+            CreateDeviceCertificateStepProcessor
         );
         mockRegisterDeviceCertificateWithoutCAStepProcessor = createMockInstance(
-            RegisterDeviceCertificateWithoutCAStepProcessor,
+            RegisterDeviceCertificateWithoutCAStepProcessor
         );
         mockUseACMPCAProcessor = createMockInstance(UseACMPCAStepProcessor);
         mockAttachAdditionalPoliciesProcessorProcessor = createMockInstance(
-            AttachAdditionalPoliciesProcessor,
+            AttachAdditionalPoliciesProcessor
         );
 
         // SSM mock
@@ -73,7 +73,7 @@ describe('ThingsService', () => {
             'bulkRequestBukcet',
             'bulkRequestPrefix',
             false,
-            false,
+            false
         );
     });
 
@@ -139,7 +139,7 @@ describe('ThingsService', () => {
         const provisionResponse = await instance.provision(
             'test_template_id',
             { ThingName: 'UnitTestThingName' },
-            undefined,
+            undefined
         );
 
         expect(provisionResponse).toBeDefined();

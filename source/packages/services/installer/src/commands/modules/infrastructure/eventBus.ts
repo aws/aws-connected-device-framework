@@ -59,7 +59,7 @@ export class EvenBusInstaller implements InfrastructureModule {
                     },
                 },
             ],
-            answers,
+            answers
         );
 
         if ((answers.eventBus?.useExisting ?? false) === false) {
@@ -131,10 +131,11 @@ export class EvenBusInstaller implements InfrastructureModule {
                 const resources = await cloudformation.send(
                     new DescribeStacksCommand({
                         StackName: this.stackName,
-                    }),
+                    })
                 );
-                const arn = resources.Stacks[0].Outputs.find((r) => r.OutputKey === 'EventBusArn')
-                    ?.OutputValue;
+                const arn = resources.Stacks[0].Outputs.find(
+                    (r) => r.OutputKey === 'EventBusArn'
+                )?.OutputValue;
                 answers.eventBus.arn = arn;
             },
         });

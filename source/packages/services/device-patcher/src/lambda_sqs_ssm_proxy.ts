@@ -26,7 +26,7 @@ const patchService: PatchService = container.get<PatchService>(TYPES.PatchServic
 const activationService: ActivationService = container.get<ActivationService>(TYPES.PatchService);
 
 const agentbasedPatchService: AgentbasedPatchService = container.get<AgentbasedPatchService>(
-    TYPES.AgentbasedPatchService,
+    TYPES.AgentbasedPatchService
 );
 
 exports.handler = async (event: Event): Promise<void> => {
@@ -51,10 +51,10 @@ exports.handler = async (event: Event): Promise<void> => {
                         eventBody.detail['document-name'] === 'AWS-ApplyAnsiblePlaybooks'
                     ) {
                         logger.debug(
-                            `lambda_sqs_ssm_proxy: ssm_event: EC2 State Manager Instance Association State Change`,
+                            `lambda_sqs_ssm_proxy: ssm_event: EC2 State Manager Instance Association State Change`
                         );
                         logger.debug(
-                            `lambda_sqs_ssm_proxy: ssm_event_body: ${JSON.stringify(eventBody)}`,
+                            `lambda_sqs_ssm_proxy: ssm_event_body: ${JSON.stringify(eventBody)}`
                         );
 
                         const instanceId = eventBody.detail['instance-id'];
@@ -65,10 +65,10 @@ exports.handler = async (event: Event): Promise<void> => {
                         const lastExecutionDate = eventBody.detail['last-execution-date'];
 
                         const instanceInformation = await agentbasedPatchService.getInstance(
-                            instanceId,
+                            instanceId
                         );
                         const association = await agentbasedPatchService.getPatchByAssociationId(
-                            associationId,
+                            associationId
                         );
 
                         const deviceId = instanceInformation.Name;
@@ -87,8 +87,8 @@ exports.handler = async (event: Event): Promise<void> => {
                         if (existingPatch.updatedAt > patch.updatedAt) {
                             logger.debug(
                                 `lambda_sqs_ssm_proxy: handler: ignoring old event: existing patch: ${JSON.stringify(
-                                    existingPatch,
-                                )}`,
+                                    existingPatch
+                                )}`
                             );
                             return;
                         }
@@ -100,24 +100,24 @@ exports.handler = async (event: Event): Promise<void> => {
                         eventBody.detail['document-name'] === 'AWS-ApplyAnsiblePlaybooks'
                     ) {
                         logger.debug(
-                            `lambda_sqs_ssm_proxy: ssm_event: EC2 State Manager Association State Change`,
+                            `lambda_sqs_ssm_proxy: ssm_event: EC2 State Manager Association State Change`
                         );
                         logger.debug(
-                            `lambda_sqs_ssm_proxy: ssm_event_body: ${JSON.stringify(eventBody)}`,
+                            `lambda_sqs_ssm_proxy: ssm_event_body: ${JSON.stringify(eventBody)}`
                         );
                     } else {
                         logger.warn(
                             `lambda_sqs_ssm_proxy handler: unrecognizable ssm event: ${JSON.stringify(
-                                record,
-                            )}`,
+                                record
+                            )}`
                         );
                     }
                 }
             } else {
                 logger.warn(
                     `lambda_sqs_ssm_proxy handler: ignoring non-sqs events: ${JSON.stringify(
-                        record,
-                    )}`,
+                        record
+                    )}`
                 );
             }
         }

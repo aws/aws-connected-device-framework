@@ -55,7 +55,7 @@ describe('ActivationService', () => {
             mockedS3Factory,
             mockedDevicesService,
             mockedPoliciesService,
-            mockedThingsService,
+            mockedThingsService
         );
     });
 

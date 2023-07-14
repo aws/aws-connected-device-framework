@@ -35,7 +35,7 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
 
     async createCommand(
         command: CommandModel,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string> {
         ow(command, ow.object.nonEmpty);
 
@@ -72,7 +72,7 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
 
     async getCommand(
         commandId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<CommandModel> {
         const url = `${this.baseUrl}${super.commandRelativeUrl(commandId)}`;
         const res = await request.get(url).set(this.buildHeaders(additionalHeaders));
@@ -84,7 +84,7 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
         commandId: string,
         fileId: string,
         fileLocation: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(commandId, ow.string.nonEmpty);
         ow(fileId, ow.string.nonEmpty);
@@ -100,7 +100,7 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
     async deleteCommandFile(
         commandId: string,
         fileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(commandId, ow.string.nonEmpty);
         ow(fileId, ow.string.nonEmpty);
@@ -112,7 +112,7 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
 
     async listExecutions(
         commandId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ExecutionSummaryListModel> {
         ow(commandId, ow.string.nonEmpty);
 
@@ -126,14 +126,14 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
     async getExecution(
         commandId: string,
         thingName: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ExecutionModel> {
         ow(commandId, ow.string.nonEmpty);
         ow(thingName, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.commandThingExecutionsRelativeUrl(
             commandId,
-            thingName,
+            thingName
         )}`;
         const res = await request.get(url).set(this.buildHeaders(additionalHeaders));
 
@@ -143,14 +143,14 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
     async cancelExecution(
         commandId: string,
         thingName: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ExecutionModel> {
         ow(commandId, ow.string.nonEmpty);
         ow(thingName, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.commandThingExecutionsRelativeUrl(
             commandId,
-            thingName,
+            thingName
         )}`;
         const res = await request.delete(url).set(this.buildHeaders(additionalHeaders));
 

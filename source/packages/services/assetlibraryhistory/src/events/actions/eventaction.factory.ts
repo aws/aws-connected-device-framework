@@ -32,7 +32,7 @@ export class EventActionFactory {
         @inject(TYPES.DeleteEventAction) private deleteAction: DeleteAction,
         @inject(TYPES.PublishTemplateEventAction)
         private publishTemplateAction: PublishTemplateAction,
-        @inject(TYPES.UnsupportedEventAction) private unsupportedAction: UnsupportedAction,
+        @inject(TYPES.UnsupportedEventAction) private unsupportedAction: UnsupportedAction
     ) {}
 
     public getAction(event: EventModel): EventAction[] {
@@ -104,7 +104,7 @@ export class EventActionFactory {
 
     private getDeviceTemplateAction(event: EventModel): EventAction[] {
         logger.debug(
-            `eventaction.factory getDeviceTemplateAction: event:${JSON.stringify(event)}}`,
+            `eventaction.factory getDeviceTemplateAction: event:${JSON.stringify(event)}}`
         );
 
         if (event.event === EventType.create) {
@@ -124,7 +124,7 @@ export class EventActionFactory {
 
     private getGroupTemplateAction(event: EventModel): EventAction[] {
         logger.debug(
-            `eventaction.factory getGroupTemplateAction: event:${JSON.stringify(event)}}`,
+            `eventaction.factory getGroupTemplateAction: event:${JSON.stringify(event)}}`
         );
 
         if (event.event === EventType.create) {

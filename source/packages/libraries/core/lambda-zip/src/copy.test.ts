@@ -102,6 +102,6 @@ describe('copy', () => {
             const to = path.resolve(targetDir);
             await copy({ to, from: '', pattern });
             expect(convertHierarchyToModel(targetDir)).toMatchSnapshot();
-        },
+        }
     );
 });

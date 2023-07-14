@@ -35,7 +35,7 @@ export class EventSourceService {
         @inject(TYPES.DynamoDbEventSource) private dynamoDbEventSource: DynamoDbEventSource,
         @inject(TYPES.IotCoreEventSource) private iotCoreEventSource: IotCoreEventSource,
         @inject(TYPES.ApiGatewayEventSource) private apiGatewayEventSource: ApiGatewayEventSource,
-        @inject(TYPES.EventService) private eventService: EventService,
+        @inject(TYPES.EventService) private eventService: EventService
     ) {}
 
     public async create(resource: EventSourceDetailResource): Promise<string> {
@@ -83,7 +83,7 @@ export class EventSourceService {
         const eventSource = await this.get(eventSourceId);
         if (eventSource === undefined) {
             logger.warn(
-                `eventSource.service delete: EventSourceId ${eventSourceId} does not exist.`,
+                `eventSource.service delete: EventSourceId ${eventSourceId} does not exist.`
             );
             return;
         }
@@ -98,7 +98,7 @@ export class EventSourceService {
                 events = await this.eventService.listByEventSource(
                     eventSourceId,
                     25,
-                    events.pagination.offset,
+                    events.pagination.offset
                 );
             } else {
                 break;

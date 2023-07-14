@@ -38,16 +38,16 @@ export class PatchTaskController implements interfaces.Controller {
     public constructor(
         @inject(TYPES.PatchTaskService) private patchTaskService: PatchTaskService,
         @inject(TYPES.PatchTaskAssembler) private patchTaskAssembler: PatchTaskAssembler,
-        @inject(TYPES.PatchAssembler) private patchAssembler: PatchAssembler,
+        @inject(TYPES.PatchAssembler) private patchAssembler: PatchAssembler
     ) {}
 
     @httpPost('')
     public async createPatchTask(
         @requestBody() resource: PatchTaskResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
-            `PatchTask.controller createPatchTask(): patchRequest:${JSON.stringify(resource)}`,
+            `PatchTask.controller createPatchTask(): patchRequest:${JSON.stringify(resource)}`
         );
 
         try {
@@ -68,7 +68,7 @@ export class PatchTaskController implements interfaces.Controller {
     @httpGet('/:taskId')
     public async getPatchTask(
         @response() res: Response,
-        @requestParam('taskId') taskId: string,
+        @requestParam('taskId') taskId: string
     ): Promise<PatchTaskResource> {
         logger.debug(`PatchTask.controller getPatchTask: in: taskId: ${taskId}`);
 
@@ -90,7 +90,7 @@ export class PatchTaskController implements interfaces.Controller {
         @response() res: Response,
         @requestParam('taskId') taskId: string,
         @queryParam('count') count: number,
-        @queryParam('exclusiveStartToken') exclusiveStartToken: string,
+        @queryParam('exclusiveStartToken') exclusiveStartToken: string
     ): Promise<void> {
         logger.debug(`PatchTask.controller getPatchTask: in: taskId: ${taskId}`);
 

@@ -36,7 +36,7 @@ export class EventDao {
         @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1: string,
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
         @inject(TYPES.CachableDocumentClientFactory)
-        cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._cachedDc = cachableDocumentClientFactory();
     }
@@ -68,7 +68,7 @@ export class EventDao {
                 PkType.Event,
                 item.id,
                 PkType.EventSource,
-                item.eventSourceId,
+                item.eventSourceId
             ),
             name: item.name,
             principal: item.principal,
@@ -229,12 +229,12 @@ export class EventDao {
     public async listEventsForEventSource(
         eventSourceId: string,
         count?: number,
-        from?: PaginationKey,
+        from?: PaginationKey
     ): Promise<[EventItem[], PaginationKey]> {
         logger.debug(
             `event.dao listEventsForEventSource: in: eventSourceId:${eventSourceId}, count:${count}, from:${JSON.stringify(
-                from,
-            )}`,
+                from
+            )}`
         );
 
         const params: DocumentClient.QueryInput = {
@@ -266,8 +266,8 @@ export class EventDao {
 
         logger.debug(
             `event.dao listEventsForEventSource: exit: response${JSON.stringify(
-                response,
-            )}, lastEvaluatedKey:${JSON.stringify(lastEvaluatedKey)}`,
+                response
+            )}, lastEvaluatedKey:${JSON.stringify(lastEvaluatedKey)}`
         );
         return [response, lastEvaluatedKey];
     }

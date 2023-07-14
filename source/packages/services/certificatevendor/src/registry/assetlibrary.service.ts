@@ -25,12 +25,12 @@ export class AssetLibraryRegistryManager implements RegistryManager {
     constructor(
         @inject('defaults.device.status.success.key') private successStatusKey: string,
         @inject('defaults.device.status.success.value') private successStatusValue: string,
-        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private devices: DevicesService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private devices: DevicesService
     ) {}
 
     public async isWhitelisted(
         deviceId: string,
-        _attributes?: { [key: string]: string | number | boolean },
+        _attributes?: { [key: string]: string | number | boolean }
     ): Promise<boolean> {
         logger.debug(`registry.assetLibrary isWhitelisted: in: deviceId:${deviceId}`);
 
@@ -63,14 +63,14 @@ export class AssetLibraryRegistryManager implements RegistryManager {
 
         if (this.successStatusKey === undefined || this.successStatusKey === null) {
             logger.warn(
-                'certificates.service updateAssetStatus: exit: successStatusKey not set, therefore not updating asset library',
+                'certificates.service updateAssetStatus: exit: successStatusKey not set, therefore not updating asset library'
             );
             return;
         }
 
         if (this.successStatusValue === undefined || this.successStatusValue === null) {
             logger.warn(
-                'certificates.service updateAssetStatus: exit: successStatusValue not set, therefore not updating asset library',
+                'certificates.service updateAssetStatus: exit: successStatusValue not set, therefore not updating asset library'
             );
             return;
         }

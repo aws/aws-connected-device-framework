@@ -26,7 +26,7 @@ import {
 export class AccountsAssembler {
     public toItem(
         resource: AccountResource | AccountCreationRequest,
-        status: AccountStatus,
+        status: AccountStatus
     ): AccountsItem {
         logger.debug(`accounts.assembler toItem: in: resource:${JSON.stringify(resource)}`);
 
@@ -53,7 +53,7 @@ export class AccountsAssembler {
     public toListResource(
         items: AccountsItem[],
         count?: number,
-        paginateFrom?: AccountListPaginationKey,
+        paginateFrom?: AccountListPaginationKey
     ): AccountResourceList {
         logger.debug(`accounts.assembler toResources: in: items:${JSON.stringify(items)}`);
 

@@ -28,7 +28,7 @@ export class GroupsServiceLite implements GroupsService {
     constructor(
         @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoLite,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
-        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
+        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter
     ) {}
 
     public async get(groupId: string, _includeGroups = false): Promise<GroupItem> {
@@ -63,7 +63,7 @@ export class GroupsServiceLite implements GroupsService {
 
     public async createBulk(
         _groups: GroupItem[],
-        _applyProfile?: string,
+        _applyProfile?: string
     ): Promise<BulkGroupsResult> {
         throw new NotSupportedError();
     }
@@ -71,8 +71,8 @@ export class GroupsServiceLite implements GroupsService {
     public async create(model: GroupItem, applyProfile?: string): Promise<string> {
         logger.debug(
             `groups.lite.service create: in: model:${JSON.stringify(
-                model,
-            )}, applyProfile:${applyProfile}`,
+                model
+            )}, applyProfile:${applyProfile}`
         );
 
         ow(model, ow.object.nonEmpty);
@@ -112,8 +112,8 @@ export class GroupsServiceLite implements GroupsService {
     public async update(model: GroupItem, applyProfile?: string): Promise<void> {
         logger.debug(
             `groups.lite.service update: in: model:${JSON.stringify(
-                model,
-            )}, applyProfile:${applyProfile}`,
+                model
+            )}, applyProfile:${applyProfile}`
         );
 
         ow(model, ow.object.nonEmpty);
@@ -154,10 +154,10 @@ export class GroupsServiceLite implements GroupsService {
         type: string,
         state: string,
         offset?: number | string,
-        maxResults?: number,
+        maxResults?: number
     ): Promise<GroupMemberItemList> {
         logger.debug(
-            `groups.lite.service getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, maxResults:${maxResults}`,
+            `groups.lite.service getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, maxResults:${maxResults}`
         );
 
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
@@ -175,7 +175,7 @@ export class GroupsServiceLite implements GroupsService {
         const model = this.groupsAssembler.toGroupMembersList(
             result.nodes,
             result.nextToken,
-            maxResults,
+            maxResults
         );
 
         logger.debug(`groups.lite.service getMembers: exit: model: ${JSON.stringify(model)}`);
@@ -197,7 +197,7 @@ export class GroupsServiceLite implements GroupsService {
         }
 
         logger.debug(
-            `groups.lite.service getParentGroups: exit: model: ${JSON.stringify(groups)}`,
+            `groups.lite.service getParentGroups: exit: model: ${JSON.stringify(groups)}`
         );
         return groups;
     }
@@ -230,10 +230,10 @@ export class GroupsServiceLite implements GroupsService {
     public async attachToGroup(
         sourceGroupPath: string,
         relationship: string,
-        targetGroupPath: string,
+        targetGroupPath: string
     ): Promise<void> {
         logger.debug(
-            `groups.lite.service attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`,
+            `groups.lite.service attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`
         );
         throw new NotSupportedError();
     }
@@ -241,10 +241,10 @@ export class GroupsServiceLite implements GroupsService {
     public async detachFromGroup(
         sourceGroupPath: string,
         relationship: string,
-        targetGroupPath: string,
+        targetGroupPath: string
     ): Promise<void> {
         logger.debug(
-            `groups.lite.service detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`,
+            `groups.lite.service detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`
         );
         throw new NotSupportedError();
     }
@@ -255,10 +255,10 @@ export class GroupsServiceLite implements GroupsService {
         direction: string,
         template: string,
         offset: number,
-        count: number,
+        count: number
     ): Promise<GroupItemList> {
         logger.debug(
-            `groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`,
+            `groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`
         );
         throw new NotSupportedError();
     }
@@ -270,10 +270,10 @@ export class GroupsServiceLite implements GroupsService {
         template: string,
         state: string,
         offset: number,
-        count: number,
+        count: number
     ): Promise<DeviceItemList> {
         logger.debug(
-            `groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`,
+            `groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`
         );
         throw new NotSupportedError();
     }
@@ -281,7 +281,7 @@ export class GroupsServiceLite implements GroupsService {
     public async attachToDevice(
         _groupPath: string,
         _relationship: string,
-        _otherDeviceId: string,
+        _otherDeviceId: string
     ): Promise<void> {
         throw new NotSupportedError();
     }
@@ -289,7 +289,7 @@ export class GroupsServiceLite implements GroupsService {
     public async detachFromDevice(
         _groupPath: string,
         _relationship: string,
-        _otherDeviceId: string,
+        _otherDeviceId: string
     ): Promise<void> {
         throw new NotSupportedError();
     }

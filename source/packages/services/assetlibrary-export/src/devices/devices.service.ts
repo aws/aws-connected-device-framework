@@ -24,17 +24,17 @@ import { DeviceItemList } from './devices.models';
 export class DevicesService {
     constructor(
         @inject(TYPES.DevicesDao) private devicesDao: DevicesDao,
-        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler
     ) {}
 
     public async getBulk(
         deviceIds: string[],
         expandComponents: boolean,
         attributes: string[],
-        includeGroups: boolean,
+        includeGroups: boolean
     ): Promise<DeviceItemList> {
         logger.debug(
-            `device.service getBulk: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}}`,
+            `device.service getBulk: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}}`
         );
 
         ow(deviceIds, ow.array.nonEmpty);
@@ -45,7 +45,7 @@ export class DevicesService {
             deviceIds,
             expandComponents,
             attributes,
-            includeGroups,
+            includeGroups
         );
 
         const model = this.devicesAssembler.toDeviceItems(result);

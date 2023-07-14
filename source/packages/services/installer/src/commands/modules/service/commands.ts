@@ -58,7 +58,7 @@ export class CommandsInstaller implements RestModule {
         delete answers.commands?.redeploy;
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
 
         if (updatedAnswers.commands?.redeploy ?? true) {
@@ -81,14 +81,14 @@ export class CommandsInstaller implements RestModule {
                     ]),
                     ...customDomainPrompt(this.name, answers),
                 ],
-                updatedAnswers,
+                updatedAnswers
             );
         }
 
         includeOptionalModule(
             'assetLibrary',
             updatedAnswers.modules,
-            updatedAnswers.commands.useAssetLibrary,
+            updatedAnswers.commands.useAssetLibrary
         );
 
         return updatedAnswers;
@@ -119,7 +119,7 @@ export class CommandsInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
         return parameterOverrides;
     }
@@ -164,11 +164,11 @@ export class CommandsInstaller implements RestModule {
                 }
                 const assetlibrarybyResourceLogicalId = await getStackResourceSummaries(
                     this.assetLibraryStackName,
-                    answers.region,
+                    answers.region
                 );
                 const provisioningbyResourceLogicalId = await getStackResourceSummaries(
                     this.provisioningStackName,
-                    answers.region,
+                    answers.region
                 );
                 answers.commands.provisioningFunctionName =
                     provisioningbyResourceLogicalId('LambdaFunction');

@@ -36,7 +36,7 @@ export class JobAction extends WorkflowPublishAction {
         @inject('aws.region') private region: string,
         @inject('aws.s3.roleArn') private s3RoleArn: string,
         @inject(PROVISIONING_CLIENT_TYPES.ThingsService) private thingsService: ThingsService,
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
+        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot
     ) {
         super();
         this.iot = iotFactory();
@@ -46,8 +46,8 @@ export class JobAction extends WorkflowPublishAction {
     async process(message: MessageItem, command: CommandItem): Promise<boolean> {
         logger.debug(
             `workflow.job process: in: message:${JSON.stringify(
-                message,
-            )}, command:${JSON.stringify(command)}`,
+                message
+            )}, command:${JSON.stringify(command)}`
         );
 
         ow(command, ow.object.nonEmpty);
@@ -68,7 +68,7 @@ export class JobAction extends WorkflowPublishAction {
 
         targetArns = await this.buildTargetArnList(
             message.id,
-            message.resolvedTargets === undefined ? [] : message.resolvedTargets,
+            message.resolvedTargets === undefined ? [] : message.resolvedTargets
         );
 
         // create a new snapshot job
@@ -126,8 +126,8 @@ export class JobAction extends WorkflowPublishAction {
     private async buildTargetArnList(messageId: string, targets: Recipient[]): Promise<string[]> {
         logger.debug(
             `workflow.job buildTargetArnList: messageId:${messageId}, targets:${JSON.stringify(
-                targets,
-            )}`,
+                targets
+            )}`
         );
 
         ow(targets, ow.array.minLength(1));
@@ -143,7 +143,7 @@ export class JobAction extends WorkflowPublishAction {
         if (targets.length > this.maxJobTargets) {
             ephemeralGroupArn = await this.buildEphemeralGroup(
                 messageId,
-                thingNames.map((t) => t.id),
+                thingNames.map((t) => t.id)
             );
         }
 
@@ -162,8 +162,8 @@ export class JobAction extends WorkflowPublishAction {
     private async buildEphemeralGroup(messageId: string, thingNames: string[]): Promise<string> {
         logger.debug(
             `workflow.job buildEphemeralGroup: messageId:${messageId},  thingNames:${JSON.stringify(
-                thingNames,
-            )}`,
+                thingNames
+            )}`
         );
 
         // create the new group

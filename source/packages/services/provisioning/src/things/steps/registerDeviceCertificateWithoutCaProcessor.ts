@@ -28,8 +28,8 @@ export class RegisterDeviceCertificateWithoutCAStepProcessor implements Provisio
     public async process(stepData: ProvisioningStepData): Promise<void> {
         logger.debug(
             `RegisterDeviceCertificateWithoutCAStepProcessor: process: in: stepData: ${JSON.stringify(
-                stepData,
-            )}`,
+                stepData
+            )}`
         );
 
         const cdfParams =
@@ -39,7 +39,7 @@ export class RegisterDeviceCertificateWithoutCAStepProcessor implements Provisio
 
         const r = await this.certUtils.registerCertificateWithoutCA(
             cdfParams.certificatePem,
-            cdfParams.certificateStatus,
+            cdfParams.certificateStatus
         );
 
         if (stepData.parameters === undefined) {

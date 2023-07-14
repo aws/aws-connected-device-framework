@@ -27,7 +27,7 @@ export class AgentbasedPatchDao {
 
     constructor(
         @inject(TYPES.DocumentClientFactory)
-        documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this.dc = documentClientFactory();
     }
@@ -42,11 +42,11 @@ export class AgentbasedPatchDao {
                 sk: createDelimitedAttribute(
                     PkType.DevicePatch,
                     PkType.DevicePatchAssociation,
-                    'map',
+                    'map'
                 ),
                 si1Sort: createDelimitedAttribute(
                     PkType.DevicePatchAssociation,
-                    association.associationId,
+                    association.associationId
                 ),
                 patchId: association.patchId,
                 associationId: association.associationId,
@@ -68,7 +68,7 @@ export class AgentbasedPatchDao {
                 sk: createDelimitedAttribute(
                     PkType.DevicePatch,
                     PkType.DevicePatchAssociation,
-                    'map',
+                    'map'
                 ),
             },
         };
@@ -93,7 +93,7 @@ export class AgentbasedPatchDao {
                 ':pk': createDelimitedAttribute(
                     PkType.DevicePatch,
                     PkType.DevicePatchAssociation,
-                    'map',
+                    'map'
                 ),
                 ':sk': createDelimitedAttribute(PkType.DevicePatchAssociation, associationId),
             },
@@ -114,7 +114,7 @@ export class AgentbasedPatchDao {
         };
 
         logger.debug(
-            `agentbasedpatch.dao:getByAssociationId:out:${JSON.stringify(patchAssociation)}`,
+            `agentbasedpatch.dao:getByAssociationId:out:${JSON.stringify(patchAssociation)}`
         );
 
         return patchAssociation;
@@ -130,7 +130,7 @@ export class AgentbasedPatchDao {
                 sk: createDelimitedAttribute(
                     PkType.DevicePatch,
                     PkType.DevicePatchAssociation,
-                    'map',
+                    'map'
                 ),
             },
         };

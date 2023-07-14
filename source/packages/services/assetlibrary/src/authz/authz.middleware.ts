@@ -59,8 +59,8 @@ export function setClaims(): RequestHandler {
                 } catch (ex) {
                     logger.warn(
                         `authz.middleware setClaims failed to parse claims:${JSON.stringify(
-                            header,
-                        )}`,
+                            header
+                        )}`
                     );
                     res.sendStatus(403);
                 }

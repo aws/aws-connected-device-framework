@@ -54,7 +54,7 @@ export class AccountsService {
         @inject(TYPES.ServiceCatalogFactory)
         serviceCatalogFactory: () => AWS.ServiceCatalog,
         @inject(TYPES.OrganizationsFactory)
-        organizationsFactory: () => AWS.Organizations,
+        organizationsFactory: () => AWS.Organizations
     ) {
         this._serviceCatalog = serviceCatalogFactory();
         this._organizations = organizationsFactory();
@@ -73,7 +73,7 @@ export class AccountsService {
 
         if (this.deleteAccountInControlTower) {
             logger.debug(
-                `accounts.service delete: in: moving account ${accountId} from ${organizationalUnitId} to ${this.suspendedOU}`,
+                `accounts.service delete: in: moving account ${accountId} from ${organizationalUnitId} to ${this.suspendedOU}`
             );
             await this._organizations
                 .moveAccount({
@@ -90,12 +90,12 @@ export class AccountsService {
 
     public async areAllComponentsDeployed(
         accountId: string,
-        components: ComponentResourceList,
+        components: ComponentResourceList
     ): Promise<boolean> {
         logger.debug(
             `accounts.service areAllComponentsDeployed: in: accountId:${accountId}, components:${JSON.stringify(
-                components,
-            )}`,
+                components
+            )}`
         );
 
         ow(accountId, ow.string.nonEmpty);
@@ -120,8 +120,7 @@ export class AccountsService {
                 if (
                     deployedComponents.find(
                         (o) =>
-                            o.componentName === componentToCheck.name &&
-                            o.region === regionToCheck,
+                            o.componentName === componentToCheck.name && o.region === regionToCheck
                     ) === undefined
                 ) {
                     allComponentsAreDeployed = false;
@@ -131,14 +130,14 @@ export class AccountsService {
         }
 
         logger.debug(
-            `accounts.service areAllComponentsDeployed: exit: allComponentsAreDeployed: ${allComponentsAreDeployed}`,
+            `accounts.service areAllComponentsDeployed: exit: allComponentsAreDeployed: ${allComponentsAreDeployed}`
         );
         return allComponentsAreDeployed;
     }
 
     public async updateComponentByAccount(request: AccountComponentModel): Promise<void> {
         logger.debug(
-            `accounts.service updateComponentStatus: in: request:${JSON.stringify(request)}`,
+            `accounts.service updateComponentStatus: in: request:${JSON.stringify(request)}`
         );
 
         const { accountId, componentName, status, region } = request;
@@ -167,7 +166,7 @@ export class AccountsService {
         const accountResource = this.accountsAssembler.toResource(accountItem);
 
         logger.debug(
-            `accounts.service getAccountById: out: account : ${JSON.stringify(accountResource)}`,
+            `accounts.service getAccountById: out: account : ${JSON.stringify(accountResource)}`
         );
 
         return accountResource;
@@ -176,7 +175,7 @@ export class AccountsService {
     public async getAccountsInOu(
         ouName: string,
         count?: number,
-        exclusiveStart?: AccountListPaginationKey,
+        exclusiveStart?: AccountListPaginationKey
     ): Promise<[AccountsItem[], AccountListPaginationKey]> {
         logger.debug(`accounts.service getAccountsInOu: in: ouName : ${ouName}`);
 
@@ -203,14 +202,14 @@ export class AccountsService {
         const accountResource = this.accountsAssembler.toResource(accountItem);
 
         logger.debug(
-            `accounts.service getAccountByName: out: account : ${JSON.stringify(accountResource)}`,
+            `accounts.service getAccountByName: out: account : ${JSON.stringify(accountResource)}`
         );
 
         return accountResource;
     }
 
     private async convertRequestToServiceCatalogParameter(
-        request: AccountCreationRequest,
+        request: AccountCreationRequest
     ): Promise<ProvisionProductInput> {
         const searchProductsAsAdminResponse = await this._serviceCatalog
             .searchProductsAsAdmin({
@@ -218,7 +217,7 @@ export class AccountsService {
             })
             .promise();
         const productId = searchProductsAsAdminResponse.ProductViewDetails.find(
-            (o) => o.ProductViewSummary.Name === this.accountFactoryProductName,
+            (o) => o.ProductViewSummary.Name === this.accountFactoryProductName
         )?.ProductViewSummary?.ProductId;
 
         if (productId === undefined) {
@@ -230,12 +229,13 @@ export class AccountsService {
             .promise();
         // This is the way the product is being versioned, we want to make sure we're using the active provisioning artifact
         const provisioningArtifactId =
-            listProvisioningArtifactsResponse.ProvisioningArtifactDetails.find((o) => o.Active)
-                ?.Id;
+            listProvisioningArtifactsResponse.ProvisioningArtifactDetails.find(
+                (o) => o.Active
+            )?.Id;
 
         if (provisioningArtifactId === undefined) {
             throw new Error(
-                'no active control tower service catalog product exists in this account',
+                'no active control tower service catalog product exists in this account'
             );
         }
 
@@ -285,7 +285,7 @@ export class AccountsService {
 
     public async updateAccountStatus(updateModel: AccountUpdateRequest): Promise<void> {
         logger.debug(
-            `accounts.service updateAccountStatus: in: updateModel:${JSON.stringify(updateModel)}`,
+            `accounts.service updateAccountStatus: in: updateModel:${JSON.stringify(updateModel)}`
         );
 
         ow(updateModel, ow.object.nonEmpty);
@@ -308,7 +308,7 @@ export class AccountsService {
             await this.accountsDao.updateRegionsMappingForAccount(
                 organizationalUnitId,
                 accountId,
-                regions,
+                regions
             );
         }
 
@@ -317,9 +317,7 @@ export class AccountsService {
 
     public async updateAccountRegions(updateModel: AccountRegionUpdateRequest): Promise<void> {
         logger.debug(
-            `accounts.service updateAccountRegions: in: updateModel:${JSON.stringify(
-                updateModel,
-            )}`,
+            `accounts.service updateAccountRegions: in: updateModel:${JSON.stringify(updateModel)}`
         );
 
         ow(updateModel, ow.object.nonEmpty);
@@ -337,7 +335,7 @@ export class AccountsService {
         await this.accountsDao.updateRegionsMappingForAccount(
             organizationalUnitId,
             accountId,
-            regions,
+            regions
         );
 
         logger.debug(`accounts.service updateAccountRegions: exit:`);
@@ -375,7 +373,7 @@ export class AccountsService {
             ow(createAccountRequestId, ow.string.nonEmpty);
             ow(tags, ow.object.nonEmpty);
             const provisionProductRequest = await this.convertRequestToServiceCatalogParameter(
-                account,
+                account
             );
             await this._serviceCatalog.provisionProduct(provisionProductRequest).promise();
             accountResource = await this.accountsDao.createAccount({
@@ -395,7 +393,7 @@ export class AccountsService {
             await this.accountsDao.updateRegionsMappingForAccount(
                 account.organizationalUnitId,
                 accountId,
-                account.regions,
+                account.regions
             );
         }
 

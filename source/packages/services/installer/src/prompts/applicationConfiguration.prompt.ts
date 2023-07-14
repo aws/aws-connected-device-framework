@@ -25,7 +25,7 @@ export type ApplicationConfigurationMappingList = ApplicationConfigurationMappin
 export function applicationConfigurationPrompt(
     name: ModuleName,
     answers: Answers,
-    configurations: ApplicationConfigurationMappingList,
+    configurations: ApplicationConfigurationMappingList
 ): Question[] {
     const questions: unknown[] = [
         {
@@ -61,7 +61,7 @@ export function applicationConfigurationPrompt(
                 },
                 askAnswered: true,
             };
-        }),
+        })
     );
 
     return questions;

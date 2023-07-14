@@ -21,8 +21,8 @@ export class InvalidTransitionAction implements WorkflowAction {
     async process(message: MessageItem, command: CommandItem): Promise<boolean> {
         logger.debug(
             `workflow.invalidTransition process: message:${JSON.stringify(
-                message,
-            )}, command:${JSON.stringify(command)}`,
+                message
+            )}, command:${JSON.stringify(command)}`
         );
 
         return false;

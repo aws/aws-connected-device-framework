@@ -28,10 +28,10 @@ export class S3Utils {
         bucketName: string,
         key: string,
         presignedUrlExpiresInSeconds?: number,
-        forUpload?: boolean,
+        forUpload?: boolean
     ): Promise<string> {
         logger.debug(
-            `s3.util: generatePresignedUrl: in: bucketName:${bucketName}, key:${key}, presignedUrlExpiresInSeconds:${presignedUrlExpiresInSeconds}`,
+            `s3.util: generatePresignedUrl: in: bucketName:${bucketName}, key:${key}, presignedUrlExpiresInSeconds:${presignedUrlExpiresInSeconds}`
         );
         const params = {
             Bucket: bucketName,

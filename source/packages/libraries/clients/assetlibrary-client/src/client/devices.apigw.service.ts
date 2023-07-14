@@ -41,7 +41,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         deviceId: string,
         relationship: string,
         otherDeviceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -50,7 +50,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         const url = `${this.baseUrl}${super.deviceAttachedDeviceRelativeUrl(
             deviceId,
             relationship,
-            otherDeviceId,
+            otherDeviceId
         )}`;
         return await request
             .put(url)
@@ -69,7 +69,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         relationship: string,
         direction: string,
         otherDeviceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -80,7 +80,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             deviceId,
             relationship,
             direction,
-            otherDeviceId,
+            otherDeviceId
         )}`;
         return await request
             .put(url)
@@ -98,7 +98,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         deviceId: string,
         relationship: string,
         groupPath: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -107,7 +107,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         const url = `${this.baseUrl}${super.deviceAttachedGroupRelativeUrl(
             deviceId,
             relationship,
-            groupPath,
+            groupPath
         )}`;
         return await request
             .put(url)
@@ -126,7 +126,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         relationship: string,
         direction: string,
         groupPath: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -137,7 +137,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             deviceId,
             relationship,
             direction,
-            groupPath,
+            groupPath
         )}`;
         return await request
             .put(url)
@@ -154,7 +154,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
     async createComponent(
         deviceId: string,
         body: Device10Resource | Device20Resource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(body, 'body', ow.object.nonEmpty);
@@ -176,7 +176,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
     async createDevice(
         body: Device10Resource | Device20Resource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(body, 'body', ow.object.nonEmpty);
 
@@ -203,7 +203,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
     async bulkCreateDevice(
         body: BulkDevicesResource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<BulkDevicesResult> {
         ow(body, 'body', ow.object.nonEmpty);
 
@@ -228,7 +228,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
     async bulkUpdateDevice(
         body: BulkDevicesResource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(body, 'body', ow.object.nonEmpty);
 
@@ -253,14 +253,14 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
     async deleteComponent(
         deviceId: string,
         componentId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(componentId, 'componentId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedComponentRelativeUrl(
             deviceId,
-            componentId,
+            componentId
         )}`;
 
         return await request
@@ -296,7 +296,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         deviceId: string,
         relationship: string,
         otherDeviceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -305,7 +305,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         const url = `${this.baseUrl}${super.deviceAttachedDeviceRelativeUrl(
             deviceId,
             relationship,
-            otherDeviceId,
+            otherDeviceId
         )}`;
 
         return await request
@@ -323,7 +323,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
     async detachFromDevices(
         deviceId: string,
         relationship: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
@@ -333,7 +333,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
         const url = `${this.baseUrl}${super.deviceAttachedDevicesRelativeUrl(
             deviceId,
-            relationship,
+            relationship
         )}`;
 
         return await request
@@ -350,7 +350,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
     async detachFromAllDevices(
         deviceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
@@ -362,7 +362,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         relationship: string,
         direction: string,
         otherDeviceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -373,7 +373,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             deviceId,
             relationship,
             direction,
-            otherDeviceId,
+            otherDeviceId
         )}`;
 
         return await request
@@ -392,7 +392,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         deviceId: string,
         relationship: string,
         groupPath: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -401,7 +401,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         const url = `${this.baseUrl}${super.deviceAttachedGroupRelativeUrl(
             deviceId,
             relationship,
-            groupPath,
+            groupPath
         )}`;
 
         return await request
@@ -419,7 +419,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
     async detachFromGroups(
         deviceId: string,
         relationship: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         if (relationship === undefined) {
@@ -428,7 +428,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
         const url = `${this.baseUrl}${super.deviceAttachedGroupsRelativeUrl(
             deviceId,
-            relationship,
+            relationship
         )}`;
 
         return await request
@@ -445,7 +445,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
     async detachFromAllGroups(
         deviceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         return await this.detachFromGroups(deviceId, undefined, additionalHeaders);
     }
@@ -455,7 +455,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         relationship: string,
         direction: string,
         groupPath: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
@@ -466,7 +466,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             deviceId,
             relationship,
             direction,
-            groupPath,
+            groupPath
         )}`;
 
         return await request
@@ -486,7 +486,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         expandComponents?: boolean,
         attributes?: string[],
         groups?: string[],
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Device10Resource | Device20Resource> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
@@ -519,7 +519,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         deviceId: string,
         componentId: string,
         body: Device10Resource | Device20Resource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(componentId, 'componentId', ow.string.nonEmpty);
@@ -527,7 +527,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
         const url = `${this.baseUrl}${super.deviceAttachedComponentRelativeUrl(
             deviceId,
-            componentId,
+            componentId
         )}`;
 
         return await request
@@ -547,7 +547,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         deviceId: string,
         body: Device10Resource | Device20Resource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(body, 'body', ow.object.nonEmpty);
@@ -576,7 +576,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         expandComponents?: boolean,
         attributes?: string[],
         groups?: string[],
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<DeviceResourceList> {
         ow(deviceIds, 'deviceIds', ow.array.nonEmpty.minLength(1));
 

@@ -35,7 +35,7 @@ export class TargetController implements interfaces.Controller {
     constructor(
         @inject(TYPES.SubscriptionService) private subscriptionService: SubscriptionService,
         @inject(TYPES.TargetService) private targetService: TargetService,
-        @inject(TYPES.TargetAssembler) private targetAssembler: TargetAssembler,
+        @inject(TYPES.TargetAssembler) private targetAssembler: TargetAssembler
     ) {}
 
     @httpPost('')
@@ -44,12 +44,12 @@ export class TargetController implements interfaces.Controller {
         @requestParam('targetType') targetType: TargetTypeStrings,
         @requestBody() resource: TargetResource,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
             `target.controller createTarget: in: subscriptionId:${subscriptionId}, targetType:${targetType}, resource:${JSON.stringify(
-                resource,
-            )}`,
+                resource
+            )}`
         );
 
         try {
@@ -58,7 +58,7 @@ export class TargetController implements interfaces.Controller {
             const item = this.targetAssembler.toItem(subscriptionId, resource, targetType);
             const id = await this.targetService.create(item);
             res.location(
-                `/subscriptions/${id.subscriptionId}/targets/${id.targetType}/${id.targetId}`,
+                `/subscriptions/${id.subscriptionId}/targets/${id.targetType}/${id.targetId}`
             );
         } catch (e) {
             handleError(e, res);
@@ -72,10 +72,10 @@ export class TargetController implements interfaces.Controller {
         @requestParam('targetType') targetType: string,
         @requestParam('targetId') targetId: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
-            `target.controller deleteTarget: in: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`,
+            `target.controller deleteTarget: in: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`
         );
 
         try {
@@ -87,7 +87,7 @@ export class TargetController implements interfaces.Controller {
             await this.subscriptionService.safeDeleteTarget(
                 subscriptionId,
                 targetType as TargetTypeStrings,
-                targetId,
+                targetId
             );
         } catch (e) {
             handleError(e, res);

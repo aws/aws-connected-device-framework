@@ -32,7 +32,7 @@ export class DeviceExtractor implements Extractor {
         private expandComponents: boolean,
         @inject('defaults.etl.extract.deviceExtractor.includeGroups')
         private includeGroups: boolean,
-        @inject('defaults.etl.extract.deviceExtractor.attributes') private attributes: string,
+        @inject('defaults.etl.extract.deviceExtractor.attributes') private attributes: string
     ) {
         this.attributesList =
             this.attributes === '' ? [] : (this.attributesList = this.attributes.split(','));
@@ -54,7 +54,7 @@ export class DeviceExtractor implements Extractor {
             batch.items,
             this.expandComponents,
             attributes,
-            this.includeGroups,
+            this.includeGroups
         );
 
         const extractedBatch = {

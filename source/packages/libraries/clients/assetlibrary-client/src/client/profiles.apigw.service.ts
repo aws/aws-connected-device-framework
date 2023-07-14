@@ -35,14 +35,14 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
     async createProfile(
         category: string,
         body: DeviceProfileResource | GroupProfileResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(body, 'body', ow.object.nonEmpty);
         ow(body.templateId, 'templateId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.profilesOfTemplateRelativeUrl(
             category,
-            body.templateId,
+            body.templateId
         )}`;
         return await request
             .post(url)
@@ -59,14 +59,14 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
 
     async createDeviceProfile(
         body: DeviceProfileResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         return await this.createProfile('device', body, additionalHeaders);
     }
 
     async createGroupProfile(
         body: GroupProfileResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         return await this.createProfile('group', body, additionalHeaders);
     }
@@ -75,7 +75,7 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
         category: string,
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<DeviceProfileResource | GroupProfileResource> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -97,7 +97,7 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
     async getDeviceProfile(
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<DeviceProfileResource> {
         return await this.getProfile('device', templateId, profileId, additionalHeaders);
     }
@@ -105,7 +105,7 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
     async getGroupProfile(
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<GroupProfileResource> {
         return await this.getProfile('group', templateId, profileId, additionalHeaders);
     }
@@ -115,7 +115,7 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
         templateId: string,
         profileId: string,
         body: DeviceProfileResource | GroupProfileResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -140,7 +140,7 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
         templateId: string,
         profileId: string,
         body: DeviceProfileResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         return await this.updateProfile('device', templateId, profileId, body, additionalHeaders);
     }
@@ -149,7 +149,7 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
         templateId: string,
         profileId: string,
         body: GroupProfileResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         return await this.updateProfile('group', templateId, profileId, body, additionalHeaders);
     }
@@ -158,7 +158,7 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
         category: string,
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -180,7 +180,7 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
     async deleteDeviceProfile(
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         return await this.deleteProfile('device', templateId, profileId, additionalHeaders);
     }
@@ -188,7 +188,7 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
     async deleteGroupProfile(
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         return await this.deleteProfile('group', templateId, profileId, additionalHeaders);
     }
@@ -196,7 +196,7 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
     async listProfiles(
         category: string,
         templateId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ProfileResourceList> {
         ow(category, 'category', ow.string.nonEmpty);
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -216,14 +216,14 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
 
     async listDeviceProfiles(
         templateId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ProfileResourceList> {
         return await this.listProfiles('device', templateId, additionalHeaders);
     }
 
     async listGroupProfiles(
         templateId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ProfileResourceList> {
         return await this.listProfiles('group', templateId, additionalHeaders);
     }

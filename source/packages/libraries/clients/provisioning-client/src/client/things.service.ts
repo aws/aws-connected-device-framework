@@ -26,7 +26,7 @@ import {
 export interface ThingsService {
     provisionThing(
         provisioningRequest: ProvisionThingRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ProvisionThingResponse>;
 
     getThing(thingName: string, additionalHeaders?: RequestHeaders): Promise<Thing>;
@@ -35,18 +35,18 @@ export interface ThingsService {
 
     bulkProvisionThings(
         req: BulkProvisionThingsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<BulkProvisionThingsResponse>;
 
     getBulkProvisionTask(
         taskId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<BulkProvisionThingsResponse>;
 
     updateThingCertificates(
         thingName: string,
         certificateStatus: CertificateStatus,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 }
 
@@ -86,7 +86,7 @@ export class ThingsServiceBase {
         if (customHeaders !== undefined) {
             try {
                 const headersFromConfig: RequestHeaders = JSON.parse(
-                    customHeaders,
+                    customHeaders
                 ) as unknown as RequestHeaders;
                 headers = { ...headers, ...headersFromConfig };
             } catch (err) {

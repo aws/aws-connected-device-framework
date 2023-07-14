@@ -22,7 +22,7 @@ import { Response } from './responses.models';
 export class ResponsesService {
     constructor(
         @inject(TYPES.MessagesDao) private messagesDao: MessagesDao,
-        @inject(TYPES.ResponsesDao) private repliesDao: ResponsesDao,
+        @inject(TYPES.ResponsesDao) private repliesDao: ResponsesDao
     ) {}
 
     public async save(reply: Response): Promise<void> {
@@ -34,7 +34,7 @@ export class ResponsesService {
 
         const message = await this.messagesDao.getMessageByCorrelation(
             reply.correlationId,
-            reply.thingName,
+            reply.thingName
         );
         if (message === undefined) {
             throw new Error('MESSAGE_NOT_FOUND');

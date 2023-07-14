@@ -36,7 +36,7 @@ export class TemplatesService {
 
     public constructor(
         @inject(TYPES.TemplatesDao) private dao: TemplatesDao,
-        @inject(TYPES.Greengrassv2Factory) ggv2Factory: () => GreengrassV2Client,
+        @inject(TYPES.Greengrassv2Factory) ggv2Factory: () => GreengrassV2Client
     ) {
         this.ggv2 = ggv2Factory();
     }
@@ -103,7 +103,7 @@ export class TemplatesService {
 
     private async validateComponents(components: Component[]): Promise<void> {
         logger.debug(
-            `templates.service validateComponents: in: components:${JSON.stringify(components)}`,
+            `templates.service validateComponents: in: components:${JSON.stringify(components)}`
         );
 
         const awsAccountId = process.env.AWS_ACCOUNTID;
@@ -130,7 +130,7 @@ export class TemplatesService {
 
     public async associateDeployment(template: TemplateItem): Promise<void> {
         logger.debug(
-            `templates.service associateDeployment: in: template:${JSON.stringify(template)}`,
+            `templates.service associateDeployment: in: template:${JSON.stringify(template)}`
         );
 
         ow(template, ow.object.nonEmpty);
@@ -140,7 +140,7 @@ export class TemplatesService {
         ow(
             template.deployment.thingGroupName,
             'deployment target thing group',
-            ow.string.nonEmpty,
+            ow.string.nonEmpty
         );
 
         // save
@@ -175,12 +175,12 @@ export class TemplatesService {
     public async listVersions(
         name: string,
         count?: number,
-        lastEvaluated?: TemplateVersionListPaginationKey,
+        lastEvaluated?: TemplateVersionListPaginationKey
     ): Promise<[TemplateItem[], TemplateVersionListPaginationKey]> {
         logger.debug(
             `templates.service listVersions: in: name:${name}, count:${count}, lastEvaluated:${JSON.stringify(
-                lastEvaluated,
-            )}`,
+                lastEvaluated
+            )}`
         );
 
         ow(name, ow.string.nonEmpty);
@@ -214,10 +214,10 @@ export class TemplatesService {
                             this.dao.delete(v);
                         } catch (e) {
                             logger.error(
-                                `templates.service delete: error: ${e.name}: ${e.message}`,
+                                `templates.service delete: error: ${e.name}: ${e.message}`
                             );
                         }
-                    }),
+                    })
                 );
             }
             // The current version would be the last one
@@ -230,7 +230,7 @@ export class TemplatesService {
                     } catch (e) {
                         logger.error(`templates.service delete: error: ${e.name}: ${e.message}`);
                     }
-                }),
+                })
             );
 
             await Promise.allSettled(deleteFutures);
@@ -241,12 +241,12 @@ export class TemplatesService {
 
     public async list(
         count?: number,
-        lastEvaluated?: TemplateListPaginationKey,
+        lastEvaluated?: TemplateListPaginationKey
     ): Promise<[TemplateItem[], TemplateListPaginationKey]> {
         logger.debug(
             `templates.service list: in: count:${count}, lastEvaluated:${JSON.stringify(
-                lastEvaluated,
-            )}`,
+                lastEvaluated
+            )}`
         );
 
         if (count) {

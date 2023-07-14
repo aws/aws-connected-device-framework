@@ -84,7 +84,7 @@ export class DevicesAssembler {
             model.category = TypeCategory.Device;
         }
         model.templateId = node.types.filter(
-            (t) => t !== TypeCategory.Device && t !== TypeCategory.Component,
+            (t) => t !== TypeCategory.Device && t !== TypeCategory.Component
         )[0];
         model.version = node.version;
 
@@ -123,7 +123,7 @@ export class DevicesAssembler {
 
                 default:
                     model.attributes[key] = this.fullAssembler.extractPropertyValue(
-                        node.attributes[key],
+                        node.attributes[key]
                     );
             }
         });
@@ -188,13 +188,13 @@ export class DevicesAssembler {
             if (res_1_0.groups) {
                 item.groups = { out: {} };
                 Object.keys(res_1_0.groups).forEach(
-                    (rel) => (item.groups.out[rel] = res_1_0.groups[rel]),
+                    (rel) => (item.groups.out[rel] = res_1_0.groups[rel])
                 );
             }
             if (res_1_0.devices) {
                 item.devices = { out: {} };
                 Object.keys(res_1_0.devices).forEach(
-                    (rel) => (item.devices.out[rel] = res_1_0.devices[rel]),
+                    (rel) => (item.devices.out[rel] = res_1_0.devices[rel])
                 );
             }
         }
@@ -216,7 +216,7 @@ export class DevicesAssembler {
         res.devices.forEach((resource) => items.push(this.fromDeviceResource(resource)));
 
         logger.silly(
-            `device.assembler fromBulkDevicesResource: exit: items: ${JSON.stringify(items)}`,
+            `device.assembler fromBulkDevicesResource: exit: items: ${JSON.stringify(items)}`
         );
         return items;
     }
@@ -224,8 +224,8 @@ export class DevicesAssembler {
     public toDeviceResource(item: DeviceItem, version: string): DeviceBaseResource {
         logger.silly(
             `device.assembler toDeviceResource: in: item: ${JSON.stringify(
-                item,
-            )}, version:${version}`,
+                item
+            )}, version:${version}`
         );
 
         if (item === undefined) {
@@ -296,7 +296,7 @@ export class DevicesAssembler {
         });
 
         logger.silly(
-            `device.assembler toDeviceResource: exit: resource: ${JSON.stringify(resource)}`,
+            `device.assembler toDeviceResource: exit: resource: ${JSON.stringify(resource)}`
         );
         return resource;
     }
@@ -304,8 +304,8 @@ export class DevicesAssembler {
     public toDeviceResourceList(items: DeviceItemList, version: string): DeviceResourceList {
         logger.silly(
             `device.assembler toDeviceResourceList: in: items: ${JSON.stringify(
-                items,
-            )}, version:${version}`,
+                items
+            )}, version:${version}`
         );
 
         if (items === undefined) {
@@ -318,11 +318,11 @@ export class DevicesAssembler {
         resources.results = [];
 
         items.results.forEach((item) =>
-            resources.results.push(this.toDeviceResource(item, version)),
+            resources.results.push(this.toDeviceResource(item, version))
         );
 
         logger.silly(
-            `device.assembler toDeviceResourceList: exit: resources: ${JSON.stringify(resources)}`,
+            `device.assembler toDeviceResourceList: exit: resources: ${JSON.stringify(resources)}`
         );
         return resources;
     }
@@ -340,7 +340,7 @@ export class DevicesAssembler {
                             model.groups[direction][key] = [];
                         }
                         model.groups[direction][key].push(
-                            (other.attributes['groupPath'] as string[])[0],
+                            (other.attributes['groupPath'] as string[])[0]
                         );
                     } else if (other.category === TypeCategory.Device) {
                         if (model.devices[direction] === undefined) {
@@ -350,7 +350,7 @@ export class DevicesAssembler {
                             model.devices[direction][key] = [];
                         }
                         model.devices[direction][key].push(
-                            (other.attributes['deviceId'] as string[])[0],
+                            (other.attributes['deviceId'] as string[])[0]
                         );
                     } else if (other.category === TypeCategory.Component) {
                         if (model.components === undefined) {
@@ -366,10 +366,10 @@ export class DevicesAssembler {
     public toRelatedDeviceModelsList(
         node: Node,
         offset?: number | string,
-        count?: number,
+        count?: number
     ): DeviceItemList {
         logger.silly(
-            `devices.assembler toRelatedDeviceModelsList: in: node: ${JSON.stringify(node)}`,
+            `devices.assembler toRelatedDeviceModelsList: in: node: ${JSON.stringify(node)}`
         );
 
         const r: DeviceItemList = {

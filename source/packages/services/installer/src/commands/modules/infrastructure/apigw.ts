@@ -37,7 +37,7 @@ export class ApiGwInstaller implements InfrastructureModule {
                     'Some of the modules chosen expose a REST API. Select the path to where the REST API CloudFormation snippets are stored (relative from aws-connected-device-framework repository) :',
                     'apigw.cloudFormationSnippetsPath',
                     answers.apigw?.cloudFormationSnippetsPath ??
-                        path.join('source', 'infrastructure', 'cloudformation', 'snippets'),
+                        path.join('source', 'infrastructure', 'cloudformation', 'snippets')
                 ),
 
                 // choose the type of rest api auth
@@ -166,7 +166,7 @@ export class ApiGwInstaller implements InfrastructureModule {
                     askAnswered: true,
                 },
             ],
-            answers,
+            answers
         );
 
         if ((answers.apigw?.type ?? '') === 'None') {
@@ -207,7 +207,7 @@ export class ApiGwInstaller implements InfrastructureModule {
                 const monorepoRoot = await getMonorepoRoot();
                 const snippetPath = await getAbsolutePath(
                     monorepoRoot,
-                    answers.apigw.cloudFormationSnippetsPath,
+                    answers.apigw.cloudFormationSnippetsPath
                 );
                 const snippets = fs.readdirSync(snippetPath);
                 for (const f of snippets) {

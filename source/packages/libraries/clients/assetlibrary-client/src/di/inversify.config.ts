@@ -39,33 +39,33 @@ export const assetLibraryContainerModule = new ContainerModule(
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind,
+        _rebind: interfaces.Rebind
     ) => {
         const assetlibraryMode = process.env.ASSETLIBRARY_MODE;
 
         if (assetlibraryMode === 'lambda') {
             bind<DevicesService>(ASSETLIBRARY_CLIENT_TYPES.DevicesService).to(
-                DevicesLambdaService,
+                DevicesLambdaService
             );
             bind<GroupsService>(ASSETLIBRARY_CLIENT_TYPES.GroupsService).to(GroupsLambdaService);
             bind<PoliciesService>(ASSETLIBRARY_CLIENT_TYPES.PoliciesService).to(
-                PoliciesLambdaService,
+                PoliciesLambdaService
             );
             bind<SearchService>(ASSETLIBRARY_CLIENT_TYPES.SearchService).to(SearchLambdaService);
             bind<TemplatesService>(ASSETLIBRARY_CLIENT_TYPES.TemplatesService).to(
-                TemplatesLambdaService,
+                TemplatesLambdaService
             );
             bind<ProfilesService>(ASSETLIBRARY_CLIENT_TYPES.ProfilesService).to(
-                ProfilesLambdaService,
+                ProfilesLambdaService
             );
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
-                    LambdaInvokerService,
+                    LambdaInvokerService
                 );
                 decorate(injectable(), AWS.Lambda);
                 bind<interfaces.Factory<AWS.Lambda>>(
-                    LAMBDAINVOKE_TYPES.LambdaFactory,
+                    LAMBDAINVOKE_TYPES.LambdaFactory
                 ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
                     return () => {
                         if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
@@ -80,15 +80,15 @@ export const assetLibraryContainerModule = new ContainerModule(
             bind<DevicesService>(ASSETLIBRARY_CLIENT_TYPES.DevicesService).to(DevicesApigwService);
             bind<GroupsService>(ASSETLIBRARY_CLIENT_TYPES.GroupsService).to(GroupsApigwService);
             bind<PoliciesService>(ASSETLIBRARY_CLIENT_TYPES.PoliciesService).to(
-                PoliciesApigwService,
+                PoliciesApigwService
             );
             bind<SearchService>(ASSETLIBRARY_CLIENT_TYPES.SearchService).to(SearchApigwService);
             bind<TemplatesService>(ASSETLIBRARY_CLIENT_TYPES.TemplatesService).to(
-                TemplatesApigwService,
+                TemplatesApigwService
             );
             bind<ProfilesService>(ASSETLIBRARY_CLIENT_TYPES.ProfilesService).to(
-                ProfilesApigwService,
+                ProfilesApigwService
             );
         }
-    },
+    }
 );

@@ -47,7 +47,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
         delete answers.assetLibraryHistory?.redeploy;
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
         if ((updatedAnswers.assetLibraryHistory?.redeploy ?? true) === false) {
             return updatedAnswers;
@@ -58,7 +58,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
                 ...applicationConfigurationPrompt(this.name, answers, []),
                 ...customDomainPrompt(this.name, answers),
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         return updatedAnswers;
@@ -85,7 +85,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
         return parameterOverrides;
     }
@@ -105,7 +105,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'assetlibraryhistory',
+                            'assetlibraryhistory'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -140,7 +140,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
                         'source',
                         'packages',
                         'services',
-                        'assetlibraryhistory',
+                        'assetlibraryhistory'
                     ),
                     parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,

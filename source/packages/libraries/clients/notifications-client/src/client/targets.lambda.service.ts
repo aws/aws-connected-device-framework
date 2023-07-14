@@ -27,7 +27,7 @@ export class TargetsLambdaService extends TargetsServiceBase implements TargetsS
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -38,7 +38,7 @@ export class TargetsLambdaService extends TargetsServiceBase implements TargetsS
         subscriptionId: string,
         targetType: string,
         target: TargetResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(subscriptionId, ow.string.nonEmpty);
         ow(targetType, ow.string.nonEmpty);
@@ -57,7 +57,7 @@ export class TargetsLambdaService extends TargetsServiceBase implements TargetsS
         subscriptionId: string,
         targetType: string,
         targetId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(subscriptionId, ow.string.nonEmpty);
         ow(targetType, ow.string.nonEmpty);

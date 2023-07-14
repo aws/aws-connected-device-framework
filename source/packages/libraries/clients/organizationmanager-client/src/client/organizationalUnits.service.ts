@@ -19,21 +19,21 @@ import { OrganizationalUnitResource } from './organizationalUnits.model';
 export interface OrganizationalUnitsService {
     createOrganizationalUnit(
         organizationalUnit: OrganizationalUnitResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string>;
 
     getOrganizationalUnit(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<OrganizationalUnitResource>;
 
     deleteOrganizationalUnit(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     listOrganizationalUnits(
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<OrganizationalUnitResource[]>;
 }
 

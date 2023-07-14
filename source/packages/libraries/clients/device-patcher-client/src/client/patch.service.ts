@@ -25,7 +25,7 @@ import {
 export interface PatchService {
     createPatchTask(
         patchRequest: PatchTaskRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string>;
 
     getPatchTask(taskId: string, additionalHeaders?: RequestHeaders): Promise<PatchTaskResponse>;
@@ -34,13 +34,13 @@ export interface PatchService {
 
     listPatchesByTaskId(
         taskId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ListPatchResponse>;
 
     listPatchesByDeviceId(
         deviceId: string,
         status?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ListPatchResponse>;
 
     updatePatch(patch: UpdatePatchRequest, additionalHeaders?: RequestHeaders): Promise<void>;

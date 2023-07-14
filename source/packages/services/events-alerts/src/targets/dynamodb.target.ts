@@ -24,8 +24,8 @@ export class DynamoDBTarget {
     public async writeAlert(item: unknown, targetTableName: string): Promise<void> {
         logger.debug(
             `Dynamodb.target writeAlert: in: targetTableName:${targetTableName}, item:${JSON.stringify(
-                item,
-            )}`,
+                item
+            )}`
         );
 
         // validate input

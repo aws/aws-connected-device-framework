@@ -70,7 +70,7 @@ export class DevicesServiceFull implements DevicesService {
         @inject(TYPES.ProfilesService) private profilesService: ProfilesService,
         @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,
         @inject(TYPES.TypesService) private typesService: TypesService,
-        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
+        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils
     ) {}
 
     public async listRelatedDevices(
@@ -81,12 +81,12 @@ export class DevicesServiceFull implements DevicesService {
         state: string,
         offset: number,
         count: number,
-        sort: SortKeys,
+        sort: SortKeys
     ): Promise<DeviceItemList> {
         logger.debug(
             `device.full.service listRelatedDevices: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${JSON.stringify(
-                sort,
-            )}`,
+                sort
+            )}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -136,16 +136,16 @@ export class DevicesServiceFull implements DevicesService {
             filteredBy,
             offsetAsInt,
             countAsInt,
-            sort,
+            sort
         );
 
         const model = this.devicesAssembler.toRelatedDeviceModelsList(
             result,
             offsetAsInt,
-            countAsInt,
+            countAsInt
         );
         logger.debug(
-            `devices.full.service listRelatedDevices: exit: model: ${JSON.stringify(model)}`,
+            `devices.full.service listRelatedDevices: exit: model: ${JSON.stringify(model)}`
         );
         return model;
     }
@@ -157,12 +157,12 @@ export class DevicesServiceFull implements DevicesService {
         template: string,
         offset: number,
         count: number,
-        sort: SortKeys,
+        sort: SortKeys
     ): Promise<GroupItemList> {
         logger.debug(
             `device.full.service listRelatedGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}, sort:${JSON.stringify(
-                sort,
-            )}`,
+                sort
+            )}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -207,12 +207,12 @@ export class DevicesServiceFull implements DevicesService {
             {},
             offsetAsInt,
             countAsInt,
-            sort,
+            sort
         );
 
         const model = this.groupsAssembler.toRelatedGroupItemList(result, offsetAsInt, countAsInt);
         logger.debug(
-            `devices.full.service listRelatedGroups: exit: model: ${JSON.stringify(model)}`,
+            `devices.full.service listRelatedGroups: exit: model: ${JSON.stringify(model)}`
         );
         return model;
     }
@@ -221,10 +221,10 @@ export class DevicesServiceFull implements DevicesService {
         deviceId: string,
         expandComponents?: boolean,
         attributes?: string[],
-        includeGroups?: boolean,
+        includeGroups?: boolean
     ): Promise<DeviceItem> {
         logger.debug(
-            `device.full.service get: in: deviceId:${deviceId}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`,
+            `device.full.service get: in: deviceId:${deviceId}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -245,7 +245,7 @@ export class DevicesServiceFull implements DevicesService {
             [deviceId],
             expandComponents,
             attributes,
-            includeGroups,
+            includeGroups
         );
 
         let model: DeviceItem;
@@ -261,10 +261,10 @@ export class DevicesServiceFull implements DevicesService {
         deviceIds: string[],
         expandComponents: boolean,
         attributes: string[],
-        includeGroups: boolean,
+        includeGroups: boolean
     ): Promise<DeviceItemList> {
         logger.debug(
-            `device.full.service getBulk: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}}`,
+            `device.full.service getBulk: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}}`
         );
 
         ow(deviceIds, 'deviceIds', ow.array.nonEmpty);
@@ -275,7 +275,7 @@ export class DevicesServiceFull implements DevicesService {
             deviceIds,
             expandComponents,
             attributes,
-            includeGroups,
+            includeGroups
         );
 
         if (result === undefined) {
@@ -296,12 +296,12 @@ export class DevicesServiceFull implements DevicesService {
 
     public async createBulk(
         devices: DeviceItem[],
-        applyProfile?: string,
+        applyProfile?: string
     ): Promise<BulkDevicesResult> {
         logger.debug(
             `device.full.service createBulk: in: devices: ${JSON.stringify(
-                devices,
-            )}, applyProfile:${applyProfile}`,
+                devices
+            )}, applyProfile:${applyProfile}`
         );
 
         ow(devices, ow.array.nonEmpty);
@@ -327,14 +327,14 @@ export class DevicesServiceFull implements DevicesService {
         };
 
         logger.debug(
-            `device.full.service createBulk: exit: response: ${JSON.stringify(response)}`,
+            `device.full.service createBulk: exit: response: ${JSON.stringify(response)}`
         );
         return response;
     }
 
     public async ___test___applyProfile(
         model: DeviceItem,
-        applyProfile?: string,
+        applyProfile?: string
     ): Promise<DeviceItem> {
         return this.applyProfile(model, applyProfile);
     }
@@ -342,14 +342,14 @@ export class DevicesServiceFull implements DevicesService {
     private async applyProfile(model: DeviceItem, applyProfile?: string): Promise<DeviceItem> {
         logger.debug(
             `device.full.service applyProfile: in: model:${JSON.stringify(
-                model,
-            )}, applyProfile:${applyProfile}`,
+                model
+            )}, applyProfile:${applyProfile}`
         );
 
         // retrieve profile
         const profile = (await this.profilesService.get(
             model.templateId,
-            applyProfile,
+            applyProfile
         )) as DeviceProfileItem;
         if (profile === undefined) {
             throw new ProfileNotFoundError(applyProfile);
@@ -400,8 +400,8 @@ export class DevicesServiceFull implements DevicesService {
     public async create(device: DeviceItem, applyProfile?: string): Promise<string> {
         logger.debug(
             `device.full.service create: in: device: ${JSON.stringify(
-                device,
-            )}, applyProfile:${applyProfile}`,
+                device
+            )}, applyProfile:${applyProfile}`
         );
 
         ow(device, ow.object.nonEmpty);
@@ -443,7 +443,7 @@ export class DevicesServiceFull implements DevicesService {
         await this.authServiceFull.authorizationCheck(
             device.listRelatedDeviceIds(),
             device.listRelatedGroupPaths(),
-            ClaimAccess.C,
+            ClaimAccess.C
         );
 
         // default initial state if none provided
@@ -455,7 +455,7 @@ export class DevicesServiceFull implements DevicesService {
         const template = await this.typesService.get(
             device.templateId,
             TypeCategory.Device,
-            TypeDefinitionStatus.published,
+            TypeDefinitionStatus.published
         );
         if (template === undefined) {
             throw new TemplateNotFoundError(device.templateId);
@@ -463,12 +463,12 @@ export class DevicesServiceFull implements DevicesService {
         const validateSubTypeFuture = this.validator.validateSubType(
             template,
             device,
-            Operation.CREATE,
+            Operation.CREATE
         );
         const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(
             template,
             device.groups,
-            device.devices,
+            device.devices
         );
         const [subTypeValidation, validateRelationships] = await Promise.all([
             validateSubTypeFuture,
@@ -492,22 +492,22 @@ export class DevicesServiceFull implements DevicesService {
             this.authServiceFull.updateRelsIdentifyingAuth(
                 device.groups?.in,
                 validateRelationships.groupLabels,
-                incomingAuthRelations,
+                incomingAuthRelations
             );
             this.authServiceFull.updateRelsIdentifyingAuth(
                 device.groups?.out,
                 validateRelationships.groupLabels,
-                outgoingAuthRelations,
+                outgoingAuthRelations
             );
             this.authServiceFull.updateRelsIdentifyingAuth(
                 device.devices?.in,
                 validateRelationships.deviceLabels,
-                incomingAuthRelations,
+                incomingAuthRelations
             );
             this.authServiceFull.updateRelsIdentifyingAuth(
                 device.devices?.out,
                 validateRelationships.deviceLabels,
-                outgoingAuthRelations,
+                outgoingAuthRelations
             );
         }
 
@@ -580,12 +580,12 @@ export class DevicesServiceFull implements DevicesService {
 
     public async updateBulk(
         devices: DeviceItem[],
-        applyProfile?: string,
+        applyProfile?: string
     ): Promise<BulkDevicesResult> {
         logger.debug(
             `device.full.service updateBulk: in: devices: ${JSON.stringify(
-                devices,
-            )}, applyProfile:${applyProfile}`,
+                devices
+            )}, applyProfile:${applyProfile}`
         );
 
         ow(devices, ow.array.nonEmpty);
@@ -617,8 +617,8 @@ export class DevicesServiceFull implements DevicesService {
     public async update(device: DeviceItem, applyProfile?: string): Promise<void> {
         logger.debug(
             `device.full.service update: in: model: ${JSON.stringify(
-                device,
-            )}, applyProfile:${applyProfile}`,
+                device
+            )}, applyProfile:${applyProfile}`
         );
 
         ow(device, ow.object.nonEmpty);
@@ -643,7 +643,7 @@ export class DevicesServiceFull implements DevicesService {
         await this.authServiceFull.authorizationCheck(
             deviceIds,
             device.listRelatedGroupPaths(),
-            ClaimAccess.U,
+            ClaimAccess.U
         );
 
         const labels = await this.devicesDao.getLabels([device.deviceId]);
@@ -656,7 +656,7 @@ export class DevicesServiceFull implements DevicesService {
         const template = await this.typesService.get(
             templateId,
             TypeCategory.Device,
-            TypeDefinitionStatus.published,
+            TypeDefinitionStatus.published
         );
         const validate = await this.validator.validateSubType(template, device, Operation.UPDATE);
         if (!validate.isValid) {
@@ -667,7 +667,7 @@ export class DevicesServiceFull implements DevicesService {
         const validateRelationships = await this.validator.validateRelationshipsByIds(
             template,
             device.groups,
-            device.devices,
+            device.devices
         );
         if (!validateRelationships.isValid) {
             throw new RelationValidationError(validateRelationships);
@@ -680,22 +680,22 @@ export class DevicesServiceFull implements DevicesService {
             this.authServiceFull.updateRelsIdentifyingAuth(
                 device.groups?.in,
                 validateRelationships.groupLabels,
-                incomingAuthRelations,
+                incomingAuthRelations
             );
             this.authServiceFull.updateRelsIdentifyingAuth(
                 device.groups?.out,
                 validateRelationships.groupLabels,
-                outgoingAuthRelations,
+                outgoingAuthRelations
             );
             this.authServiceFull.updateRelsIdentifyingAuth(
                 device.devices?.in,
                 validateRelationships.deviceLabels,
-                incomingAuthRelations,
+                incomingAuthRelations
             );
             this.authServiceFull.updateRelsIdentifyingAuth(
                 device.devices?.out,
                 validateRelationships.deviceLabels,
-                outgoingAuthRelations,
+                outgoingAuthRelations
             );
         }
 
@@ -748,10 +748,10 @@ export class DevicesServiceFull implements DevicesService {
         deviceId: string,
         relationship: string,
         direction: RelationDirection,
-        groupPath: string,
+        groupPath: string
     ): Promise<void> {
         logger.debug(
-            `device.full.service attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`,
+            `device.full.service attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -799,12 +799,12 @@ export class DevicesServiceFull implements DevicesService {
         const template = await this.typesService.get(
             device.templateId,
             TypeCategory.Device,
-            TypeDefinitionStatus.published,
+            TypeDefinitionStatus.published
         );
         const validateRelationships = await this.validator.validateRelationshipsByIds(
             template,
             relatedGroup,
-            undefined,
+            undefined
         );
         if (!validateRelationships.isValid) {
             throw new RelationValidationError(validateRelationships);
@@ -820,7 +820,7 @@ export class DevicesServiceFull implements DevicesService {
             this.authServiceFull.updateRelsIdentifyingAuth(
                 relatedGroup[direction],
                 validateRelationships.groupLabels,
-                authRelations,
+                authRelations
             );
             isAuthCheck = relatedGroup[direction][relationship][0].isAuthCheck ?? false;
         }
@@ -831,7 +831,7 @@ export class DevicesServiceFull implements DevicesService {
             relationship,
             direction,
             groupPath,
-            isAuthCheck,
+            isAuthCheck
         );
 
         // fire event
@@ -853,10 +853,10 @@ export class DevicesServiceFull implements DevicesService {
         deviceId: string,
         relationship: string,
         direction: RelationDirection,
-        groupPath: string,
+        groupPath: string
     ): Promise<void> {
         logger.debug(
-            `device.full.service detachFromGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`,
+            `device.full.service detachFromGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -894,10 +894,10 @@ export class DevicesServiceFull implements DevicesService {
     public async detachFromGroups(
         deviceId: string,
         relationship?: string,
-        direction?: RelationDirection,
+        direction?: RelationDirection
     ): Promise<void> {
         logger.debug(
-            `device.full.service detachFromGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}`,
+            `device.full.service detachFromGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -922,7 +922,7 @@ export class DevicesServiceFull implements DevicesService {
             undefined,
             offset,
             count,
-            undefined,
+            undefined
         );
         const relations: RelatedEntityIdentifer[] = [];
         while ((g?.results?.length ?? 0) > 0) {
@@ -931,7 +931,7 @@ export class DevicesServiceFull implements DevicesService {
                     relationship: r.relation,
                     direction: r.direction,
                     targetId: r.groupPath,
-                })),
+                }))
             );
 
             offset = offset + count;
@@ -942,7 +942,7 @@ export class DevicesServiceFull implements DevicesService {
                 undefined,
                 offset,
                 count,
-                undefined,
+                undefined
             );
         }
 
@@ -972,10 +972,10 @@ export class DevicesServiceFull implements DevicesService {
         deviceId: string,
         relationship: string,
         direction: RelationDirection,
-        otherDeviceId: string,
+        otherDeviceId: string
     ): Promise<void> {
         logger.debug(
-            `device.full.service attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`,
+            `device.full.service attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -991,7 +991,7 @@ export class DevicesServiceFull implements DevicesService {
         await this.authServiceFull.authorizationCheck(
             [deviceId, otherDeviceId],
             [],
-            ClaimAccess.U,
+            ClaimAccess.U
         );
 
         // fetch the existing device / group
@@ -1026,7 +1026,7 @@ export class DevicesServiceFull implements DevicesService {
         const template = await this.typesService.get(
             device.templateId,
             TypeCategory.Device,
-            TypeDefinitionStatus.published,
+            TypeDefinitionStatus.published
         );
         if (template === undefined) {
             throw new TemplateNotFoundError(device.templateId);
@@ -1034,7 +1034,7 @@ export class DevicesServiceFull implements DevicesService {
         const validateRelationships = await this.validator.validateRelationshipsByIds(
             template,
             undefined,
-            relatedDevice,
+            relatedDevice
         );
         if (!validateRelationships.isValid) {
             throw new RelationValidationError(validateRelationships);
@@ -1050,7 +1050,7 @@ export class DevicesServiceFull implements DevicesService {
             this.authServiceFull.updateRelsIdentifyingAuth(
                 relatedDevice[direction],
                 validateRelationships.deviceLabels,
-                authRelations,
+                authRelations
             );
             isAuthCheck = relatedDevice[direction][relationship][0].isAuthCheck ?? false;
         }
@@ -1061,7 +1061,7 @@ export class DevicesServiceFull implements DevicesService {
             relationship,
             direction,
             otherDeviceId,
-            isAuthCheck,
+            isAuthCheck
         );
 
         // fire event
@@ -1083,10 +1083,10 @@ export class DevicesServiceFull implements DevicesService {
         deviceId: string,
         relationship: string,
         direction: RelationDirection,
-        otherDeviceId: string,
+        otherDeviceId: string
     ): Promise<void> {
         logger.debug(
-            `device.full.service detachFromDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`,
+            `device.full.service detachFromDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -1102,7 +1102,7 @@ export class DevicesServiceFull implements DevicesService {
         await this.authServiceFull.authorizationCheck(
             [deviceId, otherDeviceId],
             [],
-            ClaimAccess.U,
+            ClaimAccess.U
         );
 
         // Save to datastore
@@ -1128,10 +1128,10 @@ export class DevicesServiceFull implements DevicesService {
     public async detachFromDevices(
         deviceId: string,
         relationship?: string,
-        direction?: RelationDirection,
+        direction?: RelationDirection
     ): Promise<void> {
         logger.debug(
-            `device.full.service detachFromDevices: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}`,
+            `device.full.service detachFromDevices: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -1157,7 +1157,7 @@ export class DevicesServiceFull implements DevicesService {
             undefined,
             offset,
             count,
-            undefined,
+            undefined
         );
         while ((d?.results?.length ?? 0) > 0) {
             const relations: RelatedEntityIdentifer[] = [];
@@ -1166,7 +1166,7 @@ export class DevicesServiceFull implements DevicesService {
                     relationship: r.relation,
                     direction: r.direction,
                     targetId: r.deviceId,
-                })),
+                }))
             );
 
             // remove the associations
@@ -1195,7 +1195,7 @@ export class DevicesServiceFull implements DevicesService {
                 undefined,
                 offset,
                 count,
-                undefined,
+                undefined
             );
         }
 
@@ -1205,12 +1205,12 @@ export class DevicesServiceFull implements DevicesService {
     public async updateComponent(
         deviceId: string,
         componentId: string,
-        component: DeviceItem,
+        component: DeviceItem
     ): Promise<void> {
         logger.debug(
             `device.full.service updateComponent: in: deviceId:${deviceId}, componentId:${componentId}, model:${JSON.stringify(
-                component,
-            )}`,
+                component
+            )}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -1249,7 +1249,7 @@ export class DevicesServiceFull implements DevicesService {
 
     public async deleteComponent(deviceId: string, componentId: string): Promise<void> {
         logger.debug(
-            `device.full.service deleteComponent: in: deviceId:${deviceId}, componentId:${componentId}`,
+            `device.full.service deleteComponent: in: deviceId:${deviceId}, componentId:${componentId}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -1284,8 +1284,8 @@ export class DevicesServiceFull implements DevicesService {
     public async createComponent(parentDeviceId: string, component: DeviceItem): Promise<string> {
         logger.debug(
             `device.full.service createComponent: in: parentDeviceId:${parentDeviceId}, model:${JSON.stringify(
-                component,
-            )}`,
+                component
+            )}`
         );
 
         ow(parentDeviceId, ow.string.nonEmpty);
@@ -1309,13 +1309,13 @@ export class DevicesServiceFull implements DevicesService {
         const parentTemplate = await this.typesService.get(
             parentDevice.templateId,
             TypeCategory.Device,
-            TypeDefinitionStatus.published,
+            TypeDefinitionStatus.published
         );
         if (parentTemplate === undefined) {
             throw new TemplateNotFoundError(parentDevice.templateId);
         }
         const componentTemplate = parentTemplate.schema.definition.componentTypes?.find(
-            (c) => (c.templateId = component.templateId),
+            (c) => (c.templateId = component.templateId)
         );
         if (componentTemplate === undefined) {
             throw new TemplateNotFoundError(component.templateId);
@@ -1323,12 +1323,12 @@ export class DevicesServiceFull implements DevicesService {
         const validateSubTypeFuture = this.validator.validateSubType(
             componentTemplate,
             component,
-            Operation.CREATE,
+            Operation.CREATE
         );
         const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(
             componentTemplate,
             component.groups,
-            undefined,
+            undefined
         );
         const [subTypeValidation, validateRelationships] = await Promise.all([
             validateSubTypeFuture,

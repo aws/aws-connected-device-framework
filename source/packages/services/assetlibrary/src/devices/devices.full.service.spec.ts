@@ -79,7 +79,7 @@ describe('DevicesService', () => {
             mockedProfilesService,
             mockedSchemaValidatorService,
             mockedTypesService,
-            mockedTypeUtils,
+            mockedTypeUtils
         );
     });
 
@@ -130,7 +130,7 @@ describe('DevicesService', () => {
         // execute
         const actual = await (<DevicesServiceFull>instance).___test___applyProfile(
             model,
-            profileId,
+            profileId
         );
 
         // verify
@@ -199,7 +199,7 @@ describe('DevicesService', () => {
         // execute
         const actual = await (<DevicesServiceFull>instance).___test___applyProfile(
             original,
-            profileId,
+            profileId
         );
 
         // verify

@@ -47,7 +47,7 @@ export class AwsIotThing<S, T, U> {
     constructor(
         @inject(DEVICE_SIMULATOR_TYPES.AwsIotEmitter) private readonly emitter: EventEmitter,
         @inject(DEVICE_SIMULATOR_TYPES.AwsIotMqttClient)
-        private readonly mqttClient: awsIot.thingShadow,
+        private readonly mqttClient: awsIot.thingShadow
     ) {
         const logMeta = { ...this.CLASS_LOGGING_DATA, method: 'constructor' };
         logger.verbose('', { ...logMeta, type: 'in' });
@@ -97,12 +97,12 @@ export class AwsIotThing<S, T, U> {
         _thingName: string,
         status: string,
         clientToken: string,
-        shadow: DeviceShadow<S, T, U>,
+        shadow: DeviceShadow<S, T, U>
     ): void {
         const logMeta = { ...this.CLASS_LOGGING_DATA, method: 'onStatusHandler' };
         logger.verbose(
             `stat:${status}, clientToken:${clientToken}, shadow:${JSON.stringify(shadow)}`,
-            { ...logMeta, type: 'in' },
+            { ...logMeta, type: 'in' }
         );
 
         if (shadow?.state !== undefined) {
@@ -203,7 +203,7 @@ export class AwsIotThing<S, T, U> {
     public onChange(
         clientToken: string,
         callback: (state: unknown) => void,
-        other: unknown,
+        other: unknown
     ): void {
         const logMeta = { ...this.CLASS_LOGGING_DATA, method: 'onChange' };
         logger.silly(`clientToken: ${clientToken}`, { ...logMeta, type: 'in' });
@@ -214,7 +214,7 @@ export class AwsIotThing<S, T, U> {
     public removeOnChange(
         clientToken: string,
         callback: (state: unknown) => void,
-        other: unknown,
+        other: unknown
     ): void {
         const logMeta = { ...this.CLASS_LOGGING_DATA, method: 'removeOnChange' };
         logger.silly(``, { ...logMeta, type: 'in' });

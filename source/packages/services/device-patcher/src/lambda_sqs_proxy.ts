@@ -34,7 +34,7 @@ exports.handler = async (event: any, _context: any, callback: any) => {
                 }
             } else {
                 logger.warn(
-                    `lambda_sqs_proxy handler: ignoring non-sqs events: ${JSON.stringify(record)}`,
+                    `lambda_sqs_proxy handler: ignoring non-sqs events: ${JSON.stringify(record)}`
                 );
             }
         }

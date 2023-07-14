@@ -30,7 +30,7 @@ export class PoliciesServiceFull implements PoliciesService {
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
         @inject(TYPES.PoliciesAssembler) private policiesAssembler: PoliciesAssembler,
         @inject(TYPES.PoliciesDao) private policiesDao: PoliciesDaoFull,
-        @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,
+        @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService
     ) {}
 
     private setIdsToLowercase(model: PolicyModel) {
@@ -69,7 +69,7 @@ export class PoliciesServiceFull implements PoliciesService {
                 description: ow.string,
                 appliesTo: ow.array.ofType(ow.string.nonEmpty),
                 document: ow.string.nonEmpty,
-            }),
+            })
         );
         ow(policy.policyId, ow.string.nonEmpty);
         ow(policy.type, ow.string.nonEmpty);
@@ -86,7 +86,7 @@ export class PoliciesServiceFull implements PoliciesService {
         const validate = await this.validator.validateType(
             TypeCategory.Policy,
             policy,
-            Operation.CREATE,
+            Operation.CREATE
         );
         if (!validate.isValid) {
             throw new SchemaValidationError(validate);
@@ -142,7 +142,7 @@ export class PoliciesServiceFull implements PoliciesService {
 
     public async listInheritedByDevice(deviceId: string, type: string): Promise<PolicyModel[]> {
         logger.debug(
-            `policies.full.service listInheritedByDevice: in: deviceId:${deviceId}, type:${type}`,
+            `policies.full.service listInheritedByDevice: in: deviceId:${deviceId}, type:${type}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -158,10 +158,10 @@ export class PoliciesServiceFull implements PoliciesService {
 
     public async listInheritedByGroup(
         groupPaths: string[],
-        type?: string,
+        type?: string
     ): Promise<PolicyModel[]> {
         logger.debug(
-            `policies.full.service listInheritedByGroup: in: groupPaths:${groupPaths}, type:${type}`,
+            `policies.full.service listInheritedByGroup: in: groupPaths:${groupPaths}, type:${type}`
         );
 
         ow(groupPaths, 'groupPaths', ow.array.nonEmpty.minLength(1));
@@ -179,10 +179,10 @@ export class PoliciesServiceFull implements PoliciesService {
     public async listPolicies(
         type?: string,
         offset?: number,
-        count?: number,
+        count?: number
     ): Promise<PolicyModel[]> {
         logger.debug(
-            `policies.full.service listPolicies: in: type:${type}, offset:${offset}, count:${count}`,
+            `policies.full.service listPolicies: in: type:${type}, offset:${offset}, count:${count}`
         );
 
         owCheckOptionalNumber(count, 1, 10000, 'count');
@@ -199,7 +199,7 @@ export class PoliciesServiceFull implements PoliciesService {
 
     private filterAttached(attached: AttachedPolicy[]): PolicyModel[] {
         logger.debug(
-            `policies.full.service filterAttached: in: attached:${JSON.stringify(attached)}`,
+            `policies.full.service filterAttached: in: attached:${JSON.stringify(attached)}`
         );
 
         // filter out the results so that we only end up with devices that are associated
@@ -247,7 +247,7 @@ export class PoliciesServiceFull implements PoliciesService {
         const models = this.policiesAssembler.toModelFromPolicies(matches);
 
         logger.debug(
-            `policies.full.service filterAttached: exit: models: ${JSON.stringify(models)}`,
+            `policies.full.service filterAttached: exit: models: ${JSON.stringify(models)}`
         );
         return models;
     }

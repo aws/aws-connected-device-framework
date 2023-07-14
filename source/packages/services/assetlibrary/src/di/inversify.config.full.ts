@@ -48,26 +48,26 @@ export const FullContainerModule = new ContainerModule(
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         _isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind,
+        _rebind: interfaces.Rebind
     ) => {
         bind<string>('neptuneUrl').toConstantValue(process.env.AWS_NEPTUNE_URL);
         bind<boolean>('enableDfeOptimization').toConstantValue(
-            process.env.ENABLE_DFE_OPTIMIZATION === 'true',
+            process.env.ENABLE_DFE_OPTIMIZATION === 'true'
         );
         bind<string>('defaults.devices.parent.relation').toConstantValue(
-            process.env.DEFAULTS_DEVICES_PARENT_RELATION,
+            process.env.DEFAULTS_DEVICES_PARENT_RELATION
         );
         bind<string>('defaults.devices.parent.groupPath').toConstantValue(
-            process.env.DEFAULTS_DEVICES_PARENT_GROUPPATH,
+            process.env.DEFAULTS_DEVICES_PARENT_GROUPPATH
         );
         bind<string>('defaults.devices.state').toConstantValue(process.env.DEFAULTS_DEVICES_STATE);
         bind<boolean>('authorization.enabled').toConstantValue(
-            process.env.AUTHORIZATION_ENABLED === 'true',
+            process.env.AUTHORIZATION_ENABLED === 'true'
         );
         // if fgac is enabled, then validation of parent paths is automatically enabled too
         bind<boolean>('defaults.groups.validateAllowedParentPaths').toConstantValue(
             process.env.DEFAULTS_GROUPS_VALIDATEALLOWEDPARENTPATHS === 'true' ||
-                process.env.AUTHORIZATION_ENABLED === 'true',
+                process.env.AUTHORIZATION_ENABLED === 'true'
         );
 
         bind<TypesService>(TYPES.TypesService).to(TypesServiceFull).inSingletonScope();
@@ -106,11 +106,11 @@ export const FullContainerModule = new ContainerModule(
 
         decorate(injectable(), structure.Graph);
         bind<interfaces.Factory<structure.Graph>>(
-            TYPES.GraphSourceFactory,
+            TYPES.GraphSourceFactory
         ).toFactory<structure.Graph>((_ctx: interfaces.Context) => {
             return () => {
                 return new structure.Graph();
             };
         });
-    },
+    }
 );

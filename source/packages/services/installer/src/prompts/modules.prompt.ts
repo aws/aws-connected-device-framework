@@ -43,7 +43,7 @@ export function buildServicesList(modules: Module[], chosen?: string[]): ModuleL
 export function expandModuleList(
     modules: Module[],
     chosen: ModuleName[],
-    includeOptional: boolean,
+    includeOptional: boolean
 ): ModuleName[] {
     const expanded: ModuleName[] = [];
     const toProcess = clone(chosen);
@@ -81,7 +81,7 @@ export function expandModuleList(
 export function topologicallySortModules(
     modules: Module[],
     toSort: string[],
-    excludeOptional = true,
+    excludeOptional = true
 ): string[][] {
     // console.log(`modules: ${JSON.stringify(modules)}, toSort:${toSort}`);
     const groups: string[][] = [];
@@ -99,7 +99,7 @@ export function topologicallySortModules(
     visited.push(...level1);
     remaining = remaining.reduce(
         (p, c) => (!level1.some((s) => s === c.name) && p.push(c), p),
-        [],
+        []
     );
 
     // next keep processing until we have no more dependant modules to process
@@ -108,7 +108,7 @@ export function topologicallySortModules(
         const nextLevel = remaining
             .filter((m) => m.dependsOnMandatory.every((e) => visited.includes(e)))
             .filter(
-                (m) => excludeOptional || m.dependsOnOptional.every((e) => visited.includes(e)),
+                (m) => excludeOptional || m.dependsOnOptional.every((e) => visited.includes(e))
             )
             .map((m) => m.name);
 
@@ -116,7 +116,7 @@ export function topologicallySortModules(
         visited.push(...nextLevel);
         remaining = remaining.reduce(
             (p, c) => (!nextLevel.some((s) => s === c.name) && p.push(c), p),
-            [],
+            []
         );
         count++;
     }
@@ -178,7 +178,7 @@ export function confirmServicesPrompt(modules: Module[]): ConfirmQuestion {
 
 export function redeployIfAlreadyExistsPrompt(
     name: ModuleName,
-    stackName: string,
+    stackName: string
 ): ConfirmQuestion {
     return {
         message: `${name} is already deployed. Redeploy?`,

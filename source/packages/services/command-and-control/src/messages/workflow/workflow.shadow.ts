@@ -27,7 +27,7 @@ export class ShadowAction extends WorkflowPublishAction {
 
     constructor(
         @inject('aws.iot.shadow.name') private shadowName: string,
-        @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData,
+        @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData
     ) {
         super();
         this.iotData = iotDataFactory();
@@ -36,8 +36,8 @@ export class ShadowAction extends WorkflowPublishAction {
     async process(message: MessageItem, command: CommandItem): Promise<boolean> {
         logger.debug(
             `workflow.shadow process: message:${JSON.stringify(message)}, command:${JSON.stringify(
-                command,
-            )}`,
+                command
+            )}`
         );
 
         ow(this.shadowName, ow.string.nonEmpty);
@@ -72,12 +72,12 @@ export class ShadowAction extends WorkflowPublishAction {
         thingName: string,
         operation: string,
         correlationId: string,
-        payload: unknown,
+        payload: unknown
     ): Promise<void> {
         logger.debug(
             `workflow.shadow publish: in: thingName:${thingName}, correlationId:${correlationId}, payload:${JSON.stringify(
-                payload,
-            )}`,
+                payload
+            )}`
         );
 
         const shadowUpdate = {

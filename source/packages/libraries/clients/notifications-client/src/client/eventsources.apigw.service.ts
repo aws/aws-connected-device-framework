@@ -34,7 +34,7 @@ export class EventsourcesApigwService
 
     async createEventSource(
         eventSource: EventSourceDetailResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string> {
         ow(eventSource, ow.object.nonEmpty);
 
@@ -69,7 +69,7 @@ export class EventsourcesApigwService
 
     async getEventSource(
         eventSourceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<EventSourceDetailResource> {
         ow(eventSourceId, ow.string.nonEmpty);
 
@@ -89,7 +89,7 @@ export class EventsourcesApigwService
     async updateEventSource(
         eventSourceId: string,
         eventSource: EventSourceDetailResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(eventSourceId, ow.string.nonEmpty);
         ow(eventSource, ow.object.nonEmpty);
@@ -110,7 +110,7 @@ export class EventsourcesApigwService
 
     async deleteEventSource(
         eventSourceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(eventSourceId, ow.string.nonEmpty);
 

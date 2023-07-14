@@ -34,7 +34,7 @@ export class DynamoDbUtils {
     private dc: DynamoDBDocumentClient;
 
     public constructor(
-        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient,
+        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient
     ) {
         this.dc = ddcFactory();
     }
@@ -51,19 +51,17 @@ export class DynamoDbUtils {
 
     public async batchWriteAll(
         params: BatchWriteCommandInput,
-        attempt = 1,
+        attempt = 1
     ): Promise<BatchWriteCommandOutput> {
         logger.debug(
-            `dynamoDb.util batchWriteAll: in: params:${JSON.stringify(
-                params,
-            )}, attempt=${attempt}`,
+            `dynamoDb.util batchWriteAll: in: params:${JSON.stringify(params)}, attempt=${attempt}`
         );
 
         if (attempt > this.MAX_RETRIES) {
             logger.error(
                 `dynamoDb.util batchWriteAll: the following items failed writing:\n${JSON.stringify(
-                    params.RequestItems,
-                )}`,
+                    params.RequestItems
+                )}`
             );
             return {
                 $metadata: {},
@@ -102,17 +100,17 @@ export class DynamoDbUtils {
 
     public async batchGetAll(
         params: BatchGetCommandInput,
-        attempt = 1,
+        attempt = 1
     ): Promise<BatchGetCommandOutput> {
         logger.debug(
-            `dynamoDb.util batchGetAll: in: params:${JSON.stringify(params)}, attempt=${attempt}`,
+            `dynamoDb.util batchGetAll: in: params:${JSON.stringify(params)}, attempt=${attempt}`
         );
 
         if (attempt > this.MAX_RETRIES) {
             logger.error(
                 `dynamoDb.util batchGetAll: the following items failed writing:\n${JSON.stringify(
-                    params.RequestItems,
-                )}`,
+                    params.RequestItems
+                )}`
             );
             return {
                 $metadata: {},
@@ -153,12 +151,12 @@ export class DynamoDbUtils {
 
     private splitBatchWriteIntoChunks(
         batch: BatchWriteCommandInput,
-        maxBatchSize?: number,
+        maxBatchSize?: number
     ): BatchWriteCommandInput[] {
         logger.debug(
             `dynamoDb.util splitBatchWriteIntoChunks: in: batch:${JSON.stringify(
-                batch,
-            )}, maxBatchSize:${maxBatchSize}`,
+                batch
+            )}, maxBatchSize:${maxBatchSize}`
         );
 
         if (maxBatchSize === undefined) {
@@ -168,7 +166,7 @@ export class DynamoDbUtils {
         // dynamodb max batch size is max 25 items, therefore split into smaller chunks if needed...
         let itemCount = 0;
         Object.keys(batch.RequestItems).forEach(
-            (k) => (itemCount += batch.RequestItems[k].length),
+            (k) => (itemCount += batch.RequestItems[k].length)
         );
 
         const chunks: BatchWriteCommandInput[] = [];
@@ -199,19 +197,19 @@ export class DynamoDbUtils {
         }
 
         logger.debug(
-            `dynamoDb.util splitBatchWriteIntoChunks: exit: chunks:${JSON.stringify(chunks)}`,
+            `dynamoDb.util splitBatchWriteIntoChunks: exit: chunks:${JSON.stringify(chunks)}`
         );
         return chunks;
     }
 
     private splitBatchGetIntoChunks(
         batch: BatchGetCommandInput,
-        maxBatchSize?: number,
+        maxBatchSize?: number
     ): BatchGetCommandInput[] {
         logger.debug(
             `dynamoDb.util splitBatchGetIntoChunks: in: batch:${JSON.stringify(
-                batch,
-            )}, maxBatchSize:${maxBatchSize}`,
+                batch
+            )}, maxBatchSize:${maxBatchSize}`
         );
 
         if (maxBatchSize === undefined) {
@@ -221,7 +219,7 @@ export class DynamoDbUtils {
         // dynamodb max get batch size is max 100 items, therefore split into smaller chunks if needed...
         let itemCount = 0;
         Object.keys(batch.RequestItems).forEach(
-            (k) => (itemCount += batch.RequestItems[k].Keys.length),
+            (k) => (itemCount += batch.RequestItems[k].Keys.length)
         );
 
         const chunks: BatchGetCommandInput[] = [];
@@ -252,26 +250,26 @@ export class DynamoDbUtils {
         }
 
         logger.debug(
-            `dynamoDb.util splitBatchGetIntoChunks: exit: chunks:${JSON.stringify(chunks)}`,
+            `dynamoDb.util splitBatchGetIntoChunks: exit: chunks:${JSON.stringify(chunks)}`
         );
         return chunks;
     }
 
     public test___splitBatchWriteIntoChunks(
         params: BatchWriteCommandInput,
-        maxBatchSize?: number,
+        maxBatchSize?: number
     ): BatchWriteCommandInput[] {
         return this.splitBatchWriteIntoChunks(params, maxBatchSize);
     }
 
     private joinChunksIntoOutputBatchWrite(
         unprocessed: BatchWriteCommandOutput,
-        remaining: BatchWriteCommandInput[],
+        remaining: BatchWriteCommandInput[]
     ): BatchWriteCommandOutput {
         logger.debug(
             `dynamoDb.util joinChunksIntoOutputBatchWrite: in: unprocessed:${JSON.stringify(
-                unprocessed,
-            )}, remaining:${JSON.stringify(remaining)}`,
+                unprocessed
+            )}, remaining:${JSON.stringify(remaining)}`
         );
 
         remaining.forEach((chunk) => {
@@ -285,20 +283,20 @@ export class DynamoDbUtils {
 
         logger.debug(
             `dynamoDb.util joinChunksIntoOutputBatchWrite: exit: unprocessed:${JSON.stringify(
-                unprocessed,
-            )}`,
+                unprocessed
+            )}`
         );
         return unprocessed;
     }
 
     private mergeBatchGetOutput(
         response: BatchGetCommandOutput,
-        toMerge: BatchGetCommandOutput,
+        toMerge: BatchGetCommandOutput
     ): BatchGetCommandOutput {
         logger.debug(
             `dynamoDb.util mergeBatchGetOutput: in: response:${JSON.stringify(
-                response,
-            )}, toMerge:${JSON.stringify(toMerge)}`,
+                response
+            )}, toMerge:${JSON.stringify(toMerge)}`
         );
 
         if (toMerge.Responses) {
@@ -325,7 +323,7 @@ export class DynamoDbUtils {
 
     public test___joinChunksIntoOutputBatchWrite(
         unprocessed: BatchWriteCommandOutput,
-        remaining: BatchWriteCommandInput[],
+        remaining: BatchWriteCommandInput[]
     ): BatchWriteCommandOutput {
         return this.joinChunksIntoOutputBatchWrite(unprocessed, remaining);
     }

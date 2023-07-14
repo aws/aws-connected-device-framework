@@ -28,8 +28,8 @@ export class S3PutObjectCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.info(
             `S3PutObjectCustomResource: create: customResourceEvent:${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const params: AWS.S3.PutObjectRequest = {
@@ -47,8 +47,8 @@ export class S3PutObjectCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.info(
             `S3PutObjectCustomResource: update: customResourceEvent:${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         return await this.create(customResourceEvent);
     }
@@ -56,8 +56,8 @@ export class S3PutObjectCustomResource implements CustomResource {
     public async delete(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.info(
             `S3PutObjectCustomResource: delete: customResourceEvent:${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         return {};
     }

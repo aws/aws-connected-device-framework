@@ -90,7 +90,7 @@ export class VpcInstaller implements InfrastructureModule {
                     },
                 },
             ],
-            answers,
+            answers
         );
 
         if ((answers.vpc?.useExisting ?? false) === false) {
@@ -168,7 +168,7 @@ export class VpcInstaller implements InfrastructureModule {
                                 monorepoRoot,
                                 'source',
                                 'infrastructure',
-                                'cloudformation',
+                                'cloudformation'
                             ),
                         });
                     },
@@ -182,10 +182,10 @@ export class VpcInstaller implements InfrastructureModule {
                         answers.vpc.privateSubnetIds = byOutputKey('PrivateSubnetIds');
                         answers.vpc.publicSubnetIds = byOutputKey('PublicSubnetIds');
                         answers.vpc.privateApiGatewayVpcEndpoint = byOutputKey(
-                            'PrivateApiGatewayVPCEndpoint',
+                            'PrivateApiGatewayVPCEndpoint'
                         );
                     },
-                },
+                }
             );
         }
 

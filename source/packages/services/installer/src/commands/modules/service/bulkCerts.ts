@@ -49,7 +49,7 @@ export class BulkCertificatesInstaller implements RestModule {
         delete answers.bulkCerts?.redeploy;
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
         if ((updatedAnswers.bulkCerts?.redeploy ?? true) === false) {
             return updatedAnswers;
@@ -244,7 +244,7 @@ export class BulkCertificatesInstaller implements RestModule {
                 ]),
                 ...customDomainPrompt(this.name, answers),
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         return updatedAnswers;
@@ -274,7 +274,7 @@ export class BulkCertificatesInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
 
         return parameterOverrides;
@@ -295,7 +295,7 @@ export class BulkCertificatesInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'bulkcerts',
+                            'bulkcerts'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -385,7 +385,7 @@ export class BulkCertificatesInstaller implements RestModule {
             .add(`CERTIFICATE_DEFAULT_EMAILADDRESS`, answers.bulkCerts.emailAddress)
             .add(
                 `CERTIFICATE_DEFAULT_DISTINGUISHEDNAMEQUALIFIER`,
-                answers.bulkCerts.distinguishedNameIdentifier,
+                answers.bulkCerts.distinguishedNameIdentifier
             )
             .add(`CERTIFICATE_DEFAULT_EXPIRYDAYS`, answers.bulkCerts.expiryDays)
             .add(`DEFAULTS_CHUNKSIZE`, answers.bulkCerts.chunksize)

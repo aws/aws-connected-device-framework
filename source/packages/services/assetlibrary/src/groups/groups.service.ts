@@ -33,7 +33,7 @@ export interface GroupsService {
         states: string,
         offset?: number,
         count?: number,
-        sort?: SortKeys,
+        sort?: SortKeys
     ): Promise<GroupMemberItemList>;
 
     getParentGroups(groupPath: string): Promise<GroupItem[]>;
@@ -43,13 +43,13 @@ export interface GroupsService {
     attachToGroup(
         sourceGroupPath: string,
         relationship: string,
-        targetGroupPath: string,
+        targetGroupPath: string
     ): Promise<void>;
 
     detachFromGroup(
         sourceGroupPath: string,
         relationship: string,
-        targetGroupPath: string,
+        targetGroupPath: string
     ): Promise<void>;
 
     listRelatedGroups(
@@ -59,7 +59,7 @@ export interface GroupsService {
         template: string,
         offset: number,
         count: number,
-        sort: SortKeys,
+        sort: SortKeys
     ): Promise<GroupItemList>;
 
     listRelatedDevices(
@@ -70,6 +70,6 @@ export interface GroupsService {
         state: string,
         offset: number,
         count: number,
-        sort: SortKeys,
+        sort: SortKeys
     ): Promise<DeviceItemList>;
 }

@@ -27,7 +27,7 @@ export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepP
     public constructor(
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         @inject('aws.region') private region: string,
-        @inject('aws.accountId') private accountId: string,
+        @inject('aws.accountId') private accountId: string
     ) {
         this._iot = iotFactory();
     }
@@ -35,8 +35,8 @@ export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepP
     public async process(stepData: ProvisioningStepData): Promise<void> {
         logger.debug(
             `things.steps.ClientIdEnforcementPolicyStepProcessor: process: in: stepData:${JSON.stringify(
-                stepData,
-            )}`,
+                stepData
+            )}`
         );
 
         const certificateArn: string = stepData.state?.arns?.certificate;
@@ -45,7 +45,7 @@ export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepP
         await this.createClientIdEnforcementPolicy(
             stepData.template,
             stepData.parameters,
-            certificateArn,
+            certificateArn
         );
         logger.debug(`things.steps.ClientIdEnforcementPolicyStepProcessor: process: exit:`);
     }
@@ -53,10 +53,10 @@ export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepP
     private async createClientIdEnforcementPolicy(
         cdfTemplate: CDFProvisioningTemplate,
         parameters: { [key: string]: string },
-        certificateArn: string,
+        certificateArn: string
     ): Promise<void> {
         logger.debug(
-            `things.steps.ClientIdEnforcementPolicyStepProcessor createClientIdEnforcementPolicy: in: certificateArn:${certificateArn}`,
+            `things.steps.ClientIdEnforcementPolicyStepProcessor createClientIdEnforcementPolicy: in: certificateArn:${certificateArn}`
         );
 
         if (
@@ -114,8 +114,8 @@ export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepP
 
             logger.debug(
                 `creating policy with params:  policyName:${policyName}, policyDocument:${JSON.stringify(
-                    policy,
-                )}`,
+                    policy
+                )}`
             );
 
             // create device specific policy and associate it with the certificate
@@ -135,7 +135,7 @@ export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepP
         await this._iot.attachPolicy(attachPolicyParams).promise();
 
         logger.debug(
-            'things.steps.ClientIdEnforcementPolicyStepProcessor createClientIdEnforcementPolicy: exit:',
+            'things.steps.ClientIdEnforcementPolicyStepProcessor createClientIdEnforcementPolicy: exit:'
         );
     }
 }

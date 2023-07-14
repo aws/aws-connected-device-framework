@@ -22,7 +22,7 @@ import { TYPES } from './di/types';
 const coresService = container.get<CoresService>(TYPES.CoresService);
 const deploymentsService = container.get<DeploymentsService>(TYPES.DeploymentsService);
 const cdfEventPublisher = container.get<CDFEventPublisher>(
-    EVENT_PUBLISHER_TYPES.CDFEventPublisher,
+    EVENT_PUBLISHER_TYPES.CDFEventPublisher
 );
 const deploymentTasksService = container.get<DeploymentTasksService>(TYPES.DeploymentTasksService);
 
@@ -36,7 +36,7 @@ exports.handler = async (event: JobEvent, _context: unknown): Promise<void> => {
     }
     if (event.statusDetails?.['detailed-deployment-status'] === undefined) {
         logger.debug(
-            `lambda_job_execution_proxy handler: ignoring as missing detailed-deployment-status!`,
+            `lambda_job_execution_proxy handler: ignoring as missing detailed-deployment-status!`
         );
         return;
     }
@@ -67,7 +67,7 @@ exports.handler = async (event: JobEvent, _context: unknown): Promise<void> => {
         template.name,
         template.version as number,
         'reported',
-        deploymentStatus,
+        deploymentStatus
     );
 
     await cdfEventPublisher.emitEvent<CoreTemplateUpdatedPayload>({

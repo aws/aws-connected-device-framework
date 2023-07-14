@@ -25,7 +25,7 @@ export class RunsDao {
     private _deviceStateTable: string;
 
     public constructor(
-        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DocumentClient,
+        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DocumentClient
     ) {
         this._dc = documentClientFactory();
         this._simulationTable = process.env.AWS_DYNAMODB_TABLE_SIMULATIONS;

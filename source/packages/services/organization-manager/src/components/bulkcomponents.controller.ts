@@ -40,17 +40,17 @@ export class BulkComponentsController implements interfaces.Controller {
     public async bulkCreateComponents(
         @requestParam('organizationalUnitId') organizationalUnitId: string,
         @requestBody() bulkComponentsResource: BulkComponentsResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<BulkComponentsResult> {
         logger.info(
             `bulkComponents.controller  bulkCreateComponents: in: components:${JSON.stringify(
-                bulkComponentsResource,
-            )}`,
+                bulkComponentsResource
+            )}`
         );
         try {
             const result = await this.componentsService.createBulk(
                 organizationalUnitId,
-                bulkComponentsResource.components,
+                bulkComponentsResource.components
             );
             res.status(201);
             return result;
@@ -63,10 +63,10 @@ export class BulkComponentsController implements interfaces.Controller {
     @httpGet('/organizationalUnits/:organizationalUnitId/bulkcomponents')
     public async bulkGetComponents(
         @requestParam('organizationalUnitId') organizationalUnitId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<ComponentResource[]> {
         logger.info(
-            `bulkComponents.controller  bulkGetComponents: in: ouName:${organizationalUnitId}`,
+            `bulkComponents.controller  bulkGetComponents: in: ouName:${organizationalUnitId}`
         );
         try {
             const resources = await this.componentsService.getBulk(organizationalUnitId);
@@ -81,10 +81,10 @@ export class BulkComponentsController implements interfaces.Controller {
     @httpDelete('/organizationalUnits/:organizationalUnitId/bulkcomponents')
     public async bulkDeleteComponents(
         @requestParam('organizationalUnitId') organizationalUnitId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `bulkComponents.controller  bulkGetComponents: in: ouName:${organizationalUnitId}`,
+            `bulkComponents.controller  bulkGetComponents: in: ouName:${organizationalUnitId}`
         );
         try {
             await this.componentsService.deleteBulk(organizationalUnitId);

@@ -27,7 +27,7 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -49,7 +49,7 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
     async listInheritedPoliciesByDevice(
         deviceId: string,
         type: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<PolicyList> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(type, 'type', ow.string.nonEmpty);
@@ -90,7 +90,7 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
         type: string,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<PolicyList> {
         ow(type, 'type', ow.string.nonEmpty);
 
@@ -123,7 +123,7 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
     async patchPolicy(
         policyId: string,
         body: Policy,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(policyId, 'policyId', ow.string.nonEmpty);
         ow(body, 'body', ow.object.nonEmpty);

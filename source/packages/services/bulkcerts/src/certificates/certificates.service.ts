@@ -50,7 +50,7 @@ export class CertificatesService {
         @inject('aws.s3.certificates.prefix') private certificatesPrefix: string,
         @inject('defaults.chunkSize') private defaultChunkSize: number,
         @inject('deviceCertificateExpiryDays') private defaultDaysExpiry: number,
-        @inject('aws.acm.concurrency.limit') private acmConcurrencyLimit: number,
+        @inject('aws.acm.concurrency.limit') private acmConcurrencyLimit: number
     ) {
         this._iot = iotFactory();
         this._s3 = s3Factory();
@@ -81,14 +81,14 @@ export class CertificatesService {
                 req.quantity,
                 req.certInfo,
                 rootCACertId,
-                req.chunkId,
+                req.chunkId
             );
         } else {
             certsZip = await this.createChunkWithCustomerCa(
                 req.quantity,
                 rootCACertId,
                 req.certInfo,
-                req.chunkId,
+                req.chunkId
             );
         }
 
@@ -99,14 +99,14 @@ export class CertificatesService {
         await this.uploadStreamToS3(
             this.certificatesBucket,
             `${this.certificatesPrefix}${s3Prefix}certs.zip`,
-            zipStream,
+            zipStream
         );
 
         // update chunk
         await this.taskDao.updateTaskChunkLocation(
             req.taskId,
             req.chunkId,
-            `s3://${this.certificatesBucket}/${this.certificatesPrefix}${s3Prefix}certs.zip`,
+            `s3://${this.certificatesBucket}/${this.certificatesPrefix}${s3Prefix}certs.zip`
         );
 
         logger.debug('certificates.service createChunk: exit:');
@@ -116,12 +116,12 @@ export class CertificatesService {
         quantity: number,
         caId: string,
         certInfo: CertificateInfo,
-        chunkId: number,
+        chunkId: number
     ): Promise<JSZip> {
         logger.debug(
             `certificates.service createChunkWithCustomerCa: in: quantity: ${quantity}, caId: ${caId}, certInfo: ${JSON.stringify(
-                certInfo,
-            )}, chunkId: ${chunkId}`,
+                certInfo
+            )}, chunkId: ${chunkId}`
         );
 
         const jszip = new JSZip();
@@ -145,7 +145,7 @@ export class CertificatesService {
                 csr,
                 deviceCertInfo.daysExpiry ?? this.defaultDaysExpiry,
                 rootKey,
-                rootPem,
+                rootPem
             );
             const certId = await this.getCertFingerprint(certificate);
 
@@ -166,12 +166,12 @@ export class CertificatesService {
     private async createChunkWithAwsIotCa(
         quantity: number,
         certInfo: CertificateInfo,
-        chunkId: number,
+        chunkId: number
     ): Promise<JSZip> {
         logger.debug(
             `certificates.service createChunkWithAwsIotCa: in: quantity: ${quantity}, certInfo: ${JSON.stringify(
-                certInfo,
-            )} , chunkId: ${chunkId}`,
+                certInfo
+            )} , chunkId: ${chunkId}`
         );
 
         const jszip = new JSZip();
@@ -201,14 +201,14 @@ export class CertificatesService {
         quantity: number,
         certInfo: CertificateInfo,
         caArn: string,
-        chunkId: number,
+        chunkId: number
     ): Promise<JSZip> {
         logger.info(
             `certificates.service createChunkWithACM: in: quantity: ${quantity}, certInfo: ${JSON.stringify(
-                certInfo,
+                certInfo
             )}, caArn: ${caArn}, chunkId: ${chunkId}, ACM Concurrency Limit:${
                 this.acmConcurrencyLimit
-            }`,
+            }`
         );
 
         const jszip = new JSZip();
@@ -225,7 +225,7 @@ export class CertificatesService {
                 limit(async () => {
                     const response = await this.createCertificateWithAcm(i, certInfo, caArn);
                     return response;
-                }),
+                })
             );
         }
 
@@ -242,7 +242,7 @@ export class CertificatesService {
     private async createCertificateWithAcm(
         index: number,
         certInfo: CertificateInfo,
-        caArn: string,
+        caArn: string
     ): Promise<ACMCertificate> {
         const privateKey = await this.createPrivateKey();
         certInfo.commonName = await this.createCommonName(certInfo.commonName, index);
@@ -251,7 +251,7 @@ export class CertificatesService {
         const certificateResponse: ACMCertificate = await this.getACMCertificate(
             csr,
             certInfo,
-            caArn,
+            caArn
         );
         certificateResponse.privateKey = privateKey;
 
@@ -260,7 +260,7 @@ export class CertificatesService {
 
     public async getCertificates(
         taskId: string,
-        downloadType: string,
+        downloadType: string
     ): Promise<string | string[]> {
         logger.debug(`certificates.service getCertificates: in: taskId: ${taskId}`);
 
@@ -276,14 +276,14 @@ export class CertificatesService {
         if (typeof downloadType !== 'undefined' && downloadType === 'signedUrl') {
             const signedURLs: string[] = await this.getS3SignedUrl(locations);
             logger.debug(
-                `bulkcertificates.service getBulkCertificates: signedURLs: ${signedURLs}`,
+                `bulkcertificates.service getBulkCertificates: signedURLs: ${signedURLs}`
             );
             return signedURLs;
         } else {
             // combine smaller zips into one zip file to be returned
             const finalZipLocation: string = await this.createZipFromZips(locations);
             logger.debug(
-                `bulkcertificates.service getBulkCertificates: finalZipLocation: ${finalZipLocation}`,
+                `bulkcertificates.service getBulkCertificates: finalZipLocation: ${finalZipLocation}`
             );
             return finalZipLocation;
         }
@@ -340,7 +340,7 @@ export class CertificatesService {
             for (const location of locations) {
                 const bucket: string = location.split('/')[2];
                 const key: string = location.substring(
-                    bucket.length + 's3://'.length + '/'.length,
+                    bucket.length + 's3://'.length + '/'.length
                 );
 
                 const params = {
@@ -381,7 +381,7 @@ export class CertificatesService {
 
         const deleteResponse = await this.deleteCertificates(taskId);
         logger.debug(
-            `certificates.service deleteBatch: exit: response: ${JSON.stringify(deleteResponse)}`,
+            `certificates.service deleteBatch: exit: response: ${JSON.stringify(deleteResponse)}`
         );
         return true;
     }
@@ -425,7 +425,7 @@ export class CertificatesService {
         csr: string,
         days: number,
         rootKey: string,
-        rootPem: string,
+        rootPem: string
     ): Promise<string> {
         return new Promise((resolve: any, reject: any) => {
             pem.createCertificate(
@@ -435,7 +435,7 @@ export class CertificatesService {
                         return reject(err);
                     }
                     return resolve(data.certificate);
-                },
+                }
             );
         });
     }
@@ -470,7 +470,7 @@ export class CertificatesService {
     }
 
     private async getAwsIotCertificate(
-        csr: string,
+        csr: string
     ): Promise<AWS.Iot.CreateCertificateFromCsrResponse> {
         const params: AWS.Iot.CreateCertificateFromCsrRequest = {
             certificateSigningRequest: csr,
@@ -485,7 +485,7 @@ export class CertificatesService {
     private async getACMCertificate(
         csr: string,
         certInfo: CertificateInfo,
-        caArn: string,
+        caArn: string
     ): Promise<ACMCertificate> {
         const params: AWS.ACMPCA.IssueCertificateRequest = {
             Csr: csr,
@@ -551,7 +551,7 @@ export class CertificatesService {
     private async uploadStreamToS3(
         bucket: string,
         key: string,
-        body: NodeJS.ReadableStream,
+        body: NodeJS.ReadableStream
     ): Promise<string> {
         const params = {
             Bucket: bucket,
@@ -587,7 +587,7 @@ export class CertificatesService {
 
     private async createCommonName(
         commonName: CommonName | string,
-        count: number,
+        count: number
     ): Promise<string> {
         let commonNameValue: string;
         if (typeof commonName === 'object') {

@@ -36,7 +36,7 @@ export class CertUtils {
     // generate certificate signing request
     public createCSR(privateKey: string, certInfo: CertInfo): Promise<string> {
         logger.debug(
-            `CertUtils: createCSR: in: privateKey: REDACTED, certInfo:${JSON.stringify(certInfo)}`,
+            `CertUtils: createCSR: in: privateKey: REDACTED, certInfo:${JSON.stringify(certInfo)}`
         );
         /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve: any, reject: any) => {
@@ -63,7 +63,7 @@ export class CertUtils {
 
     public async registerCertificateWithoutCA(
         certificatePem: string,
-        status: CertificateStatus,
+        status: CertificateStatus
     ): Promise<RegisterCertificateWithoutCAResponse> {
         logger.debug(`CertUtils: registerCertificateWithoutCA: in: ${certificatePem}`);
 

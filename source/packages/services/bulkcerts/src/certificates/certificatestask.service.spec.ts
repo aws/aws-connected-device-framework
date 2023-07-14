@@ -48,7 +48,7 @@ describe('CertificatesService', () => {
             testChunkSize,
             testDaysExpiry,
             mockedCertificatesTaskDao,
-            mockSNSFactory,
+            mockSNSFactory
         );
     });
 

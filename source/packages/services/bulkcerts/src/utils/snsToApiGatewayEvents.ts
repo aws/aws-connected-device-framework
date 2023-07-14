@@ -16,8 +16,8 @@ export class SnsToApiGatewayEvents {
     public buildApiGatewayEventFromSnsEvent(subject: string, snsMessage: Message): string {
         logger.debug(
             `snsToApiGatewayEvents buildApiGatewayEventFromSnsEvent: in: subject:${subject}, snsMessage:${JSON.stringify(
-                snsMessage,
-            )}`,
+                snsMessage
+            )}`
         );
 
         let event: string;
@@ -30,8 +30,8 @@ export class SnsToApiGatewayEvents {
 
         logger.debug(
             `snsToApiGatewayEvents buildApiGatewayEventFromSnsEvent: exit: event:${JSON.stringify(
-                event,
-            )}`,
+                event
+            )}`
         );
         return event;
     }

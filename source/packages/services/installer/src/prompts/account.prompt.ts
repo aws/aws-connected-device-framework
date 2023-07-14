@@ -23,7 +23,7 @@ export async function getCurrentAwsAccountId(region: string): Promise<string> {
 export async function getCurrentIotCredentialEndpoint(region: string): Promise<string> {
     const iot = new IoTClient({ region });
     const r = await iot.send(
-        new DescribeEndpointCommand({ endpointType: 'iot:CredentialProvider' }),
+        new DescribeEndpointCommand({ endpointType: 'iot:CredentialProvider' })
     );
     return r?.endpointAddress;
 }

@@ -41,15 +41,15 @@ export class ProfilesServiceFull implements ProfilesService {
         @inject(TYPES.ProfilesAssembler) private profilesAssembler: ProfilesAssembler,
         @inject(TYPES.ProfilesDao) private profilesDao: ProfilesDaoFull,
         @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,
-        @inject(TYPES.TypesService) private typesService: TypesService,
+        @inject(TYPES.TypesService) private typesService: TypesService
     ) {}
 
     public async get(
         templateId: string,
-        profileId: string,
+        profileId: string
     ): Promise<DeviceProfileItem | GroupProfileItem> {
         logger.debug(
-            `profiles.full.service get: in: templateId:${templateId}, profileId:${profileId}`,
+            `profiles.full.service get: in: templateId:${templateId}, profileId:${profileId}`
         );
 
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -87,7 +87,7 @@ export class ProfilesServiceFull implements ProfilesService {
         const template = await this.typesService.get(
             profile.templateId,
             model.category,
-            TypeDefinitionStatus.published,
+            TypeDefinitionStatus.published
         );
         if (template === undefined) {
             throw new TemplateNotFoundError(profile.templateId);
@@ -95,12 +95,12 @@ export class ProfilesServiceFull implements ProfilesService {
         const validateSubTypeFuture = this.validator.validateSubType(
             template,
             profile,
-            Operation.UPDATE,
+            Operation.UPDATE
         );
         const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(
             template,
             profile.groups,
-            undefined,
+            undefined
         );
         const [subTypeValidation, validateRelationships] = await Promise.all([
             validateSubTypeFuture,
@@ -207,7 +207,7 @@ export class ProfilesServiceFull implements ProfilesService {
 
     public async delete(templateId: string, profileId: string): Promise<void> {
         logger.debug(
-            `profiles.full.service delete: in: templateId:${templateId}, profileId:${profileId}`,
+            `profiles.full.service delete: in: templateId:${templateId}, profileId:${profileId}`
         );
 
         ow(templateId, 'templateId', ow.string.nonEmpty);

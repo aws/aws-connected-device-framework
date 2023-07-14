@@ -35,7 +35,7 @@ export class ManifestService {
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
         @inject('aws.s3.controltower.bucket') private bucket: string,
         @inject('aws.s3.controltower.prefix') private prefix: string,
-        @inject('aws.s3.controltower.filename') private filename: string,
+        @inject('aws.s3.controltower.filename') private filename: string
     ) {
         this._s3 = s3Factory();
     }
@@ -54,12 +54,12 @@ export class ManifestService {
     }
 
     private async assembleComponentsByOrganizationalUnitMap(
-        organizationalUnits: string[],
+        organizationalUnits: string[]
     ): Promise<ComponentsByOrganizationalUnitMap> {
         logger.debug(
             `manifest.service assembleComponentsByOrganizationalUnitMap: in: organizationalUnits:${JSON.stringify(
-                organizationalUnits,
-            )}`,
+                organizationalUnits
+            )}`
         );
         const map = {};
         for (const ouName of organizationalUnits) {
@@ -68,8 +68,8 @@ export class ManifestService {
         }
         logger.debug(
             `manifest.service assembleComponentsByOrganizationalUnitMap: exit: map:${JSON.stringify(
-                map,
-            )}`,
+                map
+            )}`
         );
         return map;
     }
@@ -78,10 +78,10 @@ export class ManifestService {
         logger.debug(`manifest.service getComponentsManifests: in:`);
         const organizationalUnitItems = await this.organizationalUnitsDao.getOrganizationalUnits();
         const componentsMap = await this.assembleComponentsByOrganizationalUnitMap(
-            organizationalUnitItems.map((o) => o.id),
+            organizationalUnitItems.map((o) => o.id)
         );
         const accountsRegionsMap = await this.templatesDao.getRegionAccountForOus(
-            organizationalUnitItems.map((o) => o.id),
+            organizationalUnitItems.map((o) => o.id)
         );
         const manifest = this.templatesAssembler.toManifest(componentsMap, accountsRegionsMap);
         logger.debug(`manifest.service getComponentsManifests: out: ${JSON.stringify(manifest)}`);
@@ -92,7 +92,7 @@ export class ManifestService {
         const configurationKey =
             this.prefix === '' ? this.filename : `${this.prefix}/${this.filename}`;
         logger.debug(
-            `manifest.service uploadStreamToS3: in: bucket: ${this.bucket} key: ${configurationKey}`,
+            `manifest.service uploadStreamToS3: in: bucket: ${this.bucket} key: ${configurationKey}`
         );
         return new Promise((resolve: any, reject: any) => {
             const params: PutObjectRequest = {

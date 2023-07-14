@@ -41,7 +41,7 @@ export class CommandsDao {
     public constructor(
         @inject('aws.dynamoDb.table') private table: string,
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
-        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DynamoDB.DocumentClient,
+        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
     }
@@ -74,17 +74,17 @@ export class CommandsDao {
 
     public async list(
         exclusiveStart?: CommandListPaginationKey,
-        count?: number,
+        count?: number
     ): Promise<[CommandItem[], CommandListPaginationKey]> {
         logger.debug(
-            `commands.dao list: exclusiveStart:${JSON.stringify(exclusiveStart)}, count:${count}`,
+            `commands.dao list: exclusiveStart:${JSON.stringify(exclusiveStart)}, count:${count}`
         );
 
         let exclusiveStartKey: DocumentClient.Key;
         if (exclusiveStart?.commandId) {
             const lastCommandId = createDelimitedAttribute(
                 PkType.Command,
-                exclusiveStart.commandId,
+                exclusiveStart.commandId
             );
             exclusiveStartKey = {
                 pk: lastCommandId,
@@ -121,7 +121,7 @@ export class CommandsDao {
         let paginationKey: CommandListPaginationKey;
         if (results.LastEvaluatedKey) {
             const lastEvaluatedCommandId = expandDelimitedAttribute(
-                results.LastEvaluatedKey.pk,
+                results.LastEvaluatedKey.pk
             )[1];
             paginationKey = {
                 commandId: lastEvaluatedCommandId,
@@ -136,12 +136,12 @@ export class CommandsDao {
         tagKey: string,
         tagValue: string,
         exclusiveStart?: CommandListIdsByTagPaginationKey,
-        count?: number,
+        count?: number
     ): Promise<[string[], CommandListIdsByTagPaginationKey]> {
         logger.debug(
             `commands.dao listIds: tagKey:${tagKey}, tagValue:${tagValue}, exclusiveStart:${JSON.stringify(
-                exclusiveStart,
-            )}, count:${count}`,
+                exclusiveStart
+            )}, count:${count}`
         );
 
         let exclusiveStartKey: DocumentClient.Key;
@@ -152,7 +152,7 @@ export class CommandsDao {
                     PkType.Tag,
                     exclusiveStart.tagValue,
                     PkType.Command,
-                    exclusiveStart.commandId,
+                    exclusiveStart.commandId
                 ),
             };
         }
@@ -223,8 +223,8 @@ export class CommandsDao {
     public async save(command: CommandItem, tagsToDelete?: Tags): Promise<void> {
         logger.debug(
             `commands.dao save: in: command:${JSON.stringify(
-                command,
-            )}, tagsToDelete:${JSON.stringify(tagsToDelete)}`,
+                command
+            )}, tagsToDelete:${JSON.stringify(tagsToDelete)}`
         );
 
         const params: DocumentClient.BatchWriteItemInput = {
@@ -273,7 +273,7 @@ export class CommandsDao {
                                 PkType.Tag,
                                 v,
                                 PkType.Command,
-                                command.id,
+                                command.id
                             ),
                         },
                     },
@@ -293,7 +293,7 @@ export class CommandsDao {
                                 PkType.Tag,
                                 v,
                                 PkType.Command,
-                                command.id,
+                                command.id
                             ),
                         },
                     },
@@ -307,7 +307,7 @@ export class CommandsDao {
         logger.silly(`commands.dao save: r:${JSON.stringify(r)}`);
         if (this.dynamoDbUtils.hasUnprocessedItems(r)) {
             logger.error(
-                `commands.dao save: has unprocessed items: ${JSON.stringify(r.UnprocessedItems)}`,
+                `commands.dao save: has unprocessed items: ${JSON.stringify(r.UnprocessedItems)}`
             );
             throw new Error('SAVE_COMMAND_FAILED');
         }
@@ -353,9 +353,7 @@ export class CommandsDao {
         logger.silly(`commands.dao delete: r:${JSON.stringify(r)}`);
         if (this.dynamoDbUtils.hasUnprocessedItems(r)) {
             logger.error(
-                `commands.dao delete: has unprocessed items: ${JSON.stringify(
-                    r.UnprocessedItems,
-                )}`,
+                `commands.dao delete: has unprocessed items: ${JSON.stringify(r.UnprocessedItems)}`
             );
             throw new Error('DELETE_COMMAND_FAILED');
         }

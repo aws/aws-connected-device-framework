@@ -23,7 +23,7 @@ export class TemplatesDao {
     public constructor(
         @inject('tables.templates') private templatesTable: string,
         @inject(TYPES.DocumentClientFactory)
-        documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
     }
@@ -121,7 +121,7 @@ export class TemplatesDao {
         };
         if (response.Item['jobExecutionsRolloutConfig']) {
             template.jobExecutionsRolloutConfig = JSON.parse(
-                response.Item['jobExecutionsRolloutConfig'],
+                response.Item['jobExecutionsRolloutConfig']
             );
         }
         if (response.Item['abortConfig']) {

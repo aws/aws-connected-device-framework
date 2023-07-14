@@ -167,7 +167,7 @@ describe('TemplatesService', function () {
             mockS3Factory,
             'bucket',
             'prefix',
-            'fakeFilename',
+            'fakeFilename'
         );
     });
 
@@ -177,7 +177,7 @@ describe('TemplatesService', function () {
         // @ts-ignore
         mockS3.upload = (
             params: S3.Types.PutObjectRequest,
-            callback?: (err: Error, data: ManagedUpload.SendData) => void,
+            callback?: (err: Error, data: ManagedUpload.SendData) => void
         ): ManagedUpload => {
             fileStream = params.Body as NodeJS.ReadableStream;
             callback(null, { eTag: 'somefakeEtag' } as unknown as ManagedUpload.SendData);

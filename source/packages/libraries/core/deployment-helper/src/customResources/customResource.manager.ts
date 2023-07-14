@@ -90,7 +90,7 @@ export class CustomResourceManager {
         protected eventSourceCustomResource: EventSourceCustomResource,
         @inject(TYPES.EventsCustomResource) protected eventsCustomResource: EventsCustomResource,
         @inject(TYPES.StackEventsCustomResource)
-        protected stackEventsCustomResource: StackEventsCustomResource,
+        protected stackEventsCustomResource: StackEventsCustomResource
     ) {
         this.customResources = {};
 

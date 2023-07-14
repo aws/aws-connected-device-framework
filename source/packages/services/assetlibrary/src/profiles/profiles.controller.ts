@@ -42,7 +42,7 @@ import { ProfilesService } from './profiles.service';
 export class ProfilesController implements interfaces.Controller {
     constructor(
         @inject(TYPES.ProfilesService) private profilesService: ProfilesService,
-        @inject(TYPES.ProfilesAssembler) private assembler: ProfilesAssembler,
+        @inject(TYPES.ProfilesAssembler) private assembler: ProfilesAssembler
     ) {}
 
     @httpPost('')
@@ -50,12 +50,12 @@ export class ProfilesController implements interfaces.Controller {
         @requestParam('category') category: TypeCategory,
         @requestParam('templateId') templateId: string,
         @requestBody() profile: DeviceProfileResource | GroupProfileResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
             `profiles.controller  createProfile: in: category:${category}, template:${templateId}, profile:${JSON.stringify(
-                profile,
-            )}`,
+                profile
+            )}`
         );
 
         profile.templateId = templateId;
@@ -79,10 +79,10 @@ export class ProfilesController implements interfaces.Controller {
         @requestParam('templateId') templateId: string,
         @requestParam('profileId') profileId: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<DeviceProfileResource | GroupProfileResource> {
         logger.info(
-            `profiles.controller getProfile: in: category:${category}, template:${templateId}, profileId:${profileId}`,
+            `profiles.controller getProfile: in: category:${category}, template:${templateId}, profileId:${profileId}`
         );
 
         let resource: DeviceProfileResource | GroupProfileResource;
@@ -94,12 +94,12 @@ export class ProfilesController implements interfaces.Controller {
             if (category === 'device') {
                 resource = this.assembler.toDeviceProfileResource(
                     item as DeviceProfileItem,
-                    req['version'],
+                    req['version']
                 );
             } else {
                 resource = this.assembler.toGroupProfileResource(
                     item as GroupProfileItem,
-                    req['version'],
+                    req['version']
                 );
             }
         } catch (e) {
@@ -115,10 +115,10 @@ export class ProfilesController implements interfaces.Controller {
         @requestParam('templateId') templateId: string,
         @requestParam('profileId') profileId: string,
         @requestBody() profile: DeviceProfileResource | GroupProfileResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `profiles.controller updateProfile: in: category:${category}, template:${templateId}, profileId:${profileId}`,
+            `profiles.controller updateProfile: in: category:${category}, template:${templateId}, profileId:${profileId}`
         );
         try {
             profile.profileId = profileId;
@@ -149,10 +149,10 @@ export class ProfilesController implements interfaces.Controller {
         @requestParam('category') category: TypeCategory,
         @requestParam('templateId') templateId: string,
         @requestParam('profileId') profileId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `profiles.controller deleteProfile: in: category:${category}, template:${templateId}, profileId:${profileId}`,
+            `profiles.controller deleteProfile: in: category:${category}, template:${templateId}, profileId:${profileId}`
         );
         try {
             await this.profilesService.delete(templateId, profileId);
@@ -166,10 +166,10 @@ export class ProfilesController implements interfaces.Controller {
         @requestParam('category') category: TypeCategory,
         @requestParam('templateId') templateId: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<ProfileResourceList> {
         logger.info(
-            `profiles.controller listProfiles: in: category:${category}, template:${templateId}`,
+            `profiles.controller listProfiles: in: category:${category}, template:${templateId}`
         );
 
         let resources: ProfileResourceList;

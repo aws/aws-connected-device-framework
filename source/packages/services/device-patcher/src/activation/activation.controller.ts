@@ -35,16 +35,16 @@ import { ActivationService } from './activation.service';
 export class ActivationController implements interfaces.Controller {
     public constructor(
         @inject(TYPES.ActivationService) private activationService: ActivationService,
-        @inject(TYPES.ActivationAssembler) private activationAssembler: ActivationAssembler,
+        @inject(TYPES.ActivationAssembler) private activationAssembler: ActivationAssembler
     ) {}
 
     @httpPost('/activations')
     public async createActivation(
         @requestBody() activation: ActivationResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<ActivationResource> {
         logger.info(
-            `Activation.controller createActivation: in: item:${JSON.stringify(activation)}`,
+            `Activation.controller createActivation: in: item:${JSON.stringify(activation)}`
         );
 
         let resource: ActivationResource;
@@ -65,7 +65,7 @@ export class ActivationController implements interfaces.Controller {
     @httpGet('/activations/:activationId')
     public async getActivation(
         @response() res: Response,
-        @requestParam('activationId') activationId: string,
+        @requestParam('activationId') activationId: string
     ): Promise<ActivationResource> {
         logger.debug(`activation.controller getActivation: in: activationId:${activationId}`);
 
@@ -85,7 +85,7 @@ export class ActivationController implements interfaces.Controller {
     @httpDelete('/activations/:activationId')
     public async deleteActivation(
         @response() res: Response,
-        @requestParam('activationId') activationId: string,
+        @requestParam('activationId') activationId: string
     ): Promise<void> {
         logger.debug(`activation.controller: in: activationId: ${activationId}`);
 

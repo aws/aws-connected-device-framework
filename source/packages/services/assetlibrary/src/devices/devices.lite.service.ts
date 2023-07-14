@@ -30,7 +30,7 @@ export class DevicesServiceLite implements DevicesService {
         @inject(TYPES.DevicesDao) private devicesDao: DevicesDaoLite,
         @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoLite,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
-        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
+        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter
     ) {}
 
     public async listRelatedDevices(
@@ -40,7 +40,7 @@ export class DevicesServiceLite implements DevicesService {
         _template: string,
         _state: string,
         _offset: number,
-        _count: number,
+        _count: number
     ): Promise<DeviceItemList> {
         throw new NotSupportedError();
     }
@@ -49,7 +49,7 @@ export class DevicesServiceLite implements DevicesService {
         deviceId: string,
         _expandComponents?: boolean,
         _attributes?: string[],
-        _includeGroups?: boolean,
+        _includeGroups?: boolean
     ): Promise<DeviceItem> {
         logger.debug(`devices.lite.service get: in: deviceId:${deviceId}`);
 
@@ -67,7 +67,7 @@ export class DevicesServiceLite implements DevicesService {
         deviceIds: string[],
         _expandComponents?: boolean,
         _attributes?: string[],
-        _includeGroups?: boolean,
+        _includeGroups?: boolean
     ): Promise<DeviceItemList> {
         logger.debug(`devices.lite.service getBulk: in: deviceIds:${deviceIds}`);
 
@@ -84,7 +84,7 @@ export class DevicesServiceLite implements DevicesService {
 
     public async createBulk(
         _devices: DeviceItem[],
-        _applyProfile?: string,
+        _applyProfile?: string
     ): Promise<BulkDevicesResult> {
         throw new NotSupportedError();
     }
@@ -92,8 +92,8 @@ export class DevicesServiceLite implements DevicesService {
     public async create(model: DeviceItem, applyProfile?: string): Promise<string> {
         logger.debug(
             `devices.lite.service create: in: model: ${JSON.stringify(
-                model,
-            )}, applyProfile:${applyProfile}`,
+                model
+            )}, applyProfile:${applyProfile}`
         );
 
         ow(model, ow.object.nonEmpty);
@@ -114,7 +114,7 @@ export class DevicesServiceLite implements DevicesService {
         const groupIds: string[] = [];
         if (model.groups?.out) {
             Object.keys(model.groups.out).forEach((relation) =>
-                groupIds.push(...Object.values(model.groups.out[relation]).map((e) => e.id)),
+                groupIds.push(...Object.values(model.groups.out[relation]).map((e) => e.id))
             );
         }
 
@@ -142,7 +142,7 @@ export class DevicesServiceLite implements DevicesService {
 
     public async updateBulk(
         _devices: DeviceItem[],
-        _applyProfile?: string,
+        _applyProfile?: string
     ): Promise<BulkDevicesResult> {
         throw new NotSupportedError();
     }
@@ -150,8 +150,8 @@ export class DevicesServiceLite implements DevicesService {
     public async update(model: DeviceItem, applyProfile?: string): Promise<void> {
         logger.debug(
             `devices.lite.service update: in: model: ${JSON.stringify(
-                model,
-            )}, applyProfile:${applyProfile}`,
+                model
+            )}, applyProfile:${applyProfile}`
         );
 
         ow(model, ow.object.nonEmpty);
@@ -210,10 +210,10 @@ export class DevicesServiceLite implements DevicesService {
         deviceId: string,
         _relationship: string,
         _direction: string,
-        groupPath: string,
+        groupPath: string
     ): Promise<void> {
         logger.debug(
-            `device.lite.service attachToGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`,
+            `device.lite.service attachToGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -241,10 +241,10 @@ export class DevicesServiceLite implements DevicesService {
         deviceId: string,
         _relationship: string,
         _direction: string,
-        groupPath: string,
+        groupPath: string
     ): Promise<void> {
         logger.debug(
-            `device.lite.service detachFromGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`,
+            `device.lite.service detachFromGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -271,7 +271,7 @@ export class DevicesServiceLite implements DevicesService {
     detachFromGroups(
         _deviceId: string,
         _relationship?: string,
-        _direction?: string,
+        _direction?: string
     ): Promise<void> {
         throw new NotSupportedError();
     }
@@ -280,7 +280,7 @@ export class DevicesServiceLite implements DevicesService {
         _deviceId: string,
         _relationship: string,
         _direction: string,
-        _otherDeviceId: string,
+        _otherDeviceId: string
     ): Promise<void> {
         throw new NotSupportedError();
     }
@@ -289,7 +289,7 @@ export class DevicesServiceLite implements DevicesService {
         _deviceId: string,
         _relationship: string,
         _direction: string,
-        _otherDeviceId: string,
+        _otherDeviceId: string
     ): Promise<void> {
         throw new NotSupportedError();
     }
@@ -298,7 +298,7 @@ export class DevicesServiceLite implements DevicesService {
         _deviceId: string,
         _template?: string,
         _relationship?: string,
-        _direction?: string,
+        _direction?: string
     ): Promise<void> {
         throw new NotSupportedError();
     }
@@ -306,7 +306,7 @@ export class DevicesServiceLite implements DevicesService {
     public async updateComponent(
         _deviceId: string,
         _componentId: string,
-        _model: DeviceItem,
+        _model: DeviceItem
     ): Promise<void> {
         throw new NotSupportedError();
     }
@@ -325,7 +325,7 @@ export class DevicesServiceLite implements DevicesService {
         _direction: string,
         _template: string,
         _offset: number,
-        _count: number,
+        _count: number
     ): Promise<GroupItemList> {
         throw new NotSupportedError();
     }

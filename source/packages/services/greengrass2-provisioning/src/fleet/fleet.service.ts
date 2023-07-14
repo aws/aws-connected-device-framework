@@ -24,7 +24,7 @@ import { TemplateUsage } from './fleet.model';
 export class FleetService {
     public constructor(
         @inject(TYPES.TemplatesService) private templatesService: TemplatesService,
-        @inject(TYPES.FleetDao) private dao: FleetDao,
+        @inject(TYPES.FleetDao) private dao: FleetDao
     ) {}
 
     public async listTemplateUsage(): Promise<TemplateUsage> {
@@ -107,12 +107,12 @@ export class FleetService {
     public async aggregateTemplateStatusChange(
         type: 'desired' | 'reported',
         oldTemplate?: TemplateAttributes,
-        newTemplate?: TemplateAttributes,
+        newTemplate?: TemplateAttributes
     ): Promise<void> {
         logger.debug(
             `fleet.service aggregateTemplateStatusChange: in: type:${type}, oldTemplate:${JSON.stringify(
-                oldTemplate,
-            )}, newTemplate:${JSON.stringify(newTemplate)}`,
+                oldTemplate
+            )}, newTemplate:${JSON.stringify(newTemplate)}`
         );
 
         ow(type, ow.string.oneOf(['desired', 'reported']));
@@ -123,12 +123,12 @@ export class FleetService {
                     type,
                     oldTemplate.name,
                     oldTemplate.version,
-                    oldTemplate.deploymentStatus,
+                    oldTemplate.deploymentStatus
                 );
             }
         } catch (e) {
             logger.error(
-                `fleet.service aggregateTemplateStatusChange: failed decrementing usage: ${e.name}`,
+                `fleet.service aggregateTemplateStatusChange: failed decrementing usage: ${e.name}`
             );
         }
 
@@ -138,12 +138,12 @@ export class FleetService {
                     type,
                     newTemplate.name,
                     newTemplate.version,
-                    newTemplate.deploymentStatus,
+                    newTemplate.deploymentStatus
                 );
             }
         } catch (e) {
             logger.error(
-                `fleet.service aggregateTemplateStatusChange: failed incrementing usage: ${e.name}`,
+                `fleet.service aggregateTemplateStatusChange: failed incrementing usage: ${e.name}`
             );
         }
 
@@ -152,7 +152,7 @@ export class FleetService {
 
     public async initializeTemplateStatistics(name: string, version: number): Promise<void> {
         logger.debug(
-            `fleet.service initializeTemplateStatistics: in: name:${name}, version:${version} `,
+            `fleet.service initializeTemplateStatistics: in: name:${name}, version:${version} `
         );
 
         ow(name, ow.string.nonEmpty);
@@ -162,7 +162,7 @@ export class FleetService {
             await this.dao.initializeTemplateStatistics(name, version);
         } catch (e) {
             logger.error(
-                `fleet.service initializeTemplateStatistics: failed initializong template statistics: ${e.name}`,
+                `fleet.service initializeTemplateStatistics: failed initializong template statistics: ${e.name}`
             );
         }
 

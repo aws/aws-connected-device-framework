@@ -18,7 +18,12 @@ import { TYPES } from '../di/types';
 
 import { BaseDaoFull } from '../data/base.full.dao';
 import { TypeCategory } from './constants';
-import { TypeDefinitionStatus, TypeModel, TypeRelationsModel, TypeVersionModel } from './types.models';
+import {
+    TypeDefinitionStatus,
+    TypeModel,
+    TypeRelationsModel,
+    TypeVersionModel,
+} from './types.models';
 
 const __ = process.statics;
 
@@ -26,7 +31,7 @@ const __ = process.statics;
 export class TypesDao extends BaseDaoFull {
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -51,7 +56,7 @@ export class TypesDao extends BaseDaoFull {
                         .otherV()
                         .inE('current_definition')
                         .has('status', TypeDefinitionStatus.published)
-                        .as('other'),
+                        .as('other')
                 )
                 .select('relationship')
                 .valueMap()
@@ -98,7 +103,7 @@ export class TypesDao extends BaseDaoFull {
     private toModel(
         result: process.Traverser,
         status: TypeDefinitionStatus,
-        category: TypeCategory,
+        category: TypeCategory
     ): TypeModel {
         logger.debug(`types.full.dao toModel: in: result: ${JSON.stringify(result)}`);
 

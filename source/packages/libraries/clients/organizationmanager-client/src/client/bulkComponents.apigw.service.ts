@@ -39,7 +39,7 @@ export class BulkComponentsApigwService
     async bulkCreateComponents(
         organizationalUnitId: string,
         bulkComponentsResource: BulkComponentsResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<BulkComponentsResult> {
         ow(bulkComponentsResource, ow.object.nonEmpty);
         ow(organizationalUnitId, ow.string.nonEmpty);
@@ -58,7 +58,7 @@ export class BulkComponentsApigwService
 
     async bulkGetComponents(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ComponentResource[]> {
         const url = `${this.baseUrl}${super.componentsRelativeUrl(organizationalUnitId)}`;
         return await request
@@ -75,7 +75,7 @@ export class BulkComponentsApigwService
 
     async bulkDeleteComponents(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         return await request
             .delete(`${this.baseUrl}${super.componentsRelativeUrl(organizationalUnitId)}`)

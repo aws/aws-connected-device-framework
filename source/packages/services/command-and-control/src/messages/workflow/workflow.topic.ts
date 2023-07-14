@@ -26,7 +26,7 @@ export class TopicAction extends WorkflowPublishAction {
 
     constructor(
         @inject('deliveryMethod.topic.mqttTopic') private topic: string,
-        @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData,
+        @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData
     ) {
         super();
         this.iotData = iotDataFactory();
@@ -35,8 +35,8 @@ export class TopicAction extends WorkflowPublishAction {
     async process(message: MessageItem, command: CommandItem): Promise<boolean> {
         logger.debug(
             `workflow.topic process: message:${JSON.stringify(message)}, command:${JSON.stringify(
-                command,
-            )}`,
+                command
+            )}`
         );
 
         ow(command, ow.object.plain);
@@ -106,7 +106,7 @@ export class TopicAction extends WorkflowPublishAction {
 
     private async publish(topic: string, payload: MessagePayload): Promise<void> {
         logger.debug(
-            `workflow.topic publish: in: topic:${topic}, payload:${JSON.stringify(payload)}`,
+            `workflow.topic publish: in: topic:${topic}, payload:${JSON.stringify(payload)}`
         );
 
         const params = {

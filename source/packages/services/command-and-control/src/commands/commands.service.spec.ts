@@ -18,7 +18,11 @@ import { createMockInstance } from 'jest-create-mock-instance';
 
 import { MessagesService } from '../messages/messages.service';
 import { CommandsDao } from './commands.dao';
-import { CommandItem, CommandListIdsByTagPaginationKey, JobDeliveryMethod } from './commands.models';
+import {
+    CommandItem,
+    CommandListIdsByTagPaginationKey,
+    JobDeliveryMethod,
+} from './commands.models';
 import { CommandsService } from './commands.service';
 import { CommandsValidator } from './commands.validator';
 
@@ -42,7 +46,7 @@ describe('CommandsService', () => {
             mockedValidator,
             mockedDao,
             mockedMessagesService,
-            mockedSQSFactory,
+            mockedSQSFactory
         );
     });
 
@@ -153,16 +157,16 @@ describe('CommandsService', () => {
         expect(mergedDeliveryMethod.abortConfig?.criteriaList?.length).toEqual(1);
         const updatedDeliveryMethod = updated.deliveryMethod as JobDeliveryMethod;
         expect(mergedDeliveryMethod.abortConfig?.criteriaList?.[0].action).toEqual(
-            updatedDeliveryMethod.abortConfig.criteriaList[0].action,
+            updatedDeliveryMethod.abortConfig.criteriaList[0].action
         );
         expect(mergedDeliveryMethod.abortConfig?.criteriaList?.[0].failureType).toEqual(
-            updatedDeliveryMethod.abortConfig.criteriaList[0].failureType,
+            updatedDeliveryMethod.abortConfig.criteriaList[0].failureType
         );
         expect(
-            mergedDeliveryMethod.abortConfig?.criteriaList?.[0].minNumberOfExecutedThings,
+            mergedDeliveryMethod.abortConfig?.criteriaList?.[0].minNumberOfExecutedThings
         ).toEqual(updatedDeliveryMethod.abortConfig.criteriaList[0].minNumberOfExecutedThings);
         expect(mergedDeliveryMethod.abortConfig?.criteriaList?.[0].thresholdPercentage).toEqual(
-            updatedDeliveryMethod.abortConfig.criteriaList[0].thresholdPercentage,
+            updatedDeliveryMethod.abortConfig.criteriaList[0].thresholdPercentage
         );
     });
 
@@ -197,7 +201,7 @@ describe('CommandsService', () => {
             await underTest.update(updated);
         };
         await expect(functionUnderTest()).rejects.toThrow(
-            'FAILED_VALIDATION: updating delivery method type is not allowed',
+            'FAILED_VALIDATION: updating delivery method type is not allowed'
         );
     });
 
@@ -237,7 +241,7 @@ describe('CommandsService', () => {
                     tagKey: string,
                     tagValue: string,
                     exclusiveStart?: CommandListIdsByTagPaginationKey,
-                    _count?: number,
+                    _count?: number
                 ): Promise<[string[], CommandListIdsByTagPaginationKey]> => {
                     let result: [string[], CommandListIdsByTagPaginationKey] = [
                         undefined,
@@ -267,7 +271,7 @@ describe('CommandsService', () => {
                             break;
                     }
                     return Promise.resolve(result);
-                },
+                }
             );
 
         // execute
@@ -302,7 +306,7 @@ describe('CommandsService', () => {
                     tagKey: string,
                     tagValue: string,
                     exclusiveStart?: CommandListIdsByTagPaginationKey,
-                    _count?: number,
+                    _count?: number
                 ): Promise<[string[], CommandListIdsByTagPaginationKey]> => {
                     let result: [string[], CommandListIdsByTagPaginationKey] = [
                         undefined,
@@ -340,14 +344,14 @@ describe('CommandsService', () => {
                             break;
                     }
                     return Promise.resolve(result);
-                },
+                }
             );
 
         // execute
         const [ids, pagination] = await underTest.listIds(
             { A: '1', B: '2', C: '3' },
             undefined,
-            4,
+            4
         );
 
         expect(ids).toBeDefined();
@@ -378,7 +382,7 @@ describe('CommandsService', () => {
                     tagKey: string,
                     tagValue: string,
                     exclusiveStart?: CommandListIdsByTagPaginationKey,
-                    _count?: number,
+                    _count?: number
                 ): Promise<[string[], CommandListIdsByTagPaginationKey]> => {
                     let result: [string[], CommandListIdsByTagPaginationKey] = [
                         undefined,
@@ -414,14 +418,14 @@ describe('CommandsService', () => {
                             break;
                     }
                     return Promise.resolve(result);
-                },
+                }
             );
 
         // execute
         const [ids, pagination] = await underTest.listIds(
             { A: '1', B: '2', C: '3' },
             { commandId: 'c04' },
-            4,
+            4
         );
 
         expect(ids).toBeDefined();

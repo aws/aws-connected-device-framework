@@ -71,7 +71,7 @@ describe('BatchService', () => {
             'type',
             'exportBucket',
             'exportKey',
-            mockedS3Utils,
+            mockedS3Utils
         );
 
         const response = await instance.batch();
@@ -116,7 +116,7 @@ describe('BatchService', () => {
             'category',
             'exportBucket',
             'exportKey',
-            mockedS3Utils,
+            mockedS3Utils
         );
 
         const response = await instance.batch();

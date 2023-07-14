@@ -40,7 +40,7 @@ export class PresignedUrlsService {
         @inject(TYPES.TemplatesService) private templateService: TemplatesService,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData,
-        @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
+        @inject(TYPES.S3Factory) s3Factory: () => AWS.S3
     ) {
         this._iot = iotFactory();
         this._iotData = iotDataFactory();
@@ -48,10 +48,10 @@ export class PresignedUrlsService {
     }
 
     public async generateForUpload(
-        request: PresignedUploadRequestModel,
+        request: PresignedUploadRequestModel
     ): Promise<PresignedResponseModel> {
         logger.debug(
-            `presignedurls.service generateForUpload: in: model: ${JSON.stringify(request)}`,
+            `presignedurls.service generateForUpload: in: model: ${JSON.stringify(request)}`
         );
 
         const r: PresignedResponseModel = {
@@ -86,7 +86,7 @@ export class PresignedUrlsService {
                     this.s3Bucket,
                     key,
                     template.presignedUrlExpiresInSeconds,
-                    true,
+                    true
                 );
                 presignedUrls[k] = presignedUrl;
             });
@@ -105,10 +105,10 @@ export class PresignedUrlsService {
     }
 
     public async generateForDownload(
-        request: PresignedDownloadRequestModel,
+        request: PresignedDownloadRequestModel
     ): Promise<PresignedResponseModel> {
         logger.debug(
-            `presignedurls.service generateForDownload: in: model: ${JSON.stringify(request)}`,
+            `presignedurls.service generateForDownload: in: model: ${JSON.stringify(request)}`
         );
 
         const r: PresignedResponseModel = {
@@ -149,7 +149,7 @@ export class PresignedUrlsService {
                     command.files[k].bucketName,
                     key,
                     template.presignedUrlExpiresInSeconds,
-                    false,
+                    false
                 );
                 presignedUrls[k] = presignedUrl;
             });
@@ -168,7 +168,7 @@ export class PresignedUrlsService {
     }
 
     private async getCommandAndJobInfo(
-        commandId: string,
+        commandId: string
     ): Promise<[CommandModel, TemplateModel, Iot.Job]> {
         logger.debug(`presignedurls.service getCommandAndJobInfo: in: commandId: ${commandId}`);
 
@@ -183,20 +183,20 @@ export class PresignedUrlsService {
 
         logger.debug(
             `presignedurls.service getCommandAndJobInfo: exit: command: ${JSON.stringify(
-                command,
-            )}, template: ${JSON.stringify(template)}, job: ${JSON.stringify(job)}`,
+                command
+            )}, template: ${JSON.stringify(template)}, job: ${JSON.stringify(job)}`
         );
         return [command, template, job];
     }
 
     private async publishSuccessResponse(
         r: PresignedResponseModel,
-        direction: string,
+        direction: string
     ): Promise<void> {
         logger.debug(
             `presignedurls.service publishSuccessResponse: in: r:${JSON.stringify(
-                r,
-            )}, direction:${direction}`,
+                r
+            )}, direction:${direction}`
         );
 
         // cdf/commands/presignedurl/{commandId}/{thingName}/{direction}/accepted
@@ -220,12 +220,12 @@ export class PresignedUrlsService {
 
     private async publishFailedResponse(
         r: PresignedResponseModel,
-        direction: string,
+        direction: string
     ): Promise<void> {
         logger.debug(
             `presignedurls.service publishSuccessResponse: in: r:${JSON.stringify(
-                r,
-            )}, direction:${direction}`,
+                r
+            )}, direction:${direction}`
         );
 
         // cdf/commands/presignedurl/{commandId}/{thingName}/{direction}/rejected
@@ -251,10 +251,10 @@ export class PresignedUrlsService {
         bucketName: string,
         key: string,
         presignedUrlExpiresInSeconds: number,
-        forUpload: boolean,
+        forUpload: boolean
     ): string {
         logger.debug(
-            `presignedurls.service generatePresignedUrl: in: bucketName:${bucketName}, key:${key}, presignedUrlExpiresInSeconds:${presignedUrlExpiresInSeconds}`,
+            `presignedurls.service generatePresignedUrl: in: bucketName:${bucketName}, key:${key}, presignedUrlExpiresInSeconds:${presignedUrlExpiresInSeconds}`
         );
         const params = {
             Bucket: bucketName,
@@ -270,8 +270,8 @@ export class PresignedUrlsService {
     private async validateDeviceIsTarget(thingName: string, job: Iot.Job): Promise<boolean> {
         logger.debug(
             `presignedurls.service validateDeviceIsTarget: in: thingName:${thingName}, job:${JSON.stringify(
-                job,
-            )}`,
+                job
+            )}`
         );
 
         if (job === undefined || job === null) {

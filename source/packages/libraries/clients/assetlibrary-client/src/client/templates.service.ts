@@ -21,7 +21,7 @@ export interface TemplatesService {
         category: CategoryEnum,
         templateId: string,
         status: StatusEnum,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<TypeResource>;
 
     createTemplate(resource: TypeResource, additionalHeaders?: RequestHeaders): Promise<void>;
@@ -31,13 +31,13 @@ export interface TemplatesService {
     publishTemplate(
         category: CategoryEnum,
         templateId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     deleteTemplate(
         category: CategoryEnum,
         templateId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     listTemplates(
@@ -45,7 +45,7 @@ export interface TemplatesService {
         status?: string,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<TypeResourceList>;
 }
 

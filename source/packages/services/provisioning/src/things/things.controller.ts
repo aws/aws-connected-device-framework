@@ -42,7 +42,7 @@ export class ThingsController implements interfaces.Controller {
     @httpPost('')
     public async provisionThing(
         @requestBody() request: ProvisionThingRequest,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<ProvisionThingResponse> {
         logger.info(`things.controller provisionThing: in: request: ${JSON.stringify(request)}`);
         try {
@@ -51,7 +51,7 @@ export class ThingsController implements interfaces.Controller {
             const thing = await this.thingsService.provision(
                 request.provisioningTemplateId,
                 request.parameters,
-                request.cdfProvisioningParameters,
+                request.cdfProvisioningParameters
             );
             res.status(201);
             return thing;
@@ -65,7 +65,7 @@ export class ThingsController implements interfaces.Controller {
     @httpGet('/:thingName')
     public async getThing(
         @requestParam('thingName') thingName: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<ThingDetailModel> {
         logger.info(`things.controller get: in: thingName: ${thingName}`);
         try {
@@ -81,7 +81,7 @@ export class ThingsController implements interfaces.Controller {
     @httpDelete('/:thingName')
     public async deleteThing(
         @requestParam('thingName') thingName: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(`things.controller delete: in: thingName: ${thingName}`);
         try {
@@ -97,18 +97,18 @@ export class ThingsController implements interfaces.Controller {
     public async updateThingCertificates(
         @requestParam('thingName') thingName: string,
         @requestBody() request: PatchCertificateRequest,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
             `things.controller updateThingCertificates: in: thingName:${thingName}, request:${JSON.stringify(
-                request,
-            )}`,
+                request
+            )}`
         );
         try {
             ow(request.certificateStatus, ow.string.nonEmpty);
             await this.thingsService.updateThingCertificatesStatus(
                 thingName,
-                request.certificateStatus,
+                request.certificateStatus
             );
             res.status(204);
         } catch (e) {

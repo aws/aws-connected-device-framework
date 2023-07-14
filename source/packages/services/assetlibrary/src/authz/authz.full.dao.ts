@@ -23,7 +23,7 @@ const __ = process.statics; // eslint-disable-line no-underscore-dangle
 export class AuthzDaoFull extends BaseDaoFull {
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -31,12 +31,12 @@ export class AuthzDaoFull extends BaseDaoFull {
     public async listAuthorizedHierarchies(
         deviceIds: string[],
         groupPaths: string[],
-        hierarchies: string[],
+        hierarchies: string[]
     ): Promise<Authorizations> {
         logger.debug(
             `authz.full.dao listAuthorizedHierarchies: in: deviceIds:${deviceIds}, groupPaths:${groupPaths}, hierarchies:${JSON.stringify(
-                hierarchies,
-            )}`,
+                hierarchies
+            )}`
         );
 
         if (deviceIds === undefined) {
@@ -60,26 +60,26 @@ export class AuthzDaoFull extends BaseDaoFull {
                         .by(
                             __.select('entity').coalesce(
                                 __.values('deviceId'),
-                                __.values('groupPath'),
-                            ),
+                                __.values('groupPath')
+                            )
                         )
                         .by(__.constant(true)),
                     // return an item if the entity is authorized
                     __.local(
                         __.until(__.has('groupPath', process.P.within(hierarchies)))
                             .repeat(
-                                __.outE().has('isAuthCheck', true).otherV().simplePath().dedup(),
+                                __.outE().has('isAuthCheck', true).otherV().simplePath().dedup()
                             )
-                            .as('authorizedPath'),
+                            .as('authorizedPath')
                     )
                         .project('entity', 'authorizedPath')
                         .by(
                             __.select('entity').coalesce(
                                 __.values('deviceId'),
-                                __.values('groupPath'),
-                            ),
+                                __.values('groupPath')
+                            )
                         )
-                        .by(__.select('authorizedPath').values('groupPath')),
+                        .by(__.select('authorizedPath').values('groupPath'))
                 );
 
             results = await traverser.toList();
@@ -88,7 +88,7 @@ export class AuthzDaoFull extends BaseDaoFull {
         }
 
         logger.debug(
-            `authz.full.dao listAuthorizedHierarchies: results:${JSON.stringify(results)}`,
+            `authz.full.dao listAuthorizedHierarchies: results:${JSON.stringify(results)}`
         );
 
         const response = new Authorizations();

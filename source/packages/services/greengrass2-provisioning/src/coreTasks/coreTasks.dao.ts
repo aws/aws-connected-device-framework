@@ -38,7 +38,7 @@ export class CoreTasksDao {
 
     public constructor(
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
-        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient,
+        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient
     ) {
         this.dbc = ddcFactory();
     }
@@ -80,8 +80,8 @@ export class CoreTasksDao {
     public async saveCoreTask(task: CoreTaskItem, saveBatchProgress: boolean): Promise<void> {
         logger.debug(
             `coreTasks.dao saveCoreTask: in: task:${JSON.stringify(
-                task,
-            )}, saveBatchProgress:${saveBatchProgress}`,
+                task
+            )}, saveBatchProgress:${saveBatchProgress}`
         );
 
         ow(task, ow.object.nonEmpty);
@@ -157,7 +157,7 @@ export class CoreTasksDao {
                     },
                 };
                 params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(
-                    coreDeviceTaskDetailItem,
+                    coreDeviceTaskDetailItem
                 );
 
                 // core device thing item
@@ -171,14 +171,14 @@ export class CoreTasksDao {
                             siKey2: createDelimitedAttribute(
                                 PkType.Template,
                                 'None',
-                                PkType.CoreDevice,
+                                PkType.CoreDevice
                             ),
                             siSort2: coreDbId,
                             siKey3: createDelimitedAttribute(
                                 PkType.Template,
                                 'None',
                                 PkType.TemplateVersion,
-                                0,
+                                0
                             ),
                             siSort3: coreDbId,
                             siSort4: coreDbId,
@@ -202,7 +202,7 @@ export class CoreTasksDao {
                             PkType.CoreDevice,
                             core.name,
                             PkType.Artifact,
-                            name,
+                            name
                         );
                         const artifactItem = {
                             PutRequest: {
@@ -217,7 +217,7 @@ export class CoreTasksDao {
                             },
                         };
                         params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(
-                            artifactItem,
+                            artifactItem
                         );
                     }
                 }
@@ -234,7 +234,7 @@ export class CoreTasksDao {
 
     public async saveTaskDetail(taskId: string, core: CoreItem): Promise<void> {
         logger.debug(
-            `coreTasks.dao saveTaskDetail: in: taskId:${taskId}, core:${JSON.stringify(core)}`,
+            `coreTasks.dao saveTaskDetail: in: taskId:${taskId}, core:${JSON.stringify(core)}`
         );
 
         ow(taskId, ow.string.nonEmpty);
@@ -352,12 +352,12 @@ export class CoreTasksDao {
 
     public async list(
         count?: number,
-        exclusiveStart?: CoreTaskListPaginationKey,
+        exclusiveStart?: CoreTaskListPaginationKey
     ): Promise<[CoreTaskItem[], CoreTaskListPaginationKey]> {
         logger.debug(
             `coreTasks.dao list: in: count:${count}, exclusiveStart:${JSON.stringify(
-                exclusiveStart,
-            )}`,
+                exclusiveStart
+            )}`
         );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
@@ -404,8 +404,8 @@ export class CoreTasksDao {
 
         logger.debug(
             `coreTasks.dao list: exit: response:${JSON.stringify(
-                response,
-            )}, paginationKey:${paginationKey}`,
+                response
+            )}, paginationKey:${paginationKey}`
         );
         return [response, paginationKey];
     }

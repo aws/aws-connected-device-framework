@@ -30,7 +30,7 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
         @inject(TYPES.CertUtils) private certUtils: CertUtils,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
-        @inject('deviceCertificateExpiryDays') private defaultExpiryDays: number,
+        @inject('deviceCertificateExpiryDays') private defaultExpiryDays: number
     ) {
         this._iot = iotFactory();
         this._ssm = ssmFactory();
@@ -39,8 +39,8 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
     public async process(stepData: ProvisioningStepData): Promise<void> {
         logger.debug(
             `CreateDeviceCertificateStepProcessor: process: in: stepData: ${JSON.stringify(
-                stepData,
-            )}`,
+                stepData
+            )}`
         );
 
         const params = stepData?.cdfProvisioningParameters as CreateDeviceCertificateParameters;
@@ -60,7 +60,7 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
             csr,
             params.certInfo.daysExpiry ?? this.defaultExpiryDays,
             caKey,
-            caPem,
+            caPem
         );
 
         if (stepData.parameters === undefined) {
@@ -85,7 +85,7 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
 
     private async getCaPrivateKey(caCertId: string): Promise<string> {
         logger.debug(
-            `CreateDeviceCertificateStepProcessor: getCaPrivateKey: in: caCertId: ${caCertId}`,
+            `CreateDeviceCertificateStepProcessor: getCaPrivateKey: in: caCertId: ${caCertId}`
         );
         const params = {
             Name: `cdf-ca-key-${caCertId}`,
@@ -101,10 +101,10 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
         csr: string,
         days: number,
         rootKey: string,
-        rootPem: string,
+        rootPem: string
     ): Promise<string> {
         logger.debug(
-            `CreateDeviceCertificateStepProcessor: createCertificate: in: csr:${csr}, days:${days}, rootKey:${rootKey}, rootPem:${rootPem}`,
+            `CreateDeviceCertificateStepProcessor: createCertificate: in: csr:${csr}, days:${days}, rootKey:${rootKey}, rootPem:${rootPem}`
         );
         /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve: any, reject: any) => {
@@ -114,16 +114,16 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
                     if (err) {
                         logger.debug(
                             `CreateDeviceCertificateStepProcessor: createCertificate: err:${JSON.stringify(
-                                err,
-                            )}`,
+                                err
+                            )}`
                         );
                         return reject(err);
                     }
                     logger.debug(
-                        `CreateDeviceCertificateStepProcessor: createCertificate: exit:${data.certificate}`,
+                        `CreateDeviceCertificateStepProcessor: createCertificate: exit:${data.certificate}`
                     );
                     return resolve(data.certificate);
-                },
+                }
             );
         });
     }

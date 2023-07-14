@@ -46,13 +46,13 @@ export class PatchTemplateController implements interfaces.Controller {
     public constructor(
         @inject(TYPES.PatchTemplatesService) private patchTemplatesService: PatchTemplatesService,
         @inject(TYPES.PatchTemplateAssembler)
-        private patchTemplateAssembler: PatchTemplateAssembler,
+        private patchTemplateAssembler: PatchTemplateAssembler
     ) {}
 
     @httpPost('', upload.single('playbookFile'))
     public async createTemplate(
         @response() res: Response,
-        @request() req: Request,
+        @request() req: Request
     ): Promise<void> {
         logger.info(`PatchTemplate.controller createTemplate: in: item:`);
 
@@ -89,7 +89,7 @@ export class PatchTemplateController implements interfaces.Controller {
     public async updateTemplate(
         @response() res: Response,
         @requestParam('name') name: string,
-        @request() req: Request,
+        @request() req: Request
     ): Promise<void> {
         logger.info(`PatchTemplate.controller updateTemplate: in: item:`);
 
@@ -124,7 +124,7 @@ export class PatchTemplateController implements interfaces.Controller {
     @httpGet('/:name')
     public async getTemplate(
         @response() res: Response,
-        @requestParam('name') name: string,
+        @requestParam('name') name: string
     ): Promise<PatchTemplateItem> {
         logger.info(`PatchTemplate.controller getTemplate: in: templateId:${name}`);
 
@@ -143,10 +143,10 @@ export class PatchTemplateController implements interfaces.Controller {
     public async listTemplates(
         @queryParam('count') count: number,
         @queryParam('exclusiveStartName') exclusiveStartName: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `PatchTemplates.controller listTemplate: in: count:${count}, exclusiveStartName:${exclusiveStartName}`,
+            `PatchTemplates.controller listTemplate: in: count:${count}, exclusiveStartName:${exclusiveStartName}`
         );
 
         try {
@@ -156,10 +156,10 @@ export class PatchTemplateController implements interfaces.Controller {
             const resources = this.patchTemplateAssembler.toListResource(
                 items,
                 count,
-                paginationKey,
+                paginationKey
             );
             logger.debug(
-                `PatchTemplates.controller listTemplates: exit: ${JSON.stringify(resources)}`,
+                `PatchTemplates.controller listTemplates: exit: ${JSON.stringify(resources)}`
             );
             res.status(200).send(resources);
         } catch (err) {
@@ -171,7 +171,7 @@ export class PatchTemplateController implements interfaces.Controller {
     @httpDelete('/:name')
     public async deleteTemplate(
         @requestParam('name') name: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(`templates.controller deleteTemplate: in: name:${name}`);
 

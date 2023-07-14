@@ -39,19 +39,19 @@ describe('SchemaValidatorService', () => {
         instance = new SchemaValidatorService(
             mockedTypesDao,
             mockedDevicesDaoFull,
-            mockedGroupsDaoFull,
+            mockedGroupsDaoFull
         );
         superTypeSchema = JSON.parse(
             fs.readFileSync(
                 path.join(__dirname, '../../src/types/definitions/device.schema.json'),
-                { encoding: 'utf8' },
-            ),
+                { encoding: 'utf8' }
+            )
         );
         specializedTypeSchema = JSON.parse(
             fs.readFileSync(
                 path.join(__dirname, '../../src/utils/testResources/test.schema.json'),
-                { encoding: 'utf8' },
-            ),
+                { encoding: 'utf8' }
+            )
         );
         superTypeSchema.definitions.subType.properties = specializedTypeSchema.properties;
         superTypeSchema.definitions.subType.required = specializedTypeSchema.required;

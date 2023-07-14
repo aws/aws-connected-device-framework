@@ -29,7 +29,7 @@ exports.handler = async (event: any, _context: unknown) => {
         for (const r of event.Records) {
             if (r.eventSource !== 'aws:sqs') {
                 logger.warn(
-                    `lambda_sqs_proxy handler: ignoring non-sqs events: ${JSON.stringify(r)}`,
+                    `lambda_sqs_proxy handler: ignoring non-sqs events: ${JSON.stringify(r)}`
                 );
                 continue;
             }
@@ -45,7 +45,7 @@ exports.handler = async (event: any, _context: unknown) => {
                     await coreTasksSvc.updateCoreTaskStatus(
                         body.coreTaskId,
                         body.deviceTaskId,
-                        body.counter,
+                        body.counter
                     );
                     break;
                 case 'CoreTask:Delete':
@@ -65,7 +65,7 @@ exports.handler = async (event: any, _context: unknown) => {
                         body.id,
                         body.templateName,
                         body.templateVersion,
-                        body.deployments,
+                        body.deployments
                     );
                     break;
                 default:

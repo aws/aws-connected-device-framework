@@ -107,12 +107,12 @@ export class DeviceItem {
         if (this.groups) {
             if (this.groups.in) {
                 Object.keys(this.groups.in).forEach((k) =>
-                    relatedGroupPaths.push(...this.groups.in[k]),
+                    relatedGroupPaths.push(...this.groups.in[k])
                 );
             }
             if (this.groups.out) {
                 Object.keys(this.groups.out).forEach((k) =>
-                    relatedGroupPaths.push(...this.groups.out[k]),
+                    relatedGroupPaths.push(...this.groups.out[k])
                 );
             }
         }
@@ -124,12 +124,12 @@ export class DeviceItem {
         if (this.devices) {
             if (this.devices.in) {
                 Object.keys(this.devices.in).forEach((k) =>
-                    relatedDeviceIds.push(...this.devices.in[k]),
+                    relatedDeviceIds.push(...this.devices.in[k])
                 );
             }
             if (this.devices.out) {
                 Object.keys(this.devices.out).forEach((k) =>
-                    relatedDeviceIds.push(...this.devices.out[k]),
+                    relatedDeviceIds.push(...this.devices.out[k])
                 );
             }
         }
@@ -146,7 +146,7 @@ export class DeviceItemList {
 }
 
 export function determineIfDevice20Resource(
-    toBeDetermined: DeviceBaseResource,
+    toBeDetermined: DeviceBaseResource
 ): toBeDetermined is Device20Resource {
     const asV2 = toBeDetermined as Device20Resource;
     if (asV2.groups?.in || asV2.groups?.out || asV2.devices?.in || asV2.devices?.out) {

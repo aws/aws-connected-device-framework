@@ -32,7 +32,7 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -41,7 +41,7 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
 
     async listObjectEvents(
         req: ObjectEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events> {
         ow(req, ow.object.nonEmpty);
         ow(req.category, ow.string.nonEmpty);
@@ -67,35 +67,35 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
 
     async listDeviceEvents(
         req: CategoryEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events> {
         return this.listCategoryEvents(Category.devices, req, additionalHeaders);
     }
 
     async listGroupEvents(
         req: CategoryEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events> {
         return this.listCategoryEvents(Category.groups, req, additionalHeaders);
     }
 
     async listDeviceTemplateEvents(
         req: CategoryEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events> {
         return this.listCategoryEvents(Category.deviceTemplates, req, additionalHeaders);
     }
 
     async listGroupTemplateEvents(
         req: CategoryEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events> {
         return this.listCategoryEvents(Category.groupTemplates, req, additionalHeaders);
     }
 
     async listPolicyEvents(
         req: CategoryEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events> {
         return this.listCategoryEvents(Category.policies, req, additionalHeaders);
     }
@@ -103,7 +103,7 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
     async listCategoryEvents(
         category: Category,
         req: CategoryEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events> {
         ow(category, 'category', ow.string.nonEmpty);
 

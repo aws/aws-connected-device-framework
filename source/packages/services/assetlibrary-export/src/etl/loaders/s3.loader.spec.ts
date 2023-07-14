@@ -59,7 +59,7 @@ describe('S3Loader', () => {
         expect(response.batchId).toEqual('some-uuid');
         expect(response.exportBucket).toEqual('myBucket');
         expect(response.exportKey).toEqual(
-            'assetlibrary-export/device/type1/dt=2022-01-26-20-47/some-uuid.json',
+            'assetlibrary-export/device/type1/dt=2022-01-26-20-47/some-uuid.json'
         );
 
         expect(mockS3PutObject.mock.calls[0][0]).toStrictEqual({

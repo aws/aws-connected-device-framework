@@ -27,7 +27,7 @@ const DEFAULT_SECRET = 'XfDKQoegNG';
 export class AssetLibraryInitCustomResource implements CustomResource {
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {}
 
     protected headers: { [key: string]: string };
@@ -37,8 +37,8 @@ export class AssetLibraryInitCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `AssetLibraryInitCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         const endpoint = customResourceEvent.ResourceProperties.FunctionName;
         await this.init(endpoint, 5000, 60);
@@ -48,8 +48,8 @@ export class AssetLibraryInitCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `AssetLibraryInitCustomResource: update: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         return await this.create(customResourceEvent);
     }
@@ -61,10 +61,10 @@ export class AssetLibraryInitCustomResource implements CustomResource {
     private async init(
         functionName: string,
         retryDelay: number,
-        retryMaxCount: number,
+        retryMaxCount: number
     ): Promise<void> {
         logger.debug(
-            `AssetLibraryInitCustomResource: init: in: functionName:${functionName}, retryDelay:${retryDelay}, retryMaxCount: {retryMaxCount}`,
+            `AssetLibraryInitCustomResource: init: in: functionName:${functionName}, retryDelay:${retryDelay}, retryMaxCount: {retryMaxCount}`
         );
 
         let requestCount = 0;
@@ -104,7 +104,7 @@ export class AssetLibraryInitCustomResource implements CustomResource {
                     requestCount <= retryMaxCount
                 ) {
                     logger.error(
-                        `AssetLibraryInitCustomResource: _init: retrying: count: ${requestCount}`,
+                        `AssetLibraryInitCustomResource: _init: retrying: count: ${requestCount}`
                     );
                     requestCount += 1;
                     await timeout(retryDelay);

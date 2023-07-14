@@ -31,7 +31,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
     async createDeviceTask(
         task: NewDeviceTask,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string> {
         ow(task, ow.object.nonEmpty);
         ow(task.devices, 'devices', ow.array.nonEmpty);

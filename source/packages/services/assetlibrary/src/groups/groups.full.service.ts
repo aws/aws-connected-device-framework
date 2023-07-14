@@ -57,7 +57,7 @@ export class GroupsServiceFull implements GroupsService {
         @inject(TYPES.ProfilesService) private profilesService: ProfilesService,
         @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,
         @inject(TYPES.TypesService) private typesService: TypesService,
-        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
+        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils
     ) {}
 
     public async get(groupPath: string, includeGroups: boolean): Promise<GroupItem> {
@@ -85,7 +85,7 @@ export class GroupsServiceFull implements GroupsService {
 
     public async getBulk(groupPaths: string[], includeGroups: boolean): Promise<GroupItemList> {
         logger.debug(
-            `groups.full.service: getBulk: in: groupPaths: ${groupPaths}, includeGroups:${includeGroups}`,
+            `groups.full.service: getBulk: in: groupPaths: ${groupPaths}, includeGroups:${includeGroups}`
         );
 
         ow(groupPaths, ow.array.nonEmpty);
@@ -107,12 +107,12 @@ export class GroupsServiceFull implements GroupsService {
 
     public async createBulk(
         groups: GroupItem[],
-        applyProfile?: string,
+        applyProfile?: string
     ): Promise<BulkGroupsResult> {
         logger.debug(
             `groups.full.service createBulk: in: groups: ${JSON.stringify(
-                groups,
-            )}, applyProfile:${applyProfile}`,
+                groups
+            )}, applyProfile:${applyProfile}`
         );
 
         ow(groups, ow.array.nonEmpty);
@@ -139,7 +139,7 @@ export class GroupsServiceFull implements GroupsService {
         };
 
         logger.debug(
-            `groups.full.service createBulk: exit: response: ${JSON.stringify(response)}`,
+            `groups.full.service createBulk: exit: response: ${JSON.stringify(response)}`
         );
         return response;
     }
@@ -178,7 +178,7 @@ export class GroupsServiceFull implements GroupsService {
 
     public async ___test___applyProfile(
         model: GroupItem,
-        applyProfile?: string,
+        applyProfile?: string
     ): Promise<GroupItem> {
         return this.applyProfile(model, applyProfile);
     }
@@ -186,14 +186,14 @@ export class GroupsServiceFull implements GroupsService {
     private async applyProfile(model: GroupItem, applyProfile?: string): Promise<GroupItem> {
         logger.debug(
             `groups.full.service applyProfile: in: model:${JSON.stringify(
-                model,
-            )}, applyProfile:${applyProfile}`,
+                model
+            )}, applyProfile:${applyProfile}`
         );
 
         // retrieve profile
         const profile = (await this.profilesService.get(
             model.templateId,
-            applyProfile,
+            applyProfile
         )) as GroupProfileItem;
         if (profile === undefined) {
             throw new ProfileNotFoundError(applyProfile);
@@ -244,8 +244,8 @@ export class GroupsServiceFull implements GroupsService {
     public async create(group: GroupItem, applyProfile?: string): Promise<string> {
         logger.debug(
             `groups.full.service create: in: group:${JSON.stringify(
-                group,
-            )}, applyProfile:${applyProfile}`,
+                group
+            )}, applyProfile:${applyProfile}`
         );
 
         ow(group, ow.object.nonEmpty);
@@ -266,14 +266,14 @@ export class GroupsServiceFull implements GroupsService {
         await this.authServiceFull.authorizationCheck(
             [],
             [group.parentPath, ...group.listRelatedGroupPaths()],
-            ClaimAccess.C,
+            ClaimAccess.C
         );
 
         // perform validation of the group...
         const template = await this.typesService.get(
             group.templateId,
             TypeCategory.Group,
-            TypeDefinitionStatus.published,
+            TypeDefinitionStatus.published
         );
         if (template === undefined) {
             throw new TemplateNotFoundError(group.templateId);
@@ -281,7 +281,7 @@ export class GroupsServiceFull implements GroupsService {
         const validateSubTypeFuture = this.validator.validateSubType(
             template,
             group,
-            Operation.CREATE,
+            Operation.CREATE
         );
         if (this.validateAllowedParentPaths) {
             if (group.groups === undefined) {
@@ -294,7 +294,7 @@ export class GroupsServiceFull implements GroupsService {
         const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(
             template,
             group.groups,
-            undefined,
+            undefined
         );
         const [subTypeValidation, validateRelationships] = await Promise.all([
             validateSubTypeFuture,
@@ -318,12 +318,12 @@ export class GroupsServiceFull implements GroupsService {
             this.authServiceFull.updateRelsIdentifyingAuth(
                 group.groups?.in,
                 validateRelationships.groupLabels,
-                incomingAuthRelations,
+                incomingAuthRelations
             );
             this.authServiceFull.updateRelsIdentifyingAuth(
                 group.groups?.out,
                 validateRelationships.groupLabels,
-                outgoingAuthRelations,
+                outgoingAuthRelations
             );
         }
 
@@ -361,8 +361,8 @@ export class GroupsServiceFull implements GroupsService {
     public async update(group: GroupItem, applyProfile?: string): Promise<void> {
         logger.debug(
             `groups.full.service update: in: model:${JSON.stringify(
-                group,
-            )}, applyProfile:${applyProfile}`,
+                group
+            )}, applyProfile:${applyProfile}`
         );
 
         ow(group, ow.object.nonEmpty);
@@ -384,7 +384,7 @@ export class GroupsServiceFull implements GroupsService {
         await this.authServiceFull.authorizationCheck(
             [],
             [group.groupPath, ...group.listRelatedGroupPaths()],
-            ClaimAccess.U,
+            ClaimAccess.U
         );
 
         const labels = await this.groupsDao.getLabels([group.groupPath]);
@@ -397,7 +397,7 @@ export class GroupsServiceFull implements GroupsService {
         const template = await this.typesService.get(
             templateId,
             TypeCategory.Group,
-            TypeDefinitionStatus.published,
+            TypeDefinitionStatus.published
         );
         if (template === undefined) {
             throw new TemplateNotFoundError(templateId);
@@ -405,7 +405,7 @@ export class GroupsServiceFull implements GroupsService {
         const subTypeValidation = await this.validator.validateSubType(
             template,
             group,
-            Operation.UPDATE,
+            Operation.UPDATE
         );
         if (!subTypeValidation.isValid) {
             throw new SchemaValidationError(subTypeValidation.errors);
@@ -414,7 +414,7 @@ export class GroupsServiceFull implements GroupsService {
         const validateRelationships = await this.validator.validateRelationshipsByIds(
             template,
             group.groups,
-            undefined,
+            undefined
         );
         // validate the id associations
         if (!validateRelationships.isValid) {
@@ -428,12 +428,12 @@ export class GroupsServiceFull implements GroupsService {
             this.authServiceFull.updateRelsIdentifyingAuth(
                 group.groups?.in,
                 validateRelationships.groupLabels,
-                incomingAuthRelations,
+                incomingAuthRelations
             );
             this.authServiceFull.updateRelsIdentifyingAuth(
                 group.groups?.out,
                 validateRelationships.groupLabels,
-                outgoingAuthRelations,
+                outgoingAuthRelations
             );
         }
 
@@ -462,12 +462,12 @@ export class GroupsServiceFull implements GroupsService {
         state: string,
         offset?: number,
         count?: number,
-        sort?: SortKeys,
+        sort?: SortKeys
     ): Promise<GroupMemberItemList> {
         logger.debug(
             `groups.full.service getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, count:${count}, sort:${JSON.stringify(
-                sort,
-            )}`,
+                sort
+            )}`
         );
 
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
@@ -515,7 +515,7 @@ export class GroupsServiceFull implements GroupsService {
             filterRelatedBy,
             offsetAsInt,
             countAsInt,
-            sort,
+            sort
         );
 
         let model: GroupMemberItemList;
@@ -525,7 +525,7 @@ export class GroupsServiceFull implements GroupsService {
             model = this.devicesAssembler.toRelatedDeviceModelsList(
                 result,
                 offsetAsInt,
-                countAsInt,
+                countAsInt
             );
         }
         logger.debug(`groups.full.service getMembers: exit: model: ${JSON.stringify(model)}`);
@@ -583,10 +583,10 @@ export class GroupsServiceFull implements GroupsService {
     public async attachToGroup(
         sourceGroupPath: string,
         relationship: string,
-        targetGroupPath: string,
+        targetGroupPath: string
     ): Promise<void> {
         logger.debug(
-            `groups.full.service attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`,
+            `groups.full.service attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`
         );
 
         ow(sourceGroupPath, 'sourceGroupPath', ow.string.nonEmpty);
@@ -601,7 +601,7 @@ export class GroupsServiceFull implements GroupsService {
         await this.authServiceFull.authorizationCheck(
             [],
             [sourceGroupPath, targetGroupPath],
-            ClaimAccess.U,
+            ClaimAccess.U
         );
 
         // fetch the existing groups
@@ -640,12 +640,12 @@ export class GroupsServiceFull implements GroupsService {
         const template = await this.typesService.get(
             sourceGroup.templateId,
             TypeCategory.Group,
-            TypeDefinitionStatus.published,
+            TypeDefinitionStatus.published
         );
         const validateRelationships = await this.validator.validateRelationshipsByIds(
             template,
             relatedGroup,
-            undefined,
+            undefined
         );
         if (!validateRelationships.isValid) {
             throw new RelationValidationError(validateRelationships);
@@ -658,7 +658,7 @@ export class GroupsServiceFull implements GroupsService {
             this.authServiceFull.updateRelsIdentifyingAuth(
                 relatedGroup.out,
                 validateRelationships.groupLabels,
-                authRelations,
+                authRelations
             );
             isAuthCheck = relatedGroup.out[relationship][0].isAuthCheck ?? false;
         }
@@ -668,7 +668,7 @@ export class GroupsServiceFull implements GroupsService {
             sourceGroupPath,
             relationship,
             targetGroupPath,
-            isAuthCheck,
+            isAuthCheck
         );
 
         // fire event
@@ -689,10 +689,10 @@ export class GroupsServiceFull implements GroupsService {
     public async detachFromGroup(
         sourceGroupPath: string,
         relationship: string,
-        targetGroupPath: string,
+        targetGroupPath: string
     ): Promise<void> {
         logger.debug(
-            `groups.full.service detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`,
+            `groups.full.service detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`
         );
 
         ow(sourceGroupPath, 'sourceGroupPath', ow.string.nonEmpty);
@@ -707,7 +707,7 @@ export class GroupsServiceFull implements GroupsService {
         await this.authServiceFull.authorizationCheck(
             [],
             [sourceGroupPath, targetGroupPath],
-            ClaimAccess.U,
+            ClaimAccess.U
         );
 
         // Save to datastore
@@ -735,12 +735,12 @@ export class GroupsServiceFull implements GroupsService {
         template: string,
         offset: number,
         count: number,
-        sort: SortKeys,
+        sort: SortKeys
     ): Promise<GroupItemList> {
         logger.debug(
             `groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}, sort:${JSON.stringify(
-                sort,
-            )}`,
+                sort
+            )}`
         );
 
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
@@ -779,12 +779,12 @@ export class GroupsServiceFull implements GroupsService {
             undefined,
             offsetAsInt,
             countAsInt,
-            sort,
+            sort
         );
 
         const model = this.groupsAssembler.toRelatedGroupItemList(result, offsetAsInt, countAsInt);
         logger.debug(
-            `groups.full.service listRelatedGroups: exit: model: ${JSON.stringify(model)}`,
+            `groups.full.service listRelatedGroups: exit: model: ${JSON.stringify(model)}`
         );
         return model;
     }
@@ -797,12 +797,12 @@ export class GroupsServiceFull implements GroupsService {
         state: string,
         offset: number,
         count: number,
-        sort: SortKeys,
+        sort: SortKeys
     ): Promise<DeviceItemList> {
         logger.debug(
             `groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${JSON.stringify(
-                sort,
-            )}`,
+                sort
+            )}`
         );
 
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
@@ -855,16 +855,16 @@ export class GroupsServiceFull implements GroupsService {
             { state },
             offsetAsInt,
             countAsInt,
-            sort,
+            sort
         );
 
         const model = this.devicesAssembler.toRelatedDeviceModelsList(
             result,
             offsetAsInt,
-            countAsInt,
+            countAsInt
         );
         logger.debug(
-            `groups.full.service listRelatedDevices: exit: model: ${JSON.stringify(model)}`,
+            `groups.full.service listRelatedDevices: exit: model: ${JSON.stringify(model)}`
         );
         return model;
     }

@@ -54,7 +54,7 @@ export class DevicesService {
         @inject(TYPES.IotFactory) iotFactory: () => IoTClient,
         @inject(TYPES.Greengrassv2Factory) ggv2Factory: () => GreengrassV2Client,
         @inject(EVENT_PUBLISHER_TYPES.CDFEventPublisher)
-        private cdfEventPublisher: CDFEventPublisher,
+        private cdfEventPublisher: CDFEventPublisher
     ) {
         this.iot = iotFactory();
         this.greengrassV2 = ggv2Factory();
@@ -79,12 +79,12 @@ export class DevicesService {
     public async disassociateDevicesFromCore(
         task: DeviceTaskItem,
         devices: DeviceItem[],
-        coreName: string,
+        coreName: string
     ): Promise<DeviceItem[]> {
         logger.debug(
             `devices.service disassociateDevicesFromCore: in: devices:${JSON.stringify(
-                devices,
-            )}, coreName: ${JSON.stringify(coreName)}`,
+                devices
+            )}, coreName: ${JSON.stringify(coreName)}`
         );
 
         ow(devices, ow.array.minLength(1));
@@ -97,21 +97,21 @@ export class DevicesService {
                 entries: devices.map((o) => {
                     return { thingName: o.name };
                 }),
-            }),
+            })
         );
 
         if (response.errorEntries.length > 0) {
             logger.warn(
                 `devices.service disassociateDevicesFromCore: there are some error when disassociating devices: ${JSON.stringify(
-                    devices,
-                )} with core: ${coreName}, errorEntries:${JSON.stringify(response.errorEntries)}`,
+                    devices
+                )} with core: ${coreName}, errorEntries:${JSON.stringify(response.errorEntries)}`
             );
             const saveTaskDetailsFuture = devices
                 .filter((o) => o.taskStatus === 'Success')
                 .filter(
                     (device) =>
                         response.errorEntries.find((o) => o.thingName === device.name) !==
-                        undefined,
+                        undefined
                 )
                 .map((device) => {
                     device.taskStatus = 'Failure';
@@ -123,9 +123,7 @@ export class DevicesService {
         }
 
         logger.debug(
-            `devices.service disassociateDevicesFromCore: exit: devices:${JSON.stringify(
-                devices,
-            )}`,
+            `devices.service disassociateDevicesFromCore: exit: devices:${JSON.stringify(devices)}`
         );
         return devices;
     }
@@ -133,12 +131,12 @@ export class DevicesService {
     public async associateDevicesWithCore(
         task: DeviceTaskItem,
         devices: DeviceItem[],
-        coreName: string,
+        coreName: string
     ): Promise<DeviceItem[]> {
         logger.debug(
             `devices.service associateDevicesWithCore: in: devices:${JSON.stringify(
-                devices,
-            )}, coreName: ${JSON.stringify(coreName)}`,
+                devices
+            )}, coreName: ${JSON.stringify(coreName)}`
         );
 
         ow(devices, ow.array.minLength(1));
@@ -153,21 +151,21 @@ export class DevicesService {
                     .map((o) => {
                         return { thingName: o.name };
                     }),
-            }),
+            })
         );
 
         if (response.errorEntries) {
             logger.error(
                 `devices.service associateDevicesWithCore: associating devices failed: ${JSON.stringify(
-                    response.errorEntries,
-                )}`,
+                    response.errorEntries
+                )}`
             );
             const saveTaskDetailsFuture = devices
                 .filter((o) => o.taskStatus === 'Success')
                 .filter(
                     (device) =>
                         response.errorEntries.find((o) => o.thingName === device.name) !==
-                        undefined,
+                        undefined
                 )
                 .map((device) => {
                     device.taskStatus = 'Failure';
@@ -179,19 +177,19 @@ export class DevicesService {
         }
 
         logger.debug(
-            `devices.service associateDevicesWithCore: exit: devices:${JSON.stringify(devices)}`,
+            `devices.service associateDevicesWithCore: exit: devices:${JSON.stringify(devices)}`
         );
         return devices;
     }
 
     public async deleteDevices(
         task: DeviceTaskItem,
-        devices: DeviceItem[],
+        devices: DeviceItem[]
     ): Promise<DeviceItem[]> {
         logger.debug(
             `devices.service deleteDevices: in: task:${JSON.stringify(
-                task,
-            )}, devices: ${JSON.stringify(devices)}`,
+                task
+            )}, devices: ${JSON.stringify(devices)}`
         );
 
         // fail fast if invalid request
@@ -207,11 +205,11 @@ export class DevicesService {
                         processed = await this.deleteDeviceByTask(
                             task,
                             c,
-                            task.options?.deprovisionClientDevices,
+                            task.options?.deprovisionClientDevices
                         );
                     } catch (e) {
                         logger.error(
-                            `devices.service deleteDevices: error: ${e.name}: ${e.message}`,
+                            `devices.service deleteDevices: error: ${e.name}: ${e.message}`
                         );
                         processed = {
                             ...c,
@@ -222,7 +220,7 @@ export class DevicesService {
                         };
                     }
                     return processed;
-                }),
+                })
             );
         }
 
@@ -233,12 +231,12 @@ export class DevicesService {
 
     public async createDevices(
         task: DeviceTaskItem,
-        devices: DeviceItem[],
+        devices: DeviceItem[]
     ): Promise<DeviceItem[]> {
         logger.debug(
             `devices.service createDevices: in: task:${JSON.stringify(
-                task,
-            )}, devices: ${JSON.stringify(devices)}`,
+                task
+            )}, devices: ${JSON.stringify(devices)}`
         );
 
         // fail fast if invalid request
@@ -254,7 +252,7 @@ export class DevicesService {
                         processed = await this.createDevice(task, c);
                     } catch (e) {
                         logger.error(
-                            `devices.service createDevices: error: ${e.name}: ${e.message}`,
+                            `devices.service createDevices: error: ${e.name}: ${e.message}`
                         );
                         processed = {
                             ...c,
@@ -265,7 +263,7 @@ export class DevicesService {
                         };
                     }
                     return processed;
-                }),
+                })
             );
         }
 
@@ -276,8 +274,8 @@ export class DevicesService {
     public async createDevice(task: DeviceTaskItem, request: DeviceItem): Promise<DeviceItem> {
         logger.debug(
             `devices.service createDevice: in: task:${JSON.stringify(
-                task,
-            )}, request:${JSON.stringify(request)}`,
+                task
+            )}, request:${JSON.stringify(request)}`
         );
 
         // fail fast if invalid request
@@ -285,7 +283,7 @@ export class DevicesService {
         ow(
             request?.provisioningTemplate,
             'client device provisioning template',
-            ow.string.nonEmpty,
+            ow.string.nonEmpty
         );
 
         // save as in progress
@@ -303,7 +301,7 @@ export class DevicesService {
             await this.iot.send(
                 new DescribeThingCommand({
                     thingName: device.name,
-                }),
+                })
             );
         } catch (e) {
             if (e.name === 'ResourceNotFoundException') {
@@ -313,7 +311,7 @@ export class DevicesService {
 
         if (thingAlreadyExists) {
             logger.warn(
-                `devices.service createCore: device: ${device.name} already registered with AWS IoT`,
+                `devices.service createCore: device: ${device.name} already registered with AWS IoT`
             );
             device.taskStatus = 'Success';
             device.statusMessage = 'Client device already registered';
@@ -362,14 +360,14 @@ export class DevicesService {
      */
     private async createThingIfNotExist(device: DeviceItem): Promise<void> {
         logger.debug(
-            `devices.service: createThingIfNotExist: in: device:${JSON.stringify(device)}`,
+            `devices.service: createThingIfNotExist: in: device:${JSON.stringify(device)}`
         );
         let thingExists = true;
         try {
             await this.iot.send(
                 new DescribeThingCommand({
                     thingName: device.name,
-                }),
+                })
             );
         } catch (e) {
             if (e.name === 'ResourceNotFoundException') {
@@ -378,7 +376,7 @@ export class DevicesService {
         }
         if (!thingExists) {
             logger.debug(
-                `devices.service createThingIfNotExist: provisioning thing for core: ${device.name}`,
+                `devices.service createThingIfNotExist: provisioning thing for core: ${device.name}`
             );
             let res: ProvisionThingResponse;
             try {
@@ -389,14 +387,14 @@ export class DevicesService {
                 };
                 logger.silly(
                     `devices.service createThingIfNotExist: provisioning: req:${JSON.stringify(
-                        req,
-                    )}`,
+                        req
+                    )}`
                 );
                 res = await this.thingsService.provisionThing(req);
                 logger.silly(
                     `devices.service createThingIfNotExist: provisioning: res:${JSON.stringify(
-                        res,
-                    )}`,
+                        res
+                    )}`
                 );
             } catch (err) {
                 logger.error(`devices.service createThingIfNotExist: provisioning: err:${err}`);
@@ -410,7 +408,7 @@ export class DevicesService {
                     const [bucket, key] = await this.uploadCerts(
                         device.name,
                         res.certificatePem,
-                        res.privateKey,
+                        res.privateKey
                     );
                     if (!device.artifacts) {
                         device.artifacts = {};
@@ -422,7 +420,7 @@ export class DevicesService {
                     };
                 } catch (err) {
                     logger.error(
-                        `devices.service createThingIfNotExist: failed uploading certs:  err:${err}`,
+                        `devices.service createThingIfNotExist: failed uploading certs:  err:${err}`
                     );
                     device.taskStatus = 'Failure';
                     device.statusMessage = `Failed uploading certs: ${err}`;
@@ -439,7 +437,7 @@ export class DevicesService {
     private async uploadCerts(
         thingName: string,
         certificate: string,
-        privateKey?: string,
+        privateKey?: string
     ): Promise<[string, string]> {
         logger.debug(`devices.service: uploadCerts: in: coreName:${thingName}`);
 
@@ -465,12 +463,12 @@ export class DevicesService {
     public async deleteDeviceByTask(
         task: DeviceTaskItem,
         device: DeviceItem,
-        deprovisionDevice: boolean,
+        deprovisionDevice: boolean
     ): Promise<DeviceItem> {
         logger.debug(
             `devices.service deleteDeviceByTask: in: task:${JSON.stringify(
-                task,
-            )}, device:${JSON.stringify(device)}, deprovisionCore:${deprovisionDevice}`,
+                task
+            )}, device:${JSON.stringify(device)}, deprovisionCore:${deprovisionDevice}`
         );
 
         const deviceItem: DeviceItem = {
@@ -518,12 +516,12 @@ export class DevicesService {
     public async deleteDevice(
         deviceName: string,
         deprovisionDevice: boolean,
-        disassociateDeviceFromCore = false,
+        disassociateDeviceFromCore = false
     ): Promise<DeviceItem> {
         logger.debug(
             `devices.service deleteDevice: in: deviceName:${JSON.stringify(
-                deviceName,
-            )}, deprovisionDevice:${deprovisionDevice}`,
+                deviceName
+            )}, deprovisionDevice:${deprovisionDevice}`
         );
 
         // fail fast if invalid request
@@ -541,7 +539,7 @@ export class DevicesService {
                 await this.thingsService.deleteThing(device.name);
             } catch (e) {
                 logger.error(
-                    `devices.service deleteDevice: deleting client device thing failed: ${e}`,
+                    `devices.service deleteDevice: deleting client device thing failed: ${e}`
                 );
             }
         }
@@ -559,7 +557,7 @@ export class DevicesService {
                 new BatchDisassociateClientDeviceFromCoreDeviceCommand({
                     coreDeviceThingName: device.coreName,
                     entries: [{ thingName: deviceName }],
-                }),
+                })
             );
         }
 

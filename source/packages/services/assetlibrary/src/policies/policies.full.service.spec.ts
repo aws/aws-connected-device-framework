@@ -37,7 +37,7 @@ describe('PoliciesService', () => {
             mockedEventEmitter,
             mockedAssembler,
             mockedDao,
-            mockedSchemaValidatorService,
+            mockedSchemaValidatorService
         );
     });
 
@@ -49,8 +49,8 @@ describe('PoliciesService', () => {
                 'policy1',
                 'provisioningtemplate',
                 ['/l1/l2/l3', '/a/b/c'],
-                ['/l1', '/a'],
-            ),
+                ['/l1', '/a']
+            )
         );
 
         const matchedPolicies: AttachedPolicy[] = [];
@@ -69,7 +69,7 @@ describe('PoliciesService', () => {
         // Make the call
         const inheritedPolicies = await instance.listInheritedByDevice(
             'device001',
-            'provisioningtemplate',
+            'provisioningtemplate'
         );
 
         // Finally, verify the results
@@ -87,16 +87,16 @@ describe('PoliciesService', () => {
                 'policy1',
                 'provisioningtemplate',
                 ['/l1/l2/l3', '/a/b/c'],
-                ['/l1', '/a'],
-            ),
+                ['/l1', '/a']
+            )
         );
         attachedPolicies.push(
             attachedPolicyStub(
                 'policy1',
                 'provisioningtemplate',
                 ['/l1/l2/l3', '/a/b/c'],
-                ['/l1', '/nomatch'],
-            ),
+                ['/l1', '/nomatch']
+            )
         );
 
         const matchedPolicies: AttachedPolicy[] = [];
@@ -105,8 +105,8 @@ describe('PoliciesService', () => {
                 'policy1',
                 'provisioningtemplate',
                 ['/l1/l2/l3', '/a/b/c'],
-                ['/l1', '/a'],
-            ),
+                ['/l1', '/a']
+            )
         );
 
         const expected: PolicyModel[] = [];
@@ -122,7 +122,7 @@ describe('PoliciesService', () => {
         // Make the call
         const inheritedPolicies = await instance.listInheritedByDevice(
             'device001',
-            'provisioningtemplate',
+            'provisioningtemplate'
         );
 
         // Finally, verify the results
@@ -147,7 +147,7 @@ function attachedPolicyStub(
     policyId: string,
     type: string,
     groups: string[],
-    policyGroups: string[],
+    policyGroups: string[]
 ): AttachedPolicy {
     const response = new AttachedPolicy();
     response.policy = {

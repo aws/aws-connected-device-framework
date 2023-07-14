@@ -37,7 +37,7 @@ import {
 export class ProfilesAssembler {
     constructor(
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
-        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
+        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler
     ) {}
 
     public toNode(model: DeviceProfileItem | GroupProfileItem): ProfileNode {
@@ -57,7 +57,7 @@ export class ProfilesAssembler {
         delete node.attributes['deviceId'];
         delete node.attributes['groupPath'];
         node.types = node.types.filter(
-            (t) => t !== TypeCategory.Device && t !== TypeCategory.Group,
+            (t) => t !== TypeCategory.Device && t !== TypeCategory.Group
         );
         node.types.push(TypeCategory.Profile);
         node.templateId = model.templateId;
@@ -69,7 +69,7 @@ export class ProfilesAssembler {
                 Object.entries(model.groups.in).map(([relation, entities]) => [
                     relation,
                     entities.map((e) => e.id),
-                ]),
+                ])
             );
         }
         if (model.groups?.out) {
@@ -77,7 +77,7 @@ export class ProfilesAssembler {
                 Object.entries(model.groups.out).map(([relation, entities]) => [
                     relation,
                     entities.map((e) => e.id),
-                ]),
+                ])
             );
         }
 
@@ -117,7 +117,7 @@ export class ProfilesAssembler {
                     Object.entries(parsedGroups.in).map(([relation, entities]) => [
                         relation,
                         entities.map((e) => ({ id: e })),
-                    ]),
+                    ])
                 );
             }
             if (parsedGroups.out) {
@@ -125,7 +125,7 @@ export class ProfilesAssembler {
                     Object.entries(parsedGroups.out).map(([relation, entities]) => [
                         relation,
                         entities.map((e) => ({ id: e })),
-                    ]),
+                    ])
                 );
             }
             delete model.attributes['groups'];
@@ -138,10 +138,10 @@ export class ProfilesAssembler {
     }
 
     public fromDeviceProfileResource(
-        res: DeviceProfile10Resource | DeviceProfile20Resource,
+        res: DeviceProfile10Resource | DeviceProfile20Resource
     ): DeviceProfileItem {
         logger.debug(
-            `profiles.assembler fromDeviceProfileResource: in: res: ${JSON.stringify(res)}`,
+            `profiles.assembler fromDeviceProfileResource: in: res: ${JSON.stringify(res)}`
         );
 
         if (res === undefined) {
@@ -150,7 +150,7 @@ export class ProfilesAssembler {
         }
 
         const item: DeviceProfileItem = this.devicesAssembler.fromDeviceResource(
-            res,
+            res
         ) as DeviceProfileItem;
 
         // then add the attributes which are specific to profile models
@@ -161,19 +161,19 @@ export class ProfilesAssembler {
         }
 
         logger.debug(
-            `profiles.assembler fromDeviceProfileResource: exit: item: ${JSON.stringify(item)}`,
+            `profiles.assembler fromDeviceProfileResource: exit: item: ${JSON.stringify(item)}`
         );
         return item;
     }
 
     public toDeviceProfileResource(
         item: DeviceProfileItem,
-        version: string,
+        version: string
     ): DeviceProfileResource {
         logger.debug(
             `profiles.assembler toDeviceProfileResource: in: item: ${JSON.stringify(
-                item,
-            )}, version:${version}`,
+                item
+            )}, version:${version}`
         );
 
         if (item === undefined) {
@@ -183,7 +183,7 @@ export class ProfilesAssembler {
 
         const resource = this.devicesAssembler.toDeviceResource(
             item as DeviceItem,
-            version,
+            version
         ) as DeviceProfileResource;
 
         const assembleRelated = (from: RelatedEntityArrayMap, to: StringArrayMap) => {
@@ -222,17 +222,17 @@ export class ProfilesAssembler {
 
         logger.debug(
             `profiles.assembler toDeviceProfileResource: exit: resource: ${JSON.stringify(
-                resource,
-            )}`,
+                resource
+            )}`
         );
         return resource;
     }
 
     public fromGroupProfileResource(
-        res: GroupProfile10Resource | GroupProfile20Resource,
+        res: GroupProfile10Resource | GroupProfile20Resource
     ): GroupProfileItem {
         logger.debug(
-            `profiles.assembler fromGroupProfileResource: in: res: ${JSON.stringify(res)}`,
+            `profiles.assembler fromGroupProfileResource: in: res: ${JSON.stringify(res)}`
         );
 
         if (res === undefined) {
@@ -241,7 +241,7 @@ export class ProfilesAssembler {
         }
 
         const item: GroupProfileItem = this.groupsAssembler.fromGroupResource(
-            res,
+            res
         ) as GroupProfileItem;
 
         // then add the attributes which are specific to profile models
@@ -252,7 +252,7 @@ export class ProfilesAssembler {
         }
 
         logger.debug(
-            `profiles.assembler fromGroupProfileResource: exit: item: ${JSON.stringify(item)}`,
+            `profiles.assembler fromGroupProfileResource: exit: item: ${JSON.stringify(item)}`
         );
         return item;
     }
@@ -260,8 +260,8 @@ export class ProfilesAssembler {
     public toGroupProfileResource(item: GroupProfileItem, version: string): GroupProfileResource {
         logger.debug(
             `profiles.assembler toGroupProfileResource: in: item: ${JSON.stringify(
-                item,
-            )}, version:${version}`,
+                item
+            )}, version:${version}`
         );
 
         if (item === undefined) {
@@ -282,7 +282,7 @@ export class ProfilesAssembler {
 
         const resource = this.groupsAssembler.toGroupResource(
             item as GroupItem,
-            version,
+            version
         ) as GroupProfileResource;
 
         // then add the attributes which are specific to profile models
@@ -306,8 +306,8 @@ export class ProfilesAssembler {
 
         logger.debug(
             `profiles.assembler toGroupProfileResource: exit: resource: ${JSON.stringify(
-                resource,
-            )}`,
+                resource
+            )}`
         );
         return resource;
     }
@@ -315,8 +315,8 @@ export class ProfilesAssembler {
     public toResourceList(items: ProfileItemList, version: string): ProfileResourceList {
         logger.debug(
             `profiles.assembler toResourceList: in: items: ${JSON.stringify(
-                items,
-            )}, version:${version}`,
+                items
+            )}, version:${version}`
         );
 
         if (items === undefined) {
@@ -330,17 +330,17 @@ export class ProfilesAssembler {
         items.results.forEach((item) => {
             if (item.category === 'device') {
                 resources.results.push(
-                    this.toDeviceProfileResource(item as DeviceProfileItem, version),
+                    this.toDeviceProfileResource(item as DeviceProfileItem, version)
                 );
             } else if (item.attributes.category === 'group') {
                 resources.results.push(
-                    this.toGroupProfileResource(item as GroupProfileItem, version),
+                    this.toGroupProfileResource(item as GroupProfileItem, version)
                 );
             }
         });
 
         logger.debug(
-            `profiles.assembler toResourceList: exit: resources: ${JSON.stringify(resources)}`,
+            `profiles.assembler toResourceList: exit: resources: ${JSON.stringify(resources)}`
         );
         return resources;
     }

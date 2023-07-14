@@ -47,7 +47,7 @@ export class DeviceMonitoringInstaller implements ServiceModule {
         delete answers.deviceMonitoring?.redeploy;
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
 
         if ((updatedAnswers.deviceMonitoring?.redeploy ?? true) === false) {
@@ -56,7 +56,7 @@ export class DeviceMonitoringInstaller implements ServiceModule {
 
         updatedAnswers = await inquirer.prompt(
             applicationConfigurationPrompt(this.name, answers, []),
-            updatedAnswers,
+            updatedAnswers
         );
         return updatedAnswers;
     }
@@ -73,7 +73,7 @@ export class DeviceMonitoringInstaller implements ServiceModule {
 
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
         return parameterOverrides;
     }
@@ -93,7 +93,7 @@ export class DeviceMonitoringInstaller implements ServiceModule {
                             'source',
                             'packages',
                             'services',
-                            'device-monitoring',
+                            'device-monitoring'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -124,7 +124,7 @@ export class DeviceMonitoringInstaller implements ServiceModule {
                 }
                 const assetlibrarybyResourceLogicalId = await getStackResourceSummaries(
                     this.assetLibraryStackName,
-                    answers.region,
+                    answers.region
                 );
                 answers.deviceMonitoring.assetLibraryFunctionName =
                     assetlibrarybyResourceLogicalId('LambdaFunction');
@@ -144,7 +144,7 @@ export class DeviceMonitoringInstaller implements ServiceModule {
                         'source',
                         'packages',
                         'services',
-                        'device-monitoring',
+                        'device-monitoring'
                     ),
                     parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,

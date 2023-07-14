@@ -16,7 +16,7 @@ import { ModuleName } from '../models/modules';
 const includeOptionalModule = (
     moduleName: ModuleName,
     { list, expandedMandatory }: Modules,
-    conditionToCheck: boolean,
+    conditionToCheck: boolean
 ): void => {
     if (
         conditionToCheck &&

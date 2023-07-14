@@ -46,7 +46,7 @@ export class CoresDao {
     private dbc: DynamoDBDocumentClient;
 
     public constructor(
-        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient,
+        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient
     ) {
         this.dbc = ddcFactory();
     }
@@ -149,10 +149,10 @@ export class CoresDao {
         templateVersion: number,
         state: 'desired' | 'reported',
         deploymentStatus?: string,
-        deploymentStatusMessage?: string,
+        deploymentStatusMessage?: string
     ): Promise<void> {
         logger.debug(
-            `cores.dao associateTemplate: in: coreName:${coreName}, templateName:${templateName}, templateVersion:${templateVersion}, state:${state}, deploymentStatus:${deploymentStatus}, deploymentStatusMessage:${deploymentStatusMessage}`,
+            `cores.dao associateTemplate: in: coreName:${coreName}, templateName:${templateName}, templateVersion:${templateVersion}, state:${state}, deploymentStatus:${deploymentStatus}, deploymentStatusMessage:${deploymentStatusMessage}`
         );
 
         ow(coreName, ow.string.nonEmpty);
@@ -175,7 +175,7 @@ export class CoresDao {
                 '#templateName=:templateName',
                 '#templateVersion=:templateVersion',
                 '#siKey2=:siKey2',
-                '#siKey3=:siKey3',
+                '#siKey3=:siKey3'
             );
             params.ExpressionAttributeNames = {
                 '#templateName': 'desiredTemplateName',
@@ -189,13 +189,13 @@ export class CoresDao {
                 ':siKey2': createDelimitedAttribute(
                     PkType.Template,
                     templateName,
-                    PkType.CoreDevice,
+                    PkType.CoreDevice
                 ),
                 ':siKey3': createDelimitedAttribute(
                     PkType.Template,
                     templateName,
                     PkType.TemplateVersion,
-                    templateVersion,
+                    templateVersion
                 ),
             };
 
@@ -214,13 +214,13 @@ export class CoresDao {
                     setExpressions.push('#siKey4=:siKey4', '#siKey5=:siKey5', '#siKey6=:siKey6');
                     params.ExpressionAttributeValues[':siKey4'] = createDelimitedAttribute(
                         PkType.DeploymentStatus,
-                        'FAILED',
+                        'FAILED'
                     );
                     params.ExpressionAttributeValues[':siKey5'] = createDelimitedAttribute(
                         PkType.DeploymentStatus,
                         'FAILED',
                         PkType.Template,
-                        templateName,
+                        templateName
                     );
                     params.ExpressionAttributeValues[':siKey6'] = createDelimitedAttribute(
                         PkType.DeploymentStatus,
@@ -228,7 +228,7 @@ export class CoresDao {
                         PkType.Template,
                         templateName,
                         PkType.TemplateVersion,
-                        templateVersion,
+                        templateVersion
                     );
                 } else {
                     // else we remove the si keys
@@ -250,7 +250,7 @@ export class CoresDao {
             // for repotred we always just update the template and version
             setExpressions.push(
                 '#templateName=:templateName',
-                '#templateVersion=:templateVersion',
+                '#templateVersion=:templateVersion'
             );
             params.ExpressionAttributeNames = {
                 '#templateName': 'reportedTemplateName',
@@ -275,7 +275,7 @@ export class CoresDao {
 
     public async associateFailedDeploymentStarts(cores: FailedCoreDeployment[]): Promise<void> {
         logger.debug(
-            `cores.dao associateFailedDeploymentStarts: in: cores:${JSON.stringify(cores)}`,
+            `cores.dao associateFailedDeploymentStarts: in: cores:${JSON.stringify(cores)}`
         );
 
         const items: TransactWriteCommandInput = {
@@ -309,7 +309,7 @@ export class CoresDao {
                             PkType.DeploymentStatus,
                             'FAILED',
                             PkType.Template,
-                            c.templateName,
+                            c.templateName
                         ),
                         ':siKey6': createDelimitedAttribute(
                             PkType.DeploymentStatus,
@@ -317,7 +317,7 @@ export class CoresDao {
                             PkType.Template,
                             c.templateName,
                             PkType.TemplateVersion,
-                            c.templateVersion,
+                            c.templateVersion
                         ),
                     },
                 },
@@ -340,7 +340,7 @@ export class CoresDao {
             futures.push(
                 limit(async () => {
                     return this.dbc.send(new TransactWriteCommand({ TransactItems: batch }));
-                }),
+                })
             );
         }
 
@@ -349,7 +349,7 @@ export class CoresDao {
         const rejected = results.filter((r) => r.status === 'rejected');
         if (rejected.length > 0) {
             logger.debug(
-                `cores.dao associateFailedDeploymentStarts: rejected:${JSON.stringify(rejected)}`,
+                `cores.dao associateFailedDeploymentStarts: rejected:${JSON.stringify(rejected)}`
             );
         }
 
@@ -392,15 +392,13 @@ export class CoresDao {
             });
 
             logger.silly(
-                `cores.dao delete: batchWriteResponse: deleteParam:${JSON.stringify(
-                    deleteParams,
-                )}`,
+                `cores.dao delete: batchWriteResponse: deleteParam:${JSON.stringify(deleteParams)}`
             );
             const batchWriteResponse = await this.dbc.send(new BatchWriteCommand(deleteParams));
             logger.silly(
                 `cores.dao delete: batchWriteResponse: result:${JSON.stringify(
-                    batchWriteResponse,
-                )}`,
+                    batchWriteResponse
+                )}`
             );
         }
 
@@ -412,12 +410,12 @@ export class CoresDao {
         templateVersion: number,
         failedOnly: boolean,
         count: number,
-        exclusiveStart: CoreListPaginationKey,
+        exclusiveStart: CoreListPaginationKey
     ): Promise<[CoreItem[], CoreListPaginationKey]> {
         logger.debug(
             `cores.dao list: in: templateName:${templateName}, failedOnly:${failedOnly}, count:${count}, exclusiveStart:${JSON.stringify(
-                exclusiveStart,
-            )}`,
+                exclusiveStart
+            )}`
         );
 
         let params: QueryCommandInput;
@@ -426,14 +424,14 @@ export class CoresDao {
                 templateName,
                 templateVersion,
                 count,
-                exclusiveStart,
+                exclusiveStart
             );
         } else if (templateVersion !== undefined) {
             params = this.generateListFilteredByTemplateVersionQuery(
                 templateName,
                 templateVersion,
                 count,
-                exclusiveStart,
+                exclusiveStart
             );
         } else if (templateName !== undefined) {
             params = this.generateListFilteredByTemplateQuery(templateName, count, exclusiveStart);
@@ -454,7 +452,7 @@ export class CoresDao {
         let paginationKey: CoreListPaginationKey;
         if (results.LastEvaluatedKey) {
             const lastEvaluatedThingName = expandDelimitedAttribute(
-                results.LastEvaluatedKey.pk,
+                results.LastEvaluatedKey.pk
             )[1];
             paginationKey = {
                 thingName: lastEvaluatedThingName,
@@ -463,15 +461,15 @@ export class CoresDao {
 
         logger.debug(
             `cores.dao list: exit: response:${JSON.stringify(
-                response,
-            )}, paginationKey:${paginationKey}`,
+                response
+            )}, paginationKey:${paginationKey}`
         );
         return [response, paginationKey];
     }
 
     private generateListQuery(
         count?: number,
-        exclusiveStart?: CoreListPaginationKey,
+        exclusiveStart?: CoreListPaginationKey
     ): QueryCommandInput {
         let exclusiveStartKey: DynamoDbPaginationKey;
         if (exclusiveStart?.thingName) {
@@ -503,16 +501,16 @@ export class CoresDao {
     private generateListFilteredByTemplateQuery(
         templateName: string,
         count?: number,
-        exclusiveStart?: CoreListPaginationKey,
+        exclusiveStart?: CoreListPaginationKey
     ): QueryCommandInput {
         const thingNameDbId = createDelimitedAttribute(
             PkType.CoreDevice,
-            exclusiveStart.thingName,
+            exclusiveStart.thingName
         );
         const templateDbId = createDelimitedAttribute(
             PkType.Template,
             templateName,
-            PkType.CoreDevice,
+            PkType.CoreDevice
         );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
@@ -547,17 +545,17 @@ export class CoresDao {
         templateName: string,
         templateVersion: number,
         count?: number,
-        exclusiveStart?: CoreListPaginationKey,
+        exclusiveStart?: CoreListPaginationKey
     ): QueryCommandInput {
         const thingNameDbId = createDelimitedAttribute(
             PkType.CoreDevice,
-            exclusiveStart.thingName,
+            exclusiveStart.thingName
         );
         const templateDbId = createDelimitedAttribute(
             PkType.Template,
             templateName,
             PkType.TemplateVersion,
-            templateVersion,
+            templateVersion
         );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
@@ -592,11 +590,11 @@ export class CoresDao {
         templateName?: string,
         templateVersion?: number,
         count?: number,
-        exclusiveStart?: CoreListPaginationKey,
+        exclusiveStart?: CoreListPaginationKey
     ): QueryCommandInput {
         const thingNameDbId = createDelimitedAttribute(
             PkType.CoreDevice,
-            exclusiveStart.thingName,
+            exclusiveStart.thingName
         );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
@@ -624,7 +622,7 @@ export class CoresDao {
                 PkType.DeploymentStatus,
                 'FAILED',
                 PkType.Template,
-                templateName,
+                templateName
             );
             hash = 'siKey5';
             if (exclusiveStart?.thingName) {
@@ -639,7 +637,7 @@ export class CoresDao {
                 PkType.Template,
                 templateName,
                 PkType.TemplateVersion,
-                templateVersion,
+                templateVersion
             );
             hash = 'siKey6';
             if (exclusiveStart?.thingName) {

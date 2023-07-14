@@ -29,7 +29,7 @@ import {
 export class SubscriptionAssembler {
     constructor(
         @inject(TYPES.TargetAssembler) private targetAssembler: TargetAssembler,
-        @inject(TYPES.SNSTarget) private snsTarget: SNSTarget,
+        @inject(TYPES.SNSTarget) private snsTarget: SNSTarget
     ) {}
 
     public augmentItem(item: SubscriptionItem, event: EventItem): void {
@@ -49,8 +49,8 @@ export class SubscriptionAssembler {
     public toItem(resource: SubscriptionBaseResource, version: string): SubscriptionItem {
         logger.debug(
             `subscription.assembler toItem: in: resource:${JSON.stringify(
-                resource,
-            )}, version:${version}`,
+                resource
+            )}, version:${version}`
         );
 
         const item: SubscriptionItem = {
@@ -97,24 +97,24 @@ export class SubscriptionAssembler {
                 dynamodb: this.targetAssembler.toItems(
                     resource.id,
                     asV2.targets?.dynamodb,
-                    'dynamodb',
+                    'dynamodb'
                 ),
                 email: this.targetAssembler.toItems(resource.id, asV2.targets?.email, 'email'),
                 mqtt: this.targetAssembler.toItems(resource.id, asV2.targets?.mqtt, 'mqtt'),
                 push_gcm: this.targetAssembler.toItems(
                     resource.id,
                     asV2.targets?.push_gcm,
-                    'push_gcm',
+                    'push_gcm'
                 ),
                 push_adm: this.targetAssembler.toItems(
                     resource.id,
                     asV2.targets?.push_adm,
-                    'push_adm',
+                    'push_adm'
                 ),
                 push_apns: this.targetAssembler.toItems(
                     resource.id,
                     asV2.targets?.push_apns,
-                    'push_apns',
+                    'push_apns'
                 ),
                 sms: this.targetAssembler.toItems(resource.id, asV2.targets?.sms, 'sms'),
             };
@@ -127,8 +127,8 @@ export class SubscriptionAssembler {
     public toResource(item: SubscriptionItem, version: string): SubscriptionBaseResource {
         logger.debug(
             `subscription.assembler toResource: in: item:${JSON.stringify(
-                item,
-            )}, version:${version}`,
+                item
+            )}, version:${version}`
         );
 
         let resource: SubscriptionBaseResource;
@@ -199,12 +199,12 @@ export class SubscriptionAssembler {
     public toResourceList(
         items: SubscriptionItem[],
         version: string,
-        paginationFrom?: PaginationKey,
+        paginationFrom?: PaginationKey
     ): SubscriptionResourceList {
         logger.debug(
             `subscription.assembler toResourceList: in: items:${JSON.stringify(
-                items,
-            )}, version:${version}, paginationFrom:${JSON.stringify(paginationFrom)}`,
+                items
+            )}, version:${version}, paginationFrom:${JSON.stringify(paginationFrom)}`
         );
 
         const list: SubscriptionResourceList = {

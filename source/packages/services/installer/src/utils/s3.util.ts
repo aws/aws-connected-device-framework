@@ -23,7 +23,7 @@ export class S3Utils {
     public async uploadStreamToS3(
         bucket: string,
         key: string,
-        body: Readable | ReadableStream | Blob | string | Uint8Array | Buffer,
+        body: Readable | ReadableStream | Blob | string | Uint8Array | Buffer
     ): Promise<void> {
         const upload = new Upload({
             client: this.s3,

@@ -19,7 +19,7 @@ import { SimulateIoTCoreMessageRequest } from './messages.model';
 export interface MessagesDebugService {
     simulateIoTCoreMessage(
         message: SimulateIoTCoreMessageRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 }
 

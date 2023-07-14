@@ -26,7 +26,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -34,7 +34,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
     async createTemplate(
         template: TemplateModel,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(template, ow.object.nonEmpty);
 
@@ -49,7 +49,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
     async getTemplate(
         templateId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<TemplateModel> {
         ow(templateId, 'templateId', ow.string.nonEmpty);
 
@@ -74,7 +74,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
     async updateTemplate(
         template: TemplateModel,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.templateId, ow.string.nonEmpty);

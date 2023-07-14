@@ -39,7 +39,7 @@ export class CoreTasksService {
         @inject(TYPES.CoresService) private coresService: CoresService,
         @inject(TYPES.DeviceTasksService) private deviceTaskService: DeviceTasksService,
         @inject(TYPES.Greengrassv2Factory) ggv2Factory: () => GreengrassV2Client,
-        @inject(TYPES.SQSFactory) sqsFactory: () => SQSClient,
+        @inject(TYPES.SQSFactory) sqsFactory: () => SQSClient
     ) {
         this.sqs = sqsFactory();
         this.ggv2 = ggv2Factory();
@@ -115,9 +115,9 @@ export class CoreTasksService {
                                     StringValue: `CoreTask:${task.type}`,
                                 },
                             },
-                        }),
-                    ),
-                ),
+                        })
+                    )
+                )
             );
         }
         await Promise.all(sqsFutures);
@@ -139,12 +139,12 @@ export class CoreTasksService {
     public async disassociateDevicesFromCoreAsync(
         task: CoreTaskItem,
         core: CoreItem,
-        deprovisionClientDevices: boolean,
+        deprovisionClientDevices: boolean
     ): Promise<void> {
         logger.debug(
             `coreTasks.service disassociateDevicesFromCoreAsync: in: task:${JSON.stringify(
-                task,
-            )}, core:${JSON.stringify(core)}`,
+                task
+            )}, core:${JSON.stringify(core)}`
         );
 
         ow(core, ow.object.nonEmpty);
@@ -156,7 +156,7 @@ export class CoreTasksService {
             const listDevicesResponse = await this.ggv2.send(
                 new ListClientDevicesAssociatedWithCoreDeviceCommand({
                     coreDeviceThingName: core.name,
-                }),
+                })
             );
             if (listDevicesResponse.associatedClientDevices.length > 0) {
                 const devicesToDelete = listDevicesResponse.associatedClientDevices.map((o) => {
@@ -173,14 +173,14 @@ export class CoreTasksService {
                         type: 'Delete',
                         options: { deprovisionClientDevices: deprovisionClientDevices },
                     },
-                    core.name,
+                    core.name
                 );
                 await this.publishCoreTaskStatusCheck(task.id, deviceTaskId);
             } else {
                 const deletedCore = await this.coresService.deleteCore(
                     task,
                     core.name,
-                    deprovisionClientDevices,
+                    deprovisionClientDevices
                 );
                 await this.saveBatchStatus(task.id, [deletedCore], false, undefined);
             }
@@ -197,10 +197,10 @@ export class CoreTasksService {
     private async publishCoreTaskStatusCheck(
         coreTaskId: string,
         deviceTaskId: string,
-        counter = 0,
+        counter = 0
     ): Promise<void> {
         logger.debug(
-            `coreTasks.service publishCoreTaskStatusCheck: in: coreTaskId:${coreTaskId}, deviceTaskId:${deviceTaskId}`,
+            `coreTasks.service publishCoreTaskStatusCheck: in: coreTaskId:${coreTaskId}, deviceTaskId:${deviceTaskId}`
         );
         await this.sqs.send(
             new SendMessageCommand({
@@ -213,7 +213,7 @@ export class CoreTasksService {
                     },
                 },
                 DelaySeconds: 5,
-            }),
+            })
         );
         logger.debug(`coreTasks.service publishCoreTaskStatusCheck: exit`);
     }
@@ -221,14 +221,14 @@ export class CoreTasksService {
     public async updateCoreTaskStatus(
         coreTaskId: string,
         deviceTaskId: string,
-        counter: number,
+        counter: number
     ): Promise<void> {
         logger.debug(
-            `coreTasks.service updateCoreTaskStatus: in: coreTaskId:${coreTaskId}, deviceTaskId:${deviceTaskId}, counter: ${counter}`,
+            `coreTasks.service updateCoreTaskStatus: in: coreTaskId:${coreTaskId}, deviceTaskId:${deviceTaskId}, counter: ${counter}`
         );
 
         const { taskStatus, statusMessage, coreName } = await this.deviceTaskService.get(
-            deviceTaskId,
+            deviceTaskId
         );
 
         if (counter > (process.env.CORE_TASK_STATUS_QUEUE_COUNTER as unknown as number)) {
@@ -257,7 +257,7 @@ export class CoreTasksService {
                 await this.coresService.deleteCore(
                     coreTask,
                     core.name,
-                    coreTask.options?.deprovisionCores,
+                    coreTask.options?.deprovisionCores
                 );
             }
         } catch (e) {
@@ -273,8 +273,8 @@ export class CoreTasksService {
     public async processDeleteCoreTaskBatch(taskId: string, cores: CoreItem[]): Promise<void> {
         logger.debug(
             `coreTasks.service processDeleteCoreTaskBatch: in: taskId:${taskId}, cores:${JSON.stringify(
-                cores,
-            )}`,
+                cores
+            )}`
         );
         try {
             // validation
@@ -296,11 +296,11 @@ export class CoreTasksService {
             await this.disassociateDevicesFromCoreAsync(
                 task,
                 core,
-                task.options?.deprovisionClientDevices,
+                task.options?.deprovisionClientDevices
             );
         } catch (e) {
             logger.error(
-                `coreTasks.service processDeleteCoreTaskBatch: e: ${e.name}: ${e.message}`,
+                `coreTasks.service processDeleteCoreTaskBatch: e: ${e.name}: ${e.message}`
             );
         }
 
@@ -310,8 +310,8 @@ export class CoreTasksService {
     public async processCreateCoreTaskBatch(taskId: string, cores: CoreItem[]): Promise<void> {
         logger.debug(
             `coreTasks.service processCreateCoreTaskBatch: in: taskId:${taskId}, cores:${JSON.stringify(
-                cores,
-            )}`,
+                cores
+            )}`
         );
 
         let failed = false;
@@ -335,7 +335,7 @@ export class CoreTasksService {
             processedCores = await this.coresService.createCores(task, cores);
         } catch (e) {
             logger.error(
-                `coreTasks.service processCreateCoreTaskBatch: e: ${e.name}: ${e.message}`,
+                `coreTasks.service processCreateCoreTaskBatch: e: ${e.name}: ${e.message}`
             );
             failed = true;
             failedReason = e.message;
@@ -351,12 +351,12 @@ export class CoreTasksService {
         taskId: string,
         cores: CoreItem[],
         failed: boolean,
-        failedReason: string,
+        failedReason: string
     ): Promise<void> {
         logger.debug(
             `coreTasks.service saveBatchStatus: in: taskId:${taskId}, failed:${failed}, failedReason:${failedReason}, cores:${JSON.stringify(
-                cores,
-            )}`,
+                cores
+            )}`
         );
 
         // update the batch progress
@@ -391,12 +391,12 @@ export class CoreTasksService {
 
     public async list(
         count?: number,
-        exclusiveStart?: CoreTaskListPaginationKey,
+        exclusiveStart?: CoreTaskListPaginationKey
     ): Promise<[CoreTaskItem[], CoreTaskListPaginationKey]> {
         logger.debug(
             `coreTasks.service list: in: count:${count}, exclusiveStart:${JSON.stringify(
-                exclusiveStart,
-            )}`,
+                exclusiveStart
+            )}`
         );
 
         if (count) {

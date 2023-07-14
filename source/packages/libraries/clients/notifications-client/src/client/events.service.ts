@@ -20,7 +20,7 @@ export interface EventsService {
     createEvent(
         eventSourceId: string,
         event: EventResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string>;
 
     getEvent(eventId: string, additionalHeaders?: RequestHeaders): Promise<EventResource>;
@@ -33,7 +33,7 @@ export interface EventsService {
         eventSourceId: string,
         count?: number,
         fromEventId?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<EventResourceList>;
 }
 

@@ -25,14 +25,14 @@ export class ResponsesDao {
     public constructor(
         @inject('aws.dynamoDb.table') private table: string,
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
-        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DocumentClient,
+        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DocumentClient
     ) {
         this._dc = documentClientFactory();
     }
 
     public async save(messageId: string, reply: Response): Promise<void> {
         logger.debug(
-            `responses.dao save: in: messageId:${messageId}, reply:${JSON.stringify(reply)}`,
+            `responses.dao save: in: messageId:${messageId}, reply:${JSON.stringify(reply)}`
         );
 
         const now = reply.timestamp ? reply.timestamp : new Date().getTime();

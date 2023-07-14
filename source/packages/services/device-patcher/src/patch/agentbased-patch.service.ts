@@ -39,7 +39,7 @@ export class AgentbasedPatchService {
         @inject(TYPES.ExpressionParser) private expressionParser: ExpressionParser,
         @inject(TYPES.PatchTemplatesService) private templatesService: PatchTemplatesService,
         @inject('aws.s3.bucket') private artifactsBucket: string,
-        @inject('aws.s3.prefix') private artifactsBucketPrefix: string,
+        @inject('aws.s3.prefix') private artifactsBucketPrefix: string
     ) {
         this.ssm = ssmFactory();
         this.sqs = sqsFactory();
@@ -65,8 +65,8 @@ export class AgentbasedPatchService {
         } catch (err) {
             logger.error(
                 `agentbasedPatch.service sqs.sendMessage: in: ${sqsRequest} : error: ${JSON.stringify(
-                    err,
-                )}`,
+                    err
+                )}`
             );
             throw err;
         }
@@ -151,7 +151,7 @@ export class AgentbasedPatchService {
         await this.agentbasedPatchDao.save(patchAssociation);
 
         logger.debug(
-            `agentbasedPatchService: deploy: out: result: ${JSON.stringify(association)}`,
+            `agentbasedPatchService: deploy: out: result: ${JSON.stringify(association)}`
         );
     }
 
@@ -251,7 +251,7 @@ export class AgentbasedPatchService {
 
     private async getInstanceByActivationId(activationId: string) {
         logger.debug(
-            `agentbasedPatchService: getInstanceByActivationId: in: activation: ${activationId}`,
+            `agentbasedPatchService: getInstanceByActivationId: in: activation: ${activationId}`
         );
 
         ow(activationId, 'Activation Id', ow.string.nonEmpty);
@@ -278,8 +278,8 @@ export class AgentbasedPatchService {
 
         logger.debug(
             `agentbasedPatchService: getInstanceByActivationId: exit: instance: ${JSON.stringify(
-                result,
-            )}`,
+                result
+            )}`
         );
 
         return result.InstanceInformationList[0].InstanceId;
@@ -311,7 +311,7 @@ export class AgentbasedPatchService {
         }
 
         logger.debug(
-            `agentbasedPatchService: getInstance: exit: instance: ${JSON.stringify(result)}`,
+            `agentbasedPatchService: getInstance: exit: instance: ${JSON.stringify(result)}`
         );
 
         return result.InstanceInformationList[0];
@@ -319,7 +319,7 @@ export class AgentbasedPatchService {
 
     public async getPatchByAssociationId(associationId: string): Promise<AssociationModel> {
         logger.debug(
-            `agentbasedPatchDao: getPatchByAssociationId in: associationId: ${associationId}`,
+            `agentbasedPatchDao: getPatchByAssociationId in: associationId: ${associationId}`
         );
 
         ow(associationId, 'Association Id', ow.string.nonEmpty);
@@ -334,8 +334,8 @@ export class AgentbasedPatchService {
 
         logger.debug(
             `agentbasedPatchService: getPatchByInstanceId: exit: association: ${JSON.stringify(
-                result,
-            )}`,
+                result
+            )}`
         );
 
         return result;
@@ -376,7 +376,7 @@ export class AgentbasedPatchService {
 
         for (const v of vars) {
             extraVars[v] = Buffer.from(await this.expressionParser.eval(extraVars[v])).toString(
-                'base64',
+                'base64'
             );
         }
 

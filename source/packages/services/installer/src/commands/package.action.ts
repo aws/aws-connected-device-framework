@@ -18,7 +18,7 @@ async function packageAction(pathToConfigFile: string, options: unknown): Promis
     const grouped = topologicallySortModules(
         modules,
         answers.modules.expandedIncludingOptional,
-        false,
+        false
     );
 
     answers.s3.optionalDeploymentBucket = options['bucket'];

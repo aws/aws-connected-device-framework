@@ -23,7 +23,7 @@ const __ = process.statics;
 export class PoliciesDaoFull extends BaseDaoFull {
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -91,7 +91,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
     private addCreateAppliesToTraversal(
         path: string,
         identifier: number,
-        traversal: process.GraphTraversal,
+        traversal: process.GraphTraversal
     ) {
         const groupId = `group___${path}`;
         const groupAlias = `group_added_${identifier}`;
@@ -106,8 +106,8 @@ export class PoliciesDaoFull extends BaseDaoFull {
     public async update(existing: PolicyModel, updated: PolicyModel): Promise<string> {
         logger.debug(
             `policies.dao update: in: existing:${JSON.stringify(
-                existing,
-            )}, updated:${JSON.stringify(updated)}`,
+                existing
+            )}, updated:${JSON.stringify(updated)}`
         );
 
         const id = `policy___${existing.policyId}`;
@@ -131,10 +131,10 @@ export class PoliciesDaoFull extends BaseDaoFull {
             /*  identfy any changes in the appliesTo relationship  */
             const changedAppliesTo = this.identifyChangedAppliesTo(
                 existing.appliesTo,
-                updated.appliesTo,
+                updated.appliesTo
             );
             logger.debug(
-                `policies.dao update: changedAppliesTo: ${JSON.stringify(changedAppliesTo)}`,
+                `policies.dao update: changedAppliesTo: ${JSON.stringify(changedAppliesTo)}`
             );
 
             /*  any new appliesTo we can simply add the step to the traversal  */
@@ -188,10 +188,10 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
     public async listDeviceAttachedPolicies(
         deviceId: string,
-        type: string,
+        type: string
     ): Promise<AttachedPolicy[]> {
         logger.debug(
-            `policies.dao listDeviceAttachedPolicies: in: deviceId:${deviceId}, type:${type}`,
+            `policies.dao listDeviceAttachedPolicies: in: deviceId:${deviceId}, type:${type}`
         );
 
         const id = `device___${deviceId.toLowerCase()}`;
@@ -224,17 +224,17 @@ export class PoliciesDaoFull extends BaseDaoFull {
         }
 
         logger.debug(
-            `policies.dao listDeviceAttachedPolicies: exit: policies: ${JSON.stringify(policies)}`,
+            `policies.dao listDeviceAttachedPolicies: exit: policies: ${JSON.stringify(policies)}`
         );
         return policies;
     }
 
     public async listGroupAttachedPolicies(
         groupPaths: string[],
-        type: string,
+        type: string
     ): Promise<AttachedPolicy[]> {
         logger.debug(
-            `policies.dao listGroupAttachedPolicies: in: groupPaths:${groupPaths}, type:${type}`,
+            `policies.dao listGroupAttachedPolicies: in: groupPaths:${groupPaths}, type:${type}`
         );
 
         const ids: string[] = [];
@@ -274,7 +274,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
         }
 
         logger.debug(
-            `policies.dao listGroupAttachedPolicies: exit: policies: ${JSON.stringify(policies)}`,
+            `policies.dao listGroupAttachedPolicies: exit: policies: ${JSON.stringify(policies)}`
         );
         return policies;
     }

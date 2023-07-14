@@ -32,7 +32,7 @@ export class ActivationService {
 
     constructor(
         @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
-        @inject(TYPES.ActivationDao) private activationDao: ActivationDao,
+        @inject(TYPES.ActivationDao) private activationDao: ActivationDao
     ) {
         this.ssm = ssmFactory();
     }
@@ -47,7 +47,7 @@ export class ActivationService {
             new TextEncoder().encode(activation.deviceId).length,
             ow.number
                 .lessThanOrEqual(2048)
-                .message((val) => `deviceId can not exceed 2048 bytes, got ${val}`),
+                .message((val) => `deviceId can not exceed 2048 bytes, got ${val}`)
         );
 
         // check if the device already has an activation
@@ -104,7 +104,7 @@ export class ActivationService {
         }
 
         logger.debug(
-            `ActivationService: getActivation: out: activation:${JSON.stringify(activation)}`,
+            `ActivationService: getActivation: out: activation:${JSON.stringify(activation)}`
         );
 
         return activation;
@@ -128,7 +128,7 @@ export class ActivationService {
         }
 
         logger.debug(
-            `ActivationService: getActivation: out: activation:${JSON.stringify(activation)}`,
+            `ActivationService: getActivation: out: activation:${JSON.stringify(activation)}`
         );
 
         return activation;
@@ -143,7 +143,7 @@ export class ActivationService {
             new TextEncoder().encode(deviceId).length,
             ow.number
                 .lessThanOrEqual(2048)
-                .message((val) => `deviceId can not exceed 2048 bytes, got ${val}`),
+                .message((val) => `deviceId can not exceed 2048 bytes, got ${val}`)
         );
 
         let activation: ActivationItem;
@@ -169,7 +169,7 @@ export class ActivationService {
         // https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_DeleteActivation.html#API_DeleteActivation_RequestParameters
         ow(
             activationId,
-            ow.string.matches(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/),
+            ow.string.matches(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)
         );
 
         await this.activationDao.delete(activationId);
@@ -185,12 +185,12 @@ export class ActivationService {
             // in this case, no deletion is needed and we fall through with a no-op, otherwise, throw the exception
             if (err.code !== 'InvalidActivation') {
                 logger.error(
-                    `activation.service ssm.deleteActivation error: ${JSON.stringify(err)}`,
+                    `activation.service ssm.deleteActivation error: ${JSON.stringify(err)}`
                 );
                 throw err;
             }
             logger.debug(
-                'activation.service ssm.deleteActivation get InvalidationActivation, falling through with no-op',
+                'activation.service ssm.deleteActivation get InvalidationActivation, falling through with no-op'
             );
         }
         logger.debug(`ActivationService: deleteActivation: exit`);

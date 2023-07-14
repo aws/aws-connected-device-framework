@@ -30,7 +30,7 @@ export class MessagesDebugLambdaService
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -39,7 +39,7 @@ export class MessagesDebugLambdaService
 
     async simulateIoTCoreMessage(
         message: SimulateIoTCoreMessageRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(message, ow.object.nonEmpty);
         ow(message.topic, ow.string.nonEmpty);

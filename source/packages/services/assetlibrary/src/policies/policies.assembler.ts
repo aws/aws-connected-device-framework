@@ -19,7 +19,7 @@ import { AttachedPolicy, Policy, PolicyModel } from './policies.models';
 export class PoliciesAssembler {
     public toModelFromTraverser(result: process.Traverser, labels: string[]): PolicyModel {
         logger.debug(
-            `policies.assembler toModelFromTraverser: in: result: ${result}, labels: ${labels}`,
+            `policies.assembler toModelFromTraverser: in: result: ${result}, labels: ${labels}`
         );
 
         const model = new PolicyModel();
@@ -43,7 +43,7 @@ export class PoliciesAssembler {
 
     public toModelFromPolicy(policy: Policy | AttachedPolicy): PolicyModel {
         logger.debug(
-            `policies.assembler toModelFromPolicy: in: policy: ${JSON.stringify(policy)}`,
+            `policies.assembler toModelFromPolicy: in: policy: ${JSON.stringify(policy)}`
         );
 
         if (policy === undefined) {
@@ -72,14 +72,14 @@ export class PoliciesAssembler {
         }
 
         logger.debug(
-            `policies.assembler toModelFromPolicy: exit: model: ${JSON.stringify(model)}`,
+            `policies.assembler toModelFromPolicy: exit: model: ${JSON.stringify(model)}`
         );
         return model;
     }
 
     public toModelFromPolicies(policies: (AttachedPolicy | Policy)[]): PolicyModel[] {
         logger.debug(
-            `policies.assembler toModelFromPolicies: in: policies: ${JSON.stringify(policies)}`,
+            `policies.assembler toModelFromPolicies: in: policies: ${JSON.stringify(policies)}`
         );
 
         const models: PolicyModel[] = [];
@@ -88,7 +88,7 @@ export class PoliciesAssembler {
         }
 
         logger.debug(
-            `policies.assembler toModelFromMatches: exit: models: ${JSON.stringify(models)}`,
+            `policies.assembler toModelFromMatches: exit: models: ${JSON.stringify(models)}`
         );
         return models;
     }

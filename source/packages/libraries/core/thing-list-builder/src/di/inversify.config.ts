@@ -21,20 +21,20 @@ export const thingListBuilderContainerModule = new ContainerModule(
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind,
+        _rebind: interfaces.Rebind
     ) => {
         if (!isBound('aws.region')) {
             bind<string>('aws.region').toConstantValue(process.env.AWS_REGION);
         }
 
         bind<AwsIotThingListBuilder>(THING_LIST_BUILDER_TYPES.AwsIotThingListBuilder).to(
-            AwsIotThingListBuilder,
+            AwsIotThingListBuilder
         );
 
         if (!isBound(THING_LIST_BUILDER_TYPES.IotFactory)) {
             decorate(injectable(), IoTClient);
             bind<interfaces.Factory<IoTClient>>(
-                THING_LIST_BUILDER_TYPES.IotFactory,
+                THING_LIST_BUILDER_TYPES.IotFactory
             ).toFactory<IoTClient>((ctx: interfaces.Context) => {
                 return () => {
                     if (!isBound(THING_LIST_BUILDER_TYPES.Iot)) {
@@ -45,5 +45,5 @@ export const thingListBuilderContainerModule = new ContainerModule(
                 };
             });
         }
-    },
+    }
 );

@@ -32,23 +32,23 @@ import { DeviceTasksService } from './deviceTasks.service';
 export class DeviceTasksController implements interfaces.Controller {
     constructor(
         @inject(TYPES.DeviceTasksService) private deviceTasksService: DeviceTasksService,
-        @inject(TYPES.DeviceTasksAssembler) private deviceTaskAssembler: DeviceTasksAssembler,
+        @inject(TYPES.DeviceTasksAssembler) private deviceTaskAssembler: DeviceTasksAssembler
     ) {}
 
     @httpPost('/cores/:coreName/deviceTasks')
     public async createDeviceTask(
         @requestBody() resource: NewDeviceTaskResource,
         @requestParam('coreName') coreName: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
-            `deviceTasks.controller createDeviceTask: in: resource: ${JSON.stringify(resource)}`,
+            `deviceTasks.controller createDeviceTask: in: resource: ${JSON.stringify(resource)}`
         );
         try {
             const item = this.deviceTaskAssembler.toItem(resource);
             const taskId = await this.deviceTasksService.create(item, coreName);
             logger.debug(
-                `deviceTasks.controller createDeviceTask: exit: taskId:${JSON.stringify(taskId)}`,
+                `deviceTasks.controller createDeviceTask: exit: taskId:${JSON.stringify(taskId)}`
             );
             res.location(`/deviceTasks/${taskId}`).header('x-taskid', taskId).status(202).send();
         } catch (e) {
@@ -59,7 +59,7 @@ export class DeviceTasksController implements interfaces.Controller {
     @httpGet('/deviceTasks/:taskId')
     public async getDeviceTask(
         @requestParam('taskId') taskId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(`deviceTasks.controller getDeviceTask: in: taskId:${taskId}`);
 
@@ -71,7 +71,7 @@ export class DeviceTasksController implements interfaces.Controller {
             } else {
                 const resource = this.deviceTaskAssembler.toResource(item);
                 logger.debug(
-                    `deviceTasks.controller getDeviceTask: exit: ${JSON.stringify(resource)}`,
+                    `deviceTasks.controller getDeviceTask: exit: ${JSON.stringify(resource)}`
                 );
                 res.status(200).send(resource);
             }

@@ -30,7 +30,7 @@ export class TemplatesValidator {
         this.rolloutsValidator.validate(
             t.jobExecutionsRolloutConfig,
             t.abortConfig,
-            t.timeoutConfig,
+            t.timeoutConfig
         );
     }
 }

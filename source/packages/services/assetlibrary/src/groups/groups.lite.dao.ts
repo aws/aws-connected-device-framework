@@ -131,10 +131,10 @@ export class GroupsDaoLite {
     public async listDeviceMembers(
         groupPath: string,
         maxResults?: number,
-        nextToken?: string,
+        nextToken?: string
     ): Promise<ListMembersResponse> {
         logger.debug(
-            `groups.lite.dao listDeviceMembers: in: groupPath:${groupPath}, maxResults:${maxResults}, nextToken:${nextToken}`,
+            `groups.lite.dao listDeviceMembers: in: groupPath:${groupPath}, maxResults:${maxResults}, nextToken:${nextToken}`
         );
 
         const params: Iot.Types.ListThingsInThingGroupRequest = {
@@ -162,10 +162,10 @@ export class GroupsDaoLite {
     public async listGroupMembers(
         groupPath: string,
         maxResults?: number,
-        nextToken?: string,
+        nextToken?: string
     ): Promise<ListMembersResponse> {
         logger.debug(
-            `groups.lite.dao listGroupMembers: in: groupPath:${groupPath}, maxResults:${maxResults}, nextToken:${nextToken}`,
+            `groups.lite.dao listGroupMembers: in: groupPath:${groupPath}, maxResults:${maxResults}, nextToken:${nextToken}`
         );
 
         const params: Iot.Types.ListThingGroupsRequest = {
@@ -193,7 +193,7 @@ export class GroupsDaoLite {
 
     public async delete(groupPath: string, expectedVersion: number): Promise<void> {
         logger.debug(
-            `groups.lite.dao delete: in: groupPath:${groupPath}, expectedVersion:${expectedVersion}`,
+            `groups.lite.dao delete: in: groupPath:${groupPath}, expectedVersion:${expectedVersion}`
         );
 
         const params: Iot.Types.DeleteThingGroupRequest = {

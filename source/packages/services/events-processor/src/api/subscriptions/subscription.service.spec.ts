@@ -56,7 +56,7 @@ describe('SubscriptionService', () => {
             mockedTargetService,
             mockedSNSTarget,
             asyncProcessingQueue,
-            mockedSQSFactory,
+            mockedSQSFactory
         );
     });
 
@@ -289,14 +289,14 @@ describe('SubscriptionService', () => {
         expect(instance.get).toBeCalledWith(subscriptionId);
         expect(instance.listSnsTargetArns).toBeCalledWith(
             stubbedSubscriptionItem2.user.id,
-            subscriptionId,
+            subscriptionId
         );
         expect(mockedTargetService.delete).toBeCalledTimes(1);
         expect(mockedTargetService.delete).toBeCalledWith(
             subscriptionId,
             targetType,
             targetId,
-            true,
+            true
         );
     });
 
@@ -327,14 +327,14 @@ describe('SubscriptionService', () => {
         expect(instance.get).toBeCalledWith(subscriptionId);
         expect(instance.listSnsTargetArns).toBeCalledWith(
             stubbedSubscriptionItem2.user.id,
-            subscriptionId,
+            subscriptionId
         );
         expect(mockedTargetService.delete).toBeCalledTimes(1);
         expect(mockedTargetService.delete).toBeCalledWith(
             subscriptionId,
             targetType,
             targetId,
-            false,
+            false
         );
     });
 });

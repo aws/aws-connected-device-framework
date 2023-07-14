@@ -28,7 +28,7 @@ export class EventService {
         @inject(TYPES.EventDao) private eventDao: EventDao,
         @inject(TYPES.EventSourceDao) private eventSourceDao: EventSourceDao,
         @inject(TYPES.SubscriptionService) private subscriptionService: SubscriptionService,
-        @inject(TYPES.EventAssembler) private eventAssembler: EventAssembler,
+        @inject(TYPES.EventAssembler) private eventAssembler: EventAssembler
     ) {}
 
     public async create(resource: EventResource): Promise<string> {
@@ -105,7 +105,7 @@ export class EventService {
 
         const merged = Object.assign(
             existing,
-            Object.fromEntries(Object.entries(updated).filter(([_k, v]) => v !== undefined)),
+            Object.fromEntries(Object.entries(updated).filter(([_k, v]) => v !== undefined))
         );
         logger.debug(`>>>>> merged:${JSON.stringify(merged)}`);
 
@@ -145,7 +145,7 @@ export class EventService {
             if (paginationKey !== undefined) {
                 [subscriptions, paginationKey] = await this.subscriptionService.listByEvent(
                     eventId,
-                    paginationKey,
+                    paginationKey
                 );
             } else {
                 break;
@@ -161,12 +161,12 @@ export class EventService {
     public async listByEventSource(
         eventSourceId: string,
         count?: number,
-        from?: PaginationKey,
+        from?: PaginationKey
     ): Promise<EventResourceList> {
         logger.debug(
             `event.service listByEventSource: in: eventSourceId:${eventSourceId}, count:${count}, from:${JSON.stringify(
-                from,
-            )}`,
+                from
+            )}`
         );
 
         ow(eventSourceId, ow.string.nonEmpty);

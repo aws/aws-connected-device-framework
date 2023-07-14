@@ -20,7 +20,7 @@ export interface TypesService {
     get(
         templateId: string,
         category: TypeCategory,
-        status: TypeDefinitionStatus,
+        status: TypeDefinitionStatus
     ): Promise<TypeModel>;
 
     list(
@@ -28,13 +28,13 @@ export interface TypesService {
         status: TypeDefinitionStatus,
         offset?: number,
         count?: number,
-        sort?: SortKeys,
+        sort?: SortKeys
     ): Promise<TypeModel[]>;
 
     create(
         templateId: string,
         category: TypeCategory,
-        definition: TypeDefinitionModel,
+        definition: TypeDefinitionModel
     ): Promise<SchemaValidationResult>;
 
     delete(templateId: string, category: TypeCategory): Promise<void>;
@@ -42,7 +42,7 @@ export interface TypesService {
     update(
         templateId: string,
         category: TypeCategory,
-        definition: TypeDefinitionModel,
+        definition: TypeDefinitionModel
     ): Promise<SchemaValidationResult>;
 
     publish(templateId: string, category: TypeCategory): Promise<void>;

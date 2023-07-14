@@ -25,7 +25,7 @@ export class OrganizationalUnitsDao {
         @inject('aws.dynamodb.tables.accounts') private accountsTable: string,
         @inject('aws.dynamodb.tables.gsi1') private accountsTableGsi1: string,
         @inject(TYPES.DocumentClientFactory)
-        documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
     }
@@ -51,7 +51,7 @@ export class OrganizationalUnitsDao {
             return [];
         }
         const itemList = OrganizationalUnitsDao.assembleOrganizationalUnits(
-            getOrganizationalUnitResponse.Items,
+            getOrganizationalUnitResponse.Items
         );
         logger.debug(`organizationalUnits.dao getOrganizationalUnits: in: ouName:${itemList}`);
         return itemList;
@@ -74,10 +74,10 @@ export class OrganizationalUnitsDao {
             return undefined;
         }
         const item = OrganizationalUnitsDao.assembleOrganizationalUnit(
-            getOrganizationalUnitResponse.Item,
+            getOrganizationalUnitResponse.Item
         );
         logger.debug(
-            `organizationalUnits.dao getOrganizationalUnit: exit: item: ${JSON.stringify(item)}`,
+            `organizationalUnits.dao getOrganizationalUnit: exit: item: ${JSON.stringify(item)}`
         );
         return item;
     }
@@ -102,7 +102,7 @@ export class OrganizationalUnitsDao {
 
         const itemList = OrganizationalUnitsDao.assembleAccounts(queryResponse.Items);
         logger.debug(
-            `organizationalUnits.dao create: exit: itemList: ${JSON.stringify(itemList)}`,
+            `organizationalUnits.dao create: exit: itemList: ${JSON.stringify(itemList)}`
         );
         return itemList;
     }
@@ -123,7 +123,7 @@ export class OrganizationalUnitsDao {
 
     public async createOrganizationalUnit(item: OrganizationalUnitItem): Promise<void> {
         logger.debug(
-            `organizationalUnits.dao createOrganizationalUnit: in: item:${JSON.stringify(item)}`,
+            `organizationalUnits.dao createOrganizationalUnit: in: item:${JSON.stringify(item)}`
         );
         const { name, id, createdAt } = item;
         try {
@@ -152,7 +152,7 @@ export class OrganizationalUnitsDao {
 
     private static assembleAccounts(result: AWS.DynamoDB.DocumentClient.ItemList): string[] {
         logger.debug(
-            `organizationalUnits.dao assembleAccounts: in: result: ${JSON.stringify(result)}`,
+            `organizationalUnits.dao assembleAccounts: in: result: ${JSON.stringify(result)}`
         );
         const itemList = [];
         for (const item of result) {
@@ -161,18 +161,18 @@ export class OrganizationalUnitsDao {
             itemList.push(pkElements[1]);
         }
         logger.debug(
-            `organizationalUnits.dao assembleAccounts: exit: ${JSON.stringify(itemList)}`,
+            `organizationalUnits.dao assembleAccounts: exit: ${JSON.stringify(itemList)}`
         );
         return itemList;
     }
 
     private static assembleOrganizationalUnit(
-        result: AWS.DynamoDB.DocumentClient.AttributeMap,
+        result: AWS.DynamoDB.DocumentClient.AttributeMap
     ): OrganizationalUnitItem {
         logger.debug(
             `organizationalUnits.dao assembleOrganizationalUnit: in: result: ${JSON.stringify(
-                result,
-            )}`,
+                result
+            )}`
         );
         const { pk, gsi2Key, createdAt } = result;
 
@@ -184,18 +184,18 @@ export class OrganizationalUnitsDao {
             createdAt,
         };
         logger.debug(
-            `organizationalUnits.dao assembleOrganizationalUnit: exit: ${JSON.stringify(item)}`,
+            `organizationalUnits.dao assembleOrganizationalUnit: exit: ${JSON.stringify(item)}`
         );
         return item;
     }
 
     private static assembleOrganizationalUnits(
-        result: AWS.DynamoDB.DocumentClient.ItemList,
+        result: AWS.DynamoDB.DocumentClient.ItemList
     ): OrganizationalUnitItem[] {
         logger.debug(
             `organizationalUnits.dao assembleOrganizationalUnits: in: result: ${JSON.stringify(
-                result,
-            )}`,
+                result
+            )}`
         );
         const itemList = [];
         for (const item of result) {
@@ -203,8 +203,8 @@ export class OrganizationalUnitsDao {
         }
         logger.debug(
             `organizationalUnits.dao assembleOrganizationalUnits: exit: ${JSON.stringify(
-                itemList,
-            )}`,
+                itemList
+            )}`
         );
         return itemList;
     }

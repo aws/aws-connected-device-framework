@@ -14,7 +14,7 @@ export class CreateAwsCertiticateProcessor implements ProvisioningStepProcessor 
 
     public async process(stepData: ProvisioningStepData): Promise<void> {
         logger.debug(
-            `CreateAwsCertiticateProcessor: process: in: stepData: ${JSON.stringify(stepData)}`,
+            `CreateAwsCertiticateProcessor: process: in: stepData: ${JSON.stringify(stepData)}`
         );
 
         const certiticate = await this._iot

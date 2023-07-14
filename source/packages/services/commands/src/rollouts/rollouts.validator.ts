@@ -24,7 +24,7 @@ export class RolloutsValidator {
     public validate(
         jobExecutionsRolloutConfig: JobExecutionsRolloutConfig,
         abortConfig: AbortConfig,
-        timeoutConfig: TimeoutConfig,
+        timeoutConfig: TimeoutConfig
     ): void {
         const jerc = jobExecutionsRolloutConfig;
         if (jerc) {
@@ -36,7 +36,7 @@ export class RolloutsValidator {
                     if (er.rateIncreaseCriteria.numberOfNotifiedThings) {
                         ow(
                             er.rateIncreaseCriteria.numberOfNotifiedThings,
-                            ow.number.integer.greaterThanOrEqual(1),
+                            ow.number.integer.greaterThanOrEqual(1)
                         );
                     }
                     const ric = er.rateIncreaseCriteria;
@@ -52,8 +52,8 @@ export class RolloutsValidator {
             ow(
                 abortConfig,
                 ow.object.nonEmpty.message(
-                    'The abortConfig must be provided if jobExecutionRolloutConfig is provided.',
-                ),
+                    'The abortConfig must be provided if jobExecutionRolloutConfig is provided.'
+                )
             );
             ow(abortConfig.criteriaList, ow.array.nonEmpty.minLength(1));
             for (const cl of abortConfig.criteriaList) {

@@ -28,7 +28,7 @@ export class ComponentsDao {
     public constructor(
         @inject('aws.dynamodb.tables.accounts') private accountsTable: string,
         @inject(TYPES.DocumentClientFactory)
-        documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
     }
@@ -62,7 +62,7 @@ export class ComponentsDao {
     }
 
     private static assembleComponents(
-        result: AWS.DynamoDB.DocumentClient.ItemList,
+        result: AWS.DynamoDB.DocumentClient.ItemList
     ): ComponentItem[] {
         logger.debug(`components.dao assemble: in: result: ${JSON.stringify(result)}`);
         const itemList = [];
@@ -74,7 +74,7 @@ export class ComponentsDao {
     }
 
     private static assembleComponent(
-        result: AWS.DynamoDB.DocumentClient.AttributeMap,
+        result: AWS.DynamoDB.DocumentClient.AttributeMap
     ): ComponentItem {
         logger.debug(`components.dao assembleComponent: in: result: ${JSON.stringify(result)}`);
         const { pk, sk, parameters, description, runOrder, resourceFile, bypassCheck } = result;
@@ -98,10 +98,10 @@ export class ComponentsDao {
 
     public async deleteComponentByOu(
         organizationalUnitId: string,
-        componentName: string,
+        componentName: string
     ): Promise<void> {
         logger.debug(
-            `components.dao deleteComponent: in: organizationalUnitId:${organizationalUnitId} componentName:${componentName}`,
+            `components.dao deleteComponent: in: organizationalUnitId:${organizationalUnitId} componentName:${componentName}`
         );
 
         await this._dc
@@ -119,7 +119,7 @@ export class ComponentsDao {
 
     public async deleteComponentsByOu(organizationalUnitId: string): Promise<void> {
         logger.debug(
-            `components.dao deleteComponents: in: organizationalUnitId:${organizationalUnitId}`,
+            `components.dao deleteComponents: in: organizationalUnitId:${organizationalUnitId}`
         );
         const components = await this.getComponentsByOu(organizationalUnitId);
         for (const component of components) {
@@ -138,7 +138,7 @@ export class ComponentsDao {
                 ExpressionAttributeValues: {
                     ':pk': createDelimitedAttributePrefix(
                         PkType.OrganizationalUnits,
-                        organizationalUnitId,
+                        organizationalUnitId
                     ),
                     ':sk': PkType.Components,
                 },

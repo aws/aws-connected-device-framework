@@ -23,7 +23,7 @@ export interface CertificatesTaskService {
     createCertificateTask(
         request: CertificateBatchRequest,
         caAlias: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<CertificateBatchTask>;
 }
 
@@ -51,7 +51,7 @@ export class CertificatesTaskServiceBase {
         if (customHeaders !== undefined) {
             try {
                 const headersFromConfig: RequestHeaders = JSON.parse(
-                    customHeaders,
+                    customHeaders
                 ) as unknown as RequestHeaders;
                 headers = { ...headers, ...headersFromConfig };
             } catch (err) {

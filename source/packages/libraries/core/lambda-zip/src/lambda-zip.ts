@@ -69,7 +69,7 @@ export type BundleOptions = {
 export async function lambdaZip(options: BundleOptions) {
     // Create a spot to build to.
     const outDir = await mkdtemp(
-        path.resolve(os.tmpdir(), `lambdaZip_${path.basename(process.cwd())}`),
+        path.resolve(os.tmpdir(), `lambdaZip_${path.basename(process.cwd())}`)
     );
 
     // To ensure we always clean up the temporary files we need
@@ -80,7 +80,7 @@ export async function lambdaZip(options: BundleOptions) {
             mergeBuildOptions({
                 ...options.build,
                 outdir: outDir,
-            }),
+            })
         );
 
         // Add in copy steps, if applicable

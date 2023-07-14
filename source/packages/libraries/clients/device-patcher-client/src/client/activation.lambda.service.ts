@@ -27,7 +27,7 @@ export class ActivationLambdaService extends ActivationServiceBase implements Ac
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -36,7 +36,7 @@ export class ActivationLambdaService extends ActivationServiceBase implements Ac
 
     public async createActivation(
         deviceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ActivationResponse> {
         ow(deviceId, ow.string.nonEmpty);
 
@@ -56,7 +56,7 @@ export class ActivationLambdaService extends ActivationServiceBase implements Ac
 
     public async getActivation(
         activationId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ActivationResponse> {
         ow(activationId, ow.string.nonEmpty);
 
@@ -71,7 +71,7 @@ export class ActivationLambdaService extends ActivationServiceBase implements Ac
 
     public async deleteActivation(
         activationId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(activationId, ow.string.nonEmpty);
 

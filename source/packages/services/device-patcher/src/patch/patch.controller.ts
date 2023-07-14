@@ -36,13 +36,13 @@ import { PatchService } from './patch.service';
 export class PatchController implements interfaces.Controller {
     public constructor(
         @inject(TYPES.PatchService) private patchService: PatchService,
-        @inject(TYPES.PatchAssembler) private patchAssembler: PatchAssembler,
+        @inject(TYPES.PatchAssembler) private patchAssembler: PatchAssembler
     ) {}
 
     @httpGet('/patches/:patchId')
     public async getPatch(
         @response() res: Response,
-        @requestParam('patchId') patchId: string,
+        @requestParam('patchId') patchId: string
     ): Promise<PatchResource> {
         logger.debug(`Patch.controller getPatch: in: patchId: ${patchId}`);
 
@@ -65,7 +65,7 @@ export class PatchController implements interfaces.Controller {
         @requestParam('deviceId') deviceId: string,
         @queryParam('patchStatus') patchStatus: string,
         @queryParam('count') count: number,
-        @queryParam('exclusiveStartToken') exclusiveStartToken: string,
+        @queryParam('exclusiveStartToken') exclusiveStartToken: string
     ): Promise<void> {
         logger.debug(`Patch.controller getPatch: in: deviceId: ${deviceId}`);
 
@@ -74,7 +74,7 @@ export class PatchController implements interfaces.Controller {
                 deviceId,
                 patchStatus,
                 count,
-                { nextToken: exclusiveStartToken },
+                { nextToken: exclusiveStartToken }
             );
             const resources = this.patchAssembler.toListResource(items, count, paginationKey);
             logger.debug(`Patch.controller getPatch: exit: ${JSON.stringify(resources)}`);
@@ -88,7 +88,7 @@ export class PatchController implements interfaces.Controller {
     @httpDelete('/patches/:patchId')
     public async deletePatch(
         @requestParam('patchId') patchId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(`Patch.controller deletePatch: in: patchId: ${patchId}`);
 
@@ -105,7 +105,7 @@ export class PatchController implements interfaces.Controller {
     public async patchPatch(
         @requestParam('patchId') patchId: string,
         @requestBody() req: PatchResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(`Patch.controller patchPatch: in: patchId: ${patchId}`);
 

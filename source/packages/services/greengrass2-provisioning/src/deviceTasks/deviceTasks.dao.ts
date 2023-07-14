@@ -36,7 +36,7 @@ export class DeviceTasksDao {
 
     public constructor(
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
-        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient,
+        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient
     ) {
         this.dbc = ddcFactory();
     }
@@ -109,8 +109,8 @@ export class DeviceTasksDao {
     public async saveDeviceTask(task: DeviceTaskItem, saveBatchProgress: boolean): Promise<void> {
         logger.debug(
             `coreTasks.dao saveCoreTask: in: task:${JSON.stringify(
-                task,
-            )}, saveBatchProgress:${saveBatchProgress}`,
+                task
+            )}, saveBatchProgress:${saveBatchProgress}`
         );
 
         ow(task, ow.object.nonEmpty);
@@ -155,7 +155,7 @@ export class DeviceTasksDao {
             const batchDbId = createDelimitedAttribute(
                 PkType.ClientDeviceTask,
                 task.id,
-                'batches',
+                'batches'
             );
             const batchSummaryItem = {
                 PutRequest: {
@@ -191,7 +191,7 @@ export class DeviceTasksDao {
                     },
                 };
                 params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(
-                    clientDeviceTaskDetailItem,
+                    clientDeviceTaskDetailItem
                 );
                 // client device thing item
                 const clientDeviceItem = {
@@ -212,13 +212,13 @@ export class DeviceTasksDao {
 
                 if ((device as DeviceItem).artifacts !== undefined) {
                     for (const [name, artifact] of Object.entries(
-                        (device as DeviceItem).artifacts,
+                        (device as DeviceItem).artifacts
                     )) {
                         const artifactDbId = createDelimitedAttribute(
                             PkType.ClientDevice,
                             device.name,
                             PkType.Artifact,
-                            name,
+                            name
                         );
                         const artifactItem = {
                             PutRequest: {
@@ -233,7 +233,7 @@ export class DeviceTasksDao {
                             },
                         };
                         params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(
-                            artifactItem,
+                            artifactItem
                         );
                     }
                 }
@@ -250,7 +250,7 @@ export class DeviceTasksDao {
 
     public async saveTaskDetail(taskId: string, device: DeviceItem): Promise<void> {
         logger.debug(
-            `deviceTasks.dao saveTaskDetail: in: taskId:${taskId}, core:${JSON.stringify(device)}`,
+            `deviceTasks.dao saveTaskDetail: in: taskId:${taskId}, core:${JSON.stringify(device)}`
         );
 
         ow(taskId, ow.string.nonEmpty);
@@ -346,12 +346,12 @@ export class DeviceTasksDao {
 
     public async list(
         count?: number,
-        exclusiveStart?: DeviceTaskListPaginationKey,
+        exclusiveStart?: DeviceTaskListPaginationKey
     ): Promise<[DeviceTaskItem[], DeviceTaskListPaginationKey]> {
         logger.debug(
             `deviceTasks.dao list: in: count:${count}, exclusiveStart:${JSON.stringify(
-                exclusiveStart,
-            )}`,
+                exclusiveStart
+            )}`
         );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
@@ -398,8 +398,8 @@ export class DeviceTasksDao {
 
         logger.debug(
             `deviceTasks.dao list: exit: response:${JSON.stringify(
-                response,
-            )}, paginationKey:${paginationKey}`,
+                response
+            )}, paginationKey:${paginationKey}`
         );
         return [response, paginationKey];
     }

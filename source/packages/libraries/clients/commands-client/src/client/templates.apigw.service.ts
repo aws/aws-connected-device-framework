@@ -30,7 +30,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
     async createTemplate(
         template: TemplateModel,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(template, ow.object.nonEmpty);
 
@@ -42,7 +42,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
     async getTemplate(
         templateId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<TemplateModel> {
         ow(templateId, 'templateId', ow.string.nonEmpty);
 
@@ -62,7 +62,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
     async updateTemplate(
         template: TemplateModel,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.templateId, ow.string.nonEmpty);

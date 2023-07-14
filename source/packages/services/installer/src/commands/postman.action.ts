@@ -41,7 +41,7 @@ async function postmanAction(name: string, environment: string, region: string):
         ],
     };
     const deployedModules = modules.filter(
-        (o) => servicesList.find((s) => s.value === o.name) !== undefined,
+        (o) => servicesList.find((s) => s.value === o.name) !== undefined
     );
 
     for (const module of deployedModules) {

@@ -41,19 +41,19 @@ export class AwsIotThingListBuilder {
         private assetLibraryGroupClient: GroupsService,
         @inject(ASSETLIBRARY_CLIENT_TYPES.SearchService)
         private assetLibrarySearchClient: SearchService,
-        @inject(THING_LIST_BUILDER_TYPES.IotFactory) iotFactory: () => IoTClient,
+        @inject(THING_LIST_BUILDER_TYPES.IotFactory) iotFactory: () => IoTClient
     ) {
         this.iot = iotFactory();
     }
 
     public async categorizeAndListThings(
         targets: string[],
-        assetLibraryQuery?: SearchRequestModel,
+        assetLibraryQuery?: SearchRequestModel
     ): Promise<ListThingsResponse> {
         logger.debug(
             `awsIotThingListBuilder categorizeAndListThings: targets:${targets}, assetLibraryQuery:${JSON.stringify(
-                assetLibraryQuery,
-            )}`,
+                assetLibraryQuery
+            )}`
         );
 
         const req: ListThingsRequest = {
@@ -125,9 +125,7 @@ export class AwsIotThingListBuilder {
             logger.silly(`awsIotThingListBuilder listThings: processing assetLibraryQuery`);
             let searchResults = await this.assetLibrarySearchClient.search(req.assetLibraryQuery);
             logger.silly(
-                `awsIotThingListBuilder listThings: searchResults:${JSON.stringify(
-                    searchResults,
-                )}`,
+                `awsIotThingListBuilder listThings: searchResults:${JSON.stringify(searchResults)}`
             );
             while ((searchResults.results?.length ?? 0) > 0) {
                 for (const r of searchResults.results) {
@@ -150,7 +148,7 @@ export class AwsIotThingListBuilder {
                     const count = searchResults.pagination.count;
                     searchResults = await this.assetLibrarySearchClient.search(
                         req.assetLibraryQuery,
-                        offset + count,
+                        offset + count
                     );
                 } else {
                     searchResults.results = [];
@@ -162,13 +160,13 @@ export class AwsIotThingListBuilder {
         if (assetLibraryGroupPathsToProcess.length > 0) {
             logger.silly(
                 `awsIotThingListBuilder listThings: expanding assetLibraryGroupPathsToProcess: ${JSON.stringify(
-                    assetLibraryGroupPathsToProcess,
-                )}`,
+                    assetLibraryGroupPathsToProcess
+                )}`
             );
             for (const groupPath of assetLibraryGroupPathsToProcess) {
                 let result = await this.assetLibraryGroupClient.listGroupMembersDevices(groupPath);
                 logger.silly(
-                    `awsIotThingListBuilder listThings: result: ${JSON.stringify(result)}`,
+                    `awsIotThingListBuilder listThings: result: ${JSON.stringify(result)}`
                 );
                 while (result?.results !== undefined) {
                     for (const device of result.results) {
@@ -189,7 +187,7 @@ export class AwsIotThingListBuilder {
                         undefined,
                         undefined,
                         offset,
-                        result.pagination.count,
+                        result.pagination.count
                     );
                 }
             }
@@ -199,15 +197,15 @@ export class AwsIotThingListBuilder {
         if ((req.assetLibraryDeviceIds?.length ?? 0) > 0) {
             logger.silly(
                 `awsIotThingListBuilder listThings: expanding assetLibraryDeviceIds: ${JSON.stringify(
-                    req.assetLibraryDeviceIds,
-                )}`,
+                    req.assetLibraryDeviceIds
+                )}`
             );
             // TODO: performance improvement, process in parallel
             const result = await this.assetLibraryDeviceClient.getDevicesByID(
                 req.assetLibraryDeviceIds,
                 false,
                 ['awsIotThingArn'],
-                [],
+                []
             );
             logger.silly(`awsIotThingListBuilder listThings: result: ${JSON.stringify(result)}`);
             for (const device of result.results) {
@@ -225,12 +223,12 @@ export class AwsIotThingListBuilder {
         if ((req.thingGroupNames?.length ?? 0) > 0) {
             logger.silly(
                 `awsIotThingListBuilder listThings: expanding thingGroupNames: ${JSON.stringify(
-                    req.thingGroupNames,
-                )}`,
+                    req.thingGroupNames
+                )}`
             );
             for (const thingGroup of req.thingGroupNames) {
                 let result = await this.iot.send(
-                    new ListThingsInThingGroupCommand({ thingGroupName: thingGroup }),
+                    new ListThingsInThingGroupCommand({ thingGroupName: thingGroup })
                 );
                 logger.silly(`awsIotThingListBuilder listThings: r: ${JSON.stringify(req)}`);
                 while ((result.things?.length ?? 0) > 0) {
@@ -240,7 +238,7 @@ export class AwsIotThingListBuilder {
                             new ListThingsInThingGroupCommand({
                                 thingGroupName: thingGroup,
                                 nextToken: result.nextToken,
-                            }),
+                            })
                         );
                     } else {
                         break;

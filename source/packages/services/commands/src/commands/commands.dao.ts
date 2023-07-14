@@ -23,7 +23,7 @@ export class CommandsDao {
     public constructor(
         @inject('tables.jobs') private jobsTable: string,
         @inject(TYPES.DocumentClientFactory)
-        documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
     }

@@ -29,7 +29,7 @@ export const FullContainerModule = new ContainerModule(
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         _isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind,
+        _rebind: interfaces.Rebind
     ) => {
         bind<TypesService>(TYPES.TypesService).to(TypesService).inSingletonScope();
         bind<TypesDao>(TYPES.TypesDao).to(TypesDao).inSingletonScope();
@@ -44,11 +44,11 @@ export const FullContainerModule = new ContainerModule(
 
         decorate(injectable(), structure.Graph);
         bind<interfaces.Factory<structure.Graph>>(
-            TYPES.GraphSourceFactory,
+            TYPES.GraphSourceFactory
         ).toFactory<structure.Graph>((_ctx: interfaces.Context) => {
             return () => {
                 return new structure.Graph();
             };
         });
-    },
+    }
 );

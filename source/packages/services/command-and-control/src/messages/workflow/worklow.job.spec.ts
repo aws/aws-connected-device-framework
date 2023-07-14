@@ -37,7 +37,7 @@ describe('Workflow.Job', () => {
             'us-west-2',
             'fakeArnRole',
             mockedThingsService,
-            mockedIotFactory,
+            mockedIotFactory
         );
     });
 
@@ -73,7 +73,7 @@ describe('Workflow.Job', () => {
             'us-west-2',
             'fakeArnRole',
             mockedThingsService,
-            mockedIotFactory,
+            mockedIotFactory
         );
         await underTest.process(message, command);
         expect(mockedIot.createJob).toBeCalledTimes(1);
@@ -99,7 +99,7 @@ describe('Workflow.Job', () => {
             'us-west-2',
             'fakeArnRole',
             mockedThingsService,
-            mockedIotFactory,
+            mockedIotFactory
         );
         await underTest.process(message, command);
         expect(mockedIot.createJob).toBeCalledTimes(1);

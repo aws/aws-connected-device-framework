@@ -22,14 +22,14 @@ import { WorkflowAction } from './workflow.interfaces';
 export class CreateAction implements WorkflowAction {
     constructor(
         @inject(TYPES.CommandsValidator) private commandsValidator: CommandsValidator,
-        @inject(TYPES.CommandsDao) private commandsDao: CommandsDao,
+        @inject(TYPES.CommandsDao) private commandsDao: CommandsDao
     ) {}
 
     async execute(existing: CommandModel, updated: CommandModel): Promise<boolean> {
         logger.debug(
             `workflow.create execute: existing:${JSON.stringify(
-                existing,
-            )}, updated:${JSON.stringify(updated)}`,
+                existing
+            )}, updated:${JSON.stringify(updated)}`
         );
 
         this.commandsValidator.validate(updated);

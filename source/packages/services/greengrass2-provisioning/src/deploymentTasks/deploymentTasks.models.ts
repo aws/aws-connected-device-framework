@@ -45,7 +45,7 @@ export interface NewDeploymentTask {
                     action: string;
                     thresholdPercentage: number;
                     minnumberOfExecutedThings: number;
-                },
+                }
             ];
         };
         timeoutConfig?: {

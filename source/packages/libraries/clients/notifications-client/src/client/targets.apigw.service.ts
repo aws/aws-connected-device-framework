@@ -33,7 +33,7 @@ export class TargetsApigwService extends TargetsServiceBase implements TargetsSe
         subscriptionId: string,
         targetType: string,
         target: TargetResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(subscriptionId, ow.string.nonEmpty);
         ow(targetType, ow.string.nonEmpty);
@@ -57,7 +57,7 @@ export class TargetsApigwService extends TargetsServiceBase implements TargetsSe
         subscriptionId: string,
         targetType: string,
         targetId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(subscriptionId, ow.string.nonEmpty);
         ow(targetType, ow.string.nonEmpty);
@@ -66,7 +66,7 @@ export class TargetsApigwService extends TargetsServiceBase implements TargetsSe
         const url = `${this.baseUrl}${super.targetRelativeUrl(
             subscriptionId,
             targetType,
-            targetId,
+            targetId
         )}`;
         return await request
             .delete(url)

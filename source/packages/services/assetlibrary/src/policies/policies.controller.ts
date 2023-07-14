@@ -37,7 +37,7 @@ export class PoliciesController implements interfaces.Controller {
     @httpPost('')
     public async create(
         @requestBody() policy: PolicyModel,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(`policies.controller  create: in: policy: ${JSON.stringify(policy)}`);
         try {
@@ -52,10 +52,10 @@ export class PoliciesController implements interfaces.Controller {
         @queryParam('deviceId') deviceId: string,
         @queryParam('groupPath') groupPaths: string[],
         @queryParam('type') type: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<PolicyListModel> {
         logger.info(
-            `policies.controller getInheritedPolicies: in: deviceId:${deviceId}, type:${type}, groupPaths:${groupPaths}`,
+            `policies.controller getInheritedPolicies: in: deviceId:${deviceId}, type:${type}, groupPaths:${groupPaths}`
         );
 
         const r: PolicyListModel = { results: [] };
@@ -87,10 +87,10 @@ export class PoliciesController implements interfaces.Controller {
         @queryParam('type') type: string,
         @queryParam('offset') offset: number,
         @queryParam('count') count: number,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<PolicyListModel> {
         logger.info(
-            `policies.controller listPolicies: in: type:${type}, offset:${offset}, count:${count}`,
+            `policies.controller listPolicies: in: type:${type}, offset:${offset}, count:${count}`
         );
         const r: PolicyListModel = { results: [] };
         if (offset && count) {
@@ -104,8 +104,8 @@ export class PoliciesController implements interfaces.Controller {
             if (type !== undefined && typeof type !== 'string') {
                 throw new ArgumentError(
                     `Invalid "type" query: ${JSON.stringify(
-                        type,
-                    )}. Please provided only one "type" query string`,
+                        type
+                    )}. Please provided only one "type" query string`
                 );
             }
 
@@ -120,7 +120,7 @@ export class PoliciesController implements interfaces.Controller {
     @httpGet('/:policyId')
     public async getPolicy(
         @requestParam('policyId') policyId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<PolicyModel> {
         logger.info(`policy.controller getPolicy: in: policyId:${policyId}`);
         try {
@@ -135,12 +135,12 @@ export class PoliciesController implements interfaces.Controller {
     public async updatePolicy(
         @requestParam('policyId') policyId: string,
         @requestBody() policy: PolicyModel,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
             `policy.controller updatePolicy: in: policyId:${policyId}, policy:${JSON.stringify(
-                policy,
-            )}`,
+                policy
+            )}`
         );
         try {
             policy.policyId = policyId;
@@ -153,7 +153,7 @@ export class PoliciesController implements interfaces.Controller {
     @httpDelete('/:policyId')
     public async deletePolicy(
         @response() res: Response,
-        @requestParam('policyId') policyId: string,
+        @requestParam('policyId') policyId: string
     ): Promise<void> {
         logger.info(`policy.controller deletePolicy: in: policyId: ${policyId}`);
         try {

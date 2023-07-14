@@ -29,8 +29,8 @@ export class IotPoliciesCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `IotPoliciesCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const policyName = customResourceEvent?.ResourceProperties?.PolicyName;
@@ -100,8 +100,8 @@ export class IotPoliciesCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `IotPoliciesCustomResource: update: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         return await this.create(customResourceEvent);
     }

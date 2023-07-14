@@ -17,7 +17,7 @@ import { logger } from '@awssolutions/simple-cdf-logger';
 
 exports.handler = async (
     event: IotRuleJobEvent | IotRuleJobExecutionEvent,
-    _context: unknown,
+    _context: unknown
 ): Promise<void> => {
     logger.debug(`lambda_job_command_response_handler: event: ${JSON.stringify(event)}`);
 

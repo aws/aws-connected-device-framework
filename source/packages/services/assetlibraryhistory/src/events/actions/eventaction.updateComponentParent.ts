@@ -47,7 +47,7 @@ export class UpdateComponentParentAction implements EventAction {
                 break;
             default:
                 logger.debug(
-                    `eventaction.updateComponentParent execute: unsupported event:${event.event}`,
+                    `eventaction.updateComponentParent execute: unsupported event:${event.event}`
                 );
                 return null;
         }

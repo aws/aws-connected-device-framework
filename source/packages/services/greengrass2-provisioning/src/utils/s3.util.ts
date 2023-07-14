@@ -30,7 +30,7 @@ export class S3Utils {
     public async uploadStreamToS3(
         bucket: string,
         key: string,
-        body: Readable | ReadableStream | Blob | string | Uint8Array | Buffer,
+        body: Readable | ReadableStream | Blob | string | Uint8Array | Buffer
     ): Promise<void> {
         logger.debug(`s3.util uploadStreamToS3: in: bucket:${bucket}, key:${key}`);
 

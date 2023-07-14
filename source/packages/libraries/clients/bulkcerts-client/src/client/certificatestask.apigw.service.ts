@@ -38,7 +38,7 @@ export class CertificatesTaskApigwService
     async createCertificateTask(
         batchRequest: CertificateBatchRequest,
         caAlias: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<CertificateBatchTask> {
         ow(caAlias, ow.string.nonEmpty);
 

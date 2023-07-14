@@ -24,7 +24,7 @@ export class CertificatesDao {
 
     public constructor(
         @inject(TYPES.DynamoDBFactory) dynamoFactory: () => AWS.DynamoDB,
-        @inject('aws.dynamodb.tasks.tableName') private tasksTable: string,
+        @inject('aws.dynamodb.tasks.tableName') private tasksTable: string
     ) {
         this._dynamodb = dynamoFactory();
     }

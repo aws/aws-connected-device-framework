@@ -18,7 +18,7 @@ import { TagsList, isValidTagKey, isValidTagValue } from './tags';
 async function configWizard(
     environment: string,
     region: string,
-    dryRun = false,
+    dryRun = false
 ): Promise<Answers> {
     const modules = loadModules(environment);
 
@@ -26,7 +26,7 @@ async function configWizard(
     const accountConfirmation = await inquirer.prompt([
         {
             message: `Detected account ${chalk.blue(
-                accountId,
+                accountId
             )} based on credentials in use. Is this correct?`,
             type: 'confirm',
             name: 'confirm',
@@ -37,8 +37,8 @@ async function configWizard(
     if (accountConfirmation.confirm === false) {
         console.log(
             chalk.red(
-                '\nAborting deployment. Please ensure you are running the installer with the correct credentials.\n',
-            ),
+                '\nAborting deployment. Please ensure you are running the installer with the correct credentials.\n'
+            )
         );
         throw new Error('Aborted');
     }
@@ -63,7 +63,7 @@ async function configWizard(
     const servicesList = buildServicesList(modules, answers.modules?.list);
     answers = await inquirer.prompt(
         [chooseServicesPrompt(servicesList), confirmServicesPrompt(modules)],
-        answers,
+        answers
     );
 
     answersStorage.save(answers);
@@ -79,7 +79,7 @@ async function configWizard(
     answers.modules.expandedIncludingOptional = expandModuleList(
         modules,
         answers.modules.list,
-        true,
+        true
     );
 
     const newlyChosenModulesSet = new Set([
@@ -102,8 +102,8 @@ async function configWizard(
         chalk.green(
             `\nIncluding dependencies, the full list of modules to be evaluated is:\n${expandedFriendlyNames
                 .map((m) => `   - ${m}`)
-                .join('\n')}\n`,
-        ),
+                .join('\n')}\n`
+        )
     );
 
     // TODO: verify that bundles exist for all the selected modules
@@ -112,7 +112,7 @@ async function configWizard(
             chooseS3BucketPrompt(
                 'Provide the name of an existing S3 bucket to store artifacts for this CDF environment:',
                 's3.bucket',
-                answers.s3?.bucket,
+                answers.s3?.bucket
             ),
             {
                 message: `Enter custom tags to be applied to all resources created for this CDF environment. You can enter up to 48 tags in the format key1;val1;key2;val2;...`,
@@ -147,7 +147,7 @@ async function configWizard(
                 },
             },
         ],
-        answers,
+        answers
     );
 
     answers.dryRun = dryRun;
@@ -162,7 +162,7 @@ async function configWizard(
 
         const mandatoryGrouped = topologicallySortModules(
             modules,
-            answers.modules.expandedMandatory,
+            answers.modules.expandedMandatory
         );
 
         for (const layer of mandatoryGrouped) {
@@ -185,8 +185,8 @@ async function configWizard(
 
     console.log(
         chalk.green(
-            `Configuration has been saved to '${answersStorage.getConfigurationFilePath()}'.\nIt is highly recommended that you store this configuration under source control to automate future deployments.`,
-        ),
+            `Configuration has been saved to '${answersStorage.getConfigurationFilePath()}'.\nIt is highly recommended that you store this configuration under source control to automate future deployments.`
+        )
     );
 
     return answers;

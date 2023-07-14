@@ -24,7 +24,7 @@ export class SimulationsDao {
     private _table: string;
 
     public constructor(
-        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DocumentClient,
+        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DocumentClient
     ) {
         this._dc = documentClientFactory();
         this._table = process.env.AWS_DYNAMODB_TABLE_SIMULATIONS;
@@ -91,10 +91,10 @@ export class SimulationsDao {
 
     public async updateStatus(
         simulationId: string,
-        status: SimulationStatus,
+        status: SimulationStatus
     ): Promise<SimulationItem> {
         logger.debug(
-            `simulations.dao updateStatus: in: simulationId:${simulationId}, status:${status}`,
+            `simulations.dao updateStatus: in: simulationId:${simulationId}, status:${status}`
         );
 
         const dbId = createDelimitedAttribute(PkType.Simulation, simulationId);
@@ -144,7 +144,7 @@ export class SimulationsDao {
     }
 
     public async incrementBatchProgress(
-        simulationId: string,
+        simulationId: string
     ): Promise<{ total: number; completed: number }> {
         logger.debug(`simulations.dao incrementBatchProgress: in: simulationId:${simulationId}`);
 
@@ -171,7 +171,7 @@ export class SimulationsDao {
         const completed = results.Attributes['completed'] as number;
 
         logger.debug(
-            `simulations.dao incrementBatchProgress: exit: total:${total}, completed:${completed}`,
+            `simulations.dao incrementBatchProgress: exit: total:${total}, completed:${completed}`
         );
 
         return { total, completed };

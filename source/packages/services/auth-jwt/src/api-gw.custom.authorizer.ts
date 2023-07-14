@@ -53,7 +53,7 @@ export class ApiGwCustomAuthorizer {
         }, {} as MapOfKidToPublicKey);
 
         logger.debug(
-            `api-gw.custom.authorizer: getPublicKeys: cacheKeys:${JSON.stringify(cacheKeys)}`,
+            `api-gw.custom.authorizer: getPublicKeys: cacheKeys:${JSON.stringify(cacheKeys)}`
         );
         return cacheKeys;
     }

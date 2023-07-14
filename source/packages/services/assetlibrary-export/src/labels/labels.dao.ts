@@ -24,7 +24,7 @@ import { VertexDto, isVertexDto } from '../data/full.model';
 export class LabelsDao extends BaseDaoFull {
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -60,7 +60,7 @@ export class LabelsDao extends BaseDaoFull {
 
     public async listIdObjectsByLabel(
         label: string,
-        range: [number, number],
+        range: [number, number]
     ): Promise<IdObject[]> {
         logger.debug(`labels.dao getDeviceIds: in: ${label}, range: ${range}`);
 

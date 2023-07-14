@@ -12,12 +12,12 @@ import {
 export interface TemplatesService {
     createTemplate(
         template: CreatePatchTemplateParams,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     updateTemplate(
         template: UpdatePatchTemplateParams,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     getTemplate(name: string, additionalHeaders?: RequestHeaders): Promise<PatchTemplate>;

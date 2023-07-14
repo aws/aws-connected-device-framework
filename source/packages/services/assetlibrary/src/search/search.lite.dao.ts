@@ -26,7 +26,7 @@ export class SearchDaoLite {
 
     public constructor(
         @inject(TYPES.NodeAssembler) private assembler: NodeAssembler,
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
+        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot
     ) {
         this.iot = iotFactory();
     }
@@ -49,7 +49,7 @@ export class SearchDaoLite {
         // filtering by custom types
         if (this.isDevice(request.types)) {
             const customType = request.types.filter(
-                (t) => t !== TypeCategory.Device && t !== TypeCategory.Group,
+                (t) => t !== TypeCategory.Device && t !== TypeCategory.Group
             )[0];
             if (customType !== undefined && customType !== null) {
                 filters.push(`thingTypeName:${customType}`);
@@ -125,12 +125,12 @@ export class SearchDaoLite {
     public async search(
         request: SearchRequestModel,
         nextToken: string,
-        maxResults: number,
+        maxResults: number
     ): Promise<Node[]> {
         logger.debug(
             `search.lite.dao search: in: request: ${JSON.stringify(
-                request,
-            )}, nextToken:${nextToken}, maxResults:${maxResults}`,
+                request
+            )}, nextToken:${nextToken}, maxResults:${maxResults}`
         );
 
         const indexName = this.getIndexName(request.types);

@@ -24,36 +24,36 @@ export interface ProfilesService {
     createProfile(
         category: string,
         body: DeviceProfileResource | GroupProfileResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     createDeviceProfile(
         body: DeviceProfileResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     createGroupProfile(
         body: GroupProfileResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     getProfile(
         category: string,
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<DeviceProfileResource | GroupProfileResource>;
 
     getDeviceProfile(
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<DeviceProfileResource>;
 
     getGroupProfile(
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<GroupProfileResource>;
 
     updateProfile(
@@ -61,56 +61,56 @@ export interface ProfilesService {
         templateId: string,
         profileId: string,
         body: DeviceProfileResource | GroupProfileResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     updateDeviceProfile(
         templateId: string,
         profileId: string,
         body: DeviceProfileResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     updateGroupProfile(
         templateId: string,
         profileId: string,
         body: GroupProfileResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     deleteProfile(
         category: string,
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     deleteDeviceProfile(
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     deleteGroupProfile(
         templateId: string,
         profileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     listProfiles(
         category: string,
         templateId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ProfileResourceList>;
 
     listDeviceProfiles(
         templateId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ProfileResourceList>;
 
     listGroupProfiles(
         templateId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ProfileResourceList>;
 }
 

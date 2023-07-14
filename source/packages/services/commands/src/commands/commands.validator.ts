@@ -44,7 +44,7 @@ export class CommandsValidator {
         this.rolloutsValidator.validate(
             c.jobExecutionsRolloutConfig,
             c.abortConfig,
-            c.timeoutConfig,
+            c.timeoutConfig
         );
     }
 }

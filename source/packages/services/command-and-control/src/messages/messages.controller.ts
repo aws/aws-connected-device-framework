@@ -34,19 +34,19 @@ import { MessagesService } from './messages.service';
 export class MessagesController implements interfaces.Controller {
     constructor(
         @inject(TYPES.MessagesService) private service: MessagesService,
-        @inject(TYPES.MessagesAssembler) private assembler: MessagesAssembler,
+        @inject(TYPES.MessagesAssembler) private assembler: MessagesAssembler
     ) {}
 
     @httpPost('/commands/:commandId/messages')
     public async createMessage(
         @requestParam('commandId') commandId: string,
         @requestBody() resource: NewMessageResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
             `messages.controller createMessage: in: commandId:${commandId}, resource: ${JSON.stringify(
-                resource,
-            )}`,
+                resource
+            )}`
         );
         try {
             resource.commandId = commandId;
@@ -62,7 +62,7 @@ export class MessagesController implements interfaces.Controller {
     @httpGet('/messages/:messageId')
     public async getMessage(
         @requestParam('messageId') messageId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<MessageResource> {
         logger.debug(`messages.controller getMessage: in: messageId:${messageId}`);
 
@@ -86,17 +86,17 @@ export class MessagesController implements interfaces.Controller {
         @requestParam('commandId') commandId: string,
         @queryParam('fromCreatedAtExclusive') fromCreatedAtExclusive: number,
         @queryParam('count') count: number,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
-            `messages.controller listMessages: in: commandId:${commandId}, fromCreatedAtExclusive:${fromCreatedAtExclusive}, count:${count}`,
+            `messages.controller listMessages: in: commandId:${commandId}, fromCreatedAtExclusive:${fromCreatedAtExclusive}, count:${count}`
         );
 
         try {
             const [items, paginationKey] = await this.service.listMessages(
                 commandId,
                 { createdAt: fromCreatedAtExclusive },
-                count,
+                count
             );
             const resources = this.assembler.toMessageListResource(items, count, paginationKey);
             logger.debug(`messages.controller listMessages: exit: ${JSON.stringify(resources)}`);
@@ -111,17 +111,17 @@ export class MessagesController implements interfaces.Controller {
         @requestParam('messageId') messageId: string,
         @queryParam('fromThingNameExclusive') fromThingNameExclusive: string,
         @queryParam('count') count: number,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
-            `messages.controller listRecipients: in: messageId:${messageId}, fromThingNameExclusive:${fromThingNameExclusive}, count:${count}`,
+            `messages.controller listRecipients: in: messageId:${messageId}, fromThingNameExclusive:${fromThingNameExclusive}, count:${count}`
         );
 
         try {
             const [items, paginationKey] = await this.service.listRecipients(
                 messageId,
                 { targetName: fromThingNameExclusive },
-                count,
+                count
             );
             const resources = this.assembler.toRecipientListResource(items, count, paginationKey);
             logger.debug(`messages.controller listRecipients: exit: ${JSON.stringify(resources)}`);
@@ -135,10 +135,10 @@ export class MessagesController implements interfaces.Controller {
     public async getRecipient(
         @requestParam('messageId') messageId: string,
         @requestParam('thingName') thingName: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<Recipient> {
         logger.debug(
-            `messages.controller getRecipient: in: messageId:${messageId}, thingName:${thingName}`,
+            `messages.controller getRecipient: in: messageId:${messageId}, thingName:${thingName}`
         );
         let recipient: Recipient;
         try {
@@ -159,10 +159,10 @@ export class MessagesController implements interfaces.Controller {
         @requestParam('thingName') thingName: string,
         @queryParam('fromReceivedAtExclusive') fromReceivedAtExclusive: number,
         @queryParam('count') count: number,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
-            `messages.controller listReplies: in: messageId:${messageId}, thingName:${thingName}, fromReceivedAtExclusive:${fromReceivedAtExclusive}, count:${count}`,
+            `messages.controller listReplies: in: messageId:${messageId}, thingName:${thingName}, fromReceivedAtExclusive:${fromReceivedAtExclusive}, count:${count}`
         );
 
         try {
@@ -170,7 +170,7 @@ export class MessagesController implements interfaces.Controller {
                 messageId,
                 thingName,
                 { receivedAt: fromReceivedAtExclusive },
-                count,
+                count
             );
             const resources = this.assembler.toReplyListResource(items, count, paginationKey);
             logger.debug(`messages.controller listReplies: exit: ${JSON.stringify(resources)}`);
@@ -183,7 +183,7 @@ export class MessagesController implements interfaces.Controller {
     @httpDelete('/messages/:messageId')
     public async delete(
         @requestParam('messageId') messageId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(`messages.controller delete: in: messageId:${messageId}`);
 

@@ -30,7 +30,7 @@ export class AccountsApigwService extends AccountsServiceBase implements Account
     }
     async getAccount(
         accountId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<AccountResource> {
         const url = `${this.baseUrl}${super.accountRelativeUrl(accountId)}`;
         return await request
@@ -47,10 +47,10 @@ export class AccountsApigwService extends AccountsServiceBase implements Account
 
     async listAccounts(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<AccountResourceList> {
         const url = `${this.baseUrl}${super.accountsInOrganizationalUnitRelativeUrl(
-            organizationalUnitId,
+            organizationalUnitId
         )}`;
         return await request
             .get(url)
@@ -66,7 +66,7 @@ export class AccountsApigwService extends AccountsServiceBase implements Account
 
     async createAccount(
         account: AccountCreationRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string> {
         ow(account, ow.object.nonEmpty);
         ow(account.organizationalUnitId, ow.string.nonEmpty);
@@ -74,8 +74,8 @@ export class AccountsApigwService extends AccountsServiceBase implements Account
         const res = await request
             .post(
                 `${this.baseUrl}${super.accountsInOrganizationalUnitRelativeUrl(
-                    account.organizationalUnitId,
-                )}`,
+                    account.organizationalUnitId
+                )}`
             )
             .set(this.buildHeaders(additionalHeaders))
             .send(account)

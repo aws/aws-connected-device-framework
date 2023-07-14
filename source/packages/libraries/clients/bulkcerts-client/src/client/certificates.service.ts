@@ -19,11 +19,11 @@ export interface CertificatesService {
     getCertificates(
         taskId: string,
         downloadType: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string[] | Buffer>;
     getCertificatesTask(
         taskId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<CertificateBatchTaskWithChunks>;
 }
 
@@ -55,7 +55,7 @@ export class CertificatesServiceBase {
         if (customHeaders !== undefined) {
             try {
                 const headersFromConfig: RequestHeaders = JSON.parse(
-                    customHeaders,
+                    customHeaders
                 ) as unknown as RequestHeaders;
                 headers = { ...headers, ...headersFromConfig };
             } catch (err) {

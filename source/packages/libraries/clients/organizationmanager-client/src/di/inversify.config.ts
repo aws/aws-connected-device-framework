@@ -31,26 +31,26 @@ export const organizationManagerContainerModule = new ContainerModule(
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind,
+        _rebind: interfaces.Rebind
     ) => {
         if (process.env.ORGANIZATIONMANAGER_MODE === 'lambda') {
             bind<AccountsService>(ORGMANLIBRARY_CLIENT_TYPES.AccountsService).to(
-                AccountsLambdaService,
+                AccountsLambdaService
             );
             bind<OrganizationalUnitsService>(
-                ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService,
+                ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService
             ).to(OrganizationalUnitsLambdaService);
             bind<BulkComponentsService>(ORGMANLIBRARY_CLIENT_TYPES.BulkComponentsService).to(
-                BulkComponentsLambdaService,
+                BulkComponentsLambdaService
             );
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
-                    LambdaInvokerService,
+                    LambdaInvokerService
                 );
                 decorate(injectable(), AWS.Lambda);
                 bind<interfaces.Factory<AWS.Lambda>>(
-                    LAMBDAINVOKE_TYPES.LambdaFactory,
+                    LAMBDAINVOKE_TYPES.LambdaFactory
                 ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
                     return () => {
                         if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
@@ -63,14 +63,14 @@ export const organizationManagerContainerModule = new ContainerModule(
             }
         } else {
             bind<AccountsService>(ORGMANLIBRARY_CLIENT_TYPES.AccountsService).to(
-                AccountsApigwService,
+                AccountsApigwService
             );
             bind<OrganizationalUnitsService>(
-                ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService,
+                ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService
             ).to(OrganizationalUnitsApigwService);
             bind<BulkComponentsService>(ORGMANLIBRARY_CLIENT_TYPES.BulkComponentsService).to(
-                BulkComponentsApigwService,
+                BulkComponentsApigwService
             );
         }
-    },
+    }
 );

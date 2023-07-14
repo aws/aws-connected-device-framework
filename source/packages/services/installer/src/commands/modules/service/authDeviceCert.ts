@@ -43,7 +43,7 @@ export class AuthDeviceCertInstaller implements ServiceModule {
         delete answers.authDeviceCert?.redeploy;
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
         if ((updatedAnswers.authDeviceCert?.redeploy ?? true) === false) {
             return updatedAnswers;
@@ -51,7 +51,7 @@ export class AuthDeviceCertInstaller implements ServiceModule {
 
         updatedAnswers = await inquirer.prompt(
             [...applicationConfigurationPrompt(this.name, answers, [])],
-            updatedAnswers,
+            updatedAnswers
         );
 
         return updatedAnswers;
@@ -88,7 +88,7 @@ export class AuthDeviceCertInstaller implements ServiceModule {
                             'source',
                             'packages',
                             'services',
-                            'auth-devicecert',
+                            'auth-devicecert'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -123,7 +123,7 @@ export class AuthDeviceCertInstaller implements ServiceModule {
                         'source',
                         'packages',
                         'services',
-                        'auth-devicecert',
+                        'auth-devicecert'
                     ),
                     parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,

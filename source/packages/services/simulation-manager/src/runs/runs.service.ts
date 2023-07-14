@@ -40,7 +40,7 @@ export class RunsService {
         @inject(TYPES.SimulationsDao) private _simulationDao: SimulationsDao,
         @inject(TYPES.SimulationsService) private _simulationService: SimulationsService,
         @inject(TYPES.RunsDao) private _runsDao: RunsDao,
-        @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
+        @inject(TYPES.S3Factory) s3Factory: () => AWS.S3
     ) {
         this._s3 = s3Factory();
         this._s3Bucket = process.env.AWS_S3_BUCKET;
@@ -82,7 +82,7 @@ export class RunsService {
         const s3RootKey = `${this._s3Prefix}${simulation.id}/runs/${run.id}/`;
 
         logger.info(
-            `runs.service createRun: task:${task}, threadsPerInstance: ${threadsPerInstance}, numInstances: ${numInstances}, devicesPerInstance: ${devicesPerInstance}, runDeviceCount: ${run.deviceCount}, runnersThreads: ${runnersThreads}`,
+            `runs.service createRun: task:${task}, threadsPerInstance: ${threadsPerInstance}, numInstances: ${numInstances}, devicesPerInstance: ${devicesPerInstance}, runDeviceCount: ${run.deviceCount}, runnersThreads: ${runnersThreads}`
         );
 
         // copy the test plan

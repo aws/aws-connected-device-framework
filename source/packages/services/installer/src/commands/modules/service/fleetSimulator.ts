@@ -64,10 +64,10 @@ export class FleetSimulatorInstaller implements RestModule {
             [
                 redeployIfAlreadyExistsPrompt(
                     this.name,
-                    `cdf-simulation-launcher-${answers.environment}`,
+                    `cdf-simulation-launcher-${answers.environment}`
                 ),
             ],
-            answers,
+            answers
         );
         if ((updatedAnswers.fleetSimulator?.redeploy ?? true) === false) {
             return updatedAnswers;
@@ -108,7 +108,7 @@ export class FleetSimulatorInstaller implements RestModule {
                 ]),
                 ...customDomainPrompt(this.name, answers),
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         return updatedAnswers;
@@ -131,7 +131,7 @@ export class FleetSimulatorInstaller implements RestModule {
 
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
         return parameterOverrides;
     }
@@ -161,7 +161,7 @@ export class FleetSimulatorInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
         return parameterOverrides;
     }
@@ -181,7 +181,7 @@ export class FleetSimulatorInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'simulation-launcher',
+                            'simulation-launcher'
                         ),
                         parameterOverrides: this.getSimulationLauncherOverrides(answers),
                     });
@@ -199,7 +199,7 @@ export class FleetSimulatorInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'simulation-manager',
+                            'simulation-manager'
                         ),
                         parameterOverrides: this.getSimulationManagerOverrides(answers),
                     });
@@ -235,7 +235,7 @@ export class FleetSimulatorInstaller implements RestModule {
                         'source',
                         'packages',
                         'services',
-                        'simulation-launcher',
+                        'simulation-launcher'
                     ),
                     parameterOverrides: this.getSimulationLauncherOverrides(answers),
                     needsPackaging: true,
@@ -249,11 +249,11 @@ export class FleetSimulatorInstaller implements RestModule {
             task: async () => {
                 const assetlibrarybyResourceLogicalId = await getStackResourceSummaries(
                     this.assetLibraryStackName,
-                    answers.region,
+                    answers.region
                 );
                 const simulationLauncherbyResourceLogicalId = await getStackResourceSummaries(
                     this.simulationLauncherStackName,
-                    answers.region,
+                    answers.region
                 );
 
                 answers.fleetSimulator.assetLibraryFunctionName =
@@ -276,7 +276,7 @@ export class FleetSimulatorInstaller implements RestModule {
                         'source',
                         'packages',
                         'services',
-                        'simulation-manager',
+                        'simulation-manager'
                     ),
                     parameterOverrides: this.getSimulationManagerOverrides(answers),
                     needsPackaging: true,

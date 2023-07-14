@@ -2,4 +2,9 @@
     "editor.codeActionsOnSave": {
         "source.organizeImports": true
     },
-}
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+  }

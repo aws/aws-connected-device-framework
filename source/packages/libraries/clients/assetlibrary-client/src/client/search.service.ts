@@ -20,7 +20,7 @@ export interface SearchService {
         searchRequest: SearchRequestModel,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<SearchResultsModel>;
 
     delete(searchRequest: SearchRequestModel, additionalHeaders?: RequestHeaders): Promise<void>;

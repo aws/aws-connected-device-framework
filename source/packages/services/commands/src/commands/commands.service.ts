@@ -47,7 +47,7 @@ export class CommandsService {
         @inject('aws.s3.bucket') private s3Bucket: string,
         @inject('aws.s3.prefix') private s3Prefix: string,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
-        @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
+        @inject(TYPES.S3Factory) s3Factory: () => AWS.S3
     ) {
         this._iot = iotFactory();
         this._s3 = s3Factory();
@@ -134,7 +134,7 @@ export class CommandsService {
         // determine the action to take based on the status
         const actions: WorkflowAction[] = this.workflowFactory.getAction(
             null,
-            command.commandStatus,
+            command.commandStatus
         );
 
         // perform the actions
@@ -173,7 +173,7 @@ export class CommandsService {
         // determine the action to take based on the status
         const actions: WorkflowAction[] = this.workflowFactory.getAction(
             existing.commandStatus,
-            updated.commandStatus,
+            updated.commandStatus
         );
 
         // perform the actions
@@ -208,10 +208,10 @@ export class CommandsService {
     public async uploadFile(
         commandId: string,
         fileId: string,
-        fileLocation: string,
+        fileLocation: string
     ): Promise<void> {
         logger.debug(
-            `commands.service uploadFile: in: commandId:${commandId}, fileId:${fileId}, fileLocation:${fileLocation}`,
+            `commands.service uploadFile: in: commandId:${commandId}, fileId:${fileId}, fileLocation:${fileLocation}`
         );
 
         const key = `${this.s3Prefix}${commandId}/files/${fileId}`;
@@ -274,7 +274,7 @@ export class CommandsService {
 
     public async getExecution(commandId: string, thingName: string): Promise<ExecutionModel> {
         logger.debug(
-            `commands.service getExecution: in: commandId:${commandId}, thingName:${thingName}`,
+            `commands.service getExecution: in: commandId:${commandId}, thingName:${thingName}`
         );
 
         const command = await this.get(commandId);
@@ -309,7 +309,7 @@ export class CommandsService {
 
     public async cancelExecution(commandId: string, thingName: string): Promise<void> {
         logger.debug(
-            `commands.service cancelExecution: in: commandId:${commandId}, thingName:${thingName}`,
+            `commands.service cancelExecution: in: commandId:${commandId}, thingName:${thingName}`
         );
 
         const command = await this.get(commandId);

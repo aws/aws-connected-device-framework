@@ -94,7 +94,7 @@ describe('CertificatesService', () => {
             mockedIotFactory,
             mockedIotDataFactory,
             mockedS3Factory,
-            mockedSsmFactory,
+            mockedSsmFactory
         );
 
         inheritPolicyInstance = new CertificateService(
@@ -118,7 +118,7 @@ describe('CertificatesService', () => {
             mockedIotFactory,
             mockedIotDataFactory,
             mockedS3Factory,
-            mockedSsmFactory,
+            mockedSsmFactory
         );
     });
 
@@ -126,7 +126,7 @@ describe('CertificatesService', () => {
         // mocks
         // const mockedGetDeviceByID = mockedDevicesService.getDeviceByID.mockImplementationOnce(()=> undefined);
         const mockedIsWhitelisted = (mockedRegistryManager.isWhitelisted = jest.fn((_deviceId) =>
-            Promise.resolve(false),
+            Promise.resolve(false)
         ));
 
         const mockPublishResponse = new MockPublishResponse();
@@ -158,7 +158,7 @@ describe('CertificatesService', () => {
     it('requesting certificate resulting in missing certificate package returns error', async () => {
         // mocks
         const mockedIsWhitelisted = (mockedRegistryManager.isWhitelisted = jest.fn((_deviceId) =>
-            Promise.resolve(true),
+            Promise.resolve(true)
         ));
 
         const mockHeadObjectResponse = new MockHeadObjectOutput();
@@ -203,7 +203,7 @@ describe('CertificatesService', () => {
         // mocks
         // const mockedGetDeviceByID = mockedDevicesService.getDeviceByID.mockImplementationOnce(()=> device);
         const mockedIsWhitelisted = (mockedRegistryManager.isWhitelisted = jest.fn((_deviceId) =>
-            Promise.resolve(true),
+            Promise.resolve(true)
         ));
 
         const mockHeadObjectResponse = new MockHeadObjectOutput();
@@ -249,7 +249,7 @@ describe('CertificatesService', () => {
     it('requesting certificate returns success', async () => {
         // mocks
         const mockedIsWhitelisted = (mockedRegistryManager.isWhitelisted = jest.fn((_deviceId) =>
-            Promise.resolve(true),
+            Promise.resolve(true)
         ));
 
         const certificateId = '1234567890';
@@ -271,7 +271,7 @@ describe('CertificatesService', () => {
 
         const presignedUrl = 'testUrl';
         const mockGetSignedUrl = (mockedS3.getSignedUrl = jest.fn(
-            (_method: string, _params: unknown) => presignedUrl,
+            (_method: string, _params: unknown) => presignedUrl
         ));
         const mockedPublish = (mockedIotData.publish = jest.fn().mockImplementationOnce(() => {
             return {
@@ -317,7 +317,7 @@ describe('CertificatesService', () => {
         // mocks
         // const mockedGetDeviceByID = mockedDevicesService.getDeviceByID.mockImplementationOnce(()=> undefined);
         const mockedIsWhitelisted = (mockedRegistryManager.isWhitelisted = jest.fn((_deviceId) =>
-            Promise.resolve(false),
+            Promise.resolve(false)
         ));
 
         const mockPublishResponse = new MockPublishResponse();
@@ -349,7 +349,7 @@ describe('CertificatesService', () => {
     it('requesting certificate with CSR returns success', async () => {
         // mocks
         const mockedIsWhitelisted = (mockedRegistryManager.isWhitelisted = jest.fn((_deviceId) =>
-            Promise.resolve(true),
+            Promise.resolve(true)
         ));
 
         const caCert = {
@@ -462,7 +462,7 @@ describe('CertificatesService', () => {
     it('requesting certificate with CSR with inherited policies returns success', async () => {
         // mocks
         const mockedIsWhitelisted = (mockedRegistryManager.isWhitelisted = jest.fn((_deviceId) =>
-            Promise.resolve(true),
+            Promise.resolve(true)
         ));
 
         const caCert = {
@@ -590,7 +590,7 @@ describe('CertificatesService', () => {
         // mocks
         // const mockedGetDeviceByID = mockedDevicesService.getDeviceByID.mockImplementationOnce(()=> undefined);
         const mockedIsWhitelisted = (mockedRegistryManager.isWhitelisted = jest.fn((_deviceId) =>
-            Promise.resolve(false),
+            Promise.resolve(false)
         ));
 
         const mockPublishResponse = new MockPublishResponse();
@@ -623,7 +623,7 @@ describe('CertificatesService', () => {
         // mocks
         // const mockedGetDeviceByID = mockedDevicesService.getDeviceByID.mockImplementationOnce(()=> device);
         const mockedIsWhitelisted = (mockedRegistryManager.isWhitelisted = jest.fn((_deviceId) =>
-            Promise.resolve(true),
+            Promise.resolve(true)
         ));
 
         const mockRemoveThingFromThingGroupResponse = new RemoveThingFromThingGroupResponse();

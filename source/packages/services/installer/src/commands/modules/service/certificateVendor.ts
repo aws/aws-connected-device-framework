@@ -56,7 +56,7 @@ export class CertificateVendorInstaller implements ServiceModule {
         delete answers.certificateVendor?.redeploy;
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
         if ((updatedAnswers.certificateVendor?.redeploy ?? true) === false) {
             return updatedAnswers;
@@ -202,7 +202,7 @@ export class CertificateVendorInstaller implements ServiceModule {
                     },
                 ]),
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         return updatedAnswers;
@@ -226,11 +226,11 @@ export class CertificateVendorInstaller implements ServiceModule {
         addIfSpecified('CaCertificateId', answers.certificateVendor.caCertificateId);
         addIfSpecified(
             'RotatedCertificatePolicy',
-            answers.certificateVendor.rotatedCertificatePolicy,
+            answers.certificateVendor.rotatedCertificatePolicy
         );
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
 
         return parameterOverrides;
@@ -251,7 +251,7 @@ export class CertificateVendorInstaller implements ServiceModule {
                             'source',
                             'packages',
                             'services',
-                            'certificatevendor',
+                            'certificatevendor'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -282,11 +282,11 @@ export class CertificateVendorInstaller implements ServiceModule {
                 }
                 const assetlibrarybyResourceLogicalId = await getStackResourceSummaries(
                     this.assetLibraryStackName,
-                    answers.region,
+                    answers.region
                 );
                 const commandsbyResourceLogicalId = await getStackResourceSummaries(
                     this.commandAndControlStackName,
-                    answers.region,
+                    answers.region
                 );
                 answers.certificateVendor.commandsFunctionName =
                     commandsbyResourceLogicalId('RESTLambdaFunction');
@@ -308,7 +308,7 @@ export class CertificateVendorInstaller implements ServiceModule {
                         'source',
                         'packages',
                         'services',
-                        'certificatevendor',
+                        'certificatevendor'
                     ),
                     parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,
@@ -329,11 +329,11 @@ export class CertificateVendorInstaller implements ServiceModule {
             .add(`AWS_S3_CERTIFICATES_SUFFIX`, answers.certificateVendor.certificatesSuffix)
             .add(
                 `AWS_S3_CERTIFICATES_PRESIGNEDURL_EXPIRESINSECONDS`,
-                answers.certificateVendor.presignedUrlExpiryInSeconds,
+                answers.certificateVendor.presignedUrlExpiryInSeconds
             )
             .add(
                 `AWS_IOT_THINGGROUP_ROTATECERTIFICATES`,
-                answers.certificateVendor.rotateCertificatesThingGroup,
+                answers.certificateVendor.rotateCertificatesThingGroup
             )
             .add(`MQTT_TOPICS_GET_SUCCESS`, answers.certificateVendor.getSuccessTopic)
             .add(`MQTT_TOPICS_GET_FAILURE`, answers.certificateVendor.getFailureTopic)
@@ -343,19 +343,19 @@ export class CertificateVendorInstaller implements ServiceModule {
             .add(`MQTT_TOPICS_ACK_ROOT`, answers.certificateVendor.ackRootTopic)
             .add(
                 `FEATURES_DELETEPREVIOUSCERTIFICATE`,
-                answers.certificateVendor.deletePreviousCertificate,
+                answers.certificateVendor.deletePreviousCertificate
             )
             .add(
                 `DEFAULTS_DEVICE_STATUS_SUCCESS_KEY`,
-                answers.certificateVendor.deviceStatusSuccessKey,
+                answers.certificateVendor.deviceStatusSuccessKey
             )
             .add(
                 `DEFAULTS_DEVICE_STATUS_SUCCESS_VALUE`,
-                answers.certificateVendor.deviceStatusSuccessValue,
+                answers.certificateVendor.deviceStatusSuccessValue
             )
             .add(
                 `DEFAULTS_CERTIFICATES_CERTIFICATEEXPIRYDAYS`,
-                answers.certificateVendor.certificateExpiryInDays,
+                answers.certificateVendor.certificateExpiryInDays
             )
             .add('USE_DEFAULT_POLICY', answers.certificateVendor.useDefaultPolicy)
             .add(`REGISTRY_MODE`, answers.certificateVendor.registryMode);

@@ -20,4 +20,3 @@ export * from './client/messages.service';
 
 export { commandAndControlContainerModule } from './di/inversify.config';
 export { COMMANDANDCONTROL_CLIENT_TYPES } from './di/types';
-

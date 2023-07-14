@@ -43,7 +43,7 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
         delete answers.greengrass2InstallerConfigGenerators?.redeploy;
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
         if ((updatedAnswers.greengrass2InstallerConfigGenerators?.redeploy ?? true) === false) {
             return updatedAnswers;
@@ -84,7 +84,7 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
                     },
                 ]),
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         return updatedAnswers;
@@ -102,7 +102,7 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
 
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
         return parameterOverrides;
     }
@@ -123,7 +123,7 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
                             'source',
                             'packages',
                             'services',
-                            'greengrass2-installer-config-generators',
+                            'greengrass2-installer-config-generators'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -159,7 +159,7 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
                         'source',
                         'packages',
                         'services',
-                        'greengrass2-installer-config-generators',
+                        'greengrass2-installer-config-generators'
                     ),
                     parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,
@@ -180,23 +180,23 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
             .add(`DEVICE_ROOT_PATH`, answers.greengrass2InstallerConfigGenerators.deviceRootPath)
             .add(
                 `DEVICE_ROOT_CA_PATH`,
-                answers.greengrass2InstallerConfigGenerators.deviceRootCAPath,
+                answers.greengrass2InstallerConfigGenerators.deviceRootCAPath
             )
             .add(
                 `DEVICE_CERTIFICATE_FILE_PATH`,
-                answers.greengrass2InstallerConfigGenerators.deviceCertificateFilePath,
+                answers.greengrass2InstallerConfigGenerators.deviceCertificateFilePath
             )
             .add(
                 `DEVICE_PRIVATE_KEY_PATH`,
-                answers.greengrass2InstallerConfigGenerators.devicePrivateKeyPath,
+                answers.greengrass2InstallerConfigGenerators.devicePrivateKeyPath
             )
             .add(
                 `DEVICE_CLAIM_CERTIFICATE_PATH`,
-                answers.greengrass2InstallerConfigGenerators.deviceClaimCertificatePath,
+                answers.greengrass2InstallerConfigGenerators.deviceClaimCertificatePath
             )
             .add(
                 `DEVICE_CLAIM_CERTIFICATE_PRIVATE_KEY_PATH`,
-                answers.greengrass2InstallerConfigGenerators.deviceClaimCertificatePrivateKeyPath,
+                answers.greengrass2InstallerConfigGenerators.deviceClaimCertificatePrivateKeyPath
             );
 
         return configBuilder.config;

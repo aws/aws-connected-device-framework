@@ -49,7 +49,7 @@ describe('SearchServiceAssembler', () => {
         instance = new SearchAssembler(
             mockedDeviceAssembler,
             mockedGroupAssembler,
-            mockedTypeUtils,
+            mockedTypeUtils
         );
     });
 
@@ -89,7 +89,7 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.containses,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
-            mockedSearchRequest.facetField,
+            mockedSearchRequest.facetField
         );
 
         expect(searchRequestModel).toBeDefined();
@@ -141,7 +141,7 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.containses,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
-            mockedSearchRequest.facetField,
+            mockedSearchRequest.facetField
         );
 
         expect(searchRequestModel).toBeDefined();
@@ -220,7 +220,7 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.containses,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
-            mockedSearchRequest.facetField,
+            mockedSearchRequest.facetField
         );
 
         expect(searchRequestModel).toBeDefined();
@@ -232,7 +232,7 @@ describe('SearchServiceAssembler', () => {
         expect(searchRequestModel.eq[0].traversals[0].direction).toEqual('out');
         expect(searchRequestModel.eq[0].field).toEqual('name');
         expect(searchRequestModel.eq[0].value).toEqual(
-            'ap-northeast-1:55f70ca4-faaa-4aa0-8778-99a102174740',
+            'ap-northeast-1:55f70ca4-faaa-4aa0-8778-99a102174740'
         );
     });
 
@@ -272,7 +272,7 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.containses,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
-            mockedSearchRequest.facetField,
+            mockedSearchRequest.facetField
         );
 
         expect(searchRequestModel).toBeDefined();
@@ -281,7 +281,7 @@ describe('SearchServiceAssembler', () => {
         expect(searchRequestModel.eq).toHaveLength(1);
         expect(searchRequestModel.eq[0].field).toEqual('name');
         expect(searchRequestModel.eq[0].value).toEqual(
-            'ap-northeast-1:55f70ca4-faaa-4aa0-8778-99a102174740',
+            'ap-northeast-1:55f70ca4-faaa-4aa0-8778-99a102174740'
         );
     });
 });

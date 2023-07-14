@@ -38,7 +38,7 @@ export class AccountsDao {
         @inject('aws.dynamodb.tables.gsi1') private accountsTableGsi1: string,
         @inject('aws.dynamodb.tables.gsi2') private accountsTableGsi2: string,
         @inject(TYPES.DocumentClientFactory)
-        documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
     }
@@ -46,7 +46,7 @@ export class AccountsDao {
     private createOrganizationalUnitsRegionMappingItems(
         organizationalUnit: string,
         regions: string[],
-        accountId: string,
+        accountId: string
     ): AWS.DynamoDB.DocumentClient.TransactWriteItemList {
         return regions.map((region) => {
             return {
@@ -55,7 +55,7 @@ export class AccountsDao {
                     Item: {
                         pk: createDelimitedAttribute(
                             PkType.OrganizationalUnits,
-                            organizationalUnit,
+                            organizationalUnit
                         ),
                         sk: createDelimitedAttribute(PkType.Region, ...[accountId, region]),
                         accountId: accountId,
@@ -127,7 +127,7 @@ export class AccountsDao {
     }
 
     private static assembleAccount(
-        result: AWS.DynamoDB.DocumentClient.AttributeMap,
+        result: AWS.DynamoDB.DocumentClient.AttributeMap
     ): AccountsItem {
         logger.debug(`accounts.dao assembleAccount: in: result: ${JSON.stringify(result)}`);
         const { pk, sk, status, regions, gsi2Key, email, ssoEmail, ssoFirstName, ssoLastName } =
@@ -156,12 +156,12 @@ export class AccountsDao {
     }
 
     private static assembleComponentsDeploymentStatus(
-        result: AWS.DynamoDB.DocumentClient.ItemList,
+        result: AWS.DynamoDB.DocumentClient.ItemList
     ): AccountComponentModel[] {
         logger.debug(
             `accounts.dao assembleComponentsDeploymentStatus: in: result: ${JSON.stringify(
-                result,
-            )}`,
+                result
+            )}`
         );
         const componentDeploymentStatus: AccountComponentModel[] = [];
         for (const item of result) {
@@ -178,8 +178,8 @@ export class AccountsDao {
 
         logger.debug(
             `accounts.dao assembleComponentsDeploymentStatus: exit: ${JSON.stringify(
-                componentDeploymentStatus,
-            )}`,
+                componentDeploymentStatus
+            )}`
         );
         return componentDeploymentStatus;
     }
@@ -202,19 +202,19 @@ export class AccountsDao {
             return [];
         }
         const componentDeploymentStatusList = AccountsDao.assembleComponentsDeploymentStatus(
-            queryResponse.Items,
+            queryResponse.Items
         );
         logger.debug(
             `accounts.dao listComponentsByAccount: exit componentDeploymentStatusList:${JSON.stringify(
-                componentDeploymentStatusList,
-            )}`,
+                componentDeploymentStatusList
+            )}`
         );
         return componentDeploymentStatusList;
     }
 
     public async updateComponentByAccount(request: AccountComponentModel): Promise<void> {
         logger.debug(
-            `accounts.dao updateComponentByAccount: in request:${JSON.stringify(request)}`,
+            `accounts.dao updateComponentByAccount: in request:${JSON.stringify(request)}`
         );
 
         const { region, accountId, componentName, status } = request;
@@ -238,10 +238,10 @@ export class AccountsDao {
     public async updateRegionsMappingForAccount(
         organizationalUnitId: string,
         accountId: string,
-        regions: string[],
+        regions: string[]
     ): Promise<void> {
         logger.debug(
-            `accounts.dao deleteRegionsMappingForAccount: in organizationalUnitId:${organizationalUnitId} accountId:${accountId}`,
+            `accounts.dao deleteRegionsMappingForAccount: in organizationalUnitId:${organizationalUnitId} accountId:${accountId}`
         );
         const queryResponse = await this._dc
             .query({
@@ -250,7 +250,7 @@ export class AccountsDao {
                 ExpressionAttributeValues: {
                     ':pk': createDelimitedAttributePrefix(
                         PkType.OrganizationalUnits,
-                        organizationalUnitId,
+                        organizationalUnitId
                     ),
                     ':sk': createDelimitedAttributePrefix(PkType.Region, accountId),
                 },
@@ -260,8 +260,8 @@ export class AccountsDao {
         if (queryResponse.Items.length > 0) {
             logger.debug(
                 `accounts.dao deleteRegionsMappingForAccount: queryResponse: ${JSON.stringify(
-                    queryResponse,
-                )}`,
+                    queryResponse
+                )}`
             );
             await this._dc
                 .batchWrite({
@@ -289,7 +289,7 @@ export class AccountsDao {
                     ...this.createOrganizationalUnitsRegionMappingItems(
                         organizationalUnitId,
                         regionSortedList,
-                        accountId,
+                        accountId
                     ),
                 ],
             })
@@ -374,12 +374,12 @@ export class AccountsDao {
                               Key: {
                                   pk: createDelimitedAttribute(
                                       PkType.OrganizationalUnits,
-                                      organizationalUnit,
+                                      organizationalUnit
                                   ),
                                   sk: createDelimitedAttribute(
                                       PkType.Region,
                                       region,
-                                      accountItem.name,
+                                      accountItem.name
                                   ),
                               },
                           },
@@ -396,7 +396,7 @@ export class AccountsDao {
                                 pk: createDelimitedAttribute(PkType.Accounts, accountItem.name),
                                 sk: createDelimitedAttribute(
                                     PkType.OrganizationalUnits,
-                                    organizationalUnit,
+                                    organizationalUnit
                                 ),
                             },
                         },
@@ -412,7 +412,7 @@ export class AccountsDao {
     public async getAccountsInOu(
         ouName: string,
         count?: number,
-        exclusiveStart?: AccountListPaginationKey,
+        exclusiveStart?: AccountListPaginationKey
     ): Promise<[AccountsItem[], AccountListPaginationKey]> {
         logger.debug(`accounts.dao getAccountsInOU: in: ouName:${ouName}`);
 
@@ -421,7 +421,7 @@ export class AccountsDao {
             exclusiveStartKey = {
                 sk: createDelimitedAttribute(
                     PkType.OrganizationalUnits,
-                    exclusiveStart.organizationalUnitId,
+                    exclusiveStart.organizationalUnitId
                 ),
                 pk: createDelimitedAttribute(PkType.Accounts, exclusiveStart.accountName),
             };
@@ -449,10 +449,10 @@ export class AccountsDao {
         let paginationKey: AccountListPaginationKey;
         if (queryResponse.LastEvaluatedKey) {
             const organizationalUnitId = expandDelimitedAttribute(
-                queryResponse.LastEvaluatedKey.pk,
+                queryResponse.LastEvaluatedKey.pk
             )[1];
             const lastEvaluatedAccountName = expandDelimitedAttribute(
-                queryResponse.LastEvaluatedKey.sk,
+                queryResponse.LastEvaluatedKey.sk
             )[1];
             paginationKey = {
                 accountName: lastEvaluatedAccountName,
@@ -462,8 +462,8 @@ export class AccountsDao {
 
         logger.debug(
             `accounts.dao getAccountsInOu: exit: result: ${JSON.stringify(
-                result,
-            )}, paginationKey: ${JSON.stringify(paginationKey)}`,
+                result
+            )}, paginationKey: ${JSON.stringify(paginationKey)}`
         );
         return [result, paginationKey];
     }
@@ -488,7 +488,7 @@ export class AccountsDao {
                         : undefined,
                     sk: createDelimitedAttribute(
                         PkType.OrganizationalUnits,
-                        item.organizationalUnitId,
+                        item.organizationalUnitId
                     ),
                     ...rest,
                 },
@@ -499,7 +499,7 @@ export class AccountsDao {
             ...item,
         };
         logger.debug(
-            `accounts.dao create: exit: accountResource:${JSON.stringify(accountResource)}`,
+            `accounts.dao create: exit: accountResource:${JSON.stringify(accountResource)}`
         );
         return accountResource;
     }

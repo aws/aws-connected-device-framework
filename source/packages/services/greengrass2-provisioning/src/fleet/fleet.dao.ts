@@ -32,7 +32,7 @@ export class FleetDao {
     private dbc: DynamoDBDocumentClient;
 
     public constructor(
-        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient,
+        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient
     ) {
         this.dbc = ddcFactory();
     }
@@ -41,10 +41,10 @@ export class FleetDao {
         type: 'desired' | 'reported',
         templateName: string,
         templateVersion: number,
-        deploymentStatus: string,
+        deploymentStatus: string
     ): Promise<void> {
         logger.debug(
-            `fleet.dao decrementTemplateUsage: in: type:${type}, templateName:${templateName}, templateVersion:${templateVersion}, deploymentStatus:${deploymentStatus}`,
+            `fleet.dao decrementTemplateUsage: in: type:${type}, templateName:${templateName}, templateVersion:${templateVersion}, deploymentStatus:${deploymentStatus}`
         );
 
         let updateExpression = 'SET #inUse = if_not_exists(#inUse, :start) - :inc';
@@ -63,7 +63,7 @@ export class FleetDao {
                     PkType.Template,
                     templateName,
                     PkType.TemplateVersion,
-                    templateVersion,
+                    templateVersion
                 ),
             },
             UpdateExpression: updateExpression,
@@ -88,10 +88,10 @@ export class FleetDao {
         type: 'desired' | 'reported',
         templateName: string,
         templateVersion: number,
-        deploymentStatus: string,
+        deploymentStatus: string
     ): Promise<void> {
         logger.debug(
-            `fleet.dao incrementTemplateUsage: in: type:${type}, templateName:${templateName}, templateVersion:${templateVersion}, deploymentStatus:${deploymentStatus}`,
+            `fleet.dao incrementTemplateUsage: in: type:${type}, templateName:${templateName}, templateVersion:${templateVersion}, deploymentStatus:${deploymentStatus}`
         );
 
         let updateExpression = 'SET #inUse = if_not_exists(#inUse, :start) + :inc';
@@ -110,7 +110,7 @@ export class FleetDao {
                     PkType.Template,
                     templateName,
                     PkType.TemplateVersion,
-                    templateVersion,
+                    templateVersion
                 ),
             },
             UpdateExpression: updateExpression,
@@ -133,10 +133,10 @@ export class FleetDao {
 
     public async initializeTemplateStatistics(
         templateName: string,
-        templateVersion: number,
+        templateVersion: number
     ): Promise<void> {
         logger.debug(
-            `fleet.dao initializeTemplateStatistics: in: templateName:${templateName}, templateVersion:${templateVersion}`,
+            `fleet.dao initializeTemplateStatistics: in: templateName:${templateName}, templateVersion:${templateVersion}`
         );
 
         const params: PutCommandInput = {
@@ -149,13 +149,13 @@ export class FleetDao {
                     PkType.Template,
                     templateName,
                     PkType.TemplateVersion,
-                    templateVersion,
+                    templateVersion
                 ),
             },
         };
 
         logger.silly(
-            `templates.dao initializeTemplateStatistics: params:${JSON.stringify(params)}`,
+            `templates.dao initializeTemplateStatistics: params:${JSON.stringify(params)}`
         );
         const r = await this.dbc.send(new PutCommand(params));
         logger.silly(`templates.dao initializeTemplateStatistics: r:${JSON.stringify(r)}`);
@@ -194,7 +194,7 @@ export class FleetDao {
     }
 
     private assemble(
-        items: DocumentDbClientItem[],
+        items: DocumentDbClientItem[]
     ): [DesiredTemplateUsage, ReportedTemplateUsage] {
         logger.debug(`fleet.dao assemble: items:${JSON.stringify(items)}`);
         if (items === undefined) {
@@ -256,8 +256,8 @@ export class FleetDao {
 
         logger.debug(
             `fleet.dao assemble: exit: desired:${JSON.stringify(
-                desiredMap,
-            )}, reported:${JSON.stringify(reportedMap)}`,
+                desiredMap
+            )}, reported:${JSON.stringify(reportedMap)}`
         );
         return [desiredMap, reportedMap];
     }

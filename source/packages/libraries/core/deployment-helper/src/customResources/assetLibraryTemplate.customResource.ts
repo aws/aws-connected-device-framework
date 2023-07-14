@@ -27,7 +27,7 @@ import { CustomResourceEvent } from './customResource.model';
 export class AssetLibraryTemplateCustomResource implements CustomResource {
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {}
 
     protected headers: { [key: string]: string };
@@ -35,8 +35,8 @@ export class AssetLibraryTemplateCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `AssetLibraryTemplateCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const functionName = customResourceEvent.ResourceProperties.FunctionName;
@@ -90,9 +90,7 @@ export class AssetLibraryTemplateCustomResource implements CustomResource {
         }
         const res = await this.lambdaInvoker.invoke(functionName, event);
         logger.debug(
-            `AssetLibraryTemplateCustomResource: create: create/update res: ${JSON.stringify(
-                res,
-            )}`,
+            `AssetLibraryTemplateCustomResource: create: create/update res: ${JSON.stringify(res)}`
         );
 
         // finally, publish it
@@ -104,8 +102,8 @@ export class AssetLibraryTemplateCustomResource implements CustomResource {
         const publishRes = await this.lambdaInvoker.invoke(functionName, publishEvent);
         logger.debug(
             `AssetLibraryTemplateCustomResource: create: publish res: ${JSON.stringify(
-                publishRes,
-            )}`,
+                publishRes
+            )}`
         );
 
         return publishRes;
@@ -114,8 +112,8 @@ export class AssetLibraryTemplateCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `AssetLibraryTemplateCustomResource: update: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         return await this.create(customResourceEvent);
     }

@@ -28,7 +28,7 @@ const _apiGwCustomAuth = new ApiGwCustomAuthorizer();
  */
 export async function handler(event: CustomAuthorizerEvent, context: Context): Promise<void> {
     logger.debug(
-        `index: handler: in: event:${JSON.stringify(event)}, context:${JSON.stringify(context)}`,
+        `index: handler: in: event:${JSON.stringify(event)}, context:${JSON.stringify(context)}`
     );
 
     ow(event, ow.object.nonEmpty);

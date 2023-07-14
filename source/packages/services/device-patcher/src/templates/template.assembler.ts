@@ -63,12 +63,12 @@ export class PatchTemplateAssembler {
     public toListResource(
         items: PatchTemplateItem[],
         count?: number,
-        paginateFrom?: TemplateListPaginationKey,
+        paginateFrom?: TemplateListPaginationKey
     ): PatchTemplatesListResource {
         logger.debug(
             `PatchTemplates.assembler toListResource: in: items:${JSON.stringify(
-                items,
-            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+                items
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
         );
 
         const list: PatchTemplatesListResource = {

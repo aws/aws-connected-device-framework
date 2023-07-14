@@ -30,7 +30,7 @@ exports.handler = (event: any, context: any) => {
             const eventJson: Message = JSON.parse(r.Sns.Message);
             const apiGatewayEvent = eventTranslator.buildApiGatewayEventFromSnsEvent(
                 r.Sns.Subject,
-                eventJson,
+                eventJson
             );
             event = apiGatewayEvent;
         }

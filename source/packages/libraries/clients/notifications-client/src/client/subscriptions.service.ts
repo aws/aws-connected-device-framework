@@ -20,30 +20,30 @@ export interface SubscriptionsService {
     createSubscription(
         eventId: string,
         subscription: SubscriptionResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string>;
 
     getSubscription(
         subscriptionId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<SubscriptionResource>;
 
     updateSubscription(
         subscription: SubscriptionResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     deleteSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<void>;
 
     listSubscriptionsForUser(
         userId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<SubscriptionResourceList>;
 
     listSubscriptionsForEvent(
         eventId: string,
         fromSubscriptionId?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<SubscriptionResourceList>;
 }
 

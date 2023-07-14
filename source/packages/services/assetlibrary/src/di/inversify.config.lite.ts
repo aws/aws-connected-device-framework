@@ -40,7 +40,7 @@ export const LiteContainerModule = new ContainerModule(
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind,
+        _rebind: interfaces.Rebind
     ) => {
         bind<TypesService>(TYPES.TypesService).to(TypesServiceLite).inSingletonScope();
         bind<TypesDaoLite>(TYPES.TypesDao).to(TypesDaoLite).inSingletonScope();
@@ -73,7 +73,7 @@ export const LiteContainerModule = new ContainerModule(
                     }
                     return ctx.container.get<AWS.Iot>(TYPES.Iot);
                 };
-            },
+            }
         );
-    },
+    }
 );

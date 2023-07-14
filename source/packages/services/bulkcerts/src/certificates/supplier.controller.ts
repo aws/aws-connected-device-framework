@@ -35,17 +35,17 @@ import { CertificatesTaskService } from './certificatestask.service';
 export class SupplierCertificatesController implements interfaces.Controller {
     constructor(
         @inject(TYPES.CertificatesTaskService)
-        private certificatesTaskService: CertificatesTaskService,
+        private certificatesTaskService: CertificatesTaskService
     ) {}
 
     @httpPost('/:supplierId/certificates')
     public async createSupplierCertificates(
         @requestParam('supplierId') supplierId: string,
         @requestBody() request: CertificateBatchRequest,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<CertificateBatchTask> {
         logger.debug(
-            `certificates.controller createCertificates: in: request: ${JSON.stringify(request)}`,
+            `certificates.controller createCertificates: in: request: ${JSON.stringify(request)}`
         );
 
         try {
@@ -56,7 +56,7 @@ export class SupplierCertificatesController implements interfaces.Controller {
             const taskId: string = await this.certificatesTaskService.createTask(
                 request.quantity,
                 supplierId,
-                certInfo,
+                certInfo
             );
             const taskResponse: CertificateBatchTask = {
                 taskId,

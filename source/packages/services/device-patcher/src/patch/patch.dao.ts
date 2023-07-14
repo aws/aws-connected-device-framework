@@ -32,7 +32,7 @@ export class PatchDao {
     constructor(
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
         @inject(TYPES.DocumentClientFactory)
-        documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this.dc = documentClientFactory();
     }
@@ -48,13 +48,13 @@ export class PatchDao {
                 si1Sort: createDelimitedAttribute(
                     PkType.DevicePatch,
                     patch.patchStatus,
-                    patch.patchId,
+                    patch.patchId
                 ),
                 si2Hash: createDelimitedAttribute(
                     PkType.PatchTemplate,
                     patch.patchTemplateName,
                     PkType.PatchTemplateVersion,
-                    patch.patchTemplate.versionNo,
+                    patch.patchTemplate.versionNo
                 ),
                 createdAt: patch.createdAt?.toISOString(),
                 updatedAt: patch.updatedAt?.toISOString(),
@@ -84,13 +84,13 @@ export class PatchDao {
                         si1Sort: createDelimitedAttribute(
                             PkType.DevicePatch,
                             patch.patchStatus,
-                            patch.patchId,
+                            patch.patchId
                         ),
                         si2Hash: createDelimitedAttribute(
                             PkType.PatchTemplate,
                             patch.patchTemplateName,
                             PkType.PatchTemplateVersion,
-                            patch.patchTemplate?.versionNo || null,
+                            patch.patchTemplate?.versionNo || null
                         ),
                         createdAt: patch.createdAt?.toISOString(),
                         updatedAt: patch.updatedAt?.toISOString(),
@@ -137,7 +137,7 @@ export class PatchDao {
     }
 
     public async getBulk(
-        patchItems: { patchId: string; deviceId: string }[],
+        patchItems: { patchId: string; deviceId: string }[]
     ): Promise<PatchItem[]> {
         logger.debug(`patch.dao: list: in: patchItems: ${patchItems}`);
 
@@ -158,7 +158,7 @@ export class PatchDao {
                 sk: createDelimitedAttribute(
                     PkType.DevicePatch,
                     PkType.DevicePatchAssociation,
-                    'map',
+                    'map'
                 ),
             });
         }
@@ -210,7 +210,7 @@ export class PatchDao {
         deviceId: string,
         status?: string,
         count?: number,
-        exclusiveStart?: PatchListPaginationKey,
+        exclusiveStart?: PatchListPaginationKey
     ): Promise<[PatchItem[], PatchListPaginationKey]> {
         logger.debug(`patch.dao: list: in: patch: ${JSON.stringify(deviceId)}`);
 
@@ -239,7 +239,7 @@ export class PatchDao {
         if (status) {
             params.ExpressionAttributeValues[':sk'] = createDelimitedAttribute(
                 PkType.Device,
-                status,
+                status
             );
         }
 
@@ -278,7 +278,7 @@ export class PatchDao {
 
         if (patch.updatedAt && patch.updatedAt instanceof Date) {
             logger.silly(
-                `patch.dao: update: using updated at from payload, updatedAt: ${patch.updatedAt}`,
+                `patch.dao: update: using updated at from payload, updatedAt: ${patch.updatedAt}`
             );
             date = patch.updatedAt.toISOString();
         }
@@ -299,7 +299,7 @@ export class PatchDao {
                 ':si1Sort': createDelimitedAttribute(
                     PkType.DevicePatch,
                     patch.patchStatus,
-                    patch.patchId,
+                    patch.patchId
                 ),
             },
         };

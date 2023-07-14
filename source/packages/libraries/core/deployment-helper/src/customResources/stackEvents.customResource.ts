@@ -38,7 +38,7 @@ export class StackEventsCustomResource implements CustomResource {
     constructor(
         @inject(TYPES.EventBridgeFactory)
         private eventBridgeFactory: (region: string) => AWS.EventBridge,
-        @inject(TYPES.STSFactory) stsFactory: () => AWS.STS,
+        @inject(TYPES.STSFactory) stsFactory: () => AWS.STS
     ) {
         this.sts = stsFactory();
     }
@@ -46,7 +46,7 @@ export class StackEventsCustomResource implements CustomResource {
     private async publishEvent(
         eventBusName: string,
         stackName: string,
-        payload?: StackEventPayload,
+        payload?: StackEventPayload
     ) {
         const eventSource = 'com.aws.cdf.customresource';
         const eventDetailType = 'CDF Deployment Events via CloudFormation Custom Resource';
@@ -85,8 +85,8 @@ export class StackEventsCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `StackEventsCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const eventBusName = customResourceEvent?.ResourceProperties?.EventBusName;
@@ -105,8 +105,8 @@ export class StackEventsCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `StackEventsCustomResource: update: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const eventBusName = customResourceEvent?.ResourceProperties?.EventBusName;

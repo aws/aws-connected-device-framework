@@ -30,7 +30,7 @@ export class PatchTemplatesDao {
     constructor(
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
         @inject(TYPES.DocumentClientFactory)
-        documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this.dc = documentClientFactory();
     }
@@ -49,7 +49,7 @@ export class PatchTemplatesDao {
                     si1Sort: createDelimitedAttribute(
                         PkType.PatchTemplate,
                         template.enabled,
-                        template.name,
+                        template.name
                     ),
                     createdAt: template.createdAt?.toISOString(),
                     updatedAt: template.updatedAt?.toISOString(),
@@ -128,12 +128,12 @@ export class PatchTemplatesDao {
 
     public async list(
         count?: number,
-        lastEvaluated?: TemplateListPaginationKey,
+        lastEvaluated?: TemplateListPaginationKey
     ): Promise<[PatchTemplateItem[], TemplateListPaginationKey]> {
         logger.debug(
             `templates.dao list: in: count:${count}, lastEvaluated:${JSON.stringify(
-                lastEvaluated,
-            )}`,
+                lastEvaluated
+            )}`
         );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
@@ -226,7 +226,7 @@ export class PatchTemplatesDao {
     }
 
     private assembleTemplateList(
-        items: AWS.DynamoDB.DocumentClient.ItemList,
+        items: AWS.DynamoDB.DocumentClient.ItemList
     ): PatchTemplateItem[] {
         logger.debug(`templates.dao assembleTemplate: items: ${JSON.stringify(items)}`);
 

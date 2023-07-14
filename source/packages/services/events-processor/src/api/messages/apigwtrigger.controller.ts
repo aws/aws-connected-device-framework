@@ -22,19 +22,19 @@ import { ApigwTriggerService } from './apigwtrigger.service';
 @controller('')
 export class ApigwTriggerController implements interfaces.Controller {
     constructor(
-        @inject(TYPES.ApigwTriggerService) private apigwtriggerService: ApigwTriggerService,
+        @inject(TYPES.ApigwTriggerService) private apigwtriggerService: ApigwTriggerService
     ) {}
 
     @httpPost('/messages/apigw')
     public async apigwTrigger(
         @requestBody() event: CommonEvent | string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         if (typeof event == 'string') {
             logger.debug(`apigwtrigger.controller apigwTrigger: in: event: ${event}`);
         } else {
             logger.debug(
-                `apigwtrigger.controller apigwTrigger: in event: ${JSON.stringify(event)}`,
+                `apigwtrigger.controller apigwTrigger: in event: ${JSON.stringify(event)}`
             );
         }
 

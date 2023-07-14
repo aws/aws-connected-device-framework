@@ -42,17 +42,17 @@ export class MessagesDao {
     public constructor(
         @inject('aws.dynamoDb.table') private table: string,
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
-        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DocumentClient,
+        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DocumentClient
     ) {
         this._dc = documentClientFactory();
     }
 
     public async getMessageByCorrelation(
         correlationId: string,
-        targetId: string,
+        targetId: string
     ): Promise<MessageItem> {
         logger.debug(
-            `messages.dao getMessageByCorrelation: in: correlationId:${correlationId}, targetId${targetId}`,
+            `messages.dao getMessageByCorrelation: in: correlationId:${correlationId}, targetId${targetId}`
         );
 
         const params: DocumentClient.QueryInput = {
@@ -71,7 +71,7 @@ export class MessagesDao {
         };
 
         logger.silly(
-            `messages.dao getMessageByCorrelation: QueryInput: ${JSON.stringify(params)}`,
+            `messages.dao getMessageByCorrelation: QueryInput: ${JSON.stringify(params)}`
         );
         const results = await this._dc.query(params).promise();
         logger.silly(`query result: ${JSON.stringify(results)}`);
@@ -82,7 +82,7 @@ export class MessagesDao {
 
         const message = this.assembleMessage(results.Items[0]);
         logger.debug(
-            `messages.dao getMessageByCorrelation: exit: message:${JSON.stringify(message)}`,
+            `messages.dao getMessageByCorrelation: exit: message:${JSON.stringify(message)}`
         );
         return message;
     }
@@ -154,8 +154,8 @@ export class MessagesDao {
         if (this.dynamoDbUtils.hasUnprocessedItems(r)) {
             logger.error(
                 `messages.dao saveMessage: has unprocessed items: ${JSON.stringify(
-                    r.UnprocessedItems,
-                )}`,
+                    r.UnprocessedItems
+                )}`
             );
             throw new Error('SAVE_MESSAGE_FAILED');
         }
@@ -223,7 +223,7 @@ export class MessagesDao {
                             siKey2: createDelimitedAttribute(PkType.Thing, target.id),
                             siSort2: createDelimitedAttribute(
                                 PkType.Message,
-                                new Date().getTime(),
+                                new Date().getTime()
                             ),
                             messageId: message.id,
                             targetId: target.id,
@@ -238,7 +238,7 @@ export class MessagesDao {
                 if (target.correlationId !== undefined) {
                     targetDbItem.PutRequest.Item['siKey1'] = createDelimitedAttribute(
                         PkType.Reply,
-                        target.correlationId,
+                        target.correlationId
                     );
                     targetDbItem.PutRequest.Item['correlationId'] = target.correlationId;
                 }
@@ -256,8 +256,8 @@ export class MessagesDao {
         if (this.dynamoDbUtils.hasUnprocessedItems(r)) {
             logger.error(
                 `messages.dao saveResolvedTargets: has unprocessed items: ${JSON.stringify(
-                    r.UnprocessedItems,
-                )}`,
+                    r.UnprocessedItems
+                )}`
             );
             throw new Error('SAVE_MESSAGE_TARGETS_FAILED');
         }
@@ -296,8 +296,8 @@ export class MessagesDao {
         if (this.dynamoDbUtils.hasUnprocessedItems(r)) {
             logger.error(
                 `messages.dao saveBatchProgress: has unprocessed items: ${JSON.stringify(
-                    r.UnprocessedItems,
-                )}`,
+                    r.UnprocessedItems
+                )}`
             );
             throw new Error('SAVE_MESSAGE_TARGETS_FAILED');
         }
@@ -308,12 +308,12 @@ export class MessagesDao {
     public async listMessages(
         commandId: string,
         exclusiveStart?: MessageListPaginationKey,
-        count?: number,
+        count?: number
     ): Promise<[MessageItem[], MessageListPaginationKey]> {
         logger.debug(
             `messages.dao listMessages: in: commandId:${commandId}, exclusiveStart:${JSON.stringify(
-                exclusiveStart,
-            )}, count:${count}`,
+                exclusiveStart
+            )}, count:${count}`
         );
 
         const siKey2 = createDelimitedAttribute(PkType.Command, commandId);
@@ -354,7 +354,7 @@ export class MessagesDao {
         let paginationKey: MessageListPaginationKey;
         if (results.LastEvaluatedKey) {
             const lastEvaluatedCreatedAt = Number(
-                expandDelimitedAttribute(results.LastEvaluatedKey.sk)[1],
+                expandDelimitedAttribute(results.LastEvaluatedKey.sk)[1]
             );
             paginationKey = {
                 createdAt: lastEvaluatedCreatedAt,
@@ -363,15 +363,15 @@ export class MessagesDao {
 
         logger.debug(
             `messages.dao listMessages: exit: messages:${JSON.stringify(
-                messages,
-            )}, paginationKey:${JSON.stringify(paginationKey)}`,
+                messages
+            )}, paginationKey:${JSON.stringify(paginationKey)}`
         );
         return [messages, paginationKey];
     }
 
     public async getRecipient(messageId: string, targetName: string): Promise<Recipient> {
         logger.debug(
-            `messages.dao getRecipient: in: messageId:${messageId}, targetName:${targetName}`,
+            `messages.dao getRecipient: in: messageId:${messageId}, targetName:${targetName}`
         );
 
         const messageDbId = createDelimitedAttribute(PkType.Message, messageId);
@@ -406,12 +406,12 @@ export class MessagesDao {
     public async listRecipients(
         id: string,
         exclusiveStart?: RecipientListPaginationKey,
-        count?: number,
+        count?: number
     ): Promise<[Recipient[], RecipientListPaginationKey]> {
         logger.debug(
             `messages.dao listRecipients: in: id:${id}, exclusiveStart:${JSON.stringify(
-                exclusiveStart,
-            )}, count:${count}`,
+                exclusiveStart
+            )}, count:${count}`
         );
 
         const messageDbId = createDelimitedAttribute(PkType.Message, id);
@@ -451,7 +451,7 @@ export class MessagesDao {
         let paginationKey: RecipientListPaginationKey;
         if (results.LastEvaluatedKey) {
             const lastEvaluatedThingName = expandDelimitedAttribute(
-                results.LastEvaluatedKey.sk,
+                results.LastEvaluatedKey.sk
             )[1];
             paginationKey = {
                 targetName: lastEvaluatedThingName,
@@ -460,8 +460,8 @@ export class MessagesDao {
 
         logger.debug(
             `messages.dao listRecipients: exit: recipients:${JSON.stringify(
-                recipients,
-            )}, paginationKey:${JSON.stringify(paginationKey)}`,
+                recipients
+            )}, paginationKey:${JSON.stringify(paginationKey)}`
         );
         return [recipients, paginationKey];
     }
@@ -470,12 +470,12 @@ export class MessagesDao {
         messageId: string,
         targetName: string,
         exclusiveStart?: ReplyListPaginationKey,
-        count?: number,
+        count?: number
     ): Promise<[ReplyItem[], ReplyListPaginationKey]> {
         logger.debug(
             `messages.dao listReplies: in: messageId:${messageId}, targetName:${targetName}, exclusiveStart:${JSON.stringify(
-                exclusiveStart,
-            )}, count:${count}`,
+                exclusiveStart
+            )}, count:${count}`
         );
 
         const messageDbId = createDelimitedAttribute(PkType.Message, messageId);
@@ -486,7 +486,7 @@ export class MessagesDao {
                 PkType.Reply,
                 PkType.Thing,
                 targetName,
-                exclusiveStart.receivedAt,
+                exclusiveStart.receivedAt
             );
             exclusiveStartKey = {
                 pk: messageDbId,
@@ -521,7 +521,7 @@ export class MessagesDao {
         let paginationKey: ReplyListPaginationKey;
         if (results.LastEvaluatedKey) {
             const lastEvaluatedReceivedAt = Number(
-                expandDelimitedAttribute(results.LastEvaluatedKey.sk)[3],
+                expandDelimitedAttribute(results.LastEvaluatedKey.sk)[3]
             );
             paginationKey = {
                 receivedAt: lastEvaluatedReceivedAt,
@@ -530,8 +530,8 @@ export class MessagesDao {
 
         logger.debug(
             `messages.dao listReplies: exit: replies:${JSON.stringify(
-                replies,
-            )}, paginationKey:${JSON.stringify(paginationKey)}`,
+                replies
+            )}, paginationKey:${JSON.stringify(paginationKey)}`
         );
         return [replies, paginationKey];
     }
@@ -571,8 +571,8 @@ export class MessagesDao {
         if (this.dynamoDbUtils.hasUnprocessedItems(r)) {
             logger.error(
                 `messages.dao deleteMessage: has unprocessed items: ${JSON.stringify(
-                    r.UnprocessedItems,
-                )}`,
+                    r.UnprocessedItems
+                )}`
             );
             throw new Error('DELETE_MESSAGE_FAILED');
         }
@@ -582,7 +582,7 @@ export class MessagesDao {
 
     public async deleteRecipient(messageId: string, targetName: string): Promise<void> {
         logger.debug(
-            `messages.dao deleteRecipient: in: messageId:${messageId}, targetName:${targetName}`,
+            `messages.dao deleteRecipient: in: messageId:${messageId}, targetName:${targetName}`
         );
 
         const params: DocumentClient.BatchWriteItemInput = {
@@ -631,8 +631,8 @@ export class MessagesDao {
         if (this.dynamoDbUtils.hasUnprocessedItems(r)) {
             logger.error(
                 `messages.dao deleteRecipient: has unprocessed items: ${JSON.stringify(
-                    r.UnprocessedItems,
-                )}`,
+                    r.UnprocessedItems
+                )}`
             );
             throw new Error('DELETE_RECIPIENT_MESSAGE_FAILED');
         }

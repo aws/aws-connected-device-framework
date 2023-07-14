@@ -50,7 +50,7 @@ exports.handler = async (event: any, _context: unknown) => {
                     key !== 'targets' &&
                     key !== 'gsi2Key' &&
                     key !== 'gsi2Sort' &&
-                    key !== 'version',
+                    key !== 'version'
             )
             .forEach((key) => (alertAttributes[key] = alert[key]));
 
@@ -85,7 +85,7 @@ function shouldDiscard(r: RawAlert): boolean {
 async function processSnsTargets(
     eventId: string,
     targets: TargetItems,
-    alertAttributes: { [key: string]: string },
+    alertAttributes: { [key: string]: string }
 ): Promise<void> {
     // build the messages for each target type
     const messages = new SNSMessages();
@@ -116,14 +116,14 @@ async function processSnsTargets(
 async function processDynamoDbTargets(
     eventId: string,
     targets: TargetItems,
-    alertAttributes: { [key: string]: string },
+    alertAttributes: { [key: string]: string }
 ): Promise<void> {
     // Process dynamodb target
     if (targets?.dynamodb?.length > 0) {
         for (const ddb of targets.dynamodb) {
             if (ddb.tableName === undefined) {
                 logger.error(
-                    `handler: unknown dynamodb tablename for eventId: ${eventId} ignoring...`,
+                    `handler: unknown dynamodb tablename for eventId: ${eventId} ignoring...`
                 );
                 return;
             }
@@ -131,7 +131,7 @@ async function processDynamoDbTargets(
             // Check if attribute mapping exists, otherwise ignore
             if (ddb.attributeMapping === undefined) {
                 logger.error(
-                    `handler: unknown dynamodb attribute mapping for eventId: ${eventId} ignoring...`,
+                    `handler: unknown dynamodb attribute mapping for eventId: ${eventId} ignoring...`
                 );
                 return;
             }
@@ -140,7 +140,7 @@ async function processDynamoDbTargets(
             const finalRecord = await messageCompiler.compileDynamodbRecord(
                 eventId,
                 alertAttributes,
-                ddb.attributeMapping,
+                ddb.attributeMapping
             );
 
             // Write record to target table

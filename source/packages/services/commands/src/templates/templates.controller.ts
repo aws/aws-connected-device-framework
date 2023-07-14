@@ -37,10 +37,10 @@ export class TemplatesController implements interfaces.Controller {
     @httpPost('')
     public async createTemplate(
         @requestBody() template: TemplateModel,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `templates.controller  createTemplate: in: template: ${JSON.stringify(template)}`,
+            `templates.controller  createTemplate: in: template: ${JSON.stringify(template)}`
         );
         try {
             await this.templatesService.create(template);
@@ -54,7 +54,7 @@ export class TemplatesController implements interfaces.Controller {
     @httpGet('/:templateId')
     public async getTemplate(
         @requestParam('templateId') templateId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<TemplateModel> {
         logger.info(`templates.controller getTemplate: in: templateId:${templateId}`);
         try {
@@ -94,12 +94,12 @@ export class TemplatesController implements interfaces.Controller {
     public async updateTemplate(
         @requestBody() template: TemplateModel,
         @response() res: Response,
-        @requestParam('templateId') templateId: string,
+        @requestParam('templateId') templateId: string
     ): Promise<void> {
         logger.info(
             `templates.controller updateTemplate: in: templateId: ${templateId}, template: ${JSON.stringify(
-                template,
-            )}`,
+                template
+            )}`
         );
         try {
             template.templateId = templateId;
@@ -112,7 +112,7 @@ export class TemplatesController implements interfaces.Controller {
     @httpDelete('/:templateId')
     public async deleteTemplate(
         @response() res: Response,
-        @requestParam('templateId') templateId: string,
+        @requestParam('templateId') templateId: string
     ): Promise<void> {
         logger.info(`templates.controller deleteTemplate: in: templateId: ${templateId}`);
         try {

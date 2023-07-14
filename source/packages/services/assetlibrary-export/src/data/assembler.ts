@@ -59,7 +59,7 @@ export class NodeAssembler {
 
     public toNodeFromThingGroupDocument(result: ThingGroupDocument): Node {
         logger.debug(
-            `assembler toNodeFromThingGroupDocument: in: result: ${JSON.stringify(result)}`,
+            `assembler toNodeFromThingGroupDocument: in: result: ${JSON.stringify(result)}`
         );
 
         const node = new Node();

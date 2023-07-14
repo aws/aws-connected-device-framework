@@ -48,7 +48,7 @@ export class ActivationService {
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
         @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private devices: DevicesService,
         @inject(ASSETLIBRARY_CLIENT_TYPES.PoliciesService) private policies: PoliciesService,
-        @inject(PROVISIONING_CLIENT_TYPES.ThingsService) private things: ThingsService,
+        @inject(PROVISIONING_CLIENT_TYPES.ThingsService) private things: ThingsService
     ) {
         this.iot = iotFactory();
         this.s3 = s3Factory();
@@ -72,7 +72,7 @@ export class ActivationService {
             }
         } catch (e) {
             logger.error(
-                `activation.service: activate: error with certificate revocation:${e.message}`,
+                `activation.service: activate: error with certificate revocation:${e.message}`
             );
             throw e;
         }
@@ -94,14 +94,14 @@ export class ActivationService {
         // all good, so go ahead and provision it
         const thingArn = await this.provisionThing(
             deviceId.toLowerCase(),
-            jitrEvent.certificateId,
+            jitrEvent.certificateId
         );
 
         try {
             await this.updateDeviceInAssetLibrary(deviceId, thingArn);
         } catch (e) {
             logger.error(
-                `activation.service: activate: error with updating asset library:${e.message}`,
+                `activation.service: activate: error with updating asset library:${e.message}`
             );
             throw e;
         }
@@ -132,7 +132,7 @@ export class ActivationService {
         };
 
         logger.debug(
-            `activation.service fetchCRL: in: getObject: params: ${JSON.stringify(params)}`,
+            `activation.service fetchCRL: in: getObject: params: ${JSON.stringify(params)}`
         );
 
         const crlResponse: AWS.S3.GetObjectOutput = await this.s3.getObject(params).promise();
@@ -157,7 +157,7 @@ export class ActivationService {
 
     private async updateDeviceInAssetLibrary(deviceId: string, thingArn: string): Promise<void> {
         logger.debug(
-            `activation.service updateDeviceInAssetLibrary: in: deviceId: ${deviceId}, thingArn: ${thingArn}`,
+            `activation.service updateDeviceInAssetLibrary: in: deviceId: ${deviceId}, thingArn: ${thingArn}`
         );
         const updateRequest: Device10Resource = {
             attributes: {
@@ -172,7 +172,7 @@ export class ActivationService {
 
     private async getDeviceIdFromCertificate(certificateId: string): Promise<string> {
         logger.debug(
-            `activation.service getDeviceIdFromCertificate: in: certificateId: ${certificateId}`,
+            `activation.service getDeviceIdFromCertificate: in: certificateId: ${certificateId}`
         );
 
         const params: AWS.Iot.DescribeCertificateRequest = {
@@ -183,7 +183,7 @@ export class ActivationService {
             .describeCertificate(params)
             .promise();
         const commonName = await this.getCertificateCommonName(
-            certResponse.certificateDescription.certificatePem,
+            certResponse.certificateDescription.certificatePem
         );
         const deviceId = atob(commonName);
 
@@ -201,24 +201,24 @@ export class ActivationService {
                         return reject(err);
                     }
                     return resolve(data.commonName);
-                },
+                }
             );
         });
     }
 
     private async provisionThing(deviceId: string, certificateId: string): Promise<string> {
         logger.debug(
-            `activation.service provisionThing: in: deviceId:${deviceId}, certificateId:${certificateId}`,
+            `activation.service provisionThing: in: deviceId:${deviceId}, certificateId:${certificateId}`
         );
 
         let provisioningTemplateId: string;
         try {
             const policies = await this.policies.listInheritedPoliciesByDevice(
                 deviceId,
-                this.PROVISIONING_POLICY_TYPE,
+                this.PROVISIONING_POLICY_TYPE
             );
             logger.debug(
-                `activation.service provisionThing: policies: ${JSON.stringify(policies)}`,
+                `activation.service provisionThing: policies: ${JSON.stringify(policies)}`
             );
             if (policies?.results === undefined || policies.results.length === 0) {
                 throw new Error('PROVISIONING_TEMPLATE_NOT_FOUND');
@@ -226,12 +226,12 @@ export class ActivationService {
             provisioningTemplateId = JSON.parse(policies.results[0].document)['template'];
         } catch (e) {
             logger.error(
-                `activation.service: provisionThing: error with provisioning template:${e.message}`,
+                `activation.service: provisionThing: error with provisioning template:${e.message}`
             );
             throw e;
         }
         logger.debug(
-            `activation.service provisionThing: provisioningTemplateId: ${provisioningTemplateId}`,
+            `activation.service provisionThing: provisioningTemplateId: ${provisioningTemplateId}`
         );
 
         const provisionRequest: ProvisionThingRequest = {
@@ -246,13 +246,13 @@ export class ActivationService {
             provisionResponse = await this.things.provisionThing(provisionRequest);
         } catch (e) {
             logger.error(
-                `activation.service: provisionThing: error with provisioning:${e.message}`,
+                `activation.service: provisionThing: error with provisioning:${e.message}`
             );
             throw e;
         }
 
         logger.debug(
-            `activation.service provisionThing: thingArn: ${provisionResponse?.resourceArns?.thing}`,
+            `activation.service provisionThing: thingArn: ${provisionResponse?.resourceArns?.thing}`
         );
         return provisionResponse?.resourceArns?.thing;
     }

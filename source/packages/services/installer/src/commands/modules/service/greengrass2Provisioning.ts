@@ -73,7 +73,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
 
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
 
         if (updatedAnswers.greengrass2Provisioning?.redeploy ?? true) {
@@ -95,7 +95,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
                         askAnswered: true,
                     },
                 ],
-                updatedAnswers,
+                updatedAnswers
             );
 
             updatedAnswers.greengrass2Provisioning.installerConfigGenerators =
@@ -116,7 +116,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
                     configGeneratorsPromptAction = configGeneratorsPromptActionChoices.Add;
                 } else {
                     const installerConfigGeneratorsAsStringList = Object.entries(
-                        updatedAnswers.greengrass2Provisioning.installerConfigGenerators,
+                        updatedAnswers.greengrass2Provisioning.installerConfigGenerators
                     )
                         .map(([k, v]) => ` * ${k}: ${v}`)
                         .join('\n');
@@ -143,7 +143,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
                                 default: configGeneratorsPromptActionChoices.Confirm,
                             },
                         ],
-                        {},
+                        {}
                     ));
                 }
 
@@ -183,7 +183,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
                                     },
                                 },
                             ],
-                            {},
+                            {}
                         );
                     updatedAnswers.greengrass2Provisioning.installerConfigGenerators[
                         newConfigGenerator.alias
@@ -200,17 +200,17 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
                                     message: `Select one or more config generators to delete from the list`,
                                     choices: Object.keys(
                                         updatedAnswers.greengrass2Provisioning
-                                            .installerConfigGenerators,
+                                            .installerConfigGenerators
                                     ),
                                     default: configGeneratorsPromptActionChoices.Confirm,
                                 },
                             ],
-                            {},
+                            {}
                         );
                     configGeneratorAliasesToDelete.list.forEach(
                         (alias) =>
                             delete updatedAnswers.greengrass2Provisioning
-                                .installerConfigGenerators[alias],
+                                .installerConfigGenerators[alias]
                     );
                 }
             }
@@ -222,14 +222,14 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
                     ...applicationConfigurationPrompt(this.name, answers, []),
                     ...customDomainPrompt(this.name, answers),
                 ],
-                updatedAnswers,
+                updatedAnswers
             );
         }
 
         includeOptionalModule(
             'assetLibrary',
             updatedAnswers.modules,
-            updatedAnswers.greengrass2Provisioning.useAssetLibrary,
+            updatedAnswers.greengrass2Provisioning.useAssetLibrary
         );
 
         return updatedAnswers;
@@ -250,7 +250,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
             }`,
             `InstallerConfigGenerators=${JSON.stringify(
                 answers.greengrass2Provisioning.installerConfigGenerators ??
-                    this.defaultInstallerConfigGenerators,
+                    this.defaultInstallerConfigGenerators
             )}`,
             `EventBridgeBusName=${answers.eventBus.arn}`,
             `VpcId=${answers.vpc?.id ?? 'N/A'}`,
@@ -267,13 +267,13 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
         addIfSpecified('ApplyAutoscaling', answers.greengrass2Provisioning.enableAutoScaling);
         addIfSpecified(
             'ProvisionedConcurrentExecutions',
-            answers.greengrass2Provisioning.provisionedConcurrentExecutions,
+            answers.greengrass2Provisioning.provisionedConcurrentExecutions
         );
         addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
 
         return parameterOverrides;
@@ -294,7 +294,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'greengrass2-provisioning',
+                            'greengrass2-provisioning'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -328,11 +328,11 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
                 }
                 const provisioningbyResourceLogicalId = await getStackResourceSummaries(
                     `cdf-provisioning-${answers.environment}`,
-                    answers.region,
+                    answers.region
                 );
                 const assetLibrarybyResourceLogicalId = await getStackResourceSummaries(
                     `cdf-assetlibrary-${answers.environment}`,
-                    answers.region,
+                    answers.region
                 );
 
                 answers.greengrass2Provisioning.provisioningFunctionName =
@@ -340,7 +340,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
 
                 if (answers.greengrass2Provisioning.provisioningFunctionName === undefined) {
                     throw new Error(
-                        `Could not find provisioning function name for environment '${answers.environment}'`,
+                        `Could not find provisioning function name for environment '${answers.environment}'`
                     );
                 }
 
@@ -363,7 +363,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
                         'source',
                         'packages',
                         'services',
-                        'greengrass2-provisioning',
+                        'greengrass2-provisioning'
                     ),
                     parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,

@@ -46,7 +46,7 @@ export class TemplatesDao {
 
     public constructor(
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
-        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient,
+        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient
     ) {
         this.dbc = ddcFactory();
     }
@@ -86,12 +86,12 @@ export class TemplatesDao {
     public async listVersions(
         name: string,
         count?: number,
-        lastEvaluated?: TemplateVersionListPaginationKey,
+        lastEvaluated?: TemplateVersionListPaginationKey
     ): Promise<[TemplateItem[], TemplateVersionListPaginationKey]> {
         logger.debug(
             `templates.dao listVersions: in: name:${name}, count:${count}, lastEvaluated:${JSON.stringify(
-                lastEvaluated,
-            )}`,
+                lastEvaluated
+            )}`
         );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
@@ -146,8 +146,8 @@ export class TemplatesDao {
 
         logger.silly(
             `templates.dao listVersions: getComponentsParams: ${JSON.stringify(
-                getComponentsParams,
-            )}`,
+                getComponentsParams
+            )}`
         );
 
         let componentItems: unknown = [];
@@ -160,8 +160,8 @@ export class TemplatesDao {
             });
             logger.debug(
                 `templates.dao listVersions: filtering components componentsItems: ${JSON.stringify(
-                    componentItems,
-                )}`,
+                    componentItems
+                )}`
             );
         }
 
@@ -169,7 +169,7 @@ export class TemplatesDao {
         let paginationKey: TemplateVersionListPaginationKey;
         if (results.LastEvaluatedKey) {
             const lastEvaluatedVersion = Number(
-                expandDelimitedAttribute(results.LastEvaluatedKey.sk)[1],
+                expandDelimitedAttribute(results.LastEvaluatedKey.sk)[1]
             );
             paginationKey = {
                 version: lastEvaluatedVersion,
@@ -178,8 +178,8 @@ export class TemplatesDao {
 
         logger.debug(
             `templates.dao listVersions: exit: response:${JSON.stringify(
-                response,
-            )}, paginationKey:${paginationKey}`,
+                response
+            )}, paginationKey:${paginationKey}`
         );
         return [response, paginationKey];
     }
@@ -255,7 +255,7 @@ export class TemplatesDao {
         tv.PutRequest.Item['siKey2'] = createDelimitedAttribute(
             PkType.Template,
             template.name,
-            PkType.Template,
+            PkType.Template
         );
         tv.PutRequest.Item['siSort2'] = tv.PutRequest.Item.sk;
         params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(tv);
@@ -273,7 +273,7 @@ export class TemplatesDao {
                                 PkType.TemplateVersion,
                                 'current',
                                 PkType.Component,
-                                component.key,
+                                component.key
                             ),
                             key: component.key,
                             version: component.version,
@@ -290,7 +290,7 @@ export class TemplatesDao {
                     PkType.TemplateVersion,
                     template.version,
                     PkType.Component,
-                    component.key,
+                    component.key
                 );
                 cv.PutRequest.Item.sk = versionedComponentDbId;
                 params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(cv);
@@ -307,7 +307,7 @@ export class TemplatesDao {
 
     public async associateDeployment(template: TemplateItem): Promise<void> {
         logger.debug(
-            `templates.dao associateDeployment: in: template:${JSON.stringify(template)}`,
+            `templates.dao associateDeployment: in: template:${JSON.stringify(template)}`
         );
 
         const params: PutCommandInput = {
@@ -317,7 +317,7 @@ export class TemplatesDao {
                 sk: createDelimitedAttribute(
                     PkType.TemplateVersion,
                     template.version,
-                    'deployment',
+                    'deployment'
                 ),
                 siKey2: createDelimitedAttribute(PkType.Deployment, template.deployment.id),
                 siSort2: createDelimitedAttribute(PkType.Deployment, template.deployment.jobId),
@@ -338,12 +338,12 @@ export class TemplatesDao {
 
     public async list(
         count?: number,
-        lastEvaluated?: TemplateListPaginationKey,
+        lastEvaluated?: TemplateListPaginationKey
     ): Promise<[TemplateItem[], TemplateListPaginationKey]> {
         logger.debug(
             `templates.dao list: in: count:${count}, lastEvaluated:${JSON.stringify(
-                lastEvaluated,
-            )}`,
+                lastEvaluated
+            )}`
         );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
@@ -390,8 +390,8 @@ export class TemplatesDao {
 
         logger.debug(
             `templates.dao list: exit: response:${JSON.stringify(
-                response,
-            )}, paginationKey:${paginationKey}`,
+                response
+            )}, paginationKey:${paginationKey}`
         );
         return [response, paginationKey];
     }
@@ -474,7 +474,7 @@ export class TemplatesDao {
                                 PkType.TemplateVersion,
                                 template.version,
                                 PkType.Component,
-                                component.key,
+                                component.key
                             ),
                         },
                     },

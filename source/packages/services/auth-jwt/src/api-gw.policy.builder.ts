@@ -96,11 +96,11 @@ export class APIGWAuthPolicyBuilder {
         effect: PolicyStatementEffect,
         verb: HttpVerb,
         resource: string,
-        condition?: Condition,
+        condition?: Condition
     ) {
         if (!this.pathRegex.test(resource)) {
             throw new Error(
-                'Invalid resource path: ' + resource + '. Path should match ' + this.pathRegex,
+                'Invalid resource path: ' + resource + '. Path should match ' + this.pathRegex
             );
         }
 

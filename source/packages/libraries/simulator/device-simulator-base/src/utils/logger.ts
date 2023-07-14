@@ -30,7 +30,7 @@ const jsonWithColorsAndTime = format.combine(
         } else {
             return `{"ts":"${info.metadata.timestamp}", "level":"${info.level}", "class":"${info.metadata.class}", "method":"${info.metadata.method}", "message":"${info.message}"}`;
         }
-    }),
+    })
 );
 
 export const logger = createLogger(<LoggerOptions>{

@@ -36,7 +36,7 @@ export class SubscriptionsApigwService
     async createSubscription(
         eventId: string,
         subscription: SubscriptionResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string> {
         ow(eventId, ow.string.nonEmpty);
         ow(subscription, ow.object.nonEmpty);
@@ -58,7 +58,7 @@ export class SubscriptionsApigwService
 
     async getSubscription(
         subscriptionId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<SubscriptionResource> {
         ow(subscriptionId, ow.string.nonEmpty);
 
@@ -77,7 +77,7 @@ export class SubscriptionsApigwService
 
     async updateSubscription(
         subscription: SubscriptionResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(subscription, ow.object.nonEmpty);
 
@@ -97,7 +97,7 @@ export class SubscriptionsApigwService
 
     async deleteSubscription(
         subscriptionId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(subscriptionId, ow.string.nonEmpty);
 
@@ -116,7 +116,7 @@ export class SubscriptionsApigwService
 
     async listSubscriptionsForUser(
         userId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<SubscriptionResourceList> {
         ow(userId, ow.string.nonEmpty);
 
@@ -136,7 +136,7 @@ export class SubscriptionsApigwService
     async listSubscriptionsForEvent(
         eventId: string,
         fromSubscriptionId?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<SubscriptionResourceList> {
         ow(eventId, ow.string.nonEmpty);
 

@@ -35,7 +35,7 @@ describe('DDBStreamTransformer', () => {
         const event = JSON.parse(
             await readFileAsync(path.join(__dirname, 'testResources/ddbStream-event-valid.json'), {
                 encoding: 'utf8',
-            }),
+            })
         );
 
         const expected: CommonEvent[] = [];
@@ -56,8 +56,8 @@ describe('DDBStreamTransformer', () => {
         const event = JSON.parse(
             await readFileAsync(
                 path.join(__dirname, 'testResources/ddbStream-event-invalid-eventSource.json'),
-                { encoding: 'utf8' },
-            ),
+                { encoding: 'utf8' }
+            )
         );
 
         const expected: CommonEvent[] = [];
@@ -79,10 +79,10 @@ describe('DDBStreamTransformer', () => {
             await readFileAsync(
                 path.join(
                     __dirname,
-                    'testResources/ddbStream-event-invalid-missing-principal.json',
+                    'testResources/ddbStream-event-invalid-missing-principal.json'
                 ),
-                { encoding: 'utf8' },
-            ),
+                { encoding: 'utf8' }
+            )
         );
 
         const expected: CommonEvent[] = [];

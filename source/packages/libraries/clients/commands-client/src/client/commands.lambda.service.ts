@@ -31,7 +31,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
     private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -40,7 +40,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
 
     async createCommand(
         command: CommandModel,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string> {
         ow(command, ow.object.nonEmpty);
 
@@ -81,7 +81,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
 
     async getCommand(
         commandId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<CommandModel> {
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.commandRelativeUrl(commandId))
@@ -96,7 +96,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
         commandId: string,
         fileId: string,
         fileLocation: string,
-        _additionalHeaders?: RequestHeaders,
+        _additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(commandId, ow.string.nonEmpty);
         ow(fileId, ow.string.nonEmpty);
@@ -109,7 +109,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
     async deleteCommandFile(
         commandId: string,
         fileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(commandId, ow.string.nonEmpty);
         ow(fileId, ow.string.nonEmpty);
@@ -124,7 +124,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
 
     async listExecutions(
         commandId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ExecutionSummaryListModel> {
         ow(commandId, ow.string.nonEmpty);
 
@@ -140,7 +140,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
     async getExecution(
         commandId: string,
         thingName: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ExecutionModel> {
         ow(commandId, ow.string.nonEmpty);
         ow(thingName, ow.string.nonEmpty);
@@ -157,7 +157,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
     async cancelExecution(
         commandId: string,
         thingName: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ExecutionModel> {
         ow(commandId, ow.string.nonEmpty);
         ow(thingName, ow.string.nonEmpty);

@@ -33,7 +33,7 @@ export class ManifestAssembler {
 
     public toManifest(
         componentsMapping: ComponentsByOrganizationalUnitMap,
-        accountsRegionMapping: RegionListByOrganizationalUnitMap,
+        accountsRegionMapping: RegionListByOrganizationalUnitMap
     ): Manifest {
         logger.info(JSON.stringify(accountsRegionMapping));
 
@@ -53,7 +53,7 @@ export class ManifestAssembler {
                     for (const component of sortedComponents) {
                         const stackSetName = this.regionListKeyToStackName(
                             component.name,
-                            regionListKey,
+                            regionListKey
                         );
                         const { parameters } = component;
                         manifest.resources.push({

@@ -73,7 +73,7 @@ export class ThingsService {
         @inject('aws.s3.bulkrequests.bucket') private bulkrequestsBucketName: string,
         @inject('aws.s3.bulkrequests.prefix') private bulkrequestsPrefix: string,
         @inject('features.delete.certificates') private deleteCertificates: boolean,
-        @inject('features.delete.policies') private deletePolicies: boolean,
+        @inject('features.delete.policies') private deletePolicies: boolean
     ) {
         this._iot = iotFactory();
         this._s3 = s3Factory();
@@ -82,12 +82,12 @@ export class ThingsService {
     public async provision(
         provisioningTemplateId: string,
         parameters: { [key: string]: string },
-        cdfProvisioningParameters: CdfProvisioningParameters,
+        cdfProvisioningParameters: CdfProvisioningParameters
     ): Promise<ProvisionThingResponse> {
         logger.debug(
             `things.service provision: in: provisioningTemplateId:${provisioningTemplateId}, parameters:${JSON.stringify(
-                parameters,
-            )}`,
+                parameters
+            )}`
         );
 
         // download the template
@@ -185,8 +185,8 @@ export class ThingsService {
     private async preProcessSteps(stepData: ProvisioningStepData): Promise<void> {
         logger.debug(
             `things.service preProcessSteps: in: stepData:${JSON.stringify(
-                this.redactStepData(stepData),
-            )}`,
+                this.redactStepData(stepData)
+            )}`
         );
 
         const cdfOptions = stepData.template.CDF;
@@ -201,7 +201,7 @@ export class ThingsService {
             await this.createAwsCertiticateProcessor.process(stepData);
         } else if (cdfOptions.registerDeviceCertificateWithoutCA === true) {
             logger.debug(
-                `things.service preProcessSteps: processing registerDeviceCertificateWithoutCA`,
+                `things.service preProcessSteps: processing registerDeviceCertificateWithoutCA`
             );
             await this.registerDeviceCertificateWithoutCAStepProcessor.process(stepData);
         } else if (cdfOptions.acmpca?.mode) {
@@ -211,16 +211,16 @@ export class ThingsService {
 
         logger.debug(
             `things.service preProcessSteps: exit: ${JSON.stringify(
-                this.redactStepData(stepData),
-            )}`,
+                this.redactStepData(stepData)
+            )}`
         );
     }
 
     private async postProcessSteps(stepData: ProvisioningStepData): Promise<void> {
         logger.debug(
             `things.service postProcessSteps: in: stepData:${JSON.stringify(
-                this.redactStepData(stepData),
-            )}`,
+                this.redactStepData(stepData)
+            )}`
         );
 
         const cdfOptions = stepData.template.CDF;
@@ -237,8 +237,8 @@ export class ThingsService {
 
         logger.debug(
             `things.service postProcessSteps: exit: ${JSON.stringify(
-                this.redactStepData(stepData),
-            )}`,
+                this.redactStepData(stepData)
+            )}`
         );
     }
 
@@ -246,7 +246,7 @@ export class ThingsService {
         const redactedStepData = clone(stepData);
         if (stepData.state) {
             redactedStepData.state.privateKey = this.removeStringForLogging(
-                stepData.state.privateKey,
+                stepData.state.privateKey
             );
         }
         return redactedStepData;
@@ -254,12 +254,12 @@ export class ThingsService {
 
     public async bulkProvision(
         provisioningTemplateId: string,
-        parameters: { [key: string]: string }[],
+        parameters: { [key: string]: string }[]
     ): Promise<BulkProvisionThingsResponse> {
         logger.debug(
             `things.service bulkProvision: in: provisioningTemplateId:${provisioningTemplateId}, parameters:${JSON.stringify(
-                parameters,
-            )}`,
+                parameters
+            )}`
         );
 
         // download the template
@@ -275,7 +275,7 @@ export class ThingsService {
         const templateBodyAsJson = JSON.parse(templateBody);
         if (templateBodyAsJson.CDF) {
             throw new Error(
-                'REGISTRATION_FAILED: CDF provisioning template extensions are not yet supported in the bulk registration flow.',
+                'REGISTRATION_FAILED: CDF provisioning template extensions are not yet supported in the bulk registration flow.'
             );
         }
 
@@ -344,7 +344,7 @@ export class ThingsService {
             return undefined;
         }
         logger.debug(
-            `things.service getBulkProvisionTask: exit: response:${JSON.stringify(response)}`,
+            `things.service getBulkProvisionTask: exit: response:${JSON.stringify(response)}`
         );
         return response;
     }
@@ -442,7 +442,7 @@ export class ThingsService {
         >[] = [];
         for (const group of thingGroups.thingGroups) {
             describeThingGroupFutures.push(
-                this._iot.describeThingGroup({ thingGroupName: group.groupName }).promise(),
+                this._iot.describeThingGroup({ thingGroupName: group.groupName }).promise()
             );
         }
         const describeThingGroupResults = await Promise.all(describeThingGroupFutures);
@@ -479,7 +479,7 @@ export class ThingsService {
     public async deleteThing(thingName: string): Promise<void> {
         logger.debug(`things.service deleteThing: in: thingName:${thingName}`);
         logger.debug(
-            `feature flags: deleteCertificates: ${this.deleteCertificates}, deletePolicies: ${this.deletePolicies}`,
+            `feature flags: deleteCertificates: ${this.deleteCertificates}, deletePolicies: ${this.deletePolicies}`
         );
 
         const thingPrincipals = await this._iot.listThingPrincipals({ thingName }).promise();
@@ -506,7 +506,7 @@ export class ThingsService {
                             // if this policy no longer targets any certificates or
                             // if every cert targeted by this policy is a cert attached to this thing
                             const policyTargetsOnlyThisThingsCerts = policyTargets.targets.every(
-                                (val) => thingPrincipals.principals.indexOf(val) >= 0,
+                                (val) => thingPrincipals.principals.indexOf(val) >= 0
                             );
                             if (
                                 policyTargets.targets.length === 0 ||
@@ -546,10 +546,10 @@ export class ThingsService {
 
     public async updateThingCertificatesStatus(
         thingName: string,
-        newStatus: CertificateStatus,
+        newStatus: CertificateStatus
     ): Promise<void> {
         logger.debug(
-            `things.service updateThingCertificatesStatus: in: thingName:${thingName}, newStatus:${newStatus}`,
+            `things.service updateThingCertificatesStatus: in: thingName:${thingName}, newStatus:${newStatus}`
         );
 
         const thing = await this.getThing(thingName);
@@ -565,10 +565,10 @@ export class ThingsService {
 
     public async updateCertificateStatus(
         certificateId: string,
-        newStatus: CertificateStatus,
+        newStatus: CertificateStatus
     ): Promise<void> {
         logger.debug(
-            `things.service updateCertificateStatus: in: certificateId:${certificateId}, newStatus:${newStatus}`,
+            `things.service updateCertificateStatus: in: certificateId:${certificateId}, newStatus:${newStatus}`
         );
 
         const params: Iot.Types.UpdateCertificateRequest = {

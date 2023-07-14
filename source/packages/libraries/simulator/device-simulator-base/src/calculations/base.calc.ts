@@ -24,7 +24,7 @@ export abstract class BaseCalc<D, T> implements Calculation<D, T> {
      */
     protected constructor(
         @unmanaged() public readonly name: string,
-        @unmanaged() private _data: D,
+        @unmanaged() private _data: D
     ) {}
 
     /**

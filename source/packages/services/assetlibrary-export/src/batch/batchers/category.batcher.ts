@@ -25,7 +25,7 @@ import { BatcherBase } from '../batcher.base';
 export class CategoryBatcher extends BatcherBase implements Batcher {
     constructor(
         @inject(TYPES.LabelsService) private labelsService: LabelsService,
-        @inject('defaults.batch.size') private batchSize: number,
+        @inject('defaults.batch.size') private batchSize: number
     ) {
         super();
     }

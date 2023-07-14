@@ -36,7 +36,7 @@ export interface DevicesService {
         deviceId: string,
         relationship: string,
         otherDeviceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -54,7 +54,7 @@ export interface DevicesService {
         relationship: string,
         direction: string,
         otherDeviceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -70,7 +70,7 @@ export interface DevicesService {
         deviceId: string,
         relationship: string,
         groupPath: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -88,7 +88,7 @@ export interface DevicesService {
         relationship: string,
         direction: string,
         groupPath: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -102,7 +102,7 @@ export interface DevicesService {
     createComponent(
         deviceId: string,
         body: Device10Resource | Device20Resource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -115,7 +115,7 @@ export interface DevicesService {
     createDevice(
         body: Device10Resource | Device20Resource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -128,7 +128,7 @@ export interface DevicesService {
     bulkCreateDevice(
         body: BulkDevicesResource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<BulkDevicesResult>;
 
     /**
@@ -141,7 +141,7 @@ export interface DevicesService {
     bulkUpdateDevice(
         body: BulkDevicesResource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -155,7 +155,7 @@ export interface DevicesService {
     deleteComponent(
         deviceId: string,
         componentId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -180,7 +180,7 @@ export interface DevicesService {
         deviceId: string,
         relationship: string,
         otherDeviceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -194,7 +194,7 @@ export interface DevicesService {
     detachFromDevices(
         deviceId: string,
         relationship: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -221,7 +221,7 @@ export interface DevicesService {
         relationship: string,
         direction: string,
         otherDeviceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -237,7 +237,7 @@ export interface DevicesService {
         deviceId: string,
         relationship: string,
         groupPath: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -251,7 +251,7 @@ export interface DevicesService {
     detachFromGroups(
         deviceId: string,
         relationship: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -278,7 +278,7 @@ export interface DevicesService {
         relationship: string,
         direction: string,
         groupPath: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -294,7 +294,7 @@ export interface DevicesService {
         expandComponents?: boolean,
         attributes?: string[],
         groups?: string[],
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Device10Resource | Device20Resource>;
 
     /**
@@ -309,7 +309,7 @@ export interface DevicesService {
         deviceId: string,
         componentId: string,
         body: Device10Resource | Device20Resource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -324,7 +324,7 @@ export interface DevicesService {
         deviceId: string,
         body: Device10Resource | Device20Resource,
         applyProfileId?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     /**
@@ -340,7 +340,7 @@ export interface DevicesService {
         expandComponents?: boolean,
         attributes?: string[],
         groups?: string[],
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<DeviceResourceList>;
 }
 
@@ -365,7 +365,7 @@ export class DevicesServiceBase extends ClientServiceBase {
     protected deviceAttachedDeviceRelativeUrl(
         deviceId: string,
         relationship: string,
-        otherDeviceId: string,
+        otherDeviceId: string
     ): string {
         return PathHelper.encodeUrl('devices', deviceId, relationship, 'devices', otherDeviceId);
     }
@@ -374,7 +374,7 @@ export class DevicesServiceBase extends ClientServiceBase {
         deviceId: string,
         relationship: string,
         direction: string,
-        otherDeviceId: string,
+        otherDeviceId: string
     ): string {
         return PathHelper.encodeUrl(
             'devices',
@@ -382,7 +382,7 @@ export class DevicesServiceBase extends ClientServiceBase {
             relationship,
             direction,
             'devices',
-            otherDeviceId,
+            otherDeviceId
         );
     }
 
@@ -393,7 +393,7 @@ export class DevicesServiceBase extends ClientServiceBase {
     protected deviceAttachedGroupRelativeUrl(
         deviceId: string,
         relationship: string,
-        groupPath: string,
+        groupPath: string
     ): string {
         return PathHelper.encodeUrl('devices', deviceId, relationship, 'groups', groupPath);
     }
@@ -402,7 +402,7 @@ export class DevicesServiceBase extends ClientServiceBase {
         deviceId: string,
         relationship: string,
         direction: string,
-        groupPath: string,
+        groupPath: string
     ): string {
         return PathHelper.encodeUrl(
             'devices',
@@ -410,7 +410,7 @@ export class DevicesServiceBase extends ClientServiceBase {
             relationship,
             direction,
             'groups',
-            groupPath,
+            groupPath
         );
     }
 

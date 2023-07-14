@@ -27,31 +27,31 @@ import {
 export interface MessagesService {
     createMessage(
         message: NewMessageResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string>;
     getMessage(messageId: string, additionalHeaders?: RequestHeaders): Promise<MessageResource>;
     listMessages(
         commandId: string,
         count?: number,
-        fromCreatedAtExclusive?: number,
+        fromCreatedAtExclusive?: number
     ): Promise<MessageList>;
     getRecipient(
         messageId: string,
         thingName: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Recipient>;
     listRecipients(
         messageId: string,
         fromThingNameExclusive?: string,
         count?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<RecipientList>;
     listReplies(
         messageId: string,
         thingName: string,
         fromReceivedAtExclusive?: number,
         count?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ReplyList>;
 }
 

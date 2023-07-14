@@ -25,7 +25,7 @@ let commandService: CommandsService;
 
 exports.presignedurl_rule_handler = async (
     event: Event,
-    _context: unknown,
+    _context: unknown
 ): Promise<PresignedResponseModel> => {
     logger.debug(`presignedurl_rule_handler: event: ${JSON.stringify(event)}`);
 

@@ -22,7 +22,7 @@ export interface PoliciesService {
     listInheritedPoliciesByDevice(
         deviceId: string,
         type: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<PolicyList>;
 
     listInheritedPoliciesByGroups(
@@ -34,7 +34,7 @@ export interface PoliciesService {
         type: string,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<PolicyList>;
 
     getPolicy(policyId: string, additionalHeaders?: RequestHeaders): Promise<Policy>;

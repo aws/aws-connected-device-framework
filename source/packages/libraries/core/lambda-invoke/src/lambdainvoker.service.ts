@@ -34,8 +34,8 @@ export class LambdaInvokerService {
     public async invoke(functionName: string, apiEvent: LambdaApiGatewayEventBuilder) {
         logger.debug(
             `LambdaInvokerService: invoke: functionName:${functionName}, apiEvent:${JSON.stringify(
-                apiEvent,
-            )}`,
+                apiEvent
+            )}`
         );
 
         const invokeRequest: AWS.Lambda.InvocationRequest = {
@@ -48,13 +48,13 @@ export class LambdaInvokerService {
             .invoke(invokeRequest)
             .promise();
         logger.silly(
-            `LambdaInvokerService: invoke: invokeResponse: ${JSON.stringify(invokeResponse)}`,
+            `LambdaInvokerService: invoke: invokeResponse: ${JSON.stringify(invokeResponse)}`
         );
 
         if (invokeResponse.StatusCode >= 200 && invokeResponse.StatusCode < 300) {
             const responsePayload = new LambdaApiGatewayEventResponse(invokeResponse.Payload);
             logger.silly(
-                `LambdaInvokerService: invoke: payload: ${JSON.stringify(responsePayload)}`,
+                `LambdaInvokerService: invoke: payload: ${JSON.stringify(responsePayload)}`
             );
 
             if ((invokeResponse.FunctionError?.length ?? 0) > 0) {

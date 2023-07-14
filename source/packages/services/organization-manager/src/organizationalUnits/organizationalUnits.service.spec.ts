@@ -54,7 +54,7 @@ describe('OrganizationalUnitService', function () {
             mockedOrganizationalUnitsDao,
             new OrganizationalUnitsAssembler(),
             mockAccountsDao,
-            mockOrganizationsFactory,
+            mockOrganizationsFactory
         );
     });
 
@@ -83,7 +83,7 @@ describe('OrganizationalUnitService', function () {
     it('createOrganizationalUnit: invalid input', async () => {
         const invalidInput = {} as OrganizationalUnitResource;
         await expect(instance.createOrganizationalUnit(invalidInput)).rejects.toThrow(
-            'Expected object to not be empty',
+            'Expected object to not be empty'
         );
     });
 
@@ -94,7 +94,7 @@ describe('OrganizationalUnitService', function () {
             },
         });
         await expect(
-            instance.createOrganizationalUnit(createOrganizationalUnitInput),
+            instance.createOrganizationalUnit(createOrganizationalUnitInput)
         ).rejects.toThrow('aws organizations exception');
     });
 
@@ -103,7 +103,7 @@ describe('OrganizationalUnitService', function () {
             jest.fn().mockReturnValueOnce({ promise: () => Promise.resolve({}) })
         );
         await expect(
-            instance.createOrganizationalUnit(createOrganizationalUnitInput),
+            instance.createOrganizationalUnit(createOrganizationalUnitInput)
         ).rejects.toThrow('root cannot be found in current organizations');
     });
 

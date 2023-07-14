@@ -35,12 +35,10 @@ export class RunsController implements interfaces.Controller {
     public async createRun(
         @requestParam('simulationId') simulationId: string,
         @requestBody() item: RunItem,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `Runs.controller createRun: simulationId:${simulationId}, item:${JSON.stringify(
-                item,
-            )}`,
+            `Runs.controller createRun: simulationId:${simulationId}, item:${JSON.stringify(item)}`
         );
 
         try {

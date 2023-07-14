@@ -49,7 +49,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
     async listInheritedPoliciesByDevice(
         deviceId: string,
         type: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<PolicyList> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(type, 'type', ow.string.nonEmpty);
@@ -57,7 +57,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
         const url = `${
             this.baseUrl
         }${super.inheritedPoliciesRelativeUrl()}?deviceId=${encodeURIComponent(
-            deviceId,
+            deviceId
         )}&type=${encodeURIComponent(type)}`;
         return await request
             .get(url)
@@ -95,7 +95,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
         type: string,
         offset?: number,
         count?: number,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<PolicyList> {
         ow(type, 'type', ow.string.nonEmpty);
 
@@ -135,7 +135,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
     async patchPolicy(
         policyId: string,
         body: Policy,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(policyId, 'policyId', ow.string.nonEmpty);
         ow(body, 'body', ow.object.nonEmpty);

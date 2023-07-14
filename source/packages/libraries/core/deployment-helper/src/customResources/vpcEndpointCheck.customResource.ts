@@ -24,7 +24,7 @@ export class VpcEndpointCheckCustomResource implements CustomResource {
     }
 
     public async create(
-        customResourceEvent: CustomResourceEvent,
+        customResourceEvent: CustomResourceEvent
     ): Promise<VpcEndpointCheckCustomResponse> {
         const vpcId = customResourceEvent.ResourceProperties.VpcId;
         const region = customResourceEvent.ResourceProperties.Region;
@@ -51,13 +51,13 @@ export class VpcEndpointCheckCustomResource implements CustomResource {
     }
 
     public async update(
-        customResourceEvent: CustomResourceEvent,
+        customResourceEvent: CustomResourceEvent
     ): Promise<VpcEndpointCheckCustomResponse> {
         return this.create(customResourceEvent);
     }
 
     public async delete(
-        _customResourceEvent: CustomResourceEvent,
+        _customResourceEvent: CustomResourceEvent
     ): Promise<VpcEndpointCheckCustomResponse> {
         return {};
     }

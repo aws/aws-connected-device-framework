@@ -131,12 +131,12 @@ export class CommandsAssembler {
     public toResourceList(
         commands: CommandItem[],
         count?: number,
-        paginateFrom?: CommandListPaginationKey,
+        paginateFrom?: CommandListPaginationKey
     ): CommandResourceList {
         logger.debug(
             `commands.assembler toResourceList: in: commands:${JSON.stringify(
-                commands,
-            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+                commands
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
         );
 
         const list: CommandResourceList = {

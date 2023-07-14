@@ -26,7 +26,7 @@ export class DevicesDao extends BaseDaoFull {
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -35,10 +35,10 @@ export class DevicesDao extends BaseDaoFull {
         deviceIds: string[],
         expandComponents: boolean,
         attributes: string[],
-        includeGroups: boolean,
+        includeGroups: boolean
     ): Promise<Node[]> {
         logger.silly(
-            `device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`,
+            `device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`
         );
 
         const dbIds: string[] = deviceIds.map((d) => `device___${d}`);
@@ -99,7 +99,7 @@ export class DevicesDao extends BaseDaoFull {
 
             // execute and retrieve the results
             logger.silly(
-                `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`,
+                `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`
             );
             results = await traverser.toList();
             logger.silly(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);

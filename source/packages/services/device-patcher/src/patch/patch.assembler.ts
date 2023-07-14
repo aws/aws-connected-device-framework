@@ -58,12 +58,12 @@ export class PatchAssembler {
     public toListResource(
         items: PatchItem[],
         count?: number,
-        paginateFrom?: PatchListPaginationKey,
+        paginateFrom?: PatchListPaginationKey
     ): PatchListResource {
         logger.debug(
             `patch.assembler toListResource: in: items:${JSON.stringify(
-                items,
-            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+                items
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
         );
 
         const list: PatchListResource = {

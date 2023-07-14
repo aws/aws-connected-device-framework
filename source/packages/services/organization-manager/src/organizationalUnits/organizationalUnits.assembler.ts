@@ -19,11 +19,11 @@ import { OrganizationalUnitItem, OrganizationalUnitResource } from './organizati
 export class OrganizationalUnitsAssembler {
     public toResourceList(items: OrganizationalUnitItem[]): OrganizationalUnitResource[] {
         logger.debug(
-            `organizationalUnit.assembler toResourceList: in: item:${JSON.stringify(items)}`,
+            `organizationalUnit.assembler toResourceList: in: item:${JSON.stringify(items)}`
         );
         const resourcelist = items.map((r) => this.toResource(r));
         logger.debug(
-            `organizationalUnit.assembler toResourceList: out: ${JSON.stringify(resourcelist)}`,
+            `organizationalUnit.assembler toResourceList: out: ${JSON.stringify(resourcelist)}`
         );
         return resourcelist;
     }
@@ -43,7 +43,7 @@ export class OrganizationalUnitsAssembler {
 
     public toItem(resource: OrganizationalUnitResource): OrganizationalUnitItem {
         logger.debug(
-            `organizationalUnit.assembler toResource: in: item:${JSON.stringify(resource)}`,
+            `organizationalUnit.assembler toResource: in: item:${JSON.stringify(resource)}`
         );
         const { id, name, createdAt } = resource;
 

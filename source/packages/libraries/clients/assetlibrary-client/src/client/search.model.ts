@@ -82,7 +82,7 @@ export class SearchRequestModel {
     private buildQSValues(
         qsParam: string,
         filters: SearchRequestFilters,
-        encodeKey?: boolean,
+        encodeKey?: boolean
     ): string[] {
         const qs: string[] = [];
 
@@ -93,7 +93,7 @@ export class SearchRequestModel {
         filters.forEach((f) => {
             let key = `${qsParam}=`;
             const v = `${this.traversalPathToQSValue(f.field, f.traversals)}:${encodeURIComponent(
-                f.value,
+                f.value
             )}`;
             key = encodeKey ? `${key}${encodeURIComponent(v)}` : `${key}${v}`;
 
@@ -105,7 +105,7 @@ export class SearchRequestModel {
 
     private traversalPathToQSValue(
         field: string,
-        traversals?: SearchRequestFilterTraversal[],
+        traversals?: SearchRequestFilterTraversal[]
     ): string {
         const parts: string[] = [];
         if (traversals !== undefined) {
@@ -188,7 +188,7 @@ export class SearchRequestModel {
         if (this.facetField) {
             const path = this.traversalPathToQSValue(
                 this.facetField.field,
-                this.facetField.traversals,
+                this.facetField.traversals
             );
             qs.push(`facetField=${encodeURIComponent(path)}`);
         }

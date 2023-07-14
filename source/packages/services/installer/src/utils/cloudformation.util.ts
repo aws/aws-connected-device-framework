@@ -38,13 +38,13 @@ type GetCloudFormationStackDetail = (key: string) => string;
 
 const getStackOutputs = async (
     stackName: string,
-    region: string,
+    region: string
 ): Promise<GetCloudFormationStackDetail> => {
     const cloudformation = new CloudFormationClient({ region });
     if (!inMemoryStackOutputs[stackName]) {
         try {
             const response = await cloudformation.send(
-                new DescribeStacksCommand({ StackName: stackName }),
+                new DescribeStacksCommand({ StackName: stackName })
             );
             inMemoryStackOutputs[stackName] = response.Stacks[0].Outputs;
         } catch (e) {
@@ -64,7 +64,7 @@ const getStackOutputs = async (
 
 const getStackResourceSummaries = async (
     stackName: string,
-    region: string,
+    region: string
 ): Promise<GetCloudFormationStackDetail> => {
     const cloudformation = new CloudFormationClient({ region });
     if (!inMemoryStackResourceSummaries[stackName]) {
@@ -75,7 +75,7 @@ const getStackResourceSummaries = async (
             const resources = await cloudformation.send(
                 new ListStackResourcesCommand({
                     StackName: stackName,
-                }),
+                })
             );
             inMemoryStackResourceSummaries[stackName] = resources.StackResourceSummaries;
         } catch (e) {
@@ -96,7 +96,7 @@ const getStackResourceSummaries = async (
 
 const getStackParameters = async (
     stackName: string,
-    region: string,
+    region: string
 ): Promise<GetCloudFormationStackDetail> => {
     const cloudformation = new CloudFormationClient({ region });
 
@@ -105,7 +105,7 @@ const getStackParameters = async (
             const stack = await cloudformation.send(
                 new DescribeStacksCommand({
                     StackName: stackName,
-                }),
+                })
             );
             inMemoryStackParameters[stackName] = stack.Stacks[0].Parameters;
         } catch (e) {
@@ -131,7 +131,7 @@ const deleteStack = async (stackName: string, region: string): Promise<void> => 
         await cloudformation.send(new DeleteStackCommand({ StackName: stackName }));
         await waitUntilStackDeleteComplete(
             { client: cloudformation, maxWaitTime: 30 * 60 },
-            { StackName: stackName },
+            { StackName: stackName }
         );
     } catch (Exception) {
         console.log(`Stack ${stackName} does not exist, error: ${Exception}`);
@@ -208,7 +208,7 @@ const packageAndUploadTemplate = async ({
     await s3.uploadStreamToS3(
         artifactBucket,
         `${artifactPrefix}/templates/${templateFileName}.template`,
-        templateContent,
+        templateContent
     );
 
     const { Parameters: templateParameters } = yaml.load(templateContent, {
@@ -229,7 +229,7 @@ const packageAndUploadTemplate = async ({
                   .filter(
                       (parameterKey) =>
                           parametersBasedOnAnswers.find((o) => o.ParameterKey === parameterKey) ===
-                          undefined,
+                          undefined
                   )
                   .map((key) => {
                       return {
@@ -245,7 +245,7 @@ const packageAndUploadTemplate = async ({
     await s3.uploadStreamToS3(
         artifactBucket,
         `${artifactPrefix}/parameters/${templateFileName}.json`,
-        JSON.stringify([...allParameters, ...parametersBasedOnAnswers]),
+        JSON.stringify([...allParameters, ...parametersBasedOnAnswers])
     );
 
     const tagsList = new TagsList(answers.customTags ?? '');
@@ -254,12 +254,12 @@ const packageAndUploadTemplate = async ({
         ...[
             { Key: 'cdf_environment', Value: answers.environment },
             { Key: 'cdf_service', Value: serviceName },
-        ],
+        ]
     );
     await s3.uploadStreamToS3(
         artifactBucket,
         `${artifactPrefix}/tags/${templateFileName}.json`,
-        JSON.stringify(tagsListParameters),
+        JSON.stringify(tagsListParameters)
     );
 };
 
@@ -334,7 +334,9 @@ const packageAndDeployStack = async ({
 
 export {
     deleteStack,
-    getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack,
-    packageAndUploadTemplate
+    getStackOutputs,
+    getStackParameters,
+    getStackResourceSummaries,
+    packageAndDeployStack,
+    packageAndUploadTemplate,
 };
-

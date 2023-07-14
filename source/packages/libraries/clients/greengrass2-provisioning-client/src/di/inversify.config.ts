@@ -41,33 +41,33 @@ export const greengrass2ProvisioningContainerModule = new ContainerModule(
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind,
+        _rebind: interfaces.Rebind
     ) => {
         if (process.env.GREENGRASSPROVISIONING_MODE === 'lambda') {
             bind<TemplatesService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.TemplatesService).to(
-                TemplatesLambdaService,
+                TemplatesLambdaService
             );
             bind<CoresService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.CoresService).to(
-                CoresLambdaService,
+                CoresLambdaService
             );
             bind<DeploymentsService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DeploymentsService).to(
-                DeploymentsLambdaService,
+                DeploymentsLambdaService
             );
             bind<FleetService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.FleetService).to(
-                FleetLambdaService,
+                FleetLambdaService
             );
             bind<DevicesService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DevicesService).to(
-                DevicesLambdaService,
+                DevicesLambdaService
             );
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 // always check to see if bound first incase it was bound by another client
                 bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
-                    LambdaInvokerService,
+                    LambdaInvokerService
                 );
                 decorate(injectable(), AWS.Lambda);
                 bind<interfaces.Factory<AWS.Lambda>>(
-                    LAMBDAINVOKE_TYPES.LambdaFactory,
+                    LAMBDAINVOKE_TYPES.LambdaFactory
                 ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
                     return () => {
                         if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
@@ -80,20 +80,20 @@ export const greengrass2ProvisioningContainerModule = new ContainerModule(
             }
         } else {
             bind<TemplatesService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.TemplatesService).to(
-                TemplatesApigwService,
+                TemplatesApigwService
             );
             bind<CoresService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.CoresService).to(
-                CoresApigwService,
+                CoresApigwService
             );
             bind<DeploymentsService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DeploymentsService).to(
-                DeploymentsApigwService,
+                DeploymentsApigwService
             );
             bind<FleetService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.FleetService).to(
-                FleetApigwService,
+                FleetApigwService
             );
             bind<DevicesService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DevicesService).to(
-                DevicesApigwService,
+                DevicesApigwService
             );
         }
-    },
+    }
 );

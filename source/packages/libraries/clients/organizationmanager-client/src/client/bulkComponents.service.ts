@@ -24,15 +24,15 @@ export interface BulkComponentsService {
     bulkCreateComponents(
         organizationalUnitId: string,
         bulkComponentsResource: BulkComponentsResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<BulkComponentsResult>;
     bulkGetComponents(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ComponentResource[]>;
     bulkDeleteComponents(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 }
 

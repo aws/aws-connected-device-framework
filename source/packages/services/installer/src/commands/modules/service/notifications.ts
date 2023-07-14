@@ -54,7 +54,7 @@ export class NotificationsInstaller implements RestModule {
         delete answers.notifications?.redeploy;
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt('notifications', this.eventsProcessorStackName)],
-            answers,
+            answers
         );
         if (updatedAnswers.notifications?.redeploy ?? true) {
             const daxInstanceTypes = await getDaxInstanceTypeList(answers.region);
@@ -92,7 +92,7 @@ export class NotificationsInstaller implements RestModule {
                                 !daxInstanceTypes.includes(answer)
                             ) {
                                 return `DAX Instance Type must be one of: ${daxInstanceTypes.join(
-                                    ', ',
+                                    ', '
                                 )}`;
                             }
                             return true;
@@ -133,7 +133,7 @@ export class NotificationsInstaller implements RestModule {
                     ...applicationConfigurationPrompt(this.name, answers, []),
                     ...customDomainPrompt(this.name, answers),
                 ],
-                updatedAnswers,
+                updatedAnswers
             );
         }
 
@@ -167,13 +167,13 @@ export class NotificationsInstaller implements RestModule {
             parameterOverrides.push(
                 `VpcId=${'N/A'}`,
                 `CDFSecurityGroupId=${''}`,
-                `PrivateSubNetIds=${''}`,
+                `PrivateSubNetIds=${''}`
             );
         } else {
             parameterOverrides.push(
                 `VpcId=${answers.vpc?.id ?? 'N/A'}`,
                 `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-                `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
+                `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`
             );
         }
 
@@ -188,7 +188,7 @@ export class NotificationsInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
         return parameterOverrides;
     }
@@ -212,7 +212,7 @@ export class NotificationsInstaller implements RestModule {
         addIfSpecified('DAXClusterArn', answers.notifications.daxClusterArn);
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
 
         if (!answers.notifications.daxClusterEndpoint) {
@@ -222,7 +222,7 @@ export class NotificationsInstaller implements RestModule {
         } else {
             parameterOverrides.push(
                 `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-                `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
+                `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`
             );
         }
         return parameterOverrides;
@@ -243,7 +243,7 @@ export class NotificationsInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'events-processor',
+                            'events-processor'
                         ),
                         parameterOverrides: this.getEventsProcessorOverrides(answers),
                     });
@@ -261,7 +261,7 @@ export class NotificationsInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'events-alerts',
+                            'events-alerts'
                         ),
                         parameterOverrides: this.getEventsAlertsOverrides(answers),
                     });
@@ -297,7 +297,7 @@ export class NotificationsInstaller implements RestModule {
                         'source',
                         'packages',
                         'services',
-                        'events-processor',
+                        'events-processor'
                     ),
                     parameterOverrides: this.getEventsProcessorOverrides(answers),
                     needsPackaging: true,
@@ -312,16 +312,16 @@ export class NotificationsInstaller implements RestModule {
             task: async () => {
                 const byOutputKey = await getStackOutputs(
                     this.eventsProcessorStackName,
-                    answers.region,
+                    answers.region
                 );
                 answers.notifications.notificationsTableName = byOutputKey(
-                    'EventNotificationsTable',
+                    'EventNotificationsTable'
                 );
                 answers.notifications.notificationsTableArn = byOutputKey(
-                    'EventNotificationsTableArn',
+                    'EventNotificationsTableArn'
                 );
                 answers.notifications.notificationsTableStreamArn = byOutputKey(
-                    'EventNotificationsStreamArn',
+                    'EventNotificationsStreamArn'
                 );
                 answers.notifications.configTableName = byOutputKey('EventConfigTable');
                 answers.notifications.configTableArn = byOutputKey('EventConfigTableArn');
@@ -343,7 +343,7 @@ export class NotificationsInstaller implements RestModule {
                         'source',
                         'packages',
                         'services',
-                        'events-alerts',
+                        'events-alerts'
                     ),
                     parameterOverrides: this.getEventsAlertsOverrides(answers),
                     needsPackaging: true,

@@ -61,7 +61,7 @@ export class CertificateService {
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData,
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
-        @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
+        @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM
     ) {
         this.iot = iotFactory();
         this.iotData = iotDataFactory();
@@ -93,7 +93,7 @@ export class CertificateService {
             const presignedUrl = this.generatePresignedUrl(
                 this.s3Bucket,
                 key,
-                this.presignedUrlExpiresInSeconds,
+                this.presignedUrlExpiresInSeconds
             );
 
             // update asset library status
@@ -115,10 +115,10 @@ export class CertificateService {
     public async getWithCsr(
         deviceId: string,
         csr: string,
-        previousCertificateId?: string,
+        previousCertificateId?: string
     ): Promise<void> {
         logger.debug(
-            `certificates.service getWithCsr: in: deviceId:${deviceId}, csr: ${csr}, previousCertificateId: ${previousCertificateId}`,
+            `certificates.service getWithCsr: in: deviceId:${deviceId}, csr: ${csr}, previousCertificateId: ${previousCertificateId}`
         );
         const response: CertificateResponseModel = {};
 
@@ -142,7 +142,7 @@ export class CertificateService {
             await this.attachPolicyToCertificate(
                 certificateArn,
                 this.rotatedCertificatePolicy,
-                previousCertificateId,
+                previousCertificateId
             );
 
             // update asset library status
@@ -165,10 +165,10 @@ export class CertificateService {
     public async ack(
         deviceId: string,
         certId: string,
-        previousCertificateId?: string,
+        previousCertificateId?: string
     ): Promise<void> {
         logger.debug(
-            `certificates.service ack: in: deviceId:${deviceId}, certId: ${certId} previousCertificateId: ${previousCertificateId}`,
+            `certificates.service ack: in: deviceId:${deviceId}, certId: ${certId} previousCertificateId: ${previousCertificateId}`
         );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -208,7 +208,7 @@ export class CertificateService {
 
     private async getCertificateId(bucketName: string, key: string): Promise<string> {
         logger.debug(
-            `certificates.service getCertificateId: in: bucketName:${bucketName}, key:${key}`,
+            `certificates.service getCertificateId: in: bucketName:${bucketName}, key:${key}`
         );
         const params = {
             Bucket: bucketName,
@@ -236,14 +236,14 @@ export class CertificateService {
         }
 
         logger.debug(
-            `certificates.service getCertificateId: exit: certificateId:${certificateId}`,
+            `certificates.service getCertificateId: exit: certificateId:${certificateId}`
         );
         return certificateId;
     }
 
     private async activateCertificate(certificateId: string): Promise<void> {
         logger.debug(
-            `certificates.service activateCertificate: in: certificateId:${certificateId}`,
+            `certificates.service activateCertificate: in: certificateId:${certificateId}`
         );
         const params: UpdateCertificateRequest = {
             certificateId,
@@ -263,10 +263,10 @@ export class CertificateService {
     private generatePresignedUrl(
         bucketName: string,
         key: string,
-        presignedUrlExpiresInSeconds: number,
+        presignedUrlExpiresInSeconds: number
     ): string {
         logger.debug(
-            `certificates.service generatePresignedUrl: in: bucketName:${bucketName}, key:${key}, presignedUrlExpiresInSeconds:${presignedUrlExpiresInSeconds}`,
+            `certificates.service generatePresignedUrl: in: bucketName:${bucketName}, key:${key}, presignedUrlExpiresInSeconds:${presignedUrlExpiresInSeconds}`
         );
         const params = {
             Bucket: bucketName,
@@ -287,12 +287,12 @@ export class CertificateService {
     private async publishResponse(
         topicTemplate: string,
         deviceId: string,
-        r: CertificateResponseModel,
+        r: CertificateResponseModel
     ): Promise<void> {
         logger.debug(
             `certificates.service publishResponse: in: topicTemplate:${topicTemplate}, deviceId:${deviceId}, r:${JSON.stringify(
-                r,
-            )}`,
+                r
+            )}`
         );
 
         // e.g. cdf/certificates/{thingName}/get/accepted
@@ -354,7 +354,7 @@ export class CertificateService {
     private createCertificateFromCsr(
         csr: string,
         rootKey: string,
-        rootPem: string,
+        rootPem: string
     ): Promise<string> {
         /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve: any, reject: any) => {
@@ -370,14 +370,14 @@ export class CertificateService {
                         return reject(err);
                     }
                     return resolve(data.certificate);
-                },
+                }
             );
         });
     }
 
     private async registerCertificate(ca: string, certificate: string): Promise<string> {
         logger.debug(
-            `certificates.service registerCertificate: in: ca: ${ca}, certificate:${certificate}`,
+            `certificates.service registerCertificate: in: ca: ${ca}, certificate:${certificate}`
         );
         const params: RegisterCertificateRequest = {
             caCertificatePem: ca,
@@ -397,17 +397,17 @@ export class CertificateService {
         }
 
         logger.debug(
-            `certificates.service registerCertificate: exit: certificateArn: ${certificateArn}`,
+            `certificates.service registerCertificate: exit: certificateArn: ${certificateArn}`
         );
         return certificateArn;
     }
 
     private async attachCertificateToThing(
         certificateArn: string,
-        deviceId: string,
+        deviceId: string
     ): Promise<void> {
         logger.debug(
-            `certificates.service attachCertificateToThing: in: certificateArn: ${certificateArn}, deviceId:${deviceId}`,
+            `certificates.service attachCertificateToThing: in: certificateArn: ${certificateArn}, deviceId:${deviceId}`
         );
         const params: AttachThingPrincipalRequest = {
             principal: certificateArn,
@@ -427,16 +427,16 @@ export class CertificateService {
     private async attachPolicyToCertificate(
         certificateArn: string,
         policy: string,
-        previousCertificateId: string,
+        previousCertificateId: string
     ): Promise<void> {
         logger.debug(
-            `certificates.service attachPolicyToCertificate: in: certificateArn: ${certificateArn}, policy:${policy}, previousCertificateId: ${previousCertificateId}, defaultPolicy:${this.rotatedCertificatePolicy}, useDefaultPolicy: ${this.useDefaultPolicy}`,
+            `certificates.service attachPolicyToCertificate: in: certificateArn: ${certificateArn}, policy:${policy}, previousCertificateId: ${previousCertificateId}, defaultPolicy:${this.rotatedCertificatePolicy}, useDefaultPolicy: ${this.useDefaultPolicy}`
         );
         const params = [];
         // Attach all policies associated with the previous certificate
         if (previousCertificateId && !this.useDefaultPolicy) {
             logger.debug(
-                `certificates.service attachPolicyToCertificate: Attaching inherited policies`,
+                `certificates.service attachPolicyToCertificate: Attaching inherited policies`
             );
             const policies = await this.getEffectivePolicies(previousCertificateId);
             for (const policy of policies.effectivePolicies) {
@@ -449,7 +449,7 @@ export class CertificateService {
         } else {
             // Attach the default policy
             logger.debug(
-                `certificates.service attachPolicyToCertificate: Attaching the default policy`,
+                `certificates.service attachPolicyToCertificate: Attaching the default policy`
             );
             const param: Iot.AttachPolicyRequest = {
                 target: certificateArn,
@@ -473,10 +473,10 @@ export class CertificateService {
     private async removePreviousCertificate(
         deviceId: string,
         certId: string,
-        previousCertificateId?: string,
+        previousCertificateId?: string
     ): Promise<void> {
         logger.debug(
-            `certificates.service removePreviousCertificate: in: deviceId: ${deviceId}, certId:${certId}, previousCertificateId: ${previousCertificateId}`,
+            `certificates.service removePreviousCertificate: in: deviceId: ${deviceId}, certId:${certId}, previousCertificateId: ${previousCertificateId}`
         );
         const thingPrincipals: ListThingPrincipalsResponse = await this.iot
             .listThingPrincipals({ thingName: deviceId })

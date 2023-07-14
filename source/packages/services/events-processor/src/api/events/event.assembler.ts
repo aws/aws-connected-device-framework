@@ -65,12 +65,12 @@ export class EventAssembler {
     public toResourceList(
         items: EventItem[],
         count?: number,
-        paginateFrom?: PaginationKey,
+        paginateFrom?: PaginationKey
     ): EventResourceList {
         logger.debug(
             `subscription.assembler toResourceList: in: items:${JSON.stringify(
-                items,
-            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+                items
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
         );
 
         const list: EventResourceList = {
@@ -96,8 +96,8 @@ export class EventAssembler {
     private extractTemplateProperties(templateMap: { [key: string]: string }): string[] {
         logger.debug(
             `event.assembler extractTemplateProperties: in: templateMap:${JSON.stringify(
-                templateMap,
-            )}`,
+                templateMap
+            )}`
         );
 
         if (templateMap === undefined || Object.keys(templateMap).length === 0) {
@@ -126,8 +126,8 @@ export class EventAssembler {
 
         logger.debug(
             `event.assembler extractTemplateProperties: out: templateProperties:${JSON.stringify(
-                templateProperties,
-            )}`,
+                templateProperties
+            )}`
         );
         // Return list of all keys within all templates
         return templateProperties;

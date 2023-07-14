@@ -19,7 +19,7 @@ import { getMonorepoRoot } from '../prompts/paths.prompt';
 async function generateLocalConfigAction(
     environment: string,
     region: string,
-    configFolderLocation: string,
+    configFolderLocation: string
 ): Promise<void> {
     const lambdaClient = new LambdaClient({
         region,
@@ -46,7 +46,7 @@ async function generateLocalConfigAction(
             stack = await cloudFormationClient.send(
                 new DescribeStacksCommand({
                     StackName: stackName,
-                }),
+                })
             );
         } catch (e) {
             continue;
@@ -54,7 +54,7 @@ async function generateLocalConfigAction(
 
         // see if we have a rest api function name
         const functionName = stack.Stacks?.[0]?.Outputs?.filter(
-            (o) => o.OutputKey === 'RestApiFunctionName',
+            (o) => o.OutputKey === 'RestApiFunctionName'
         )?.[0]?.OutputValue;
         if (functionName === undefined) {
             continue;
@@ -66,7 +66,7 @@ async function generateLocalConfigAction(
             lambda = await lambdaClient.send(
                 new GetFunctionCommand({
                     FunctionName: functionName,
-                }),
+                })
             );
         } catch (e) {
             continue;
@@ -90,7 +90,7 @@ async function generateLocalConfigAction(
             'source',
             'packages',
             'services',
-            (module as RestModule).localProjectDir,
+            (module as RestModule).localProjectDir
         );
 
         // convert the lambdas environment config as the .env application config file
@@ -128,7 +128,7 @@ ${appConfig}
 
     console.log(`\nFinished exporting application configuration to '${configFolderLocation}'.\n`);
     console.log(
-        `If you are unsure on how to run a module locally, open the generated .env file for that module from the above mentioned folder. We have added instructions on how to start the module to the file to get you going.\n\n`,
+        `If you are unsure on how to run a module locally, open the generated .env file for that module from the above mentioned folder. We have added instructions on how to start the module to the file to get you going.\n\n`
     );
 }
 

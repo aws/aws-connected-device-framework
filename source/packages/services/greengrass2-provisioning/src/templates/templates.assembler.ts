@@ -59,12 +59,12 @@ export class TemplatesAssembler {
     public toListResource(
         items: TemplateItem[],
         count?: number,
-        paginateFrom?: TemplateListPaginationKey,
+        paginateFrom?: TemplateListPaginationKey
     ): TemplateListResource {
         logger.debug(
             `templates.assembler toListResource: in: items:${JSON.stringify(
-                items,
-            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+                items
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
         );
 
         const list: TemplateListResource = {
@@ -95,12 +95,12 @@ export class TemplatesAssembler {
     public toVersionListResource(
         items: TemplateItem[],
         count?: number,
-        paginateFrom?: TemplateVersionListPaginationKey,
+        paginateFrom?: TemplateVersionListPaginationKey
     ): TemplateVersionListResource {
         logger.debug(
             `templates.assembler toVersionListResource: in: items:${JSON.stringify(
-                items,
-            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+                items
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
         );
 
         const list: TemplateVersionListResource = {

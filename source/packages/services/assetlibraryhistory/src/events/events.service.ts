@@ -21,7 +21,7 @@ import { EventModel } from './events.models';
 @injectable()
 export class EventsService {
     constructor(
-        @inject(TYPES.EventActionFactory) private eventActionFactory: EventActionFactory,
+        @inject(TYPES.EventActionFactory) private eventActionFactory: EventActionFactory
     ) {}
 
     public async create(event: EventModel): Promise<void> {

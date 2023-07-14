@@ -21,7 +21,7 @@ export class BaseDaoFull {
 
     public constructor(
         @inject('neptuneUrl') private neptuneUrl: string,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         this._graph = graphSourceFactory();
     }
@@ -44,7 +44,7 @@ export class BaseDaoFull {
 export class NeptuneConnection {
     constructor(
         private _traversal: process.GraphTraversalSource,
-        private _connection: driver.DriverRemoteConnection,
+        private _connection: driver.DriverRemoteConnection
     ) {}
 
     public get traversal(): process.GraphTraversalSource {

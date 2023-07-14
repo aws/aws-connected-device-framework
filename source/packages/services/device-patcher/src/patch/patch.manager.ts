@@ -26,7 +26,7 @@ export class PatchManager {
 
     constructor(
         @inject(TYPES.AgentbasedPatchService)
-        protected agentbasedPatchService: AgentbasedPatchService,
+        protected agentbasedPatchService: AgentbasedPatchService
     ) {
         this.patchStrategies[PatchType.AGENTBASED] = agentbasedPatchService;
     }

@@ -31,7 +31,7 @@ export class PatchTaskDao {
     constructor(
         @inject(TYPES.DocumentClientFactory)
         documentClientFactory: () => AWS.DynamoDB.DocumentClient,
-        @inject(TYPES.PatchDao) private patchDao: PatchDao,
+        @inject(TYPES.PatchDao) private patchDao: PatchDao
     ) {
         this.dc = documentClientFactory();
     }
@@ -82,7 +82,7 @@ export class PatchTaskDao {
     public async getPatchs(
         taskId: string,
         count?: number,
-        exclusiveStart?: PatchListPaginationKey,
+        exclusiveStart?: PatchListPaginationKey
     ): Promise<[PatchItem[], PatchListPaginationKey]> {
         logger.debug(`patchTask.dao:getPatchs:in:taskId:${taskId}`);
 
@@ -132,8 +132,8 @@ export class PatchTaskDao {
 
         logger.debug(
             `patchTask.dao:getPatchs: exit: response:${JSON.stringify(
-                patches,
-            )}, paginationKey:${paginationKey}`,
+                patches
+            )}, paginationKey:${paginationKey}`
         );
         return [patches, paginationKey];
     }

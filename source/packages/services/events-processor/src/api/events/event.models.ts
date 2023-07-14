@@ -119,7 +119,7 @@ export class EventConditionsUtils {
 
     public populateParameters(
         ec: EventConditions,
-        valueMap: { [key: string]: string | boolean | number },
+        valueMap: { [key: string]: string | boolean | number }
     ): void {
         if (ec?.all) {
             if (isEventConditions(ec.all)) {
@@ -143,7 +143,7 @@ export class EventConditionsUtils {
     }
     public populateParameter(
         ec: EventCondition,
-        valueMap: { [key: string]: string | boolean | number },
+        valueMap: { [key: string]: string | boolean | number }
     ): void {
         if (valueMap !== undefined) {
             for (const key of Object.keys(valueMap)) {
@@ -172,7 +172,7 @@ export type TargetTemplateMap = { [key in EventTargetTypeStrings]: string };
 export type TemplatePropertiesData = { [key: string]: string | number | boolean };
 
 export function isEventConditions(
-    conditions: EventConditions | EventCondition[],
+    conditions: EventConditions | EventCondition[]
 ): conditions is EventConditions {
     return (<EventCondition[]>conditions).length === undefined;
 }

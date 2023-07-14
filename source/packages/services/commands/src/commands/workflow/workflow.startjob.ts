@@ -59,7 +59,7 @@ export class StartJobAction implements WorkflowAction {
         @inject('aws.s3.roleArn') private s3RoleArn: string,
         @inject('aws.jobs.maxTargets') private maxTargets: number,
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
+        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot
     ) {
         this._iot = iotFactory();
         this._s3 = s3Factory();
@@ -68,8 +68,8 @@ export class StartJobAction implements WorkflowAction {
     async execute(existing: CommandModel, updated: CommandModel): Promise<boolean> {
         logger.debug(
             `workflow.startjob execute: existing:${JSON.stringify(
-                existing,
-            )}, updated:${JSON.stringify(updated)}`,
+                existing
+            )}, updated:${JSON.stringify(updated)}`
         );
 
         const [merged, template] = await this.buildCommand(existing, updated);
@@ -90,7 +90,7 @@ export class StartJobAction implements WorkflowAction {
                 const token = `\${cdf:parameter:${key}}`;
                 template.document = template.document.replace(
                     token,
-                    merged.documentParameters[key],
+                    merged.documentParameters[key]
                 );
             }
         }
@@ -127,7 +127,7 @@ export class StartJobAction implements WorkflowAction {
         const jobTargets = await this.buildTargetList(
             merged.commandId,
             merged.targets,
-            merged.targetQuery,
+            merged.targetQuery
         );
 
         // create the AWS IoT job
@@ -151,7 +151,7 @@ export class StartJobAction implements WorkflowAction {
     public ___testonly___buildTargetList(
         commandId: string,
         targets: string[],
-        targetQuery: SearchRequestModel,
+        targetQuery: SearchRequestModel
     ): Promise<string[]> {
         return this.buildTargetList(commandId, targets, targetQuery);
     }
@@ -159,12 +159,12 @@ export class StartJobAction implements WorkflowAction {
     private async buildTargetList(
         commandId: string,
         targets: string[],
-        targetQuery: SearchRequestModel,
+        targetQuery: SearchRequestModel
     ): Promise<string[]> {
         logger.debug(
             `workflow.startjob buildTargetList: commandId:${commandId}, targets:${targets}, targetQuery:${JSON.stringify(
-                targetQuery,
-            )}`,
+                targetQuery
+            )}`
         );
 
         ow(commandId, ow.string.nonEmpty);
@@ -179,9 +179,7 @@ export class StartJobAction implements WorkflowAction {
         if (targetQuery !== undefined) {
             let searchResults = await this.assetLibrarySearchClient.search(targetQuery);
             logger.verbose(
-                `workflow.startjob buildTargetList: searchResults:${JSON.stringify(
-                    searchResults,
-                )}`,
+                `workflow.startjob buildTargetList: searchResults:${JSON.stringify(searchResults)}`
             );
             while (searchResults.results.length > 0) {
                 for (const r of searchResults.results) {
@@ -200,7 +198,7 @@ export class StartJobAction implements WorkflowAction {
                     const count = searchResults.pagination.count;
                     searchResults = await this.assetLibrarySearchClient.search(
                         targetQuery,
-                        offset + count,
+                        offset + count
                     );
                 } else {
                     searchResults.results = [];
@@ -245,8 +243,8 @@ export class StartJobAction implements WorkflowAction {
         if (cdfGroupTargets.length > 0) {
             logger.debug(
                 `workflow.startjob buildTargetList: creating CDFGroupTargets cdfGroupTargets: ${JSON.stringify(
-                    cdfGroupTargets,
-                )}`,
+                    cdfGroupTargets
+                )}`
             );
             for (const groupPath of cdfGroupTargets) {
                 let result = await this.assetLibraryGroupClient.listGroupMembersDevices(groupPath);
@@ -265,7 +263,7 @@ export class StartJobAction implements WorkflowAction {
                         null,
                         null,
                         offset,
-                        result.pagination.count,
+                        result.pagination.count
                     );
                 }
             }
@@ -275,14 +273,14 @@ export class StartJobAction implements WorkflowAction {
         if (cdfDeviceTargets.length > 0) {
             logger.debug(
                 `workflow.startjob buildTargetList: creating CDFDeviceTargets, cdfDeviceTargets: ${JSON.stringify(
-                    cdfDeviceTargets,
-                )}`,
+                    cdfDeviceTargets
+                )}`
             );
             const result = await this.assetLibraryDeviceClient.getDevicesByID(
                 cdfDeviceTargets,
                 false,
                 [],
-                [],
+                []
             );
             for (const device of result.results) {
                 if (device.awsIotThingArn) {
@@ -308,17 +306,17 @@ export class StartJobAction implements WorkflowAction {
 
     public ___testonly___buildEphemeralGroup(
         commandId: string,
-        awsThingTargets: string[],
+        awsThingTargets: string[]
     ): Promise<string> {
         return this.buildEphemeralGroup(commandId, awsThingTargets);
     }
 
     private async buildEphemeralGroup(
         commandId: string,
-        awsThingTargets: string[],
+        awsThingTargets: string[]
     ): Promise<string> {
         logger.debug(
-            `workflow.startjob buildEphemeralGroup: commandId:${commandId},  awsThingTargets:${awsThingTargets}`,
+            `workflow.startjob buildEphemeralGroup: commandId:${commandId},  awsThingTargets:${awsThingTargets}`
         );
 
         // create the new group
@@ -350,7 +348,7 @@ export class StartJobAction implements WorkflowAction {
         }
 
         logger.debug(
-            `workflow.startjob buildEphemeralGroup: exit:${thingGroupResponse.thingGroupArn}`,
+            `workflow.startjob buildEphemeralGroup: exit:${thingGroupResponse.thingGroupArn}`
         );
         return thingGroupResponse.thingGroupArn;
     }
@@ -382,12 +380,12 @@ export class StartJobAction implements WorkflowAction {
 
     private async buildCommand(
         existing: CommandModel,
-        updated: CommandModel,
+        updated: CommandModel
     ): Promise<[CommandModel, TemplateModel]> {
         logger.debug(
             `workflow.startjob buildCommand: existing:${JSON.stringify(
-                existing,
-            )}, updated:${JSON.stringify(updated)}`,
+                existing
+            )}, updated:${JSON.stringify(updated)}`
         );
 
         // merge the existing command with the updated
@@ -416,7 +414,7 @@ export class StartJobAction implements WorkflowAction {
             merged.timeoutConfig = template.timeoutConfig;
         }
         logger.debug(
-            `workflow.startjob buildCommand: exit: ${JSON.stringify([merged, template])}`,
+            `workflow.startjob buildCommand: exit: ${JSON.stringify([merged, template])}`
         );
         return [merged, template];
     }
@@ -424,12 +422,12 @@ export class StartJobAction implements WorkflowAction {
     private assembleCreateJobRequest(
         jobTargets: string[],
         template: TemplateModel,
-        command: CommandModel,
+        command: CommandModel
     ): AWS.Iot.CreateJobRequest {
         logger.debug(
             `workflow.startjob assembleCreateJobRequest: in: jobTargets:${JSON.stringify(
-                jobTargets,
-            )}, template:${JSON.stringify(template)}, command:${JSON.stringify(jobTargets)}`,
+                jobTargets
+            )}, template:${JSON.stringify(template)}, command:${JSON.stringify(jobTargets)}`
         );
         const params: AWS.Iot.CreateJobRequest = {
             jobId: `cdf-${command.commandId}`,
@@ -456,7 +454,7 @@ export class StartJobAction implements WorkflowAction {
         }
 
         logger.debug(
-            `workflow.startjob assembleCreateJobRequest: exit: ${JSON.stringify(params)}`,
+            `workflow.startjob assembleCreateJobRequest: exit: ${JSON.stringify(params)}`
         );
         return params;
     }

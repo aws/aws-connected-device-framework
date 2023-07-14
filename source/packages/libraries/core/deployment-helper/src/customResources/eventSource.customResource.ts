@@ -20,7 +20,7 @@ import { CustomResourceEvent } from './customResource.model';
 export class EventSourceCustomResource implements CustomResource {
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {}
 
     protected headers: { [key: string]: string };
@@ -28,8 +28,8 @@ export class EventSourceCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `EventSourceCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const functionName = customResourceEvent?.ResourceProperties?.FunctionName;
@@ -62,7 +62,7 @@ export class EventSourceCustomResource implements CustomResource {
         logger.debug(
             `EventSourceCustomResource: create: eventSourceId: ${
                 eventSourceId[eventSourceId.length - 1]
-            }`,
+            }`
         );
 
         return { eventSourceId: eventSourceId[eventSourceId.length - 1] };
@@ -71,8 +71,8 @@ export class EventSourceCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `EventSourceCustomResource: update: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         return await this.create(customResourceEvent);
@@ -81,8 +81,8 @@ export class EventSourceCustomResource implements CustomResource {
     public async delete(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `EventSourceCustomResource: delete: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         // no delete
         return {};

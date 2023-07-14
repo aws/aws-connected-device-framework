@@ -35,16 +35,16 @@ export class TypesServiceFull implements TypesService {
     constructor(
         @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,
         @inject(TYPES.TypesDao) private typesDao: TypesDaoFull,
-        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
+        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter
     ) {}
 
     public async get(
         templateId: string,
         category: TypeCategory,
-        status: TypeDefinitionStatus,
+        status: TypeDefinitionStatus
     ): Promise<TypeModel> {
         logger.debug(
-            `types.full.service get: in: templateId: ${templateId}, category: ${category}, status: ${status}`,
+            `types.full.service get: in: templateId: ${templateId}, category: ${category}, status: ${status}`
         );
 
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -66,7 +66,7 @@ export class TypesServiceFull implements TypesService {
                 result.schema.definition.componentTypes = [];
                 for (const componentTemplateId of result.schema.definition.components) {
                     result.schema.definition.componentTypes.push(
-                        await this.get(componentTemplateId, TypeCategory.Device, status),
+                        await this.get(componentTemplateId, TypeCategory.Device, status)
                     );
                 }
             }
@@ -81,12 +81,12 @@ export class TypesServiceFull implements TypesService {
         status: TypeDefinitionStatus,
         offset?: number,
         count?: number,
-        sort?: SortKeys,
+        sort?: SortKeys
     ): Promise<TypeModel[]> {
         logger.debug(
             `types.full.service list: in: category:${category}, status:${status}, offset:${offset}, count:${count}, sort:${JSON.stringify(
-                sort,
-            )}`,
+                sort
+            )}`
         );
 
         ow(category, 'category', ow.string.nonEmpty);
@@ -108,7 +108,7 @@ export class TypesServiceFull implements TypesService {
 
     private async validateRelations(definition: TypeDefinitionModel): Promise<boolean> {
         logger.debug(
-            `types.full.service validateRelations: in: definition:${JSON.stringify(definition)}`,
+            `types.full.service validateRelations: in: definition:${JSON.stringify(definition)}`
         );
 
         let linkedTargetsValid = true;
@@ -120,14 +120,14 @@ export class TypesServiceFull implements TypesService {
                 Object.values(definition.relations.out).forEach((v) =>
                     v
                         .map((v2) => (isRelationTargetExpanded(v2) ? v2 : { name: v2 }))
-                        .forEach((v2) => linkedTargetNames.push(v2.name)),
+                        .forEach((v2) => linkedTargetNames.push(v2.name))
                 );
             }
             if (definition.relations.in !== undefined) {
                 Object.values(definition.relations.in).forEach((v) =>
                     v
                         .map((v2) => (isRelationTargetExpanded(v2) ? v2 : { name: v2 }))
-                        .forEach((v2) => linkedTargetNames.push(v2.name)),
+                        .forEach((v2) => linkedTargetNames.push(v2.name))
                 );
             }
             linkedTargetNames = Array.from(new Set(linkedTargetNames));
@@ -159,12 +159,12 @@ export class TypesServiceFull implements TypesService {
     public async create(
         templateId: string,
         category: TypeCategory,
-        definition: TypeDefinitionModel,
+        definition: TypeDefinitionModel
     ): Promise<SchemaValidationResult> {
         logger.debug(
             `types.full.service create: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(
-                definition,
-            )}`,
+                definition
+            )}`
         );
 
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -192,7 +192,7 @@ export class TypesServiceFull implements TypesService {
         const validationResult = await this.validator.validateSchema(definition, Operation.CREATE);
         if (!validationResult.isValid) {
             logger.debug(
-                `types.full.service create: exit: validationResult:${JSON.stringify(definition)}`,
+                `types.full.service create: exit: validationResult:${JSON.stringify(definition)}`
             );
             return validationResult;
         }
@@ -238,7 +238,7 @@ export class TypesServiceFull implements TypesService {
 
     public async delete(templateId: string, category: TypeCategory): Promise<void> {
         logger.debug(
-            `types.full.service delete: in: templateId:${templateId}, category:${category}`,
+            `types.full.service delete: in: templateId:${templateId}, category:${category}`
         );
 
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -274,12 +274,12 @@ export class TypesServiceFull implements TypesService {
     public async update(
         templateId: string,
         category: TypeCategory,
-        definition: TypeDefinitionModel,
+        definition: TypeDefinitionModel
     ): Promise<SchemaValidationResult> {
         logger.debug(
             `types.full.service update: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(
-                definition,
-            )}`,
+                definition
+            )}`
         );
 
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -301,7 +301,7 @@ export class TypesServiceFull implements TypesService {
         const validationResult = await this.validator.validateSchema(definition, Operation.UPDATE);
         if (!validationResult.isValid) {
             logger.debug(
-                `types.full.service update: exit: validationResult:${JSON.stringify(definition)}`,
+                `types.full.service update: exit: validationResult:${JSON.stringify(definition)}`
             );
             return validationResult;
         }
@@ -335,7 +335,7 @@ export class TypesServiceFull implements TypesService {
             const published = await this.get(
                 model.templateId,
                 model.category,
-                TypeDefinitionStatus.published,
+                TypeDefinitionStatus.published
             );
 
             // if we don't have a published one either, then the type does not exist, we can't proceed
@@ -365,7 +365,7 @@ export class TypesServiceFull implements TypesService {
 
     public async publish(templateId: string, category: TypeCategory): Promise<void> {
         logger.debug(
-            `types.full.service publish: in: templateId:${templateId}, category:${category}`,
+            `types.full.service publish: in: templateId:${templateId}, category:${category}`
         );
 
         ow(templateId, 'templateId', ow.string.nonEmpty);

@@ -41,7 +41,7 @@ export class TargetService {
         @inject(TYPES.EmailTarget) private emailTarget: EmailTarget,
         @inject(TYPES.DynamodDBTarget) private dynamodbTarget: DynamodDBTarget,
         @inject(TYPES.SMSTarget) private smsTarget: SMSTarget,
-        @inject(TYPES.PushTarget) private pushTarget: PushTarget,
+        @inject(TYPES.PushTarget) private pushTarget: PushTarget
     ) {}
 
     public async get(subscriptionId: string): Promise<SubscriptionItem> {
@@ -55,10 +55,10 @@ export class TargetService {
         subscriptionId: string,
         targetType: TargetTypeStrings,
         targetId: string,
-        unsubscribe: boolean,
+        unsubscribe: boolean
     ): Promise<void> {
         logger.debug(
-            `target.service delete: in: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}, unsubscribe:${unsubscribe}`,
+            `target.service delete: in: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}, unsubscribe:${unsubscribe}`
         );
 
         ow(subscriptionId, ow.string.nonEmpty);
@@ -122,14 +122,14 @@ export class TargetService {
         topicArn?: string,
         principalValue?: string,
         event?: EventItem,
-        skipDao?: boolean,
+        skipDao?: boolean
     ): Promise<CreateTargetResponse> {
         logger.debug(
             `target.service create: in: item:${JSON.stringify(
-                item,
+                item
             )}, topicArn:${topicArn}, principalValue:${principalValue}, event:${JSON.stringify(
-                event,
-            )}, skipDao:${skipDao}`,
+                event
+            )}, skipDao:${skipDao}`
         );
 
         // validate input
@@ -177,7 +177,7 @@ export class TargetService {
             case 'dynamodb':
                 ow(event.supportedTargets.dynamodb, ow.string.nonEmpty);
                 await this.dynamodbTarget.ensureTableExists(
-                    (item as DynamodDBTargetItem).tableName,
+                    (item as DynamodDBTargetItem).tableName
                 );
                 break;
             case 'push_gcm':
@@ -202,7 +202,7 @@ export class TargetService {
                 item,
                 event.eventSourceId,
                 event.principal,
-                principalValue,
+                principalValue
             );
         }
 

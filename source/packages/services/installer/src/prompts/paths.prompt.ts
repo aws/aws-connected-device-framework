@@ -23,7 +23,7 @@ export function fuzzyPathPrompt(
     name: string,
     itemType: 'any' | 'directory' | 'file',
     rootPath?: string,
-    initial?: string,
+    initial?: string
 ): unknown {
     return {
         message,
@@ -60,7 +60,7 @@ export async function getMonorepoRoot(): Promise<string> {
 
 export async function getAbsolutePath(
     monorepoRoot: string,
-    relativePath: string,
+    relativePath: string
 ): Promise<string> {
     const absolutePath = path.join(monorepoRoot, relativePath);
     return absolutePath;

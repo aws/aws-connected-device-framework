@@ -37,7 +37,7 @@ export class OrganizationalUnitsApigwService
 
     async createOrganizationalUnit(
         organizationalUnit: OrganizationalUnitResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string> {
         ow(organizationalUnit, ow.object.nonEmpty);
         ow(organizationalUnit.name, ow.string.nonEmpty);
@@ -58,7 +58,7 @@ export class OrganizationalUnitsApigwService
 
     async getOrganizationalUnit(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<OrganizationalUnitResource> {
         const url = `${this.baseUrl}${super.organizationalUnitRelativeUrl(organizationalUnitId)}`;
         return await request
@@ -75,7 +75,7 @@ export class OrganizationalUnitsApigwService
 
     async deleteOrganizationalUnit(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         const url = `${this.baseUrl}${super.organizationalUnitRelativeUrl(organizationalUnitId)}`;
         return await request
@@ -91,7 +91,7 @@ export class OrganizationalUnitsApigwService
     }
 
     async listOrganizationalUnits(
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<OrganizationalUnitResource[]> {
         return await request
             .get(`${this.baseUrl}${super.organizationalUnitsRelativeUrl()}`)

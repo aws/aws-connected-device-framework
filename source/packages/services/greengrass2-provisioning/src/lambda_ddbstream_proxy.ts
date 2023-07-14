@@ -74,8 +74,8 @@ type Image = { [key: string]: AttributeValue } | undefined;
 async function processCoreDeviceChange(oldImage: Image, newImage: Image) {
     logger.debug(
         `lambda_ddbstream_proxy processCoreDeviceChange: oldImage:${JSON.stringify(
-            oldImage,
-        )}, newImage:${JSON.stringify(newImage)}`,
+            oldImage
+        )}, newImage:${JSON.stringify(newImage)}`
     );
 
     const oldDesired: TemplateAttributes = {
@@ -120,9 +120,7 @@ async function processCoreDeviceChange(oldImage: Image, newImage: Image) {
 
 async function initializeTemplateStatistics(newImage: Image) {
     logger.debug(
-        `lambda_ddbstream_proxy initializeTemplateStatistics: newImage:${JSON.stringify(
-            newImage,
-        )}`,
+        `lambda_ddbstream_proxy initializeTemplateStatistics: newImage:${JSON.stringify(newImage)}`
     );
     const name = newImage?.name?.S;
     const version = parseInt(newImage?.version?.N);

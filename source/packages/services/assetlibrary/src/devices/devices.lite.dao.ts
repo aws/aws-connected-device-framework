@@ -75,8 +75,8 @@ export class DevicesDaoLite {
     private assembleAssociations(node: Node, r: Iot.Types.GroupNameAndArn[]) {
         logger.debug(
             `devices.lite.dao assembleAssociations: in: node: ${JSON.stringify(
-                node,
-            )}, r:${JSON.stringify(r)}`,
+                node
+            )}, r:${JSON.stringify(r)}`
         );
 
         // assemble all associated objects
@@ -92,9 +92,7 @@ export class DevicesDaoLite {
 
     public async create(n: Node, groups: string[]): Promise<string> {
         logger.debug(
-            `devices.lite.dao create: in: n:${JSON.stringify(n)}, groups:${JSON.stringify(
-                groups,
-            )}`,
+            `devices.lite.dao create: in: n:${JSON.stringify(n)}, groups:${JSON.stringify(groups)}`
         );
 
         const thingParams: Iot.Types.CreateThingRequest = {
@@ -168,7 +166,7 @@ export class DevicesDaoLite {
 
     public async attachToGroup(deviceId: string, groupPath: string): Promise<void> {
         logger.debug(
-            `device.lite.dao attachToGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`,
+            `device.lite.dao attachToGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`
         );
 
         const params: Iot.Types.AddThingToThingGroupRequest = {
@@ -183,7 +181,7 @@ export class DevicesDaoLite {
 
     public async detachFromGroup(deviceId: string, groupPath: string): Promise<void> {
         logger.debug(
-            `device.lite.dao detachFromGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`,
+            `device.lite.dao detachFromGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`
         );
 
         const params: Iot.Types.RemoveThingFromThingGroupRequest = {

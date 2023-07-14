@@ -27,24 +27,24 @@ export class ComponentsService {
     constructor(
         @inject(TYPES.ComponentsDao) private componentsDao: ComponentsDao,
         @inject(TYPES.OrganizationalUnitsService)
-        private organizationalUnitService: OrganizationalUnitsService,
+        private organizationalUnitService: OrganizationalUnitsService
     ) {}
 
     public async createBulk(
         organizationalUnitId: string,
-        componentsResource: ComponentResource[],
+        componentsResource: ComponentResource[]
     ): Promise<BulkComponentsResult> {
         logger.info(
             `components.service createComponents in: organizationalUnitId: ${organizationalUnitId} componentsResource: ${JSON.stringify(
-                componentsResource,
-            )}`,
+                componentsResource
+            )}`
         );
 
         ow(organizationalUnitId, ow.string.nonEmpty);
         ow(componentsResource, ow.array.nonEmpty);
 
         const organizationalUnit = await this.organizationalUnitService.getOrganizationalUnit(
-            organizationalUnitId,
+            organizationalUnitId
         );
 
         if (!organizationalUnit) {
@@ -76,12 +76,12 @@ export class ComponentsService {
 
     public async createComponent(
         organizationalUnitId: string,
-        componentResource: ComponentResource,
+        componentResource: ComponentResource
     ): Promise<void> {
         logger.info(
             `components.service createComponent in: organizationalUnitId: ${organizationalUnitId} componentResource: ${JSON.stringify(
-                componentResource,
-            )}`,
+                componentResource
+            )}`
         );
 
         ow(organizationalUnitId, ow.string.nonEmpty);
@@ -112,15 +112,15 @@ export class ComponentsService {
 
         logger.info(
             `components.service listComponents exit: componentResourceList: ${JSON.stringify(
-                componentResourceList,
-            )}`,
+                componentResourceList
+            )}`
         );
         return componentResourceList;
     }
 
     public async deleteBulk(organizationalUnitId: string): Promise<void> {
         logger.info(
-            `components.service deleteBulk in: organizationalUnitId: ${organizationalUnitId}`,
+            `components.service deleteBulk in: organizationalUnitId: ${organizationalUnitId}`
         );
         ow(organizationalUnitId, ow.string.nonEmpty);
         await this.componentsDao.deleteComponentsByOu(organizationalUnitId);
@@ -129,7 +129,7 @@ export class ComponentsService {
 
     public async getBulk(organizationalUnitId: string): Promise<ComponentResource[]> {
         logger.info(
-            `components.service getBulk in: organizationalUnitId: ${organizationalUnitId}`,
+            `components.service getBulk in: organizationalUnitId: ${organizationalUnitId}`
         );
 
         ow(organizationalUnitId, ow.string.nonEmpty);
@@ -142,8 +142,8 @@ export class ComponentsService {
 
         logger.info(
             `components.service getBulk out: componentResourceList: ${JSON.stringify(
-                componentResourceList,
-            )}`,
+                componentResourceList
+            )}`
         );
         return componentResourceList;
     }

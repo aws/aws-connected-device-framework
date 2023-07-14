@@ -26,7 +26,7 @@ describe('AccountsDao', function () {
             'fakeAccountsTable',
             'fakeGsi1',
             'fakeGsi2',
-            () => mockedDynamoDb,
+            () => mockedDynamoDb
         );
     });
 

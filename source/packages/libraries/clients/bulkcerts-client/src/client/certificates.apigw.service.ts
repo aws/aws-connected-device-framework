@@ -34,15 +34,15 @@ export class CertificatesApigwService
     async getCertificates(
         taskId: string,
         downloadType: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string[] | Buffer> {
         ow(taskId, ow.string.nonEmpty);
 
         return await request
             .get(
                 `${this.baseUrl}${super.getCertificatesRelativeUrl(
-                    taskId,
-                )}?downloadType=${downloadType}`,
+                    taskId
+                )}?downloadType=${downloadType}`
             )
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
@@ -56,7 +56,7 @@ export class CertificatesApigwService
 
     async getCertificatesTask(
         taskId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<CertificateBatchTaskWithChunks> {
         ow(taskId, ow.string.nonEmpty);
 

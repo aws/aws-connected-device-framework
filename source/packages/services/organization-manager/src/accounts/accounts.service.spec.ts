@@ -113,7 +113,7 @@ describe('AccountsService', function () {
             mockedOrganizationalUnitsDao,
             new AccountsAssembler(),
             mockedServiceCatalogFactory,
-            mockedOrganizationsFactory,
+            mockedOrganizationsFactory
         );
     });
 
@@ -128,7 +128,7 @@ describe('AccountsService', function () {
             mockedOrganizationalUnitsDao,
             new AccountsAssembler(),
             mockedServiceCatalogFactory,
-            mockedOrganizationsFactory,
+            mockedOrganizationsFactory
         );
 
         const mockedProvisionProduct = (mockedServiceCatalog.provisionProduct = jest
@@ -205,7 +205,7 @@ describe('AccountsService', function () {
         });
 
         await expect(instance.createAccount(request)).rejects.toThrow(
-            'no control tower product exists in this account',
+            'no control tower product exists in this account'
         );
     });
 
@@ -223,7 +223,7 @@ describe('AccountsService', function () {
         });
 
         await expect(instance.createAccount(request)).rejects.toThrow(
-            'no active control tower service catalog product exists in this account',
+            'no active control tower service catalog product exists in this account'
         );
     });
 
@@ -255,7 +255,7 @@ describe('AccountsService', function () {
 
         const result = await instance.areAllComponentsDeployed(
             'fakeAccountName',
-            componentResourceList,
+            componentResourceList
         );
         expect(result).toBe(true);
     });
@@ -288,7 +288,7 @@ describe('AccountsService', function () {
 
         const result = await instance.areAllComponentsDeployed(
             'fakeAccountName',
-            componentResourceList,
+            componentResourceList
         );
         expect(result).toBe(false);
     });
@@ -350,7 +350,7 @@ describe('AccountsService', function () {
             mockedOrganizationalUnitsDao,
             new AccountsAssembler(),
             mockedServiceCatalogFactory,
-            mockedOrganizationsFactory,
+            mockedOrganizationsFactory
         );
         const mockDeleteAccountDetails = (mockedAccountsDao.deleteAccount = jest.fn());
         const mockMoveAccount = (mockedOrganizations.moveAccount = jest.fn());

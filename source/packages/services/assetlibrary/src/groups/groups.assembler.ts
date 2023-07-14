@@ -43,7 +43,7 @@ import {
 export class GroupsAssembler {
     constructor(
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
-        @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
+        @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler
     ) {}
 
     public toNode(model: GroupItem): Node {
@@ -120,7 +120,7 @@ export class GroupsAssembler {
                     break;
                 default:
                     model.attributes[key] = this.fullAssembler.extractPropertyValue(
-                        node.attributes[key],
+                        node.attributes[key]
                     );
             }
         });
@@ -210,7 +210,7 @@ export class GroupsAssembler {
         const assembleRelated = (
             from: StringArrayMap,
             rels: DirectionToRelatedEntityArrayMap,
-            direction: RelationDirection,
+            direction: RelationDirection
         ) => {
             if (from) {
                 if (rels[direction] === undefined) rels[direction] = {};
@@ -253,7 +253,7 @@ export class GroupsAssembler {
         res.groups.forEach((resource) => items.push(this.fromGroupResource(resource)));
 
         logger.debug(
-            `group.assembler fromBulkGroupsResource: exit: items: ${JSON.stringify(items)}`,
+            `group.assembler fromBulkGroupsResource: exit: items: ${JSON.stringify(items)}`
         );
         return items;
     }
@@ -261,8 +261,8 @@ export class GroupsAssembler {
     public toGroupResource(item: GroupItem, version: string): GroupBaseResource {
         logger.debug(
             `group.assembler toGroupResource: in: item: ${JSON.stringify(
-                item,
-            )}, version:${version}`,
+                item
+            )}, version:${version}`
         );
 
         if (item === undefined) {
@@ -319,7 +319,7 @@ export class GroupsAssembler {
         });
 
         logger.debug(
-            `group.assembler toGroupResource: exit: resource: ${JSON.stringify(resource)}`,
+            `group.assembler toGroupResource: exit: resource: ${JSON.stringify(resource)}`
         );
         return resource;
     }
@@ -327,8 +327,8 @@ export class GroupsAssembler {
     public toGroupResourceList(items: GroupItemList, version: string): GroupResourceList {
         logger.debug(
             `group.assembler toGroupResourceList: in: items: ${JSON.stringify(
-                items,
-            )}, version:${version}`,
+                items
+            )}, version:${version}`
         );
 
         if (items === undefined) {
@@ -341,23 +341,23 @@ export class GroupsAssembler {
         resources.results = [];
 
         items.results.forEach((item) =>
-            resources.results.push(this.toGroupResource(item, version)),
+            resources.results.push(this.toGroupResource(item, version))
         );
 
         logger.debug(
-            `group.assembler toGroupResourceList: exit: resources: ${JSON.stringify(resources)}`,
+            `group.assembler toGroupResourceList: exit: resources: ${JSON.stringify(resources)}`
         );
         return resources;
     }
 
     public toGroupMemberResourceList(
         items: GroupMemberItemList,
-        version: string,
+        version: string
     ): GroupMemberResourceList {
         logger.debug(
             `group.assembler toGroupMemberResourceList: in: items: ${JSON.stringify(
-                items,
-            )}, version:${version}`,
+                items
+            )}, version:${version}`
         );
 
         if (items === undefined) {
@@ -380,8 +380,8 @@ export class GroupsAssembler {
 
         logger.debug(
             `group.assembler toGroupMemberResourceList: exit: resources: ${JSON.stringify(
-                resources,
-            )}`,
+                resources
+            )}`
         );
         return resources;
     }
@@ -406,7 +406,7 @@ export class GroupsAssembler {
     public toRelatedGroupItemList(
         node: Node,
         offset?: number | string,
-        count?: number,
+        count?: number
     ): GroupItemList {
         logger.debug(`groups.assembler toRelatedGroupItemList: in: node: ${JSON.stringify(node)}`);
 
@@ -456,7 +456,7 @@ export class GroupsAssembler {
     public toGroupMembersList(
         nodes: Node[],
         offset?: number | string,
-        count?: number,
+        count?: number
     ): GroupMemberItemList {
         logger.debug(`groups.assembler toGroupMembersList: in: nodes: ${JSON.stringify(nodes)}`);
 
@@ -482,7 +482,7 @@ export class GroupsAssembler {
                 r.results.push(this.toGroupItem(node));
             } else {
                 logger.warn(
-                    `groups.assembler toGroupMembersList: unsupported template: ${node.types}`,
+                    `groups.assembler toGroupMembersList: unsupported template: ${node.types}`
                 );
             }
         }

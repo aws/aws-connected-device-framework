@@ -35,17 +35,17 @@ export class PoliciesServiceLite implements PoliciesService {
 
     public async listInheritedByDevice(deviceId: string, type: string): Promise<PolicyModel[]> {
         logger.debug(
-            `policies.full.service listInheritedByDevice: in: deviceId:${deviceId}, type:${type}`,
+            `policies.full.service listInheritedByDevice: in: deviceId:${deviceId}, type:${type}`
         );
         throw new NotSupportedError();
     }
 
     public async listInheritedByGroup(
         groupPaths: string[],
-        type?: string,
+        type?: string
     ): Promise<PolicyModel[]> {
         logger.debug(
-            `policies.full.service listInheritedByGroup: in: groupPaths:${groupPaths}, type:${type}`,
+            `policies.full.service listInheritedByGroup: in: groupPaths:${groupPaths}, type:${type}`
         );
         throw new NotSupportedError();
     }
@@ -53,10 +53,10 @@ export class PoliciesServiceLite implements PoliciesService {
     public async listPolicies(
         type?: string,
         offset?: number,
-        count?: number,
+        count?: number
     ): Promise<PolicyModel[]> {
         logger.debug(
-            `policies.full.service listPolicies: in: type:${type}, offset:${offset}, count:${count}`,
+            `policies.full.service listPolicies: in: type:${type}, offset:${offset}, count:${count}`
         );
         throw new NotSupportedError();
     }

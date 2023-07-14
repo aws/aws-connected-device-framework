@@ -29,7 +29,7 @@ export class MessageCompilerDao {
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable: string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1: string,
         @inject(TYPES.CachableDocumentClientFactory)
-        cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._cachedDc = cachableDocumentClientFactory();
     }

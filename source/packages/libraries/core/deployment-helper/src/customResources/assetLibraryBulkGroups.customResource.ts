@@ -27,7 +27,7 @@ import { CustomResourceEvent } from './customResource.model';
 export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {}
 
     protected headers: { [key: string]: string };
@@ -35,8 +35,8 @@ export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `AssetLibraryBulkGroupsCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const functionName = customResourceEvent?.ResourceProperties?.FunctionName;
@@ -88,14 +88,14 @@ export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
                         const patchRes = await this.patchGroup(functionName, headers, group);
                         logger.debug(
                             `AssetLibraryBulkGroupsCustomResource: pathGroup: response: ${JSON.stringify(
-                                patchRes,
-                            )}`,
+                                patchRes
+                            )}`
                         );
                     } catch (err) {
                         logger.error(
                             `AssetLibraryBulkGroupsCustomResource: patchGroup: ${JSON.stringify(
-                                err,
-                            )}`,
+                                err
+                            )}`
                         );
                     }
                 }
@@ -109,8 +109,8 @@ export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `AssetLibraryBulkGroupsCustomResource: update: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         return await this.create(customResourceEvent);
     }
@@ -133,12 +133,12 @@ export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
     protected async patchGroup(
         functionName: string,
         headers: { [key: string]: string },
-        group: { [key: string]: string },
+        group: { [key: string]: string }
     ): Promise<any> {
         logger.debug(
             `AssetLibraryBulkGroupsCustomResource: patchGroup: in: functionName:${functionName}, group:${JSON.stringify(
-                group,
-            )}`,
+                group
+            )}`
         );
         const groupPath =
             group.parentPath === '/'
@@ -154,7 +154,7 @@ export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
 
         const res = await this.lambdaInvoker.invoke(functionName, event);
         logger.debug(
-            `AssetLibraryBulkGroupsCustomResource: patchGroup: exit: ${JSON.stringify(res)}`,
+            `AssetLibraryBulkGroupsCustomResource: patchGroup: exit: ${JSON.stringify(res)}`
         );
 
         return res;

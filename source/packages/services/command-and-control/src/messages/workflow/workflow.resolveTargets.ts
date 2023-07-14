@@ -28,14 +28,14 @@ export class ResolveTargetsAction implements WorkflowAction {
     constructor(
         @inject(TYPES.MessagesDao) private messagesDao: MessagesDao,
         @inject(THING_LIST_BUILDER_TYPES.AwsIotThingListBuilder)
-        private awsIotThingListBuilder: AwsIotThingListBuilder,
+        private awsIotThingListBuilder: AwsIotThingListBuilder
     ) {}
 
     async process(message: MessageItem, command: CommandItem): Promise<boolean> {
         logger.debug(
             `workflow.resolveTargets process: message:${JSON.stringify(
-                message,
-            )}, command:${JSON.stringify(command)}`,
+                message
+            )}, command:${JSON.stringify(command)}`
         );
 
         ow(command, ow.object.plain);

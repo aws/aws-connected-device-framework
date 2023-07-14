@@ -59,12 +59,12 @@ export class CoresAssembler {
     public toListResource(
         items: CoreItem[],
         count?: number,
-        paginateFrom?: CoreListPaginationKey,
+        paginateFrom?: CoreListPaginationKey
     ): CoreListResource {
         logger.debug(
             `cores.assembler toListResource: in: items:${JSON.stringify(
-                items,
-            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+                items
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
         );
 
         const list: CoreListResource = {

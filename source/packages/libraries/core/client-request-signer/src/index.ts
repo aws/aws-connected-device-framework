@@ -37,7 +37,7 @@ export const signClientRequest = async (): Promise<Plugin> => {
                 region: process.env.AWS_REGION,
                 headers: requestAny.header,
             },
-            credentials,
+            credentials
         );
 
         request.set(signedOptions.headers);

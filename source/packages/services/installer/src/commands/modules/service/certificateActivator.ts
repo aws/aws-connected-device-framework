@@ -48,7 +48,7 @@ export class CertificateActivatorInstaller implements ServiceModule {
         delete answers.certificateActivator?.redeploy;
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
         if ((updatedAnswers.certificateActivator?.redeploy ?? true) === false) {
             return updatedAnswers;
@@ -64,7 +64,7 @@ export class CertificateActivatorInstaller implements ServiceModule {
                     },
                 ]),
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         return updatedAnswers;
@@ -85,7 +85,7 @@ export class CertificateActivatorInstaller implements ServiceModule {
 
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
 
         return parameterOverrides;
@@ -106,7 +106,7 @@ export class CertificateActivatorInstaller implements ServiceModule {
                             'source',
                             'packages',
                             'services',
-                            'certificateactivator',
+                            'certificateactivator'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -137,11 +137,11 @@ export class CertificateActivatorInstaller implements ServiceModule {
                 }
                 const assetlibrarybyResourceLogicalId = await getStackResourceSummaries(
                     this.assetLibraryStackName,
-                    answers.region,
+                    answers.region
                 );
                 const provisioningbyResourceLogicalId = await getStackResourceSummaries(
                     this.provisioningStackName,
-                    answers.region,
+                    answers.region
                 );
                 answers.certificateActivator.provisioningFunctionName =
                     provisioningbyResourceLogicalId('LambdaFunction');
@@ -163,7 +163,7 @@ export class CertificateActivatorInstaller implements ServiceModule {
                         'source',
                         'packages',
                         'services',
-                        'certificateactivator',
+                        'certificateactivator'
                     ),
                     parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,

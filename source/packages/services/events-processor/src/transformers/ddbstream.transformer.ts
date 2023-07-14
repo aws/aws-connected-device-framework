@@ -39,7 +39,7 @@ export class DDBStreamTransformer {
              */
             if (rec.eventSource !== 'aws:dynamodb') {
                 logger.error(
-                    `eventSource ${eventSourceId} incorrectly configured as a dynamodb stream!`,
+                    `eventSource ${eventSourceId} incorrectly configured as a dynamodb stream!`
                 );
                 break;
             }
@@ -72,7 +72,7 @@ export class DDBStreamTransformer {
 
             if (rec.dynamodb === undefined || rec.dynamodb.Keys === undefined) {
                 logger.warn(
-                    `eventSource ${eventSourceId} missing 'Keys' therefore ignoring: ${rec}`,
+                    `eventSource ${eventSourceId} missing 'Keys' therefore ignoring: ${rec}`
                 );
                 continue;
             }
@@ -122,7 +122,7 @@ export class DDBStreamTransformer {
 
             if (transformedEvent.principalValue === undefined) {
                 logger.warn(
-                    `eventSource ${eventSourceId} missing value for principal therefore ignoring.  attributes: ${transformedEvent.attributes}`,
+                    `eventSource ${eventSourceId} missing value for principal therefore ignoring.  attributes: ${transformedEvent.attributes}`
                 );
                 continue;
             }
@@ -131,7 +131,7 @@ export class DDBStreamTransformer {
         }
 
         logger.debug(
-            `ddbstream.transformer transform: exit: ${JSON.stringify(transformedEvents)}`,
+            `ddbstream.transformer transform: exit: ${JSON.stringify(transformedEvents)}`
         );
         return transformedEvents;
     }

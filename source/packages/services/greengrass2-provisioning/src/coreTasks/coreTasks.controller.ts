@@ -34,22 +34,22 @@ import { CoreTasksService } from './coreTasks.service';
 export class CoreTasksController implements interfaces.Controller {
     constructor(
         @inject(TYPES.CoreTasksService) private coreTasksService: CoreTasksService,
-        @inject(TYPES.CoreTasksAssembler) private coreTasksAssembler: CoreTasksAssembler,
+        @inject(TYPES.CoreTasksAssembler) private coreTasksAssembler: CoreTasksAssembler
     ) {}
 
     @httpPost('')
     public async createCoreTask(
         @requestBody() resource: NewCoreTaskResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
-            `coreTasks.controller createCoreTask: in: resource: ${JSON.stringify(resource)}`,
+            `coreTasks.controller createCoreTask: in: resource: ${JSON.stringify(resource)}`
         );
         try {
             const item = this.coreTasksAssembler.toItem(resource);
             const taskId = await this.coreTasksService.create(item);
             logger.debug(
-                `coreTasks.controller createCoreTask: exit: taskId:${JSON.stringify(taskId)}`,
+                `coreTasks.controller createCoreTask: exit: taskId:${JSON.stringify(taskId)}`
             );
             res.location(`/coreTasks/${taskId}`).header('x-taskid', taskId).status(202).send();
         } catch (e) {
@@ -60,7 +60,7 @@ export class CoreTasksController implements interfaces.Controller {
     @httpGet('/:taskId')
     public async getCoreTask(
         @requestParam('taskId') taskId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(`coreTasks.controller getCoreTask: in: taskId:${taskId}`);
 
@@ -72,7 +72,7 @@ export class CoreTasksController implements interfaces.Controller {
             } else {
                 const resource = this.coreTasksAssembler.toResource(item);
                 logger.debug(
-                    `coreTasks.controller getCoreTask: exit: ${JSON.stringify(resource)}`,
+                    `coreTasks.controller getCoreTask: exit: ${JSON.stringify(resource)}`
                 );
                 res.status(200).send(resource);
             }
@@ -85,10 +85,10 @@ export class CoreTasksController implements interfaces.Controller {
     public async listCoreTasks(
         @queryParam('count') count: number,
         @queryParam('exclusiveStartTaskId') exclusiveStartTaskId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
-            `coreTasks.controller listCoreTasks: in: count:${count}, exclusiveStartTaskId:${exclusiveStartTaskId}`,
+            `coreTasks.controller listCoreTasks: in: count:${count}, exclusiveStartTaskId:${exclusiveStartTaskId}`
         );
 
         try {

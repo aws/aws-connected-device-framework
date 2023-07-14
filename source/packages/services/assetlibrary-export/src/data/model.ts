@@ -52,7 +52,7 @@ export function applyMixins(derivedCtor: any, baseCtors: any[]): void {
             Object.defineProperty(
                 derivedCtor.prototype,
                 name,
-                Object.getOwnPropertyDescriptor(baseCtor.prototype, name),
+                Object.getOwnPropertyDescriptor(baseCtor.prototype, name)
             );
         });
     });

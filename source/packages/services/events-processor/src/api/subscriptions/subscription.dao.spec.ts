@@ -185,7 +185,7 @@ describe('SubscriptionDao', () => {
             'gsi2Key-gsi2Sort-index',
             mockedTargetDao,
             mockedDynamoDbUtils,
-            mockedCachedDocumentClientFactory,
+            mockedCachedDocumentClientFactory
         );
     });
 
@@ -358,7 +358,7 @@ describe('SubscriptionDao', () => {
         const actual = await instance.listSubscriptionsForEventMessage(
             eventSourceId,
             principal,
-            principalValue,
+            principalValue
         );
 
         // verify
@@ -369,7 +369,7 @@ describe('SubscriptionDao', () => {
 
 function mockBuildPutItemAttributeMap(
     mockedTargetDao: jest.Mocked<TargetDao>,
-    item: SubscriptionItem,
+    item: SubscriptionItem
 ) {
     // mocks
     const response1 = {

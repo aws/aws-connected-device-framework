@@ -45,13 +45,13 @@ import { CommandsService } from './commands.service';
 export class CommandsController implements interfaces.Controller {
     constructor(
         @inject(TYPES.CommandsService) private commandsService: CommandsService,
-        @inject('tmpdir') private tmpDir: string,
+        @inject('tmpdir') private tmpDir: string
     ) {}
 
     @httpPost('')
     public async createCommand(
         @requestBody() model: CommandModel,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(`commands.controller  createCommand: in: model: ${JSON.stringify(model)}`);
         try {
@@ -67,12 +67,12 @@ export class CommandsController implements interfaces.Controller {
     public async updateCommand(
         @requestBody() command: CommandModel,
         @response() res: Response,
-        @requestParam('commandId') commandId: string,
+        @requestParam('commandId') commandId: string
     ): Promise<void> {
         logger.info(
             `commands.controller updateCommand: in: commandId: ${commandId}, command: ${JSON.stringify(
-                command,
-            )}`,
+                command
+            )}`
         );
         try {
             command.commandId = commandId;
@@ -103,7 +103,7 @@ export class CommandsController implements interfaces.Controller {
     @httpGet('/:commandId')
     public async getCommand(
         @requestParam('commandId') commandId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<CommandModel> {
         logger.info(`commands.controller getCommand: in: commandId:${commandId}`);
         try {
@@ -126,10 +126,10 @@ export class CommandsController implements interfaces.Controller {
         @requestParam('commandId') commandId: string,
         @requestParam('fileId') fileId: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `commands.controller uploadCommandFile: in: commandId:${commandId}, fileId:${fileId}`,
+            `commands.controller uploadCommandFile: in: commandId:${commandId}, fileId:${fileId}`
         );
 
         const busboy = new Busboy.default({ headers: req.headers });
@@ -170,10 +170,10 @@ export class CommandsController implements interfaces.Controller {
     public async deleteCommandFile(
         @requestParam('commandId') commandId: string,
         @requestParam('fileId') fileId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `commands.controller deleteCommandFile: in: commandId:${commandId}, fileId:${fileId}`,
+            `commands.controller deleteCommandFile: in: commandId:${commandId}, fileId:${fileId}`
         );
         res.status(500).json({ error: 'NOT_IMPLEMENTED' });
     }
@@ -184,10 +184,10 @@ export class CommandsController implements interfaces.Controller {
         @queryParam('status') status: string,
         @queryParam('maxResults') maxResults: number,
         @queryParam('nextToken') nextToken: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<ExecutionSummaryListModel> {
         logger.info(
-            `commands.controller listExecutions: in: commandId:${commandId}, status:${status}, maxResults:${maxResults}, nextToken:${nextToken}`,
+            `commands.controller listExecutions: in: commandId:${commandId}, status:${status}, maxResults:${maxResults}, nextToken:${nextToken}`
         );
 
         try {
@@ -215,10 +215,10 @@ export class CommandsController implements interfaces.Controller {
     public async getExecution(
         @requestParam('commandId') commandId: string,
         @requestParam('thingName') thingName: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<ExecutionModel> {
         logger.info(
-            `commands.controller getExecution: in: commandId:${commandId}, thingName:${thingName}`,
+            `commands.controller getExecution: in: commandId:${commandId}, thingName:${thingName}`
         );
 
         try {
@@ -240,10 +240,10 @@ export class CommandsController implements interfaces.Controller {
     public async cancelExecution(
         @requestParam('commandId') commandId: string,
         @requestParam('thingName') thingName: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `commands.controller cancelExecution: in: commandId:${commandId}, thingName:${thingName}`,
+            `commands.controller cancelExecution: in: commandId:${commandId}, thingName:${thingName}`
         );
 
         try {

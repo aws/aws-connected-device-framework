@@ -59,7 +59,7 @@ export interface StackUpdateEventDetail {
 }
 
 const toAccountComponentResource = (
-    stackEventDetail: StackUpdateEventDetail,
+    stackEventDetail: StackUpdateEventDetail
 ): AccountComponentResource => {
     const { accountId, region, status, componentName } = stackEventDetail;
     return {
@@ -71,7 +71,7 @@ const toAccountComponentResource = (
 };
 
 const toUpdateAccountCreatedRequest = (
-    managedAccountStatus: ManagedAccountStatus,
+    managedAccountStatus: ManagedAccountStatus
 ): AccountUpdateRequest => {
     let status: AccountStatus, accountId: string;
     const accountName = managedAccountStatus?.account?.accountName;
@@ -93,7 +93,7 @@ const toUpdateAccountCreatedRequest = (
 
 export const handler = async (
     event: EventBridgeEvent<any, any>,
-    _context: Context,
+    _context: Context
 ): Promise<void> => {
     logger.debug(`handler: event: ${JSON.stringify(event)}`);
 
@@ -116,12 +116,12 @@ export const handler = async (
                 if (event.detail.eventName === 'CreateManagedAccount') {
                     request = toUpdateAccountCreatedRequest(
                         event?.detail?.serviceEventDetails?.serviceEventDetails
-                            ?.createManagedAccountStatus,
+                            ?.createManagedAccountStatus
                     );
                 } else if (event.detail.eventName === 'UpdateManagedAccount') {
                     request = toUpdateAccountCreatedRequest(
                         event?.detail?.serviceEventDetails?.serviceEventDetails
-                            ?.updateManagedAccountStatus,
+                            ?.updateManagedAccountStatus
                     );
                 }
 
@@ -140,18 +140,18 @@ export const handler = async (
                     event.detail.eventName == 'CDFStackCreated'
                 ) {
                     const accountResource = await accountService.getAccountById(
-                        event.detail?.accountId,
+                        event.detail?.accountId
                     );
                     const { organizationalUnitId: organizationalUnit } = accountResource;
 
                     const components = await componentsService.listComponents(organizationalUnit);
 
-                    const component = components.find(
-                        (o) => event.detail?.stackName.includes(o.name),
+                    const component = components.find((o) =>
+                        event.detail?.stackName.includes(o.name)
                     );
                     if (!component) {
                         logger.error(
-                            `handler: could not derive component name from stackName : ${event.detail?.stackName}`,
+                            `handler: could not derive component name from stackName : ${event.detail?.stackName}`
                         );
                         return;
                     }
@@ -165,7 +165,7 @@ export const handler = async (
 
                     const areAllComponentsDeployed = await accountService.areAllComponentsDeployed(
                         event.detail?.accountId,
-                        components,
+                        components
                     );
 
                     if (areAllComponentsDeployed) {

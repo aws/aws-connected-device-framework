@@ -39,14 +39,14 @@ export class DeploymentTasksDao {
 
     public constructor(
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
-        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient,
+        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient
     ) {
         this.dbc = ddcFactory();
     }
 
     public async getCoreDeploymentStatus(taskId: string, coreName: string): Promise<Deployment> {
         logger.debug(
-            `deploymentTasks.dao getDeploymentTaskStatusByCore: in: taskId:${taskId}, coreName:${coreName}}`,
+            `deploymentTasks.dao getDeploymentTaskStatusByCore: in: taskId:${taskId}, coreName:${coreName}}`
         );
 
         const params: GetCommandInput = {
@@ -65,7 +65,7 @@ export class DeploymentTasksDao {
 
         const deployment = this.assembleDeployment(result.Item);
         logger.debug(
-            `deploymentTasks.dao getDeploymentTaskStatusByCore: exit: deployment:${deployment}}`,
+            `deploymentTasks.dao getDeploymentTaskStatusByCore: exit: deployment:${deployment}}`
         );
 
         return deployment;
@@ -74,12 +74,12 @@ export class DeploymentTasksDao {
     public async listDeploymentsByCore(
         coreName: string,
         count?: number,
-        lastEvaluated?: DeploymentTaskListPaginationKey,
+        lastEvaluated?: DeploymentTaskListPaginationKey
     ): Promise<[Deployment[], DeploymentTaskListPaginationKey]> {
         logger.debug(
             `deploymentTasks.dao listDeploymentsByCore: in: coreName:${coreName}, count:${count}, lastEvaluated:${JSON.stringify(
-                lastEvaluated,
-            )}`,
+                lastEvaluated
+            )}`
         );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
@@ -128,8 +128,8 @@ export class DeploymentTasksDao {
 
         logger.debug(
             `deploymentTasks.dao listDeploymentsByCore: in: deployments:${JSON.stringify(
-                deployments,
-            )}, paginationKey: ${JSON.stringify(paginationKey)}`,
+                deployments
+            )}, paginationKey: ${JSON.stringify(paginationKey)}`
         );
         return [deployments, paginationKey];
     }
@@ -137,12 +137,12 @@ export class DeploymentTasksDao {
     public async listCoresByDeploymentTask(
         taskId: string,
         count?: number,
-        lastEvaluated?: CoreDeploymentListPaginationKey,
+        lastEvaluated?: CoreDeploymentListPaginationKey
     ): Promise<[Deployment[], CoreDeploymentListPaginationKey]> {
         logger.debug(
             `deploymentTasks.dao list: in: taskId:${taskId}, count:${count}, lastEvaluated:${JSON.stringify(
-                lastEvaluated,
-            )}`,
+                lastEvaluated
+            )}`
         );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
@@ -181,7 +181,7 @@ export class DeploymentTasksDao {
         let paginationKey: CoreDeploymentListPaginationKey;
         if (results.LastEvaluatedKey) {
             const lastEvaluatedThingName = expandDelimitedAttribute(
-                results.LastEvaluatedKey.sk,
+                results.LastEvaluatedKey.sk
             )[1];
             paginationKey = {
                 thingName: lastEvaluatedThingName,
@@ -190,20 +190,20 @@ export class DeploymentTasksDao {
 
         logger.debug(
             `deploymentTasks.dao listCoresByDeploymentTask: in: deployments:${JSON.stringify(
-                deployments,
-            )}, paginationKey: ${JSON.stringify(paginationKey)}`,
+                deployments
+            )}, paginationKey: ${JSON.stringify(paginationKey)}`
         );
         return [deployments, paginationKey];
     }
 
     public async list(
         count?: number,
-        lastEvaluated?: DeploymentTaskListPaginationKey,
+        lastEvaluated?: DeploymentTaskListPaginationKey
     ): Promise<[DeploymentTask[], DeploymentTaskListPaginationKey]> {
         logger.debug(
             `deploymentTasks.dao list: in: count:${count}, lastEvaluated:${JSON.stringify(
-                lastEvaluated,
-            )}`,
+                lastEvaluated
+            )}`
         );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
@@ -248,8 +248,8 @@ export class DeploymentTasksDao {
 
         logger.debug(
             `templates.dao list: exit: response:${JSON.stringify(
-                deploymentTaskList,
-            )}, paginationKey:${paginationKey}`,
+                deploymentTaskList
+            )}, paginationKey:${paginationKey}`
         );
 
         return [deploymentTaskList, paginationKey];
@@ -293,12 +293,12 @@ export class DeploymentTasksDao {
 
     public async saveDeploymentTask(
         task: DeploymentTask,
-        saveBatchProgress: boolean,
+        saveBatchProgress: boolean
     ): Promise<void> {
         logger.debug(
             `deploymentTasks.dao saveDeploymentTask: in: task:${JSON.stringify(
-                task,
-            )}, saveBatchProgress:${saveBatchProgress}`,
+                task
+            )}, saveBatchProgress:${saveBatchProgress}`
         );
 
         ow(task, ow.object.nonEmpty);
@@ -377,7 +377,7 @@ export class DeploymentTasksDao {
                     },
                 };
                 params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(
-                    deploymentTaskDetailItem,
+                    deploymentTaskDetailItem
                 );
             }
         }
@@ -406,7 +406,7 @@ export class DeploymentTasksDao {
         };
 
         logger.silly(
-            `deploymentTasks.dao getDeploymentIdByJobId: QueryInput: ${JSON.stringify(params)}`,
+            `deploymentTasks.dao getDeploymentIdByJobId: QueryInput: ${JSON.stringify(params)}`
         );
 
         const results = await this.dbc.send(new QueryCommand(params));
@@ -425,8 +425,8 @@ export class DeploymentTasksDao {
     public async saveTaskDetail(taskId: string, deployment: Deployment): Promise<void> {
         logger.debug(
             `deploymentTasks.dao saveTaskDetail: in: taskId:${taskId}, deployment:${JSON.stringify(
-                deployment,
-            )}`,
+                deployment
+            )}`
         );
 
         ow(taskId, ow.string.nonEmpty);
@@ -487,7 +487,7 @@ export class DeploymentTasksDao {
             total: result.Attributes['batchesTotal'],
         };
         logger.debug(
-            `deploymentTasks.dao incrementBatchProgress: exit: ${JSON.stringify(response)}`,
+            `deploymentTasks.dao incrementBatchProgress: exit: ${JSON.stringify(response)}`
         );
         return response;
     }
@@ -503,7 +503,7 @@ export class DeploymentTasksDao {
         }
 
         logger.debug(
-            `deploymentTasks.dao assembleList: response:${JSON.stringify(deploymentTaskList)}`,
+            `deploymentTasks.dao assembleList: response:${JSON.stringify(deploymentTaskList)}`
         );
 
         return deploymentTaskList;
@@ -522,7 +522,7 @@ export class DeploymentTasksDao {
         });
 
         logger.debug(
-            `deploymentTasks.dao assembleDeployments: deployments:${JSON.stringify(deployments)}`,
+            `deploymentTasks.dao assembleDeployments: deployments:${JSON.stringify(deployments)}`
         );
         return deployments;
     }

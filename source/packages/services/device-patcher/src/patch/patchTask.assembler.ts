@@ -51,7 +51,7 @@ export class PatchTaskAssembler {
         });
 
         logger.debug(
-            `activation.assembler toResource: exit: resource: ${JSON.stringify(resource)}`,
+            `activation.assembler toResource: exit: resource: ${JSON.stringify(resource)}`
         );
         return resource;
     }

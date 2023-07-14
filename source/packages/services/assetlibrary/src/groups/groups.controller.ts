@@ -42,7 +42,7 @@ export class GroupsController implements interfaces.Controller {
     constructor(
         @inject(TYPES.GroupsService) private groupsService: GroupsService,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
-        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler
     ) {}
 
     @httpGet('/:groupPath')
@@ -50,7 +50,7 @@ export class GroupsController implements interfaces.Controller {
         @requestParam('groupPath') groupPath: string,
         @queryParam('includeGroups') groups: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<GroupBaseResource> {
         logger.info(`groups.controller get: in: groupPath: ${groupPath}`);
         try {
@@ -74,12 +74,12 @@ export class GroupsController implements interfaces.Controller {
     public async createGroup(
         @requestBody() group: GroupBaseResource,
         @response() res: Response,
-        @queryParam('applyProfile') applyProfile?: string,
+        @queryParam('applyProfile') applyProfile?: string
     ): Promise<void> {
         logger.info(
             `groups.controller createGroup: in: group: ${JSON.stringify(
-                group,
-            )}, applyProfile:${applyProfile}`,
+                group
+            )}, applyProfile:${applyProfile}`
         );
         try {
             const item = this.groupsAssembler.fromGroupResource(group);
@@ -96,12 +96,12 @@ export class GroupsController implements interfaces.Controller {
         @requestBody() group: GroupBaseResource,
         @response() res: Response,
         @requestParam('groupPath') groupPath: string,
-        @queryParam('applyProfile') applyProfile?: string,
+        @queryParam('applyProfile') applyProfile?: string
     ): Promise<void> {
         logger.info(
             `groups.controller update: in: groupPath: ${groupPath}, group: ${JSON.stringify(
-                group,
-            )}, applyProfile:${applyProfile}`,
+                group
+            )}, applyProfile:${applyProfile}`
         );
         try {
             group.groupPath = groupPath;
@@ -122,10 +122,10 @@ export class GroupsController implements interfaces.Controller {
         @queryParam('count') count: number,
         @queryParam('sort') sort: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<GroupMemberResourceList> {
         logger.info(
-            `groups.controller listGroupMembers: in: groupPath:${groupPath}, category:${category}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${sort}`,
+            `groups.controller listGroupMembers: in: groupPath:${groupPath}, category:${category}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${sort}`
         );
 
         let r: GroupMemberResourceList = { results: [] };
@@ -135,7 +135,7 @@ export class GroupsController implements interfaces.Controller {
         try {
             if (Array.isArray(template)) {
                 throw new InvalidQueryStringError(
-                    'Only one `template` query param can be provided.',
+                    'Only one `template` query param can be provided.'
                 );
             }
             if (Array.isArray(state)) {
@@ -150,7 +150,7 @@ export class GroupsController implements interfaces.Controller {
                 state,
                 offset,
                 count,
-                sortKeys,
+                sortKeys
             );
             if (items === undefined) {
                 res.status(404);
@@ -168,14 +168,14 @@ export class GroupsController implements interfaces.Controller {
     public async listGroupMemberships(
         @requestParam('groupPath') groupPath: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<GroupResourceList> {
         logger.info(`groups.controller getGroupMemberships: in: groupPath:${groupPath}`);
         try {
             const items = await this.groupsService.getParentGroups(groupPath);
             const resources = this.groupsAssembler.toGroupResourceList(
                 { results: items },
-                req['version'],
+                req['version']
             );
 
             logger.debug(`controller exit: ${JSON.stringify(resources)}`);
@@ -194,7 +194,7 @@ export class GroupsController implements interfaces.Controller {
     @httpDelete('/:groupPath')
     public async deleteGroup(
         @response() res: Response,
-        @requestParam('groupPath') groupPath: string,
+        @requestParam('groupPath') groupPath: string
     ): Promise<void> {
         logger.info(`groups.controller delete: in: groupPath: ${groupPath}`);
         try {
@@ -209,10 +209,10 @@ export class GroupsController implements interfaces.Controller {
         @requestParam('sourceGroupPath') sourceGroupPath: string,
         @requestParam('relationship') relationship: string,
         @requestParam('targetGroupPath') targetGroupPath: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `groups.controller attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`,
+            `groups.controller attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`
         );
         try {
             await this.groupsService.attachToGroup(sourceGroupPath, relationship, targetGroupPath);
@@ -226,16 +226,16 @@ export class GroupsController implements interfaces.Controller {
         @requestParam('sourceGroupPath') sourceGroupPath: string,
         @requestParam('relationship') relationship: string,
         @requestParam('targetGroupPath') targetGroupPath: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `groups.controller detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`,
+            `groups.controller detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`
         );
         try {
             await this.groupsService.detachFromGroup(
                 sourceGroupPath,
                 relationship,
-                targetGroupPath,
+                targetGroupPath
             );
         } catch (e) {
             handleError(e, res);
@@ -252,10 +252,10 @@ export class GroupsController implements interfaces.Controller {
         @queryParam('count') count: number,
         @queryParam('sort') sort: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<GroupResourceList> {
         logger.info(
-            `groups.controller listGroupRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}, sort:${sort}`,
+            `groups.controller listGroupRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}, sort:${sort}`
         );
 
         let r: GroupResourceList = { results: [] };
@@ -263,12 +263,12 @@ export class GroupsController implements interfaces.Controller {
         try {
             if (Array.isArray(direction)) {
                 throw new InvalidQueryStringError(
-                    'Only one `direction` query param can be provided.',
+                    'Only one `direction` query param can be provided.'
                 );
             }
             if (Array.isArray(template)) {
                 throw new InvalidQueryStringError(
-                    'Only one `template` query param can be provided.',
+                    'Only one `template` query param can be provided.'
                 );
             }
 
@@ -280,7 +280,7 @@ export class GroupsController implements interfaces.Controller {
                 template,
                 offset,
                 count,
-                sortKeys,
+                sortKeys
             );
             r = this.groupsAssembler.toGroupResourceList(items, req['version']);
 
@@ -305,10 +305,10 @@ export class GroupsController implements interfaces.Controller {
         @queryParam('count') count: number,
         @queryParam('sort') sort: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<DeviceResourceList> {
         logger.info(
-            `groups.controller listGroupRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${sort}`,
+            `groups.controller listGroupRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${sort}`
         );
 
         let r: DeviceResourceList = { results: [] };
@@ -316,12 +316,12 @@ export class GroupsController implements interfaces.Controller {
         try {
             if (Array.isArray(direction)) {
                 throw new InvalidQueryStringError(
-                    'Only one `direction` query param can be provided.',
+                    'Only one `direction` query param can be provided.'
                 );
             }
             if (Array.isArray(template)) {
                 throw new InvalidQueryStringError(
-                    'Only one `template` query param can be provided.',
+                    'Only one `template` query param can be provided.'
                 );
             }
             if (Array.isArray(state)) {
@@ -337,7 +337,7 @@ export class GroupsController implements interfaces.Controller {
                 state,
                 offset,
                 count,
-                sortKeys,
+                sortKeys
             );
             r = this.devicesAssembler.toDeviceResourceList(items, req['version']);
             if (r === undefined) {

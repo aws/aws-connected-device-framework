@@ -32,7 +32,7 @@ export class BatchService implements Batcher {
         @inject('defaults.batch.by') public batchBy: string,
         @inject('aws.s3.export.bucket') private exportBucket: string,
         @inject('aws.s3.export.prefix') private exportKeyPrefix: string,
-        @inject(TYPES.S3Utils) private s3Utils: S3Utils,
+        @inject(TYPES.S3Utils) private s3Utils: S3Utils
     ) {
         this.batchers['type'] = typeBatcher;
         this.batchers['category'] = categoryBatcher;

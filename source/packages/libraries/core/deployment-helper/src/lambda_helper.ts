@@ -26,7 +26,7 @@ exports.handler = async (
         | CloudFormationCustomResourceCreateEvent
         | CloudFormationCustomResourceUpdateEvent
         | CloudFormationCustomResourceDeleteEvent,
-    context: Context,
+    context: Context
 ) => {
     logger.debug(`Event:${JSON.stringify(event)} Context: ${JSON.stringify(context)}`);
 

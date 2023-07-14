@@ -112,12 +112,12 @@ export class DeviceItem {
         const relatedGroupPaths: string[] = [];
         if (this.groups?.in) {
             Object.values(this.groups.in).forEach((relations) =>
-                relations.forEach((relation) => relatedGroupPaths.push(relation.id)),
+                relations.forEach((relation) => relatedGroupPaths.push(relation.id))
             );
         }
         if (this.groups?.out) {
             Object.values(this.groups.out).forEach((relations) =>
-                relations.forEach((relation) => relatedGroupPaths.push(relation.id)),
+                relations.forEach((relation) => relatedGroupPaths.push(relation.id))
             );
         }
         return relatedGroupPaths;
@@ -127,12 +127,12 @@ export class DeviceItem {
         const relatedDeviceIds: string[] = [];
         if (this.devices?.in) {
             Object.values(this.devices.in).forEach((relations) =>
-                relations.forEach((relation) => relatedDeviceIds.push(relation.id)),
+                relations.forEach((relation) => relatedDeviceIds.push(relation.id))
             );
         }
         if (this.devices?.out) {
             Object.values(this.devices.out).forEach((relations) =>
-                relations.forEach((relation) => relatedDeviceIds.push(relation.id)),
+                relations.forEach((relation) => relatedDeviceIds.push(relation.id))
             );
         }
         return relatedDeviceIds;
@@ -148,7 +148,7 @@ export class DeviceItemList {
 }
 
 export function determineIfDevice20Resource(
-    toBeDetermined: DeviceBaseResource,
+    toBeDetermined: DeviceBaseResource
 ): toBeDetermined is Device20Resource {
     const asV2 = toBeDetermined as Device20Resource;
     if (asV2.groups?.in || asV2.groups?.out || asV2.devices?.in || asV2.devices?.out) {

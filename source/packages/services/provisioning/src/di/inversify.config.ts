@@ -81,7 +81,7 @@ container
     .inSingletonScope();
 container
     .bind<RegisterDeviceCertificateWithoutCAStepProcessor>(
-        TYPES.RegisterDeviceCertificateWithoutCAStepProcessor,
+        TYPES.RegisterDeviceCertificateWithoutCAStepProcessor
     )
     .to(RegisterDeviceCertificateWithoutCAStepProcessor)
     .inSingletonScope();
@@ -188,7 +188,7 @@ container.bind<interfaces.Factory<AWS.ACMPCA>>(TYPES.ACMPCAFactory).toFactory<AW
                             acmpcaConfig.credentials.sessionToken = data.Credentials.SessionToken;
                             acmPcaStsExpiresAt = data.Credentials.Expiration;
                         }
-                    },
+                    }
                 );
             }
 

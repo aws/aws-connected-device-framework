@@ -36,7 +36,7 @@ export class SimulationsService {
     public constructor(
         @inject(TYPES.SimulationsDao) private _dao: SimulationsDao,
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
-        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS,
+        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS
     ) {
         this._sns = snsFactory();
         this._s3 = s3Factory();
@@ -152,10 +152,10 @@ export class SimulationsService {
         simulationId: string,
         instances: number,
         s3RootKey: string,
-        taskOverrides?: SimulationTaskOverride,
+        taskOverrides?: SimulationTaskOverride
     ): Promise<void> {
         logger.debug(
-            `simulations.service launchRunner: in: simulationId:${simulationId}, instances:${instances}, s3RootKey:${s3RootKey}`,
+            `simulations.service launchRunner: in: simulationId:${simulationId}, instances:${instances}, s3RootKey:${s3RootKey}`
         );
 
         ow(simulationId, ow.string.nonEmpty);

@@ -23,13 +23,13 @@ import { SimulationsService } from './simulations.service';
 @controller('/simulations')
 export class SimulationsController implements interfaces.Controller {
     public constructor(
-        @inject(TYPES.SimulationsService) private simulationService: SimulationsService,
+        @inject(TYPES.SimulationsService) private simulationService: SimulationsService
     ) {}
 
     @httpPost('/')
     public async createSimulation(
         @requestBody() request: CreateSimulationRequest,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(`simulations.controller createSimulation: request:${JSON.stringify(request)}`);
 

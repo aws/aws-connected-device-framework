@@ -37,7 +37,7 @@ describe('FilterService', () => {
             mockedSubscriptionDao,
             mockedAlertDao,
             mockedEventConditionsUtils,
-            mockedEventDao,
+            mockedEventDao
         );
     });
 
@@ -521,7 +521,7 @@ describe('FilterService', () => {
         const attributeMap = await instance.getTemplatePropertiesData(
             mockedSubscriptionItem,
             mockedEvent,
-            mockedTemplateCache,
+            mockedTemplateCache
         );
         expect(attributeMap).toEqual({
             batteryLevel: 21,
@@ -598,7 +598,7 @@ describe('FilterService', () => {
         const attributeMap = await instance.getTemplatePropertiesData(
             mockedSubscriptionItem,
             mockedEvent,
-            mockedTemplateCache,
+            mockedTemplateCache
         );
         expect(attributeMap).toEqual({});
 

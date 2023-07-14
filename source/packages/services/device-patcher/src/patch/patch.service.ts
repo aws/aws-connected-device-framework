@@ -27,7 +27,7 @@ import { PatchListPaginationKey } from './patchTask.dao';
 export class PatchService {
     constructor(
         @inject(TYPES.PatchDao) private patchDao: PatchDao,
-        @inject(TYPES.PatchManager) private patchManager: PatchManager,
+        @inject(TYPES.PatchManager) private patchManager: PatchManager
     ) {}
 
     public validate(patches: PatchItem[]) {
@@ -116,7 +116,7 @@ export class PatchService {
         deviceId: string,
         status?: string,
         count?: number,
-        exclusiveStartKey?: PatchListPaginationKey,
+        exclusiveStartKey?: PatchListPaginationKey
     ): Promise<[PatchItem[], PatchListPaginationKey]> {
         logger.debug(`PatchService listPatchesByDeviceId: in: deviceId: ${deviceId}`);
 
@@ -131,7 +131,7 @@ export class PatchService {
         }
 
         logger.debug(
-            `patch.service listPatchsByDeviceId: exit: patch: ${JSON.stringify(patches)}`,
+            `patch.service listPatchsByDeviceId: exit: patch: ${JSON.stringify(patches)}`
         );
         return patches;
     }

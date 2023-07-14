@@ -38,12 +38,12 @@ export class EventController implements interfaces.Controller {
     public async createEvent(
         @requestParam('eventSourceId') eventSourceId: string,
         @requestBody() event: EventResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
             `event.controller createEvent: in: eventSourceId:${eventSourceId}, event:${JSON.stringify(
-                event,
-            )}`,
+                event
+            )}`
         );
 
         event.eventSourceId = eventSourceId;
@@ -60,7 +60,7 @@ export class EventController implements interfaces.Controller {
     @httpGet('/events/:eventId')
     public async getEvent(
         @requestParam('eventId') eventId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<EventResource> {
         logger.debug(`event.controller getEvent: eventId:${eventId}`);
 
@@ -80,7 +80,7 @@ export class EventController implements interfaces.Controller {
     @httpDelete('/events/:eventId')
     public async deleteEvent(
         @requestParam('eventId') eventId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(`event.controller deleteEvent: eventId:${eventId}`);
 
@@ -97,10 +97,10 @@ export class EventController implements interfaces.Controller {
         @requestParam('eventSourceId') eventSourceId: string,
         @queryParam('count') count: number,
         @queryParam('fromEventId') fromEventId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<EventResourceList> {
         logger.debug(
-            `event.controller listEventsForEventSource: in: eventSourceId:${eventSourceId}, count:${count}, fromEventId:${fromEventId}`,
+            `event.controller listEventsForEventSource: in: eventSourceId:${eventSourceId}, count:${count}, fromEventId:${fromEventId}`
         );
 
         let model;
@@ -129,10 +129,10 @@ export class EventController implements interfaces.Controller {
     public async updateEvent(
         @requestParam('eventId') eventId: string,
         @requestBody() event: EventResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
-            `event.controller updateEvent: event:${JSON.stringify(event)}, eventId:${eventId}`,
+            `event.controller updateEvent: event:${JSON.stringify(event)}, eventId:${eventId}`
         );
 
         event.eventId = eventId;

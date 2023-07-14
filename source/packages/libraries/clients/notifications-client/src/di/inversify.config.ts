@@ -40,31 +40,31 @@ export const notificationsContainerModule = new ContainerModule(
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind,
+        _rebind: interfaces.Rebind
     ) => {
         if (process.env.NOTIFICATIONS_MODE === 'lambda') {
             bind<EventsService>(NOTIFICATIONS_CLIENT_TYPES.EventsService).to(EventsLambdaService);
             bind<EventsourcesService>(NOTIFICATIONS_CLIENT_TYPES.EventSourcesService).to(
-                EventsourcesLambdaService,
+                EventsourcesLambdaService
             );
             bind<SubscriptionsService>(NOTIFICATIONS_CLIENT_TYPES.SubscriptionsService).to(
-                SubscriptionsLambdaService,
+                SubscriptionsLambdaService
             );
             bind<TargetsService>(NOTIFICATIONS_CLIENT_TYPES.TargetsService).to(
-                TargetsLambdaService,
+                TargetsLambdaService
             );
             bind<MessagesDebugService>(NOTIFICATIONS_CLIENT_TYPES.MessageDebugService).to(
-                MessagesDebugLambdaService,
+                MessagesDebugLambdaService
             );
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 // always check to see if bound first incase it was bound by another client
                 bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
-                    LambdaInvokerService,
+                    LambdaInvokerService
                 );
                 decorate(injectable(), AWS.Lambda);
                 bind<interfaces.Factory<AWS.Lambda>>(
-                    LAMBDAINVOKE_TYPES.LambdaFactory,
+                    LAMBDAINVOKE_TYPES.LambdaFactory
                 ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
                     return () => {
                         if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
@@ -78,17 +78,17 @@ export const notificationsContainerModule = new ContainerModule(
         } else {
             bind<EventsService>(NOTIFICATIONS_CLIENT_TYPES.EventsService).to(EventsApigwService);
             bind<EventsourcesService>(NOTIFICATIONS_CLIENT_TYPES.EventSourcesService).to(
-                EventsourcesApigwService,
+                EventsourcesApigwService
             );
             bind<SubscriptionsService>(NOTIFICATIONS_CLIENT_TYPES.SubscriptionsService).to(
-                SubscriptionsApigwService,
+                SubscriptionsApigwService
             );
             bind<TargetsService>(NOTIFICATIONS_CLIENT_TYPES.TargetsService).to(
-                TargetsApigwService,
+                TargetsApigwService
             );
             bind<MessagesDebugService>(NOTIFICATIONS_CLIENT_TYPES.MessageDebugService).to(
-                MessagesDebugApigwService,
+                MessagesDebugApigwService
             );
         }
-    },
+    }
 );

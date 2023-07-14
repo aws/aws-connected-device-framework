@@ -48,7 +48,7 @@ export class MessagesService {
         @inject(TYPES.MessagesDao) private messagesDao: MessagesDao,
         @inject(TYPES.WorkflowFactory) private workflowFactory: WorkflowFactory,
         @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS,
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
+        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot
     ) {
         this.sqs = sqsFactory();
         this.iot = iotFactory();
@@ -84,7 +84,7 @@ export class MessagesService {
             command.payloadParams.forEach((p) => {
                 if (message.payloadParamValues?.[p] === undefined) {
                     throw new Error(
-                        `FAILED_VALIDATION: value for command payload parameter '${p}' not provided`,
+                        `FAILED_VALIDATION: value for command payload parameter '${p}' not provided`
                     );
                 }
             });
@@ -103,8 +103,8 @@ export class MessagesService {
     public async processMessage(message: MessageItem, command: CommandItem): Promise<void> {
         logger.debug(
             `messages.service: processMessage: message:${JSON.stringify(
-                message,
-            )}, command:${JSON.stringify(command)}`,
+                message
+            )}, command:${JSON.stringify(command)}`
         );
 
         let failed = false;
@@ -149,7 +149,7 @@ export class MessagesService {
             message,
             failed,
             failedReason,
-            command.deliveryMethod.expectReply,
+            command.deliveryMethod.expectReply
         );
 
         logger.debug(`messages.service: processMessage: exit:`);
@@ -159,12 +159,12 @@ export class MessagesService {
         message: MessageItem,
         failed: boolean,
         failedReason: string,
-        expectReply: boolean,
+        expectReply: boolean
     ): Promise<void> {
         logger.debug(
             `messages.service saveBatchStatus: in: message:${JSON.stringify(
-                message,
-            )}, failed:${failed}, failedReason:${failedReason}`,
+                message
+            )}, failed:${failed}, failedReason:${failedReason}`
         );
 
         // update the batch progress
@@ -212,12 +212,12 @@ export class MessagesService {
     public async listMessages(
         commandId: string,
         exclusiveStart?: MessageListPaginationKey,
-        count?: number,
+        count?: number
     ): Promise<[MessageItem[], MessageListPaginationKey]> {
         logger.debug(
             `messages.service listMessages: in: commandId:${commandId}, exclusiveStart:${JSON.stringify(
-                exclusiveStart,
-            )}, count:${count}`,
+                exclusiveStart
+            )}, count:${count}`
         );
 
         ow(commandId, ow.string.nonEmpty);
@@ -240,12 +240,12 @@ export class MessagesService {
     public async listRecipients(
         messageId: string,
         exclusiveStart?: RecipientListPaginationKey,
-        count?: number,
+        count?: number
     ): Promise<[Recipient[], RecipientListPaginationKey]> {
         logger.debug(
             `messages.service listRecipients: in: messageId:${messageId}, exclusiveStart:${JSON.stringify(
-                exclusiveStart,
-            )}, count:${count}`,
+                exclusiveStart
+            )}, count:${count}`
         );
 
         ow(messageId, ow.string.nonEmpty);
@@ -263,7 +263,7 @@ export class MessagesService {
 
     public async getRecipient(messageId: string, thingName: string): Promise<Recipient> {
         logger.debug(
-            `messages.service getRecipient: in:messageId:${messageId}, thingName:${thingName}`,
+            `messages.service getRecipient: in:messageId:${messageId}, thingName:${thingName}`
         );
 
         ow(messageId, ow.string.nonEmpty);
@@ -278,12 +278,12 @@ export class MessagesService {
         messageId: string,
         thingName: string,
         exclusiveStart?: ReplyListPaginationKey,
-        count?: number,
+        count?: number
     ): Promise<[ReplyItem[], ReplyListPaginationKey]> {
         logger.debug(
             `messages.service listReplies: in: messageId:${messageId}, thingName:${thingName}, exclusiveStart:${JSON.stringify(
-                exclusiveStart,
-            )}, count:${count}`,
+                exclusiveStart
+            )}, count:${count}`
         );
 
         ow(messageId, ow.string.nonEmpty);
@@ -359,7 +359,7 @@ export class MessagesService {
                 messageId,
                 thingName,
                 exclusiveStart,
-                count,
+                count
             );
         }
 
@@ -389,7 +389,7 @@ export class MessagesService {
             r[0]?.forEach(async (recipient) => {
                 // delete the recipient, processing a page at a time. this will allow the delete method to be safely rerun in the edge case where deletion of millions of recipients of a message may fail due to exceeding lambda execution time limits
                 futures.push(
-                    limit(() => this.sqsSendRecipientForDeletion(messageId, recipient.id)),
+                    limit(() => this.sqsSendRecipientForDeletion(messageId, recipient.id))
                 );
             });
             await Promise.all(futures);
@@ -408,7 +408,7 @@ export class MessagesService {
 
     public async processRecipientDeletion(messageId: string, thingName: string): Promise<void> {
         logger.debug(
-            `messages.service processRecipientDeletion: in: messageId:${messageId}, thingName:${thingName}`,
+            `messages.service processRecipientDeletion: in: messageId:${messageId}, thingName:${thingName}`
         );
 
         await this.messagesDao.deleteRecipient(messageId, thingName);
@@ -418,7 +418,7 @@ export class MessagesService {
 
     private async sqsSendMessageForProcessing(
         message: MessageItem,
-        command: CommandItem,
+        command: CommandItem
     ): Promise<SendMessageResult> {
         return this.sqs
             .sendMessage({
@@ -456,7 +456,7 @@ export class MessagesService {
 
     private async sqsSendRecipientForDeletion(
         messageId: string,
-        thingName: string,
+        thingName: string
     ): Promise<SendMessageResult> {
         return this.sqs
             .sendMessage({

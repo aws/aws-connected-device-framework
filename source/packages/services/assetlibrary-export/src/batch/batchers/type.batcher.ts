@@ -29,7 +29,7 @@ export class TypeBatcher extends BatcherBase implements Batcher {
     constructor(
         @inject(TYPES.TypesService) private typesService: TypesService,
         @inject(TYPES.LabelsService) private labelsService: LabelsService,
-        @inject('defaults.batch.size') private batchSize: number,
+        @inject('defaults.batch.size') private batchSize: number
     ) {
         super();
     }
@@ -54,8 +54,8 @@ export class TypeBatcher extends BatcherBase implements Batcher {
     private async getBatchesByTypes(category: string, types: TypeModel[]): Promise<Batch[]> {
         logger.debug(
             `types.batcher: getBatchesByTypes in: category: ${category}, types: ${JSON.stringify(
-                types,
-            )}`,
+                types
+            )}`
         );
 
         const typeIds = types.map((type) => type.templateId);

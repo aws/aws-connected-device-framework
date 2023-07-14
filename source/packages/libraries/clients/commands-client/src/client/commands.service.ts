@@ -35,30 +35,30 @@ export interface CommandsService {
         commandId: string,
         fileId: string,
         fileLocation: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     deleteCommandFile(
         commandId: string,
         fileId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
 
     listExecutions(
         commandId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ExecutionSummaryListModel>;
 
     getExecution(
         commandId: string,
         thingName: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ExecutionModel>;
 
     cancelExecution(
         commandId: string,
         thingName: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ExecutionModel>;
 }
 
@@ -98,7 +98,7 @@ export class CommandsServiceBase {
         if (customHeaders !== undefined) {
             try {
                 const headersFromConfig: RequestHeaders = JSON.parse(
-                    customHeaders,
+                    customHeaders
                 ) as unknown as RequestHeaders;
                 headers = { ...headers, ...headersFromConfig };
             } catch (err) {

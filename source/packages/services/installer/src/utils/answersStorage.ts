@@ -30,11 +30,7 @@ export class AnswersStorage {
     private environmentFileName: string;
     private localStoragePath: string;
 
-    constructor(
-        private accountId: string,
-        private region: string,
-        private environment: string,
-    ) {
+    constructor(private accountId: string, private region: string, private environment: string) {
         this.localStoragePath = path.join(configurationRootPath, this.accountId, this.region);
 
         this.localStorage = new LocalStorage(this.localStoragePath);
@@ -53,14 +49,14 @@ export class AnswersStorage {
         const answers: Answers = Object.assign(
             {},
             JSON.parse(this.localStorage[this.environmentFileName]),
-            { environment: this.environment, region: this.region, accountId: this.accountId },
+            { environment: this.environment, region: this.region, accountId: this.accountId }
         );
         return answers;
     }
 
     public static async loadFromFile(
         configLocation: string,
-        deploymentInformation?: DeploymentInformation,
+        deploymentInformation?: DeploymentInformation
     ): Promise<Answers> {
         const configOnDisk = await fs.readFile(configLocation, 'utf8');
         const answer: Answers = JSON.parse(configOnDisk);

@@ -48,11 +48,11 @@ export class OrganizationManagerInstaller implements RestModule {
     public async generateLocalConfiguration(answers: Answers): Promise<string> {
         const byResourceLogicalId = await getStackResourceSummaries(
             this.stackName,
-            answers.region,
+            answers.region
         );
         const configBuilder = new ConfigBuilder().add(
             `AWS_DYNAMODB_ORGANIZATION_TABLE`,
-            byResourceLogicalId('OrganizationManagerTable'),
+            byResourceLogicalId('OrganizationManagerTable')
         );
         return configBuilder.config;
     }
@@ -75,15 +75,15 @@ export class OrganizationManagerInstaller implements RestModule {
             .add(`ENABLE_DELETE_OUS_FEATURE`, answers.organizationManager?.deleteOUsEnabled)
             .add(
                 `ENABLE_CREATE_ACCOUNTS_FEATURE`,
-                answers.organizationManager?.createAccountsEnabled,
+                answers.organizationManager?.createAccountsEnabled
             )
             .add(
                 `ENABLE_DELETE_ACCOUNTS_FEATURE`,
-                answers.organizationManager?.deleteAccountsEnabled,
+                answers.organizationManager?.deleteAccountsEnabled
             )
             .add(
                 `MANAGEMENT_ACCOUNT_ASSUME_ROLE`,
-                answers.organizationManager?.managementAccountRole,
+                answers.organizationManager?.managementAccountRole
             )
             .add(`SUSPENDED_OU`, answers.organizationManager?.suspendedOU);
 
@@ -95,7 +95,7 @@ export class OrganizationManagerInstaller implements RestModule {
 
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
 
         if ((updatedAnswers.organizationManager?.redeploy ?? true) === false) {
@@ -109,7 +109,7 @@ export class OrganizationManagerInstaller implements RestModule {
                 chooseS3BucketPrompt(
                     'Provide the name of an existing S3 bucket used by control tower customization:',
                     'organizationManager.controlTowerBucket',
-                    answers.organizationManager?.controlTowerBucket,
+                    answers.organizationManager?.controlTowerBucket
                 ),
                 ...applicationConfigurationPrompt(this.name, answers, [
                     {
@@ -215,7 +215,7 @@ export class OrganizationManagerInstaller implements RestModule {
                     },
                 },
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         return updatedAnswers;
@@ -244,7 +244,7 @@ export class OrganizationManagerInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
         return parameterOverrides;
     }
@@ -270,7 +270,7 @@ export class OrganizationManagerInstaller implements RestModule {
     public async createBucketAndApplyPolicy(
         bucketPrefix: string,
         region: string,
-        organizationId: string,
+        organizationId: string
     ) {
         const s3 = new S3Client({ region });
         const bucketName = `${bucketPrefix}-${region}`;
@@ -301,14 +301,14 @@ export class OrganizationManagerInstaller implements RestModule {
             new PutBucketPolicyCommand({
                 Bucket: bucketName,
                 Policy: JSON.stringify(policyToApply),
-            }),
+            })
         );
     }
 
     private async uploadSampleTemplates(
         controlPlaneRegion: string,
         bucketPrefix: string,
-        supportedRegions: string[],
+        supportedRegions: string[]
     ): Promise<void> {
         const monorepoRoot = await getMonorepoRoot();
         const regions = supportedRegions.join(' ');
@@ -329,7 +329,7 @@ export class OrganizationManagerInstaller implements RestModule {
                 '-R',
                 controlPlaneRegion,
             ],
-            cmdOptions,
+            cmdOptions
         );
     }
 
@@ -358,9 +358,9 @@ export class OrganizationManagerInstaller implements RestModule {
                             return this.createBucketAndApplyPolicy(
                                 artifactBucketPrefix,
                                 region,
-                                organizationId,
+                                organizationId
                             );
-                        },
+                        }
                     );
                     await Promise.all(createBucketPromises);
                 },
@@ -372,7 +372,7 @@ export class OrganizationManagerInstaller implements RestModule {
                     await this.uploadSampleTemplates(
                         answers.region,
                         artifactBucketPrefix,
-                        supportedRegions,
+                        supportedRegions
                     );
                 },
             },
@@ -391,7 +391,7 @@ export class OrganizationManagerInstaller implements RestModule {
                         needsCapabilityAutoExpand: true,
                     });
                 },
-            },
+            }
         );
 
         return [answers, tasks];

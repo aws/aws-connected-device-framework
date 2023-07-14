@@ -31,7 +31,7 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
         @inject(TYPES.CertUtils) private certUtils: CertUtils,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         // as the ACMPCA may be configured for cross-account access, we use the factory directly which includes automatic STS expiration handling
-        @inject(TYPES.ACMPCAFactory) private acmpcaFactory: () => ACMPCA,
+        @inject(TYPES.ACMPCAFactory) private acmpcaFactory: () => ACMPCA
     ) {
         this.iot = iotFactory();
     }
@@ -42,7 +42,7 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
         const templateParams = stepData?.template?.CDF?.acmpca;
         ow(
             templateParams,
-            ow.object.message('Missing ACM PCA config in the provisioning template.'),
+            ow.object.message('Missing ACM PCA config in the provisioning template.')
         );
         ow(templateParams.mode, ow.string.oneOf(['REGISTER_WITH_CA', 'REGISTER_WITHOUT_CA']));
 
@@ -57,8 +57,8 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
                 ow(
                     cdfParams.awsiotCaArn,
                     ow.string.message(
-                        'Either `awsiotCaAlias` or `awsiotCaArn` must be provided when the provisoning template is configured to use ACM PCA in `REGISTER_WITH_CA` mode.',
-                    ),
+                        'Either `awsiotCaAlias` or `awsiotCaArn` must be provided when the provisoning template is configured to use ACM PCA in `REGISTER_WITH_CA` mode.'
+                    )
                 );
             }
         }
@@ -69,7 +69,7 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
         } else {
             ow(
                 cdfParams.acmpcaCaArn,
-                ow.string.message('Either `acmpcaCaAlias` or `acmpcaCaArn` must be provided.'),
+                ow.string.message('Either `acmpcaCaAlias` or `acmpcaCaArn` must be provided.')
             );
         }
 
@@ -81,7 +81,7 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
             cdfParams.csr = await this.certUtils.createCSR(privateKey, cdfParams.certInfo);
             ow(
                 cdfParams.csr,
-                ow.string.message('No `csr` was provided, and auto-generation failed.'),
+                ow.string.message('No `csr` was provided, and auto-generation failed.')
             );
         }
 
@@ -89,7 +89,7 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
         stepData.state.certificatePem = await this.createCert(
             cdfParams.csr,
             cdfParams.acmpcaCaArn,
-            cdfParams.certInfo,
+            cdfParams.certInfo
         );
 
         if (stepData.parameters === undefined) {
@@ -99,7 +99,7 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
         if (templateParams.mode === 'REGISTER_WITH_CA') {
             // register the device cert with AWS IoT using a CA
             const caCertificatePem: string = await this.certUtils.getCaCertificate(
-                cdfParams.awsiotCaArn,
+                cdfParams.awsiotCaArn
             );
             const r = await this.iot
                 .registerCertificate({
@@ -115,7 +115,7 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
             // register the device cert with AWS IoT without a CA
             const r = await this.certUtils.registerCertificateWithoutCA(
                 stepData.state.certificatePem,
-                CertificateStatus.ACTIVE,
+                CertificateStatus.ACTIVE
             );
             stepData.parameters.CertificateId = r.certificateId;
             stepData.parameters.CertificateArn = r.certificateArn;
@@ -127,8 +127,8 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
     private async createCert(csr: string, caArn: string, certInfo: CertInfo): Promise<string> {
         logger.debug(
             `UseACMPCAStepProcessor: createCert: in: caArn:${caArn}, certInfo:${JSON.stringify(
-                certInfo,
-            )}, csr:${csr}`,
+                certInfo
+            )}, csr:${csr}`
         );
 
         const params: ACMPCA.IssueCertificateRequest = {

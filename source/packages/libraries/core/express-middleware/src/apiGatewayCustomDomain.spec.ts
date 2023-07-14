@@ -13,6 +13,6 @@ describe('Api Gateway Custom Domain Middleware', () => {
         'should convert [ $originalPath ] to [ $sanitisedPath ] given configuration set to [ $basePath ]',
         ({ originalPath, basePath, sanitisedPath }) => {
             expect(normalisePath(originalPath, basePath)).toBe(sanitisedPath);
-        },
+        }
     );
 });

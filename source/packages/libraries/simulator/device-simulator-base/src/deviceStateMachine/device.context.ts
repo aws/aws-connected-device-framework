@@ -28,7 +28,7 @@ export class DeviceContext<D, S, T, U> {
      */
     constructor(
         @inject(DEVICE_SIMULATOR_TYPES.DeviceEmitter) public readonly deviceEmitter: EventEmitter,
-        @inject(DEVICE_SIMULATOR_TYPES.CalcEngine) public readonly calculations: CalcEngine<D>,
+        @inject(DEVICE_SIMULATOR_TYPES.CalcEngine) public readonly calculations: CalcEngine<D>
     ) {
         const logMeta = { ...this.CLASS_LOGGING_DATA, method: 'constructor' };
         logger.verbose('', { ...logMeta, type: 'in' });

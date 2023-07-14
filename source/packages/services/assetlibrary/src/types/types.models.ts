@@ -48,7 +48,7 @@ export type RelationTargetExpanded = {
 export type RelationTarget = RelationTargetSimple | RelationTargetExpanded;
 
 export function isRelationTargetExpanded(
-    toBeDetermined: unknown,
+    toBeDetermined: unknown
 ): toBeDetermined is RelationTargetExpanded {
     const asRelationTargetExpanded = toBeDetermined as RelationTargetExpanded;
     if (asRelationTargetExpanded?.name) {

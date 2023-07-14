@@ -29,7 +29,7 @@ export class ActivationDao {
     constructor(
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
         @inject(TYPES.DocumentClientFactory)
-        documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this.dc = documentClientFactory();
     }
@@ -44,7 +44,7 @@ export class ActivationDao {
                 sk: createDelimitedAttribute(PkType.Device, activation.deviceId),
                 si1Sort: createDelimitedAttribute(
                     PkType.DeviceActivation,
-                    activation.activationId,
+                    activation.activationId
                 ),
                 createdAt: activation.createdAt?.toISOString(),
                 updatedAt: activation.updatedAt?.toISOString(),
@@ -138,7 +138,7 @@ export class ActivationDao {
         const activationList = this.assemble(result.Items);
 
         logger.debug(
-            `activation.dao: get: exit: activationList: ${JSON.stringify(activationList)}`,
+            `activation.dao: get: exit: activationList: ${JSON.stringify(activationList)}`
         );
 
         return activationList.activations[0];
@@ -171,8 +171,8 @@ export class ActivationDao {
 
         logger.debug(
             `activation.dao: getByDeviceId: exit: activationList: ${JSON.stringify(
-                activationList,
-            )}`,
+                activationList
+            )}`
         );
 
         return activationList.activations[0];

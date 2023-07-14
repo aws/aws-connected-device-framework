@@ -41,7 +41,7 @@ export function chooseS3ObjectPrompt(
     message: string,
     name: string,
     bucket: string,
-    objectPrefix?: string,
+    objectPrefix?: string
 ): S3Question {
     return {
         message,

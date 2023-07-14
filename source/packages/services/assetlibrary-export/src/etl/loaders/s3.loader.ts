@@ -29,7 +29,7 @@ export class S3Loader implements Loader {
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
         @inject('defaults.etl.load.path') private loadPath: string,
         @inject('aws.s3.export.bucket') private exportBucket: string,
-        @inject('aws.s3.export.prefix') private exportKeyPrefix: string,
+        @inject('aws.s3.export.prefix') private exportKeyPrefix: string
     ) {
         this.s3 = s3Factory();
     }

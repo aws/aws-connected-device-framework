@@ -21,7 +21,7 @@ import {
 
 async function fetchNeptuneInstancetypes(
     region: string,
-    neptuneEngineVersion: string,
+    neptuneEngineVersion: string
 ): Promise<string[]> {
     try {
         const client = new RDSClient({ region: region });
@@ -35,7 +35,7 @@ async function fetchNeptuneInstancetypes(
             .filter((it) => it !== '');
     } catch (err) {
         console.warn(
-            `Error while trying to fetch list of available Neptune instance types from AWS Pricing API. Will proceed without list. Error was: ${err}`,
+            `Error while trying to fetch list of available Neptune instance types from AWS Pricing API. Will proceed without list. Error was: ${err}`
         );
         return [];
     }
@@ -125,7 +125,7 @@ export async function getDaxInstanceTypeList(region: string): Promise<string[]> 
         return filteredList;
     } catch (err) {
         console.warn(
-            `Error while trying to fetch list of available DAX instance types from Pricing API. Will proceed without list. Error was: ${err}`,
+            `Error while trying to fetch list of available DAX instance types from Pricing API. Will proceed without list. Error was: ${err}`
         );
         return [];
     }
@@ -133,14 +133,14 @@ export async function getDaxInstanceTypeList(region: string): Promise<string[]> 
 
 export async function getNeptuneInstancetypeList(
     region: string,
-    engineVersion: string,
+    engineVersion: string
 ): Promise<string[]> {
     try {
         const itList = await fetchNeptuneInstancetypes(region, engineVersion);
         return itList.sort(compareNeptuneInstancetypeNames);
     } catch (err) {
         console.warn(
-            `Error while trying to fetch list of available Neptune instance types from RDS API. Will proceed without list. Error was: ${err}`,
+            `Error while trying to fetch list of available Neptune instance types from RDS API. Will proceed without list. Error was: ${err}`
         );
         return [];
     }

@@ -34,7 +34,7 @@ export class RotateCertificatesJobCustomResource implements CustomResource {
         @inject(COMMANDANDCONTROL_CLIENT_TYPES.CommandsService)
         private commandsService: CommandsService,
         @inject(COMMANDANDCONTROL_CLIENT_TYPES.MessagesService)
-        private messagesService: MessagesService,
+        private messagesService: MessagesService
     ) {
         this.mimeType = this.DEFAULT_MIME_TYPE;
     }

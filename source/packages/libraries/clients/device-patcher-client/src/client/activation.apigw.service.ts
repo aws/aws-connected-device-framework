@@ -31,7 +31,7 @@ export class ActivationApigwService extends ActivationServiceBase implements Act
 
     async createActivation(
         deviceId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ActivationResponse> {
         ow(deviceId, ow.string.nonEmpty);
 
@@ -54,7 +54,7 @@ export class ActivationApigwService extends ActivationServiceBase implements Act
 
     async getActivation(
         activationId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ActivationResponse> {
         ow(activationId, ow.string.nonEmpty);
 
@@ -73,7 +73,7 @@ export class ActivationApigwService extends ActivationServiceBase implements Act
 
     async deleteActivation(
         activationId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(activationId, ow.string.nonEmpty);
 

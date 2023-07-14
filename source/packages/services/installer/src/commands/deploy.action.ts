@@ -48,7 +48,7 @@ async function deployAction(environment: string, region: string, options: unknow
     const grouped = topologicallySortModules(
         modules,
         answers.modules.expandedIncludingOptional,
-        false,
+        false
     );
 
     for (const layer of grouped) {

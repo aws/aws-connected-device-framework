@@ -44,7 +44,7 @@ export class AlertAssembler {
                     return {
                         address: j.M?.address?.S,
                     };
-                }),
+                })
             );
         }
         if (targetsM.email?.M) {
@@ -60,7 +60,7 @@ export class AlertAssembler {
                     return {
                         topic: j.M?.topic?.S,
                     };
-                }),
+                })
             );
         }
         if (targetsM.mqtt?.M) {
@@ -76,7 +76,7 @@ export class AlertAssembler {
                     return {
                         phoneNumber: j.M?.phoneNumber?.S,
                     };
-                }),
+                })
             );
         }
         if (targetsM.sms?.M) {
@@ -99,7 +99,7 @@ export class AlertAssembler {
                         tableName: ddb.M?.tableName?.S,
                         attributeMapping,
                     };
-                }),
+                })
             );
         }
         if (targetsM.dynamodb?.M) {
@@ -122,7 +122,7 @@ export class AlertAssembler {
                     return {
                         platformEndpointArn: j.M?.platformEndpointArn?.S,
                     };
-                }),
+                })
             );
         }
         if (targetsM.push_gcm?.M) {
@@ -138,7 +138,7 @@ export class AlertAssembler {
                     return {
                         platformEndpointArn: j.M?.platformEndpointArn?.S,
                     };
-                }),
+                })
             );
         }
         if (targetsM.push_adm?.M) {
@@ -154,7 +154,7 @@ export class AlertAssembler {
                     return {
                         platformEndpointArn: j.M?.platformEndpointArn?.S,
                     };
-                }),
+                })
             );
         }
         if (targetsM.push_apns?.M) {

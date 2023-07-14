@@ -49,7 +49,7 @@ export class DevicePatcherInstaller implements RestModule {
         delete answers.devicePatcher?.redeploy;
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
         if ((updatedAnswers.devicePatcher?.redeploy ?? true) === false) {
             return updatedAnswers;
@@ -60,7 +60,7 @@ export class DevicePatcherInstaller implements RestModule {
                 ...applicationConfigurationPrompt(this.name, answers, []),
                 ...customDomainPrompt(this.name, answers),
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         return updatedAnswers;
@@ -87,7 +87,7 @@ export class DevicePatcherInstaller implements RestModule {
 
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
         addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
@@ -109,7 +109,7 @@ export class DevicePatcherInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'device-patcher',
+                            'device-patcher'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -148,7 +148,7 @@ export class DevicePatcherInstaller implements RestModule {
                         'source',
                         'packages',
                         'services',
-                        'device-patcher',
+                        'device-patcher'
                     ),
                     parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,

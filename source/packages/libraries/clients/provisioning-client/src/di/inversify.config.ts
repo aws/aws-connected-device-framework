@@ -26,7 +26,7 @@ export const provisioningContainerModule = new ContainerModule(
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind,
+        _rebind: interfaces.Rebind
     ) => {
         if (process.env.PROVISIONING_MODE === 'lambda') {
             bind<ThingsService>(PROVISIONING_CLIENT_TYPES.ThingsService).to(ThingsLambdaService);
@@ -34,11 +34,11 @@ export const provisioningContainerModule = new ContainerModule(
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 // always check to see if bound first incase it was bound by another client
                 bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
-                    LambdaInvokerService,
+                    LambdaInvokerService
                 );
                 decorate(injectable(), AWS.Lambda);
                 bind<interfaces.Factory<AWS.Lambda>>(
-                    LAMBDAINVOKE_TYPES.LambdaFactory,
+                    LAMBDAINVOKE_TYPES.LambdaFactory
                 ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
                     return () => {
                         if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
@@ -52,5 +52,5 @@ export const provisioningContainerModule = new ContainerModule(
         } else {
             bind<ThingsService>(PROVISIONING_CLIENT_TYPES.ThingsService).to(ThingsApigwService);
         }
-    },
+    }
 );

@@ -27,7 +27,7 @@ export class ExtractService implements Extractor {
 
     constructor(
         @inject(TYPES.DeviceExtractor) protected deviceExtractor: DeviceExtractor,
-        @inject(TYPES.GroupExtractor) protected groupExtractor: GroupExtractor,
+        @inject(TYPES.GroupExtractor) protected groupExtractor: GroupExtractor
     ) {
         this.extractors[TypeCategory.Device] = deviceExtractor;
         this.extractors[TypeCategory.Group] = groupExtractor;

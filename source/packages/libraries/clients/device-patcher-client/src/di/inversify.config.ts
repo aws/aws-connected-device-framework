@@ -35,25 +35,25 @@ export const devicePatcherContainerModule = new ContainerModule(
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind,
+        _rebind: interfaces.Rebind
     ) => {
         if (process.env.DEVICE_PATCHER_MODE === 'lambda') {
             bind<PatchService>(DEVICE_PATCHER_CLIENT_TYPES.PatchService).to(PatchLambdaService);
             bind<ActivationService>(DEVICE_PATCHER_CLIENT_TYPES.ActivationService).to(
-                ActivationLambdaService,
+                ActivationLambdaService
             );
             bind<TemplatesService>(DEVICE_PATCHER_CLIENT_TYPES.TemplatesService).to(
-                TemplatesLambdaService,
+                TemplatesLambdaService
             );
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 // always check to see if bound first incase it was bound by another client
                 bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
-                    LambdaInvokerService,
+                    LambdaInvokerService
                 );
                 decorate(injectable(), AWS.Lambda);
                 bind<interfaces.Factory<AWS.Lambda>>(
-                    LAMBDAINVOKE_TYPES.LambdaFactory,
+                    LAMBDAINVOKE_TYPES.LambdaFactory
                 ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
                     return () => {
                         if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
@@ -67,11 +67,11 @@ export const devicePatcherContainerModule = new ContainerModule(
         } else {
             bind<PatchService>(DEVICE_PATCHER_CLIENT_TYPES.PatchService).to(PatchApigwService);
             bind<ActivationService>(DEVICE_PATCHER_CLIENT_TYPES.ActivationService).to(
-                ActivationApigwService,
+                ActivationApigwService
             );
             bind<TemplatesService>(DEVICE_PATCHER_CLIENT_TYPES.TemplatesService).to(
-                TemplatesApigwService,
+                TemplatesApigwService
             );
         }
-    },
+    }
 );

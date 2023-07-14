@@ -27,16 +27,16 @@ import { TypesService } from './types.service';
 export class TypesServiceLite implements TypesService {
     constructor(
         @inject(TYPES.TypesDao) private typesDao: TypesDaoLite,
-        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
+        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter
     ) {}
 
     public async get(
         templateId: string,
         category: TypeCategory,
-        status?: TypeDefinitionStatus,
+        status?: TypeDefinitionStatus
     ): Promise<TypeModel> {
         logger.debug(
-            `types.lite.service get: in: templateId: ${templateId}, category: ${category}, status: ${status}`,
+            `types.lite.service get: in: templateId: ${templateId}, category: ${category}, status: ${status}`
         );
 
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -53,12 +53,12 @@ export class TypesServiceLite implements TypesService {
         status: TypeDefinitionStatus,
         offset?: number,
         count?: number,
-        sort?: SortKeys,
+        sort?: SortKeys
     ): Promise<TypeModel[]> {
         logger.debug(
             `types.lite.service list: in: category:${category}, status:${status}, offset:${offset}, count:${count}, sort:${JSON.stringify(
-                sort,
-            )}`,
+                sort
+            )}`
         );
 
         // validation
@@ -74,12 +74,12 @@ export class TypesServiceLite implements TypesService {
     public async create(
         templateId: string,
         category: TypeCategory,
-        definition: TypeDefinitionModel,
+        definition: TypeDefinitionModel
     ): Promise<SchemaValidationResult> {
         logger.debug(
             `types.lite.service create: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(
-                definition,
-            )}`,
+                definition
+            )}`
         );
 
         // validation
@@ -132,7 +132,7 @@ export class TypesServiceLite implements TypesService {
 
     public async delete(templateId: string, category: TypeCategory): Promise<void> {
         logger.debug(
-            `types.lite.service delete: in: templateId:${templateId}, category:${category}`,
+            `types.lite.service delete: in: templateId:${templateId}, category:${category}`
         );
 
         ow(templateId, 'templateId', ow.string.nonEmpty);
@@ -155,19 +155,19 @@ export class TypesServiceLite implements TypesService {
     public async update(
         templateId: string,
         category: TypeCategory,
-        definition: TypeDefinitionModel,
+        definition: TypeDefinitionModel
     ): Promise<SchemaValidationResult> {
         logger.debug(
             `types.lite.service update: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(
-                definition,
-            )}`,
+                definition
+            )}`
         );
         throw new NotSupportedError();
     }
 
     public async publish(templateId: string, category: TypeCategory): Promise<void> {
         logger.debug(
-            `types.lite.service publish: in: templateId:${templateId}, category:${category}`,
+            `types.lite.service publish: in: templateId:${templateId}, category:${category}`
         );
         throw new NotSupportedError();
     }

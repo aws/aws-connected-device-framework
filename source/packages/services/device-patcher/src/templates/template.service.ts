@@ -27,7 +27,7 @@ export class PatchTemplatesService {
         @inject(TYPES.PatchTemplateDao) private patchTemplatesDao: PatchTemplatesDao,
         @inject(TYPES.S3Utils) private s3Utils: S3Utils,
         @inject('aws.s3.bucket') private s3Bucket: string,
-        @inject('aws.s3.prefix') private s3Prefix: string,
+        @inject('aws.s3.prefix') private s3Prefix: string
     ) {}
 
     public async create(template: PatchTemplateItem): Promise<void> {
@@ -126,10 +126,10 @@ export class PatchTemplatesService {
 
     public async list(
         count?: number,
-        lastEvaluated?: TemplateListPaginationKey,
+        lastEvaluated?: TemplateListPaginationKey
     ): Promise<[PatchTemplateItem[], TemplateListPaginationKey]> {
         logger.debug(
-            `templates.service count:${count}, lastEvaluated:${JSON.stringify(lastEvaluated)}:`,
+            `templates.service count:${count}, lastEvaluated:${JSON.stringify(lastEvaluated)}:`
         );
 
         if (count) {
@@ -154,7 +154,7 @@ export class PatchTemplatesService {
             await this.patchTemplatesDao.delete(name);
             await this.s3Utils.deleteObject(
                 template.playbookSource.bucket,
-                template.playbookSource.key,
+                template.playbookSource.key
             );
         }
 

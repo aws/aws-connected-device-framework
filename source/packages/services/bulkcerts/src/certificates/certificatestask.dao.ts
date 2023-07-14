@@ -24,7 +24,7 @@ export class CertificatesTaskDao {
 
     public constructor(
         @inject('aws.dynamodb.tasks.tableName') private tasksTable: string,
-        @inject(TYPES.DynamoDBFactory) dynamoFactory: () => AWS.DynamoDB,
+        @inject(TYPES.DynamoDBFactory) dynamoFactory: () => AWS.DynamoDB
     ) {
         this._dynamodb = dynamoFactory();
     }
@@ -37,10 +37,10 @@ export class CertificatesTaskDao {
         chunkID: number,
         quantity: number,
         status: string,
-        batchDateInMs: number,
+        batchDateInMs: number
     ): Promise<void> {
         logger.debug(
-            `certificatestask.dao saveChunk: in: taskID:${taskID}, chunkID:${chunkID}, quantity:${quantity}, status:${status}, batchDateInMs:${batchDateInMs}`,
+            `certificatestask.dao saveChunk: in: taskID:${taskID}, chunkID:${chunkID}, quantity:${quantity}, status:${status}, batchDateInMs:${batchDateInMs}`
         );
 
         ow(taskID, ow.string.nonEmpty);
@@ -80,10 +80,10 @@ export class CertificatesTaskDao {
     public async updateTaskChunkLocation(
         taskID: string,
         chunkID: number,
-        location: string,
+        location: string
     ): Promise<void> {
         logger.debug(
-            `certificatestask.service updateTaskChunkLocation: in: taskID:${taskID}, chunkID:${chunkID}, location:${location}`,
+            `certificatestask.service updateTaskChunkLocation: in: taskID:${taskID}, chunkID:${chunkID}, location:${location}`
         );
 
         ow(taskID, ow.string.nonEmpty);

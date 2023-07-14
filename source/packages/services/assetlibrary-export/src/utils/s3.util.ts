@@ -27,7 +27,7 @@ export class S3Utils {
 
     public async save(bucket: string, key: string, object: any): Promise<AWS.S3.PutObjectOutput> {
         logger.debug(
-            `S3Loader: save: in: bucket:${bucket}, key:${key}, object:${JSON.stringify(object)}`,
+            `S3Loader: save: in: bucket:${bucket}, key:${key}, object:${JSON.stringify(object)}`
         );
 
         ow(bucket, 'bucket', ow.string.nonEmpty);

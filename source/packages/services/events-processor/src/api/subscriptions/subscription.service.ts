@@ -38,7 +38,7 @@ export class SubscriptionService {
         @inject(TYPES.TargetService) private targetService: TargetService,
         @inject(TYPES.SNSTarget) private snsTarget: SNSTarget,
         @inject('aws.sqs.asyncProcessing') private asyncProcessingQueue: string,
-        @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS,
+        @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS
     ) {
         this.sqs = sqsFactory();
     }
@@ -71,7 +71,7 @@ export class SubscriptionService {
                 if (existingSnsSubscriptions === undefined) {
                     try {
                         existingSnsSubscriptions = await this.snsTarget.listSubscriptions(
-                            subscription.sns?.topicArn,
+                            subscription.sns?.topicArn
                         );
                     } catch (err) {
                         if (err.hasOwnProperty('code') && err['code'] === 'NotFound') {
@@ -81,8 +81,8 @@ export class SubscriptionService {
                             // this does not update subscriptions in the dao.
                             logger.debug(
                                 `subscription.service get: assuming subscription delete is in-progress from error: ${JSON.stringify(
-                                    err,
-                                )}`,
+                                    err
+                                )}`
                             );
                             existingSnsSubscriptions = { Subscriptions: [] };
                         } else {
@@ -91,7 +91,7 @@ export class SubscriptionService {
                     }
                 }
                 const matches = existingSnsSubscriptions.Subscriptions?.filter(
-                    (s) => s.Endpoint === target.getId(),
+                    (s) => s.Endpoint === target.getId()
                 );
                 if (matches?.length > 0) {
                     // update with latest info if different to what we have
@@ -119,10 +119,10 @@ export class SubscriptionService {
      */
     public async listSnsTargetArns(
         userId: string,
-        excludeSubscriptionId?: string,
+        excludeSubscriptionId?: string
     ): Promise<Set<string>> {
         logger.debug(
-            `subscription.service listTargetArns: in: userId:${userId}, excludeSubscriptionId:${excludeSubscriptionId}`,
+            `subscription.service listTargetArns: in: userId:${userId}, excludeSubscriptionId:${excludeSubscriptionId}`
         );
 
         let subscriptions = await this.listByUser(userId);
@@ -134,11 +134,11 @@ export class SubscriptionService {
                 .map((s) =>
                     Object.keys(s.targets)
                         .map((tt) => s.targets[tt])
-                        .flat(),
+                        .flat()
                 )
                 .flat()
                 .map((t) => t['subscriptionArn'])
-                .filter((arn) => arn !== undefined),
+                .filter((arn) => arn !== undefined)
         );
 
         logger.debug(`subscription.service listTargetArns: exit:${JSON.stringify(targetArns)}`);
@@ -164,7 +164,7 @@ export class SubscriptionService {
                         await this.safeDeleteTarget(
                             subscriptionId,
                             targetType as TargetTypeStrings,
-                            (t as TargetItemBase).getId(),
+                            (t as TargetItemBase).getId()
                         );
                     }
                 }
@@ -197,10 +197,10 @@ export class SubscriptionService {
     public async safeDeleteTarget(
         subscriptionId: string,
         targetType: TargetTypeStrings,
-        targetId: string,
+        targetId: string
     ): Promise<void> {
         logger.debug(
-            `subscription.service safeDeleteTarget: in: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`,
+            `subscription.service safeDeleteTarget: in: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`
         );
 
         ow(subscriptionId, ow.string.nonEmpty);
@@ -239,10 +239,10 @@ export class SubscriptionService {
     public async deleteByUser(
         userId: string,
         principal?: string,
-        principalValue?: string,
+        principalValue?: string
     ): Promise<void> {
         logger.debug(
-            `subscription.service deleteByUser: in: userId:${userId}, principal:${principal}, principalValue:${principalValue}`,
+            `subscription.service deleteByUser: in: userId:${userId}, principal:${principal}, principalValue:${principalValue}`
         );
 
         ow(userId, ow.string.nonEmpty);
@@ -271,10 +271,10 @@ export class SubscriptionService {
         userId: string,
         returnIdsOnly = false,
         principal?: string,
-        principalValue?: string,
+        principalValue?: string
     ): Promise<SubscriptionItem[]> {
         logger.debug(
-            `subscription.service listByUser: in: userId:${userId}, returnIdsOnly:${returnIdsOnly}, principal:${principal}, principalValue:${principalValue}`,
+            `subscription.service listByUser: in: userId:${userId}, returnIdsOnly:${returnIdsOnly}, principal:${principal}, principalValue:${principalValue}`
         );
 
         ow(userId, ow.string.nonEmpty);
@@ -285,7 +285,7 @@ export class SubscriptionService {
             subscriptionIds = await this.subscriptionDao.listSubscriptionIdsForUserPrincipal(
                 userId,
                 principal,
-                principalValue,
+                principalValue
             );
         } else {
             subscriptionIds = await this.subscriptionDao.listSubscriptionIdsForUser(userId);
@@ -309,19 +309,19 @@ export class SubscriptionService {
 
     public async listByEvent(
         eventId: string,
-        from?: PaginationKey,
+        from?: PaginationKey
     ): Promise<[SubscriptionItem[], PaginationKey]> {
         logger.debug(
             `subscription.service listByEvent: in: eventId:${eventId}, from:${JSON.stringify(
-                from,
-            )}`,
+                from
+            )}`
         );
 
         ow(eventId, ow.string.nonEmpty);
 
         const [results, pagintion] = await this.subscriptionDao.listSubscriptionsForEvent(
             eventId,
-            from,
+            from
         );
 
         logger.debug(`subscription.service listByEvent: exit: model: ${JSON.stringify(results)}`);
@@ -368,11 +368,11 @@ export class SubscriptionService {
             event.id,
             event.principal,
             item.principalValue,
-            item.user.id,
+            item.user.id
         );
         if (existing?.length > 0) {
             logger.debug(
-                `subscription.service create: subscription ${existing[0]} already exists for this event/user/principal`,
+                `subscription.service create: subscription ${existing[0]} already exists for this event/user/principal`
             );
             throw new Error('SUBSCRIPTION_FOR_USER_PRINCIPAL_ALREADY_EXISTS');
         }
@@ -392,7 +392,7 @@ export class SubscriptionService {
                         topicArn,
                         item.principalValue,
                         event,
-                        true,
+                        true
                     );
                 }
             }

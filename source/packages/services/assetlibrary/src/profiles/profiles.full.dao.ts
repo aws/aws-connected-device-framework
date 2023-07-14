@@ -26,7 +26,7 @@ const __ = process.statics;
 export class ProfilesDaoFull extends BaseDaoFull {
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -74,7 +74,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
     public async get(templateId: string, profileId: string): Promise<ProfileNode> {
         logger.debug(
-            `profiles.full.dao get: in: templateId:${templateId}, profileId:${profileId}`,
+            `profiles.full.dao get: in: templateId:${templateId}, profileId:${profileId}`
         );
 
         const id = `profile___${templateId}___${profileId}`;
@@ -149,12 +149,12 @@ export class ProfilesDaoFull extends BaseDaoFull {
     private assembleNode(
         profile: { [key: string]: NodeAttributeValue },
         template: { [key: string]: NodeAttributeValue },
-        category: { [key: string]: NodeAttributeValue },
+        category: { [key: string]: NodeAttributeValue }
     ): ProfileNode {
         logger.debug(
             `profiles.full.dao assembleNode: in: profile:${JSON.stringify(
-                profile,
-            )}, template:${JSON.stringify(template)}, category:${JSON.stringify(category)}`,
+                profile
+            )}, template:${JSON.stringify(template)}, category:${JSON.stringify(category)}`
         );
 
         const labels = safeExtractLabels(profile['label']);
@@ -178,7 +178,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
     public async delete(templateId: string, profileId: string): Promise<void> {
         logger.debug(
-            `profiles.full.dao delete: in: templateId:${templateId}, profileId:${profileId}`,
+            `profiles.full.dao delete: in: templateId:${templateId}, profileId:${profileId}`
         );
 
         const id = `profile___${templateId}___${profileId}`;

@@ -31,13 +31,13 @@ import { DevicesService } from './devices.service';
 export class DevicesController implements interfaces.Controller {
     constructor(
         @inject(TYPES.DevicesService) private devicesService: DevicesService,
-        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler
     ) {}
 
     @httpGet('/:name')
     public async getDevice(
         @requestParam('name') name: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(`devices.controller getCore: in: name:${name}`);
 
@@ -61,10 +61,10 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('name') name: string,
         @queryParam('deprovision') deprovision = true,
         @queryParam('disassociateDeviceFromCore') disassociateDeviceFromCore = true,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `devices.controller deleteDevice: in: name:${name}, deprovision:${deprovision}, disassociateDeviceFromCore:${disassociateDeviceFromCore}`,
+            `devices.controller deleteDevice: in: name:${name}, deprovision:${deprovision}, disassociateDeviceFromCore:${disassociateDeviceFromCore}`
         );
 
         try {

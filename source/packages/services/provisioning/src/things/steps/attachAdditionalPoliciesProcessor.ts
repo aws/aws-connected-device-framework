@@ -30,8 +30,8 @@ export class AttachAdditionalPoliciesProcessor implements ProvisioningStepProces
     public async process(stepData: ProvisioningStepData): Promise<void> {
         logger.debug(
             `attachAdditionalPoliciesProcessor: process: in: stepInput: ${JSON.stringify(
-                stepData,
-            )}`,
+                stepData
+            )}`
         );
 
         const policies = stepData?.template?.CDF?.attachAdditionalPolicies;
@@ -48,7 +48,7 @@ export class AttachAdditionalPoliciesProcessor implements ProvisioningStepProces
             if (p.document !== undefined) {
                 policyName += `_${generate()}`;
                 logger.debug(
-                    `attachAdditionalPoliciesProcessor: process: creating policy: ${policyName}`,
+                    `attachAdditionalPoliciesProcessor: process: creating policy: ${policyName}`
                 );
                 await this._iot
                     .createPolicy({
@@ -58,7 +58,7 @@ export class AttachAdditionalPoliciesProcessor implements ProvisioningStepProces
                     .promise();
             }
             logger.debug(
-                `attachAdditionalPoliciesProcessor: process: attaching policy: ${policyName} to target: ${certificateArn}`,
+                `attachAdditionalPoliciesProcessor: process: attaching policy: ${policyName} to target: ${certificateArn}`
             );
             await this._iot
                 .attachPolicy({

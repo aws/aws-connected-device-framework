@@ -77,7 +77,7 @@ describe('StartJobAction', () => {
             s3RoleArn,
             maxTargets,
             mockedS3Factory,
-            mockedIotFactory,
+            mockedIotFactory
         );
     });
 
@@ -266,7 +266,7 @@ describe('StartJobAction', () => {
         const actual = await instance.___testonly___buildTargetList(
             commandId,
             targets,
-            targetQuery,
+            targetQuery
         );
 
         // Finally, verify the results
@@ -337,7 +337,7 @@ describe('StartJobAction', () => {
         const actual = await instance.___testonly___buildTargetList(
             commandId,
             undefined,
-            targetQuery,
+            targetQuery
         );
 
         // Finally, verify the results

@@ -24,18 +24,18 @@ export class ManifestDao {
     public constructor(
         @inject('aws.dynamodb.tables.accounts') private accountsTable: string,
         @inject(TYPES.DocumentClientFactory)
-        documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
     }
 
     private static assembleOrganizationalUnitRegionItem(
-        result: AWS.DynamoDB.DocumentClient.ItemList,
+        result: AWS.DynamoDB.DocumentClient.ItemList
     ): AccountsByRegionListMap {
         logger.debug(
             `manifest.dao assembleOrganizationalUnitRegionItem: in: result: ${JSON.stringify(
-                result,
-            )}`,
+                result
+            )}`
         );
         const ouRegionItem = {};
         for (const item of result) {
@@ -52,14 +52,14 @@ export class ManifestDao {
 
         logger.debug(
             `manifest.dao assembleOrganizationalUnitRegionItem: exit: ${JSON.stringify(
-                ouRegionItem,
-            )}`,
+                ouRegionItem
+            )}`
         );
         return ouRegionItem;
     }
 
     public async getRegionAccountForOus(
-        ids: string[],
+        ids: string[]
     ): Promise<RegionListByOrganizationalUnitMap> {
         const mapping = {};
         for (const id of ids) {
@@ -86,7 +86,7 @@ export class ManifestDao {
         }
         const itemList = ManifestDao.assembleOrganizationalUnitRegionItem(queryResponse.Items);
         logger.debug(
-            `templates.dao getOrganizationalUnitRegionItemList: exit: ${JSON.stringify(itemList)}`,
+            `templates.dao getOrganizationalUnitRegionItemList: exit: ${JSON.stringify(itemList)}`
         );
         return itemList;
     }

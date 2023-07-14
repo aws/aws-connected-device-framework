@@ -26,7 +26,7 @@ export class TypesService implements TypesService {
 
     public async list(
         category: TypeCategory,
-        status?: TypeDefinitionStatus,
+        status?: TypeDefinitionStatus
     ): Promise<TypeModel[]> {
         logger.debug(`types.full.service list: in: category:${category}, status:${status}`);
 

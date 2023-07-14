@@ -49,7 +49,7 @@ export class OpenSslInstaller implements InfrastructureModule {
         const r = await lambda.send(
             new ListLayerVersionsCommand({
                 LayerName: 'cdf-openssl',
-            }),
+            })
         );
         if ((r?.LayerVersions?.length ?? 0) > 0) {
             // if it does exist, ask whether it needs to be re built and uploaded
@@ -65,7 +65,7 @@ export class OpenSslInstaller implements InfrastructureModule {
                         when: answers.dryRun === false,
                     },
                 ],
-                answers,
+                answers
             );
         } else {
             // if not, upload it
@@ -90,7 +90,7 @@ export class OpenSslInstaller implements InfrastructureModule {
                             'source',
                             'infrastructure',
                             'lambdaLayers',
-                            'openssl',
+                            'openssl'
                         ),
                         parameterOverrides: [`Environment=${answers.environment}`],
                     });
@@ -126,7 +126,7 @@ export class OpenSslInstaller implements InfrastructureModule {
                             'source',
                             'infrastructure',
                             'lambdaLayers',
-                            'openssl',
+                            'openssl'
                         ),
                     });
                 },
@@ -140,7 +140,7 @@ export class OpenSslInstaller implements InfrastructureModule {
                 const r = await lambda.send(
                     new ListLayerVersionsCommand({
                         LayerName: 'cdf-openssl',
-                    }),
+                    })
                 );
 
                 if ((r?.LayerVersions?.length ?? 0) === 0) {

@@ -20,8 +20,8 @@ export class InvalidTransitionAction implements WorkflowAction {
     async execute(existing: CommandModel, updated: CommandModel): Promise<boolean> {
         logger.debug(
             `workflow.invalidTransition execute: existing:${JSON.stringify(
-                existing,
-            )}, updated:${JSON.stringify(updated)}`,
+                existing
+            )}, updated:${JSON.stringify(updated)}`
         );
 
         return false;

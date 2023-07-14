@@ -37,7 +37,7 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
 
     async createCommand(
         command: EditableCommandResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string> {
         ow(command, ow.object.nonEmpty);
 
@@ -57,7 +57,7 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
     async updateCommand(
         commandId: string,
         command: EditableCommandResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(command, ow.object.nonEmpty);
         ow(commandId, ow.string.nonEmpty);
@@ -80,7 +80,7 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
     async createNamedCommand(
         commandId: string,
         command: EditableCommandResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string> {
         ow(command, ow.object.nonEmpty);
         ow(commandId, ow.string.nonEmpty);
@@ -102,7 +102,7 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
         tags?: Tags,
         fromCommandIdExclusive?: string,
         count?: number,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<CommandResourceList> {
         let url = `${this.baseUrl}${super.commandsRelativeUrl()}`;
         let queryString = QSHelper.getQueryString({ count, fromCommandIdExclusive });
@@ -135,7 +135,7 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
 
     async getCommand(
         commandId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<CommandResource> {
         const url = `${this.baseUrl}${super.commandRelativeUrl(commandId)}`;
         return await request

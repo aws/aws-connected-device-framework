@@ -103,7 +103,7 @@ export class KmsKeyInstaller implements InfrastructureModule {
                     },
                 },
             ],
-            answers,
+            answers
         );
 
         // remove "alias/" prefix if entered
@@ -117,11 +117,11 @@ export class KmsKeyInstaller implements InfrastructureModule {
                 const kms = new KMSClient({ region: answers.region });
                 const aliases = await kms.send(new ListAliasesCommand({}));
                 const key = aliases.Aliases?.find(
-                    (a) => a.AliasName === `alias/${answers.kms.alias}`,
+                    (a) => a.AliasName === `alias/${answers.kms.alias}`
                 );
                 if (key === undefined) {
                     throw new Error(
-                        `KMS Key alias ${answers.kms.alias} not found in account ${answers.accountId} ${answers.region}.`,
+                        `KMS Key alias ${answers.kms.alias} not found in account ${answers.accountId} ${answers.region}.`
                     );
                 } else {
                     answers.kms.id = key.TargetKeyId;
@@ -157,7 +157,7 @@ export class KmsKeyInstaller implements InfrastructureModule {
         if (answers.kms.id === undefined) {
             const aliases = await kms.send(new ListAliasesCommand({}));
             const existingAlias = aliases.Aliases?.find(
-                (a) => a.AliasName === `alias/${answers.kms.alias}`,
+                (a) => a.AliasName === `alias/${answers.kms.alias}`
             );
             if (existingAlias !== undefined) {
                 answers.kms.id = existingAlias.TargetKeyId;
@@ -198,7 +198,7 @@ export class KmsKeyInstaller implements InfrastructureModule {
                             new CreateKeyCommand({
                                 Description: `CDF encryption key (${answers.environment})`,
                                 Policy: JSON.stringify(keyPolicy),
-                            }),
+                            })
                         );
                         answers.kms.id = r.KeyMetadata.KeyId;
                     },
@@ -209,15 +209,15 @@ export class KmsKeyInstaller implements InfrastructureModule {
                         await kms.send(
                             new EnableKeyRotationCommand({
                                 KeyId: answers.kms.id,
-                            }),
+                            })
                         );
                     },
-                },
+                }
             );
 
             const aliases = await kms.send(new ListAliasesCommand({}));
             const alias = aliases.Aliases?.find(
-                (a) => a.AliasName === `alias/${answers.kms.alias}`,
+                (a) => a.AliasName === `alias/${answers.kms.alias}`
             );
 
             if (alias === undefined) {
@@ -228,7 +228,7 @@ export class KmsKeyInstaller implements InfrastructureModule {
                             new CreateAliasCommand({
                                 AliasName: `alias/${answers.kms.alias}`,
                                 TargetKeyId: answers.kms.id,
-                            }),
+                            })
                         );
                     },
                 });
@@ -240,7 +240,7 @@ export class KmsKeyInstaller implements InfrastructureModule {
                             new UpdateAliasCommand({
                                 AliasName: `alias/${answers.kms.alias}`,
                                 TargetKeyId: answers.kms.id,
-                            }),
+                            })
                         );
                     },
                 });

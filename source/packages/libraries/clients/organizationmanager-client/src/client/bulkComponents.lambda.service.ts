@@ -35,7 +35,7 @@ export class BulkComponentsLambdaService
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -45,7 +45,7 @@ export class BulkComponentsLambdaService
     async bulkCreateComponents(
         organizationalUnitId: string,
         bulkComponentsResource: BulkComponentsResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<BulkComponentsResult> {
         ow(organizationalUnitId, ow.string.nonEmpty);
         ow(bulkComponentsResource, ow.object.nonEmpty);
@@ -63,7 +63,7 @@ export class BulkComponentsLambdaService
 
     async bulkGetComponents(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ComponentResource[]> {
         ow(organizationalUnitId, ow.string.nonEmpty);
         const event = new LambdaApiGatewayEventBuilder()
@@ -77,7 +77,7 @@ export class BulkComponentsLambdaService
 
     async bulkDeleteComponents(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(organizationalUnitId, ow.string.nonEmpty);
 

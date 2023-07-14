@@ -20,7 +20,7 @@ import { TYPES } from '../di/types';
 export class InitDaoFull extends BaseDaoFull {
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -166,7 +166,7 @@ export class InitDaoFull extends BaseDaoFull {
                             },
                         },
                         required: ['deviceId', 'templateId'],
-                    }),
+                    })
                 )
                 .property(process.cardinality.single, 'lastUpdated', new Date().toISOString())
                 .as('definition')
@@ -212,7 +212,7 @@ export class InitDaoFull extends BaseDaoFull {
                             },
                         },
                         required: ['name', 'parentPath', 'templateId'],
-                    }),
+                    })
                 )
                 .property(process.cardinality.single, 'lastUpdated', new Date().toISOString())
                 .as('definition')

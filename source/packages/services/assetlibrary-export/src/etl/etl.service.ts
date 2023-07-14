@@ -32,7 +32,7 @@ export class ETLService {
         @inject(TYPES.LabelsService) private labelsService: LabelsService,
         @inject('aws.s3.export.bucket') private exportBucket: string,
         @inject('aws.s3.export.prefix') private exportKeyPrefix: string,
-        @inject(TYPES.S3Utils) private s3Utils: S3Utils,
+        @inject(TYPES.S3Utils) private s3Utils: S3Utils
     ) {}
 
     public async processBatch(batchId: string): Promise<Loaded> {
@@ -44,7 +44,7 @@ export class ETLService {
         try {
             batch = await this.s3Utils.get(
                 this.exportBucket,
-                `${this.exportKeyPrefix}_temp/${batchId}`,
+                `${this.exportKeyPrefix}_temp/${batchId}`
             );
         } catch (e) {
             throw new Error('NOT_FOUND');

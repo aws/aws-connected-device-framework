@@ -34,20 +34,20 @@ export class OrganizationalUnitsController implements interfaces.Controller {
     constructor(
         @inject(TYPES.OrganizationalUnitsService)
         private organizationsService: OrganizationalUnitsService,
-        @inject(TYPES.ComponentsService) private componentsService: ComponentsService,
+        @inject(TYPES.ComponentsService) private componentsService: ComponentsService
     ) {}
 
     @httpPost('/organizationalUnits')
     public async createOrganizationalUnit(
         @requestBody() model: OrganizationalUnitResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `organizations.controller createOrganizationalUnit: in: ouName: ${model.name}`,
+            `organizations.controller createOrganizationalUnit: in: ouName: ${model.name}`
         );
         try {
             const organizationalUnitId = await this.organizationsService.createOrganizationalUnit(
-                model,
+                model
             );
             res.location(`/organizationalUnits/${organizationalUnitId}`)
                 .header('x-organizationalUnitId', organizationalUnitId)
@@ -72,12 +72,12 @@ export class OrganizationalUnitsController implements interfaces.Controller {
     @httpDelete('/organizationalUnits/:id')
     public async deleteOrganizationalUnit(
         @requestParam('id') id: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(`organizations.controller deleteOrganizationalUnit: in: accountId: ${id}`);
         try {
             logger.info(
-                `organizations.controller deleteOrganizationalUnit: delete components from organizational unit ${id}`,
+                `organizations.controller deleteOrganizationalUnit: delete components from organizational unit ${id}`
             );
             await this.componentsService.deleteBulk(id);
             await this.organizationsService.deleteOrganizationalUnit(id);
@@ -92,7 +92,7 @@ export class OrganizationalUnitsController implements interfaces.Controller {
     @httpGet('/organizationalUnits/:id')
     public async getOrganizationalUnit(
         @requestParam('id') id: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<OrganizationalUnitResource> {
         logger.info(`organizations.controller getOrganizationalUnit: in: accountId: ${id}`);
         try {

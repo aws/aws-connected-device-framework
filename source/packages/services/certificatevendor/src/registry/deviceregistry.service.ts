@@ -24,7 +24,7 @@ export class DeviceRegistryManager implements RegistryManager {
     constructor(
         @inject('defaults.device.status.success.key') private successKey: string,
         @inject('defaults.device.status.success.value') private successValue: string,
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
+        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot
     ) {
         this.iot = iotFactory();
     }
@@ -57,13 +57,13 @@ export class DeviceRegistryManager implements RegistryManager {
 
         if (this.successKey === undefined || this.successKey === null) {
             logger.warn(
-                'deviceregistry.service updateAssetStatus: exit: successKey not set, therefore not updating device registry',
+                'deviceregistry.service updateAssetStatus: exit: successKey not set, therefore not updating device registry'
             );
             return;
         }
         if (this.successValue === undefined || this.successValue === null) {
             logger.warn(
-                'deviceregistry.service updateAssetStatus: exit: successValue not set, therefore not updating device registry',
+                'deviceregistry.service updateAssetStatus: exit: successValue not set, therefore not updating device registry'
             );
             return;
         }

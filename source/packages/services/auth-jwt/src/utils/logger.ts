@@ -22,6 +22,6 @@ export const logger = createLogger(<LoggerOptions>{
         timestamp(),
         printf((nfo) => {
             return `${nfo.timestamp} ${nfo.level}: ${nfo.message}`;
-        }),
+        })
     ),
 });

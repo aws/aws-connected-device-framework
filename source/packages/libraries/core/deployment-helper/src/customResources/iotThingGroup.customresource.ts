@@ -34,7 +34,7 @@ export class IotThingGroupCustomResource implements CustomResource {
     }
 
     public async create(
-        customResourceEvent: CustomResourceEvent,
+        customResourceEvent: CustomResourceEvent
     ): Promise<IotThingGroupCustomResourceOutput> {
         const thingGroupName = customResourceEvent?.ResourceProperties?.ThingGroupName;
         ow(thingGroupName, ow.string.nonEmpty);
@@ -43,13 +43,13 @@ export class IotThingGroupCustomResource implements CustomResource {
                 .describeThingGroup({ thingGroupName })
                 .promise();
             logger.info(
-                `IotThingGroupCustomResource: create: thing group ${describeThingGroupResponse.thingGroupName} exist`,
+                `IotThingGroupCustomResource: create: thing group ${describeThingGroupResponse.thingGroupName} exist`
             );
             return describeThingGroupResponse;
         } catch (e) {
             if (e.code === 'ResourceNotFoundException') {
                 logger.info(
-                    `IotThingGroupCustomResource: create: creating new thing group ${thingGroupName}`,
+                    `IotThingGroupCustomResource: create: creating new thing group ${thingGroupName}`
                 );
                 const params: AWS.Iot.Types.CreateThingGroupRequest = {
                     thingGroupName,
@@ -61,8 +61,8 @@ export class IotThingGroupCustomResource implements CustomResource {
             } else {
                 logger.error(
                     `IotThingGroupCustomResource: create: error when querying thing group ${JSON.stringify(
-                        e,
-                    )}`,
+                        e
+                    )}`
                 );
             }
         }
@@ -70,7 +70,7 @@ export class IotThingGroupCustomResource implements CustomResource {
     }
 
     public async update(
-        customResourceEvent: CustomResourceEvent,
+        customResourceEvent: CustomResourceEvent
     ): Promise<IotThingGroupCustomResourceOutput> {
         const thingGroupName = customResourceEvent?.ResourceProperties?.ThingGroupName;
         ow(thingGroupName, ow.string.nonEmpty);
@@ -84,7 +84,7 @@ export class IotThingGroupCustomResource implements CustomResource {
         const thingGroupName = customResourceEvent?.ResourceProperties?.ThingGroupName;
         ow(thingGroupName, ow.string.nonEmpty);
         logger.warn(
-            `IotThingGroupCustomResource: delete: the thing group ${thingGroupName} need to be deleted manually `,
+            `IotThingGroupCustomResource: delete: the thing group ${thingGroupName} need to be deleted manually `
         );
         return {};
     }

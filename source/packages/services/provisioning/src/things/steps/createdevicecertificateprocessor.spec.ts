@@ -34,7 +34,7 @@ describe('CreateDeviceCertificateStepProcessor', () => {
             certUtils,
             () => mockIot,
             () => mockSSM,
-            356,
+            356
         );
     });
 
@@ -160,16 +160,16 @@ uw3icwmlsuNd7r8ASIyQhNzZG+INd4ykWKgS+qcIHxsTrJhvPa4PCQYmc5yU6oSv
         expect(cdfOutputParams.caId).toEqual(cdfInputParams.caId);
         expect(cdfOutputParams.certInfo).toMatchObject(cdfInputParams.certInfo);
         expect(stepData.parameters.CaCertificatePem).toEqual(
-            cert.certificateDescription.certificatePem,
+            cert.certificateDescription.certificatePem
         );
         expect(
-            stepData.parameters.CertificatePem.startsWith('-----BEGIN CERTIFICATE-----\n'),
+            stepData.parameters.CertificatePem.startsWith('-----BEGIN CERTIFICATE-----\n')
         ).toBeTruthy();
         expect(
-            stepData.parameters.CertificatePem.endsWith('-----END CERTIFICATE-----'),
+            stepData.parameters.CertificatePem.endsWith('-----END CERTIFICATE-----')
         ).toBeTruthy();
         expect(
-            stepData.state.privateKey.startsWith('-----BEGIN RSA PRIVATE KEY-----\n'),
+            stepData.state.privateKey.startsWith('-----BEGIN RSA PRIVATE KEY-----\n')
         ).toBeTruthy();
         expect(stepData.state.privateKey.endsWith('-----END RSA PRIVATE KEY-----')).toBeTruthy();
 
@@ -202,7 +202,7 @@ uw3icwmlsuNd7r8ASIyQhNzZG+INd4ykWKgS+qcIHxsTrJhvPa4PCQYmc5yU6oSv
             fail();
         } catch (e) {
             expect(e.message).toContain(
-                'Expected `certInfo` to be of type `object` but received type `undefined`',
+                'Expected `certInfo` to be of type `object` but received type `undefined`'
             );
         }
     });
@@ -239,7 +239,7 @@ uw3icwmlsuNd7r8ASIyQhNzZG+INd4ykWKgS+qcIHxsTrJhvPa4PCQYmc5yU6oSv
             fail();
         } catch (e) {
             expect(e.message).toEqual(
-                'Expected `caId` to be of type `string` but received type `undefined`',
+                'Expected `caId` to be of type `string` but received type `undefined`'
             );
         }
     });
@@ -267,7 +267,7 @@ uw3icwmlsuNd7r8ASIyQhNzZG+INd4ykWKgS+qcIHxsTrJhvPa4PCQYmc5yU6oSv
             fail();
         } catch (e) {
             expect(e.message).toContain(
-                'Expected `certInfo` to be of type `object` but received type `undefined`',
+                'Expected `certInfo` to be of type `object` but received type `undefined`'
             );
         }
     });

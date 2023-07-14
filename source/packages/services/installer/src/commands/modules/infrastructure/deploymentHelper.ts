@@ -76,7 +76,7 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
                             'packages',
                             'libraries',
                             'core',
-                            'deployment-helper',
+                            'deployment-helper'
                         ),
                         parameterOverrides: [
                             `Environment=${answers.environment}`,
@@ -98,7 +98,7 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
                             'packages',
                             'libraries',
                             'core',
-                            'deployment-helper',
+                            'deployment-helper'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -143,7 +143,7 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
                             'packages',
                             'libraries',
                             'core',
-                            'deployment-helper',
+                            'deployment-helper'
                         ),
                     });
                 },
@@ -167,7 +167,7 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
                             'packages',
                             'libraries',
                             'core',
-                            'deployment-helper',
+                            'deployment-helper'
                         ),
                     });
                 },
@@ -181,10 +181,10 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
                 const r = await cloudFormation.send(
                     new DescribeStacksCommand({
                         StackName: this.deploymentHelperStackName,
-                    }),
+                    })
                 );
                 answers.deploymentHelper.lambdaArn = r?.Stacks?.[0]?.Outputs?.find(
-                    (o) => o.OutputKey === 'CustomResourceLambdaArn',
+                    (o) => o.OutputKey === 'CustomResourceLambdaArn'
                 )?.OutputValue;
             },
         });
@@ -197,10 +197,10 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
                 const r = await cloudFormation.send(
                     new DescribeStacksCommand({
                         StackName: this.vpcDeploymentHelperStackName,
-                    }),
+                    })
                 );
                 answers.deploymentHelper.vpcLambdaArn = r?.Stacks?.[0]?.Outputs?.find(
-                    (o) => o.OutputKey === 'CustomResourceVpcLambdaArn',
+                    (o) => o.OutputKey === 'CustomResourceVpcLambdaArn'
                 )?.OutputValue;
             },
         });

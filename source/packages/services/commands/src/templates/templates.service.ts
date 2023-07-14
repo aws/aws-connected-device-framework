@@ -22,7 +22,7 @@ import { TemplatesValidator } from './templates.validator';
 export class TemplatesService {
     constructor(
         @inject(TYPES.TemplatesValidator) private validator: TemplatesValidator,
-        @inject(TYPES.TemplatesDao) private templatesDao: TemplatesDao,
+        @inject(TYPES.TemplatesDao) private templatesDao: TemplatesDao
     ) {}
 
     public async create(model: TemplateModel): Promise<void> {

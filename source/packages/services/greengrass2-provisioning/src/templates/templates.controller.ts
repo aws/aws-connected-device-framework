@@ -36,16 +36,16 @@ import { TemplatesService } from './templates.service';
 export class TemplatesController implements interfaces.Controller {
     constructor(
         @inject(TYPES.TemplatesService) private templatesService: TemplatesService,
-        @inject(TYPES.TemplatesAssembler) private templatesAssembler: TemplatesAssembler,
+        @inject(TYPES.TemplatesAssembler) private templatesAssembler: TemplatesAssembler
     ) {}
 
     @httpPost('')
     public async createTemplate(
         @requestBody() resource: EditableTemplateResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `templates.controller createTemplate: in: resource: ${JSON.stringify(resource)}`,
+            `templates.controller createTemplate: in: resource: ${JSON.stringify(resource)}`
         );
         try {
             const item = this.templatesAssembler.toItem(resource);
@@ -65,10 +65,10 @@ export class TemplatesController implements interfaces.Controller {
     public async updateTemplate(
         @requestParam('name') name: string,
         @requestBody() resource: EditableTemplateResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `templates.controller updateTemplate: in: resource: ${JSON.stringify(resource)}`,
+            `templates.controller updateTemplate: in: resource: ${JSON.stringify(resource)}`
         );
         try {
             resource.name = name;
@@ -88,7 +88,7 @@ export class TemplatesController implements interfaces.Controller {
     @httpGet('/:name')
     public async getLatestTemplate(
         @requestParam('name') name: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(`templates.controller getLatestTemplate: name:${name}`);
 
@@ -100,7 +100,7 @@ export class TemplatesController implements interfaces.Controller {
             } else {
                 const resource = this.templatesAssembler.toResource(item);
                 logger.debug(
-                    `templates.controller getLatestTemplate: exit: ${JSON.stringify(resource)}`,
+                    `templates.controller getLatestTemplate: exit: ${JSON.stringify(resource)}`
                 );
                 res.status(200).send(resource);
             }
@@ -112,7 +112,7 @@ export class TemplatesController implements interfaces.Controller {
     @httpDelete('/:name')
     public async deleteTemplate(
         @requestParam('name') name: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(`templates.controller deleteTemplate: name:${name}`);
 
@@ -128,10 +128,10 @@ export class TemplatesController implements interfaces.Controller {
     public async listTemplates(
         @queryParam('count') count: number,
         @queryParam('exclusiveStartName') exclusiveStartName: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
-            `templates.controller listTemplates: in: count:${count}, exclusiveStartName:${exclusiveStartName}`,
+            `templates.controller listTemplates: in: count:${count}, exclusiveStartName:${exclusiveStartName}`
         );
 
         try {
@@ -151,10 +151,10 @@ export class TemplatesController implements interfaces.Controller {
         @requestParam('name') name: string,
         @queryParam('count') count: number,
         @queryParam('exclusiveStartVersion') exclusiveStartVersion: number,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
-            `templates.controller listTemplateVersions: name:${name}, count:${count}, exclusiveStartVersion:${exclusiveStartVersion}`,
+            `templates.controller listTemplateVersions: name:${name}, count:${count}, exclusiveStartVersion:${exclusiveStartVersion}`
         );
 
         try {
@@ -164,10 +164,10 @@ export class TemplatesController implements interfaces.Controller {
             const resources = this.templatesAssembler.toVersionListResource(
                 items,
                 count,
-                paginationKey,
+                paginationKey
             );
             logger.debug(
-                `templates.controller listTemplateVersions: exit: ${JSON.stringify(resources)}`,
+                `templates.controller listTemplateVersions: exit: ${JSON.stringify(resources)}`
             );
             res.status(200).send(resources);
         } catch (e) {
@@ -179,7 +179,7 @@ export class TemplatesController implements interfaces.Controller {
     public async getTemplateVersion(
         @requestParam('name') name: string,
         @requestParam('version') version: number,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(`templates.controller getTemplateVersion: name:${name}, version:${version}`);
 
@@ -191,7 +191,7 @@ export class TemplatesController implements interfaces.Controller {
             } else {
                 const resource = this.templatesAssembler.toResource(item);
                 logger.debug(
-                    `templates.controller getTemplateVersion: exit: ${JSON.stringify(resource)}`,
+                    `templates.controller getTemplateVersion: exit: ${JSON.stringify(resource)}`
                 );
                 res.status(200).send(resource);
             }

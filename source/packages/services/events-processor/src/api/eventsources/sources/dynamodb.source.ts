@@ -25,7 +25,7 @@ export class DynamoDbEventSource implements EventSource {
     constructor(
         @inject('aws.lambda.dynamoDbStream.name') private dynamoDbStreamEntryLambda: string,
         @inject(TYPES.DynamoDBFactory) dynamoDBFactory: () => AWS.DynamoDB,
-        @inject(TYPES.LambdaFactory) lambdaFactory: () => AWS.Lambda,
+        @inject(TYPES.LambdaFactory) lambdaFactory: () => AWS.Lambda
     ) {
         this.ddb = dynamoDBFactory();
         this.lambda = lambdaFactory();
@@ -55,7 +55,7 @@ export class DynamoDbEventSource implements EventSource {
             tableInfo.Table.StreamSpecification.StreamEnabled === false
         ) {
             logger.debug(
-                `dynamodb.source create: Stream not enabled for table ${table}, therefore enabling`,
+                `dynamodb.source create: Stream not enabled for table ${table}, therefore enabling`
             );
             const updateParams: AWS.DynamoDB.UpdateTableInput = {
                 TableName: table,

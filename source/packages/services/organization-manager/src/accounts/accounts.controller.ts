@@ -44,19 +44,19 @@ export class AccountsController implements interfaces.Controller {
     constructor(
         @inject(TYPES.AccountsService) private accountsService: AccountsService,
         @inject(TYPES.ManifestService) private manifestService: ManifestService,
-        @inject(TYPES.AccountsAssembler) private accountsAssembler: AccountsAssembler,
+        @inject(TYPES.AccountsAssembler) private accountsAssembler: AccountsAssembler
     ) {}
 
     @httpPost('/organizationalUnits/:organizationalUnitId/accounts')
     public async createAccount(
         @requestParam('organizationalUnitId') organizationalUnitId: string,
         @requestBody() model: AccountCreationRequest,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<AccountResource> {
         logger.info(
             `accounts.controller  createAccount: in: model: ${JSON.stringify(
-                model,
-            )}, organizationalUnitId: ${organizationalUnitId}`,
+                model
+            )}, organizationalUnitId: ${organizationalUnitId}`
         );
         try {
             const accountResource = await this.accountsService.createAccount(model);
@@ -77,16 +77,16 @@ export class AccountsController implements interfaces.Controller {
         @requestParam('organizationalUnitId') organizationalUnitId: string,
         @queryParam('count') count: number,
         @queryParam('exclusiveStartAccountName') exclusiveStartAccountName: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<AccountResourceList> {
         logger.info(
-            `organizations.controller getOrganizationalUnit: in: accountId: ${organizationalUnitId}`,
+            `organizations.controller getOrganizationalUnit: in: accountId: ${organizationalUnitId}`
         );
         try {
             const [items, paginationKey] = await this.accountsService.getAccountsInOu(
                 organizationalUnitId,
                 count,
-                { organizationalUnitId, accountName: exclusiveStartAccountName },
+                { organizationalUnitId, accountName: exclusiveStartAccountName }
             );
             const resources = this.accountsAssembler.toListResource(items, count, paginationKey);
             logger.debug(`organizations.controller exit: ${JSON.stringify(resources)}`);
@@ -100,7 +100,7 @@ export class AccountsController implements interfaces.Controller {
     @httpGet('/accounts/:accountId')
     public async getAccount(
         @requestParam('accountId') accountId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<AccountResource> {
         logger.info(`accounts.controller getAccount: in: accountId: ${accountId}`);
         try {
@@ -121,7 +121,7 @@ export class AccountsController implements interfaces.Controller {
     public async updateAccount(
         @requestParam('id') accountId: string,
         @requestBody() requestBody: AccountRegionUpdateRequest,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<AccountResource> {
         logger.info(`accounts.controller updateAccount: in: accountName: ${accountId}`);
         try {
@@ -138,7 +138,7 @@ export class AccountsController implements interfaces.Controller {
     @httpDelete('/accounts/:accountId')
     public async deleteAccount(
         @requestParam('accountId') accountId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(`accounts.controller deleteAccount: in: accountId:${accountId}`);
         try {

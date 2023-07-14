@@ -63,12 +63,12 @@ export class CoreTasksAssembler {
     public toListResource(
         items: CoreTaskItem[],
         count?: number,
-        paginateFrom?: CoreTaskListPaginationKey,
+        paginateFrom?: CoreTaskListPaginationKey
     ): CoreTaskListResource {
         logger.debug(
             `coreTasks.assembler toListResource: in: items:${JSON.stringify(
-                items,
-            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+                items
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
         );
 
         const list: CoreTaskListResource = {

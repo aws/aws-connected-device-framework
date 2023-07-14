@@ -53,7 +53,7 @@ describe('SearchRequestModel', () => {
 
         expect(httpQueryString).toBeDefined();
         expect(httpQueryString).toEqual(
-            'type=device&eq=installed_in%3Aout%3Abelongs_to%3Aout%3Aname%3Acustomer001&eq=located_at%3Aout%3Aname%3Acolorado&eq=name%3A5AZVZ34HXGA10004',
+            'type=device&eq=installed_in%3Aout%3Abelongs_to%3Aout%3Aname%3Acustomer001&eq=located_at%3Aout%3Aname%3Acolorado&eq=name%3A5AZVZ34HXGA10004'
         );
 
         expect(lambdaQueryString).toBeDefined();
@@ -61,13 +61,13 @@ describe('SearchRequestModel', () => {
         expect(lambdaQueryString.type[0]).toEqual('device');
         expect(lambdaQueryString.eq).toHaveLength(3);
         expect(lambdaQueryString.eq[0]).toEqual(
-            'installed_in:out:belongs_to:out:name:customer001',
+            'installed_in:out:belongs_to:out:name:customer001'
         );
         expect(lambdaQueryString.eq[1]).toEqual('located_at:out:name:colorado');
         expect(lambdaQueryString.eq[2]).toEqual('name:5AZVZ34HXGA10004');
 
         expect(decodeURIComponent(httpQueryString)).toEqual(
-            'type=device&eq=installed_in:out:belongs_to:out:name:customer001&eq=located_at:out:name:colorado&eq=name:5AZVZ34HXGA10004',
+            'type=device&eq=installed_in:out:belongs_to:out:name:customer001&eq=located_at:out:name:colorado&eq=name:5AZVZ34HXGA10004'
         );
     });
 
@@ -86,7 +86,7 @@ describe('SearchRequestModel', () => {
 
         expect(httpQueryString).toBeDefined();
         expect(httpQueryString).toEqual(
-            'type=auto_ecu&eq=name%3Aap-northeast-1%253A55f70ca4-faaa-4aa0-8778-99a102174740',
+            'type=auto_ecu&eq=name%3Aap-northeast-1%253A55f70ca4-faaa-4aa0-8778-99a102174740'
         );
 
         expect(lambdaQueryString).toBeDefined();
@@ -94,11 +94,11 @@ describe('SearchRequestModel', () => {
         expect(lambdaQueryString.type[0]).toEqual('auto_ecu');
         expect(lambdaQueryString.eq).toHaveLength(1);
         expect(lambdaQueryString.eq[0]).toEqual(
-            'name:ap-northeast-1%3A55f70ca4-faaa-4aa0-8778-99a102174740',
+            'name:ap-northeast-1%3A55f70ca4-faaa-4aa0-8778-99a102174740'
         );
 
         expect(decodeURIComponent(httpQueryString)).toEqual(
-            'type=auto_ecu&eq=name:ap-northeast-1%3A55f70ca4-faaa-4aa0-8778-99a102174740',
+            'type=auto_ecu&eq=name:ap-northeast-1%3A55f70ca4-faaa-4aa0-8778-99a102174740'
         );
     });
 

@@ -29,7 +29,7 @@ export const logger = createLogger(<LoggerOptions>{
             return `${nfo.timestamp} ${nfo.level}: rid-${requestId ? requestId : 'not-set-yet'}: ${
                 nfo.message
             }`;
-        }),
+        })
     ),
 });
 

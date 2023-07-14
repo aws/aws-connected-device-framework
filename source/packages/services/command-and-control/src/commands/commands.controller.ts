@@ -41,16 +41,16 @@ import { CommandsService } from './commands.service';
 export class CommandsController implements interfaces.Controller {
     constructor(
         @inject(TYPES.CommandsService) private commandsService: CommandsService,
-        @inject(TYPES.CommandsAssembler) private commandsAssembler: CommandsAssembler,
+        @inject(TYPES.CommandsAssembler) private commandsAssembler: CommandsAssembler
     ) {}
 
     @httpPost('')
     public async createCommand(
         @requestBody() resource: EditableCommandResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `commands.controller createCommand: in: resource: ${JSON.stringify(resource)}`,
+            `commands.controller createCommand: in: resource: ${JSON.stringify(resource)}`
         );
         try {
             const item = this.commandsAssembler.toItem(resource);
@@ -68,10 +68,10 @@ export class CommandsController implements interfaces.Controller {
     public async updateCommand(
         @requestParam('commandId') commandId: string,
         @requestBody() resource: EditableCommandResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `commands.controller updateCommand: in: resource: ${JSON.stringify(resource)}`,
+            `commands.controller updateCommand: in: resource: ${JSON.stringify(resource)}`
         );
         try {
             const item = this.commandsAssembler.toItem(resource);
@@ -87,10 +87,10 @@ export class CommandsController implements interfaces.Controller {
     public async createNamedCommand(
         @requestParam('commandId') commandId: string,
         @requestBody() resource: EditableCommandResource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `commands.controller createNamedCommand: in: resource: ${JSON.stringify(resource)}`,
+            `commands.controller createNamedCommand: in: resource: ${JSON.stringify(resource)}`
         );
         try {
             const item = this.commandsAssembler.toItem(resource);
@@ -107,12 +107,12 @@ export class CommandsController implements interfaces.Controller {
         @queryParam('tag') tagsQS: string | string[],
         @queryParam('fromCommandIdExclusive') fromCommandIdExclusive: string,
         @queryParam('count') count: number,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<CommandResourceList> {
         logger.info(
             `commands.controller listCommands: in: tagsQS:${JSON.stringify(
-                tagsQS,
-            )}, fromCommandIdExclusive:${fromCommandIdExclusive}, count:${count}`,
+                tagsQS
+            )}, fromCommandIdExclusive:${fromCommandIdExclusive}, count:${count}`
         );
 
         let result: CommandResourceList;
@@ -132,7 +132,7 @@ export class CommandsController implements interfaces.Controller {
             const [items, paginationKey] = await this.commandsService.list(
                 tags,
                 { commandId: fromCommandIdExclusive },
-                count,
+                count
             );
             result = this.commandsAssembler.toResourceList(items, count, paginationKey);
         } catch (e) {
@@ -145,7 +145,7 @@ export class CommandsController implements interfaces.Controller {
     @httpGet('/:commandId')
     public async getCommand(
         @requestParam('commandId') commandId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<CommandResource> {
         logger.info(`commands.controller getCommand: in: commandId:${commandId}`);
 
@@ -166,7 +166,7 @@ export class CommandsController implements interfaces.Controller {
     @httpDelete('/:commandId')
     public async deleteCommand(
         @requestParam('commandId') commandId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(`commands.controller deleteCommand: in: commandId: ${commandId}`);
         try {

@@ -29,8 +29,8 @@ export class IotRoleAliasCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `IotRoleAliasCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const tokenExchangeRoleNameArn =
@@ -48,7 +48,7 @@ export class IotRoleAliasCustomResource implements CustomResource {
                 await this._iot.deletePolicy({ policyName: tokenExchangeRolePolicy }).promise();
             } catch (Exception) {
                 logger.error(
-                    `IotRoleAliasCustomResource: create: error: cannot delete policy: ${Exception}`,
+                    `IotRoleAliasCustomResource: create: error: cannot delete policy: ${Exception}`
                 );
             }
 
@@ -56,7 +56,7 @@ export class IotRoleAliasCustomResource implements CustomResource {
                 await this._iot.deleteRoleAlias({ roleAlias: tokenExchangeRoleAlias }).promise();
             } catch (Exception) {
                 logger.error(
-                    `IotRoleAliasCustomResource: create: error: cannot delete existing role alias: ${Exception}`,
+                    `IotRoleAliasCustomResource: create: error: cannot delete existing role alias: ${Exception}`
                 );
             }
 
@@ -88,7 +88,7 @@ export class IotRoleAliasCustomResource implements CustomResource {
                 .promise();
 
             logger.info(
-                `IotRoleAliasCustomResource: policy: ${tokenExchangeRolePolicy} is created`,
+                `IotRoleAliasCustomResource: policy: ${tokenExchangeRolePolicy} is created`
             );
             return {};
         } catch (err) {
@@ -100,8 +100,8 @@ export class IotRoleAliasCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `IotRoleAliasCustomResource: update: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         return await this.create(customResourceEvent);
     }

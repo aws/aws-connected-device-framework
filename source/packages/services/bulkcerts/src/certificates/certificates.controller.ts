@@ -34,14 +34,14 @@ export class CertificatesController implements interfaces.Controller {
     constructor(
         @inject(TYPES.CertificatesTaskService)
         private certificatesTaskService: CertificatesTaskService,
-        @inject(TYPES.CertificatesService) private certificatesService: CertificatesService,
+        @inject(TYPES.CertificatesService) private certificatesService: CertificatesService
     ) {}
 
     @httpGet('/:taskId')
     public async getCertificates(
         @requestParam('taskId') taskId: string,
         @queryParam('downloadType') downloadType: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(`certificates.controller getCertificates: in: taskId:${taskId}`);
 
@@ -70,7 +70,7 @@ export class CertificatesController implements interfaces.Controller {
                 // but if its not complete, redirect the client to the task
                 const redirectTo = `/certificates/${taskId}/task`;
                 logger.debug(
-                    `certificates.controller getCertificates: exit: 303 to ${redirectTo}`,
+                    `certificates.controller getCertificates: exit: 303 to ${redirectTo}`
                 );
                 res.location(redirectTo);
                 res.status(303);
@@ -85,7 +85,7 @@ export class CertificatesController implements interfaces.Controller {
     @httpGet('/:taskId/task')
     public async getCertificatesTask(
         @requestParam('taskId') taskId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<CertificateBatchTaskWithChunks> {
         logger.debug(`certificates.controller getCertificatesTask: in: taskId:${taskId}`);
 

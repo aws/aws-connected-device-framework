@@ -39,7 +39,7 @@ export class OrganizationalUnitsService {
         @inject(TYPES.OrganizationalUnitsAssembler)
         private organizationalUnitsAssembler: OrganizationalUnitsAssembler,
         @inject(TYPES.AccountsDao) private accountsDao: AccountsDao,
-        @inject(TYPES.OrganizationsFactory) organizationsFactory: () => AWS.Organizations,
+        @inject(TYPES.OrganizationsFactory) organizationsFactory: () => AWS.Organizations
     ) {
         this._organizations = organizationsFactory();
     }
@@ -51,7 +51,7 @@ export class OrganizationalUnitsService {
 
     private async createOrganizationalUnitInMaster(
         ouName: string,
-        tags: { [key: string]: string },
+        tags: { [key: string]: string }
     ): Promise<string> {
         const rootId = await this.getRootId();
 
@@ -82,8 +82,8 @@ export class OrganizationalUnitsService {
     public async createOrganizationalUnit(request: OrganizationalUnitResource): Promise<string> {
         logger.debug(
             `organizationmanager.service createOrganizationalUnit: in: request: ${JSON.stringify(
-                request,
-            )}`,
+                request
+            )}`
         );
 
         ow(request, ow.object.nonEmpty);
@@ -103,16 +103,16 @@ export class OrganizationalUnitsService {
             owCheckUnprintableChar(request.id, 'request.id');
             owCheckOversizeString(request.id, 2048, 'request.id');
             logger.debug(
-                `organizationmanager.service createOrganizationalUnit: registering existing ou:${request.id}`,
+                `organizationmanager.service createOrganizationalUnit: registering existing ou:${request.id}`
             );
         }
         await this.organizationalUnitsDao.createOrganizationalUnit(
-            this.organizationalUnitsAssembler.toItem(request),
+            this.organizationalUnitsAssembler.toItem(request)
         );
         logger.debug(
             `organizationmanager.service: createOrganizationalUnit: out: ${JSON.stringify(
-                request,
-            )}`,
+                request
+            )}`
         );
         return request.id;
     }
@@ -154,8 +154,8 @@ export class OrganizationalUnitsService {
 
         logger.debug(
             `organizationmanager.service: listOrganizationalUnits: out: ${JSON.stringify(
-                organizationalUnits,
-            )}`,
+                organizationalUnits
+            )}`
         );
         return organizationalUnits;
     }
@@ -208,8 +208,8 @@ export class OrganizationalUnitsService {
 
         logger.debug(
             `organizationmanager.service: getOrganizationalUnit: out: ${JSON.stringify(
-                organizationalUnitResource,
-            )}`,
+                organizationalUnitResource
+            )}`
         );
 
         return organizationalUnitResource;

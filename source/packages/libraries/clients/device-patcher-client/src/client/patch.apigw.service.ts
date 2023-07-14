@@ -38,7 +38,7 @@ export class PatchApigwService extends PatchServiceBase implements PatchService 
 
     public async createPatchTask(
         patchTaskRequest: PatchTaskRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string> {
         ow(patchTaskRequest, ow.object.nonEmpty);
         ow(patchTaskRequest.patches, ow.array.nonEmpty);
@@ -59,7 +59,7 @@ export class PatchApigwService extends PatchServiceBase implements PatchService 
 
     public async getPatch(
         patchId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<PatchResponse> {
         ow(patchId, ow.string.nonEmpty);
 
@@ -78,7 +78,7 @@ export class PatchApigwService extends PatchServiceBase implements PatchService 
 
     public async getPatchTask(
         taskId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<PatchTaskResponse> {
         ow(taskId, ow.string.nonEmpty);
 
@@ -97,7 +97,7 @@ export class PatchApigwService extends PatchServiceBase implements PatchService 
 
     public async listPatchesByTaskId(
         taskId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ListPatchResponse> {
         ow(taskId, ow.string.nonEmpty);
 
@@ -117,7 +117,7 @@ export class PatchApigwService extends PatchServiceBase implements PatchService 
     public async listPatchesByDeviceId(
         deviceId: string,
         status?: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<ListPatchResponse> {
         ow(deviceId, ow.string.nonEmpty);
 
@@ -142,7 +142,7 @@ export class PatchApigwService extends PatchServiceBase implements PatchService 
 
     public async updatePatch(
         patchRequest: UpdatePatchRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(patchRequest, ow.object.nonEmpty);
         ow(patchRequest.patchStatus, ow.string.nonEmpty);

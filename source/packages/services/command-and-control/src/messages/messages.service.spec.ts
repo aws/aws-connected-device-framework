@@ -53,7 +53,7 @@ describe('MessagesService', () => {
             mockedMessagesDao,
             mockedWorkflowFactory,
             mockedSQSFactory,
-            mockedIotFactory,
+            mockedIotFactory
         );
     });
 
@@ -96,7 +96,7 @@ describe('MessagesService', () => {
         expect(JSON.parse(sendMessageArgs.MessageBody)?.message?.id).toEqual(saved.id);
         expect(JSON.parse(sendMessageArgs.MessageBody)?.command?.id).toEqual(command.id);
         expect(sendMessageArgs.MessageAttributes.messageType.StringValue).toEqual(
-            'Message::identifying_targets',
+            'Message::identifying_targets'
         );
     });
 
@@ -144,7 +144,7 @@ describe('MessagesService', () => {
         expect(JSON.parse(sendMessageArgs.MessageBody)?.message?.id).toEqual(saved.id);
         expect(JSON.parse(sendMessageArgs.MessageBody)?.command?.id).toEqual(command.id);
         expect(sendMessageArgs.MessageAttributes.messageType.StringValue).toEqual(
-            'Message::identifying_targets',
+            'Message::identifying_targets'
         );
     });
 
@@ -172,7 +172,7 @@ describe('MessagesService', () => {
             await underTest.create(message);
         };
         await expect(functionUnderTest()).rejects.toThrow(
-            "FAILED_VALIDATION: value for command payload parameter 'bar' not provided",
+            "FAILED_VALIDATION: value for command payload parameter 'bar' not provided"
         );
 
         // verify

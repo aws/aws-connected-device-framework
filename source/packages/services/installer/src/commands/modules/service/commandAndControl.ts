@@ -58,7 +58,7 @@ export class CommandAndControlInstaller implements RestModule {
         delete answers.commandAndControl?.redeploy;
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
         if (updatedAnswers.commandAndControl?.redeploy ?? true) {
             updatedAnswers = await inquirer.prompt(
@@ -74,14 +74,14 @@ export class CommandAndControlInstaller implements RestModule {
                     ...applicationConfigurationPrompt(this.name, answers, []),
                     ...customDomainPrompt(this.name, answers),
                 ],
-                updatedAnswers,
+                updatedAnswers
             );
         }
 
         includeOptionalModule(
             'assetLibrary',
             updatedAnswers.modules,
-            updatedAnswers.commandAndControl.useAssetLibrary,
+            updatedAnswers.commandAndControl.useAssetLibrary
         );
         return updatedAnswers;
     }
@@ -111,7 +111,7 @@ export class CommandAndControlInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
 
         return parameterOverrides;
@@ -132,7 +132,7 @@ export class CommandAndControlInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'command-and-control',
+                            'command-and-control'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -163,11 +163,11 @@ export class CommandAndControlInstaller implements RestModule {
                 }
                 const assetlibrarybyResourceLogicalId = await getStackResourceSummaries(
                     this.assetLibraryStackName,
-                    answers.region,
+                    answers.region
                 );
                 const provisioningbyResourceLogicalId = await getStackResourceSummaries(
                     this.provisioningStackName,
-                    answers.region,
+                    answers.region
                 );
                 answers.commandAndControl.provisioningFunctionName =
                     provisioningbyResourceLogicalId('LambdaFunction');
@@ -189,7 +189,7 @@ export class CommandAndControlInstaller implements RestModule {
                         'source',
                         'packages',
                         'services',
-                        'command-and-control',
+                        'command-and-control'
                     ),
                     parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,
@@ -219,7 +219,7 @@ export class CommandAndControlInstaller implements RestModule {
             .add(`CORS_ORIGIN`, answers.apigw.corsOrigin)
             .add(
                 `PROVISIONING_TEMPLATES_ADDTHINGTOTHINGGROUP`,
-                answers.commandAndControl.addThingToGroupTemplate,
+                answers.commandAndControl.addThingToGroupTemplate
             );
 
         return configBuilder.config;

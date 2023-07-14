@@ -55,7 +55,7 @@ export class ProvisioningInstaller implements RestModule {
 
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
 
         if ((updatedAnswers.provisioning?.redeploy ?? true) === false) {
@@ -119,7 +119,7 @@ export class ProvisioningInstaller implements RestModule {
                     },
                 },
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         updatedAnswers = await inquirer.prompt(
@@ -135,7 +135,7 @@ export class ProvisioningInstaller implements RestModule {
                     },
                 },
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         //Collect the IoT CA List
@@ -146,7 +146,7 @@ export class ProvisioningInstaller implements RestModule {
                 updatedAnswers.provisioning.iotCaAliases = iotCaAliases;
                 updatedAnswers = await inquirer.prompt(
                     [..._.getIoTCAPrompt(answers, iotCaAliases)],
-                    updatedAnswers,
+                    updatedAnswers
                 );
                 // Update the iotCaAlias to upper case
                 if (updatedAnswers.provisioning.iotCaAlias === undefined) {
@@ -156,7 +156,7 @@ export class ProvisioningInstaller implements RestModule {
                         updatedAnswers.provisioning.iotCaAlias.toUpperCase();
                     if (
                         !updatedAnswers.provisioning.iotCaAliases.list.includes(
-                            updatedAnswers.provisioning.iotCaAlias,
+                            updatedAnswers.provisioning.iotCaAlias
                         )
                     ) {
                         const alias = updatedAnswers.provisioning.iotCaAlias;
@@ -183,7 +183,7 @@ export class ProvisioningInstaller implements RestModule {
                     },
                 },
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         //Collect the ACM PCA List
@@ -194,7 +194,7 @@ export class ProvisioningInstaller implements RestModule {
                 updatedAnswers.provisioning.pcaAliases = pcaAliases;
                 updatedAnswers = await inquirer.prompt(
                     [..._.getPCAPrompt(answers, pcaAliases)],
-                    updatedAnswers,
+                    updatedAnswers
                 );
                 if (updatedAnswers.provisioning.pcaAlias === undefined) {
                     updatedAnswers.provisioning.pcaFinished = true;
@@ -204,7 +204,7 @@ export class ProvisioningInstaller implements RestModule {
                         updatedAnswers.provisioning.pcaAlias.toUpperCase();
                     if (
                         !updatedAnswers.provisioning.pcaAliases.list.includes(
-                            updatedAnswers.provisioning.pcaAlias,
+                            updatedAnswers.provisioning.pcaAlias
                         )
                     ) {
                         const alias = updatedAnswers.provisioning.pcaAlias;
@@ -253,7 +253,7 @@ export class ProvisioningInstaller implements RestModule {
                     },
                 ]),
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         return updatedAnswers;
@@ -283,7 +283,7 @@ export class ProvisioningInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
         addIfSpecified('ACMPCACrossAccountRoleArn', answers.provisioning.pcaCrossAccountRoleArn);
 
@@ -305,7 +305,7 @@ export class ProvisioningInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'provisioning',
+                            'provisioning'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -509,7 +509,7 @@ export class ProvisioningInstaller implements RestModule {
 
     private validateAcmPcaArn(arn: string): boolean | string {
         return /^arn:aws:acm-pca:\w+(?:-\w+)+:\d{12}:certificate-authority\/[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+$/.test(
-            arn,
+            arn
         )
             ? true
             : 'Value is not a valid ACM PCA Arn';

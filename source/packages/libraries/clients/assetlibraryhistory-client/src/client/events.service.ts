@@ -23,38 +23,38 @@ import {
 export interface EventsService {
     listObjectEvents(
         req: ObjectEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events>;
 
     listDeviceEvents(
         req: CategoryEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events>;
 
     listGroupEvents(
         req: CategoryEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events>;
 
     listDeviceTemplateEvents(
         req: CategoryEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events>;
 
     listGroupTemplateEvents(
         req: CategoryEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events>;
 
     listPolicyEvents(
         req: CategoryEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events>;
 
     listCategoryEvents(
         category: Category,
         req: CategoryEventsRequest,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<Events>;
 }
 
@@ -82,7 +82,7 @@ export class EventsServiceBase {
         if (customHeaders !== undefined) {
             try {
                 const headersFromConfig: RequestHeaders = JSON.parse(
-                    customHeaders,
+                    customHeaders
                 ) as unknown as RequestHeaders;
                 headers = { ...headers, ...headersFromConfig };
             } catch (err) {

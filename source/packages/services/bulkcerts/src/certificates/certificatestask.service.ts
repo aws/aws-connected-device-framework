@@ -45,7 +45,7 @@ export class CertificatesTaskService {
         @inject('defaults.chunkSize') private defaultChunkSize: number,
         @inject('deviceCertificateExpiryDays') private defaultDaysExpiry: number,
         @inject(TYPES.CertificatesTaskDao) private dao: CertificatesTaskDao,
-        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS,
+        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS
     ) {
         this._sns = snsFactory();
     }
@@ -53,12 +53,12 @@ export class CertificatesTaskService {
     public async createTask(
         quantity: number,
         caAlias: string,
-        certInfo: CertificateInfo,
+        certInfo: CertificateInfo
     ): Promise<string> {
         logger.debug(
             `certificatestask.service createTask: in: quantity: ${quantity}, caAlias: ${caAlias}, certInfo:${JSON.stringify(
-                certInfo,
-            )}`,
+                certInfo
+            )}`
         );
 
         ow(caAlias, ow.string.nonEmpty);
@@ -121,10 +121,10 @@ export class CertificatesTaskService {
         chunkId: number,
         quantity: number,
         caAlias: string,
-        certInfo: CertificateInfo,
+        certInfo: CertificateInfo
     ): Promise<void> {
         logger.debug(
-            `certificatestask.service fireSNSevent: in: taskId:${taskId}, chunkId:${chunkId}, quantity:${quantity}`,
+            `certificatestask.service fireSNSevent: in: taskId:${taskId}, chunkId:${chunkId}, quantity:${quantity}`
         );
 
         ow(taskId, ow.string.nonEmpty);
@@ -193,7 +193,7 @@ export class CertificatesTaskService {
             TopicArn: this.requestTopic,
         };
         logger.silly(
-            `certificatestask.service fireSNSevent: publishing:${JSON.stringify(params)}`,
+            `certificatestask.service fireSNSevent: publishing:${JSON.stringify(params)}`
         );
         await this._sns.publish(params).promise();
         logger.debug('certificatestask.service fireSNSevent: exit:');
@@ -215,7 +215,7 @@ export class CertificatesTaskService {
 
     private validateCertInfo(certInfo: CertificateInfo): CertInfoValidationResult {
         logger.debug(
-            `certificatestask.service validateCertInfo: in: certInfo:${JSON.stringify(certInfo)}`,
+            `certificatestask.service validateCertInfo: in: certInfo:${JSON.stringify(certInfo)}`
         );
 
         const commonNameRE = /^[0-9A-Fa-f]+$/g;
@@ -294,7 +294,7 @@ export class CertificatesTaskService {
 
     private constructCommonName(certInfo: CertificateInfo): CertificateInfo {
         logger.debug(
-            `certificatestask.service constructCommonName: in:${JSON.stringify(certInfo)}`,
+            `certificatestask.service constructCommonName: in:${JSON.stringify(certInfo)}`
         );
 
         let prefix: string;
@@ -338,14 +338,14 @@ export class CertificatesTaskService {
                 const quantityArr = commonName.match(incrementRE);
                 if (typeof quantityArr !== 'undefined' && quantityArr !== null) {
                     certInfoRes['commonName']['quantity'] = parseInt(
-                        quantityArr[0].replace(/[()/]/gi, ''),
+                        quantityArr[0].replace(/[()/]/gi, '')
                     );
                 }
                 certInfoRes['commonName']['commonNameStart'] = commonName.replace(generatorRE, '');
             } else if (generator === 'static') {
                 certInfoRes['commonName']['commonNameStatic'] = commonName.replace(
                     generatorRE,
-                    '',
+                    ''
                 );
             } else if (generator === 'list') {
                 certInfoRes['commonName']['quantity'] = certInfoRes.commonNameList.length;
@@ -356,7 +356,7 @@ export class CertificatesTaskService {
             certInfoRes['commonName']['commonNameStatic'] = commonName;
         }
         logger.debug(
-            `certificatestask.service constructCommonName: exit:${JSON.stringify(certInfoRes)}`,
+            `certificatestask.service constructCommonName: exit:${JSON.stringify(certInfoRes)}`
         );
         return certInfoRes;
     }
@@ -365,8 +365,8 @@ export class CertificatesTaskService {
     private validateCommonName(certInfo: CertificateInfo): void {
         logger.debug(
             `certificatesTask.service validateCommonName: in: certInfo: ${JSON.stringify(
-                certInfo,
-            )}`,
+                certInfo
+            )}`
         );
         const commonName = certInfo.commonName;
         let commonNameValue: string;
@@ -396,7 +396,7 @@ export class CertificatesTaskService {
         //convert string to base64
         commonNameValue = Buffer.from(commonNameValue.toString()).toString('base64');
         logger.silly(
-            `certificates.service createCommonName: commonNameValue:${commonNameValue} length:${commonNameValue?.length}`,
+            `certificates.service createCommonName: commonNameValue:${commonNameValue} length:${commonNameValue?.length}`
         );
         ow(commonNameValue, `base64 encoded commonName`, ow.string.maxLength(64));
     }

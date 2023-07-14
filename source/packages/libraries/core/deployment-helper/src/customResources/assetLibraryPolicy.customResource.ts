@@ -27,7 +27,7 @@ import { CustomResourceEvent } from './customResource.model';
 export class AssetLibraryPolicyCustomResource implements CustomResource {
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {}
 
     protected headers: { [key: string]: string };
@@ -35,8 +35,8 @@ export class AssetLibraryPolicyCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `AssetLibraryPolicyCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const functionName = customResourceEvent.ResourceProperties.FunctionName;
@@ -88,7 +88,7 @@ export class AssetLibraryPolicyCustomResource implements CustomResource {
         }
         const res = await this.lambdaInvoker.invoke(functionName, event);
         logger.debug(
-            `AssetLibraryPolicyCustomResource: create: create/update res: ${JSON.stringify(res)}`,
+            `AssetLibraryPolicyCustomResource: create: create/update res: ${JSON.stringify(res)}`
         );
 
         return res;
@@ -97,8 +97,8 @@ export class AssetLibraryPolicyCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `AssetLibraryPolicyCustomResource: update: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         return await this.create(customResourceEvent);
     }

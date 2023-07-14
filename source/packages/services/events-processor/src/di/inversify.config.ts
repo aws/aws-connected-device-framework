@@ -196,7 +196,7 @@ container
                     dc = new AWS.DynamoDB.DocumentClient({ service: dax });
                 } else {
                     const dcf = container.get<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(
-                        TYPES.DocumentClientFactory,
+                        TYPES.DocumentClientFactory
                     );
                     dc = <AWS.DynamoDB.DocumentClient>dcf();
                 }

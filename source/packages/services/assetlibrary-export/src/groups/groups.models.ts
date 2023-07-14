@@ -75,12 +75,12 @@ export class GroupItem {
         if (this.groups) {
             if (this.groups.in) {
                 Object.keys(this.groups.in).forEach((k) =>
-                    relatedGroupPaths.push(...this.groups.in[k]),
+                    relatedGroupPaths.push(...this.groups.in[k])
                 );
             }
             if (this.groups.out) {
                 Object.keys(this.groups.out).forEach((k) =>
-                    relatedGroupPaths.push(...this.groups.out[k]),
+                    relatedGroupPaths.push(...this.groups.out[k])
                 );
             }
         }
@@ -124,7 +124,7 @@ export class BulkGroupsResult {
 }
 
 export function determineIfGroup20Resource(
-    toBeDetermined: GroupBaseResource,
+    toBeDetermined: GroupBaseResource
 ): toBeDetermined is Group20Resource {
     const asV2 = toBeDetermined as Group20Resource;
     if (asV2.groups && (asV2.groups.in || asV2.groups.out)) {

@@ -27,7 +27,7 @@ import { CustomResourceEvent } from './customResource.model';
 export class CommandsCommandCustomResource implements CustomResource {
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {}
 
     protected headers: { [key: string]: string };
@@ -35,8 +35,8 @@ export class CommandsCommandCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `CommandsCommandCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const functionName = customResourceEvent.ResourceProperties.FunctionName;
@@ -72,7 +72,7 @@ export class CommandsCommandCustomResource implements CustomResource {
 
         const publishRes = await this.lambdaInvoker.invoke(functionName, publishEvent);
         logger.debug(
-            `CommandsCommandCustomResource: create: publishRes: ${JSON.stringify(publishRes)}`,
+            `CommandsCommandCustomResource: create: publishRes: ${JSON.stringify(publishRes)}`
         );
 
         return publishRes;
@@ -81,8 +81,8 @@ export class CommandsCommandCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `CommandsCommandCustomResource: update: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         // no update
         return {};
@@ -91,8 +91,8 @@ export class CommandsCommandCustomResource implements CustomResource {
     public async delete(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `CommandsCommandCustomResource: delete: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         // no deleet
         return {};

@@ -28,7 +28,7 @@ export class GroupsDao extends BaseDaoFull {
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -76,11 +76,11 @@ export class GroupsDao extends BaseDaoFull {
                         .constant('out')
                         .as('dir')
                         .select('entityId', 'dir', 'e', 'vProps'),
-                    __.select('main').valueMap().with_(process.withOptions.tokens),
+                    __.select('main').valueMap().with_(process.withOptions.tokens)
                 );
 
             logger.silly(
-                `groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`,
+                `groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`
             );
             results = await traverser.toList();
             logger.silly(`groups.full.dao get: result: ${JSON.stringify(results)}`);

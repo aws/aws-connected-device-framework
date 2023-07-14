@@ -97,12 +97,12 @@ export class MessagesAssembler {
     public toMessageListResource(
         items: MessageItem[],
         count?: number,
-        paginateFrom?: MessageListPaginationKey,
+        paginateFrom?: MessageListPaginationKey
     ): MessageResourceList {
         logger.debug(
             `messages.assembler toMessageListResource: in: items:${JSON.stringify(
-                items,
-            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+                items
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
         );
 
         const list: MessageResourceList = {
@@ -134,12 +134,12 @@ export class MessagesAssembler {
     public toRecipientListResource(
         items: Recipient[],
         count?: number,
-        paginateFrom?: RecipientListPaginationKey,
+        paginateFrom?: RecipientListPaginationKey
     ): RecipientList {
         logger.debug(
             `messages.assembler toRecipientListResource: in: items:${JSON.stringify(
-                items,
-            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+                items
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
         );
 
         const list: RecipientList = {
@@ -169,12 +169,12 @@ export class MessagesAssembler {
     public toReplyListResource(
         items: ReplyItem[],
         count?: number,
-        paginateFrom?: ReplyListPaginationKey,
+        paginateFrom?: ReplyListPaginationKey
     ): ReplyResourceList {
         logger.debug(
             `messages.assembler toReplyListResource: in: items:${JSON.stringify(
-                items,
-            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`,
+                items
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
         );
 
         const list: ReplyResourceList = {

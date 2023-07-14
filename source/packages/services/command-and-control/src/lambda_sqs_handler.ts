@@ -30,9 +30,7 @@ exports.handler = async (event: any, _context: unknown) => {
             try {
                 if (r.eventSource !== 'aws:sqs') {
                     logger.warn(
-                        `lambda_sqs_handler handler: ignoring non-sqs events: ${JSON.stringify(
-                            r,
-                        )}`,
+                        `lambda_sqs_handler handler: ignoring non-sqs events: ${JSON.stringify(r)}`
                     );
                     continue;
                 }

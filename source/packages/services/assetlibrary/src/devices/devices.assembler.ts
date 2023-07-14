@@ -90,7 +90,7 @@ export class DevicesAssembler {
             model.category = TypeCategory.Device;
         }
         model.templateId = node.types.filter(
-            (t) => t !== TypeCategory.Device && t !== TypeCategory.Component,
+            (t) => t !== TypeCategory.Device && t !== TypeCategory.Component
         )[0];
         model.version = node.version;
 
@@ -129,7 +129,7 @@ export class DevicesAssembler {
 
                 default:
                     model.attributes[key] = this.fullAssembler.extractPropertyValue(
-                        node.attributes[key],
+                        node.attributes[key]
                     );
             }
         });
@@ -186,7 +186,7 @@ export class DevicesAssembler {
         const assembleRelated = (
             from: StringArrayMap,
             rels: DirectionToRelatedEntityArrayMap,
-            direction: RelationDirection,
+            direction: RelationDirection
         ) => {
             if (from) {
                 if (rels[direction] === undefined) rels[direction] = {};
@@ -235,7 +235,7 @@ export class DevicesAssembler {
         res.devices.forEach((resource) => items.push(this.fromDeviceResource(resource)));
 
         logger.debug(
-            `device.assembler fromBulkDevicesResource: exit: items: ${JSON.stringify(items)}`,
+            `device.assembler fromBulkDevicesResource: exit: items: ${JSON.stringify(items)}`
         );
         return items;
     }
@@ -243,8 +243,8 @@ export class DevicesAssembler {
     public toDeviceResource(item: DeviceItem, version: string): DeviceBaseResource {
         logger.debug(
             `device.assembler toDeviceResource: in: item: ${JSON.stringify(
-                item,
-            )}, version:${version}`,
+                item
+            )}, version:${version}`
         );
 
         if (item === undefined) {
@@ -317,7 +317,7 @@ export class DevicesAssembler {
         });
 
         logger.debug(
-            `device.assembler toDeviceResource: exit: resource: ${JSON.stringify(resource)}`,
+            `device.assembler toDeviceResource: exit: resource: ${JSON.stringify(resource)}`
         );
         return resource;
     }
@@ -325,8 +325,8 @@ export class DevicesAssembler {
     public toDeviceResourceList(items: DeviceItemList, version: string): DeviceResourceList {
         logger.debug(
             `device.assembler toDeviceResourceList: in: items: ${JSON.stringify(
-                items,
-            )}, version:${version}`,
+                items
+            )}, version:${version}`
         );
 
         if (items === undefined) {
@@ -339,11 +339,11 @@ export class DevicesAssembler {
         resources.results = [];
 
         items.results.forEach((item) =>
-            resources.results.push(this.toDeviceResource(item, version)),
+            resources.results.push(this.toDeviceResource(item, version))
         );
 
         logger.debug(
-            `device.assembler toDeviceResourceList: exit: resources: ${JSON.stringify(resources)}`,
+            `device.assembler toDeviceResourceList: exit: resources: ${JSON.stringify(resources)}`
         );
         return resources;
     }
@@ -351,7 +351,7 @@ export class DevicesAssembler {
     private assembleRelated(
         model: DeviceItem,
         related: StringNodeMap,
-        direction: RelationDirection,
+        direction: RelationDirection
     ) {
         Object.keys(related).forEach((key) => {
             const others = related[key];
@@ -391,10 +391,10 @@ export class DevicesAssembler {
     public toRelatedDeviceModelsList(
         node: Node,
         offset?: number | string,
-        count?: number,
+        count?: number
     ): DeviceItemList {
         logger.debug(
-            `devices.assembler toRelatedDeviceModelsList: in: node: ${JSON.stringify(node)}`,
+            `devices.assembler toRelatedDeviceModelsList: in: node: ${JSON.stringify(node)}`
         );
 
         const r: DeviceItemList = {

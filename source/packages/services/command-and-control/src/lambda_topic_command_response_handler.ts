@@ -23,7 +23,7 @@ const svc: ResponsesService = container.get<ResponsesService>(TYPES.ResponsesSer
 
 exports.handler = async (event: Response, _context: unknown): Promise<void> => {
     logger.debug(
-        `lambda_topic_command_response_handler: handler: in: event: ${JSON.stringify(event)}`,
+        `lambda_topic_command_response_handler: handler: in: event: ${JSON.stringify(event)}`
     );
 
     // validate reply

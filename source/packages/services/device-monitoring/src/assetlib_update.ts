@@ -22,12 +22,12 @@ import 'reflect-metadata';
 @injectable()
 export class AssetLibUpdate {
     constructor(
-        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private readonly devices: DevicesService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private readonly devices: DevicesService
     ) {}
 
     public async updateDeviceConnected(deviceId: string, connected: boolean): Promise<void> {
         logger.debug(
-            `assetlib_update: updatedevice: in: deviceId:${deviceId}, connected:${connected}`,
+            `assetlib_update: updatedevice: in: deviceId:${deviceId}, connected:${connected}`
         );
 
         // update device status to active

@@ -33,19 +33,19 @@ import { GroupsService } from './groups.service';
 export class BulkGroupsController implements interfaces.Controller {
     constructor(
         @inject(TYPES.GroupsService) private groupsService: GroupsService,
-        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
+        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler
     ) {}
 
     @httpPost('')
     public async bulkCreateGroups(
         @requestBody() groups: BulkGroupsResource,
         @response() res: Response,
-        @queryParam('applyProfile') applyProfile?: string,
+        @queryParam('applyProfile') applyProfile?: string
     ): Promise<BulkGroupsResult> {
         logger.info(
             `bulkgroups.controller  bulkCreateGroups: in: groups:${JSON.stringify(
-                groups,
-            )}, applyProfile:${applyProfile}`,
+                groups
+            )}, applyProfile:${applyProfile}`
         );
         try {
             const items = this.groupsAssembler.fromBulkGroupsResource(groups);
@@ -63,7 +63,7 @@ export class BulkGroupsController implements interfaces.Controller {
         @queryParam('groupPaths') groupPaths: string,
         @queryParam('includeGroups') groups: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<GroupMemberResourceList> {
         logger.info(`bulkgroups.controller bulkGetGroups: in: groupPaths:${groupPaths}`);
         try {
@@ -83,13 +83,13 @@ export class BulkGroupsController implements interfaces.Controller {
             }
             // remove duplicate group paths if any
             groupPathsAsArray = groupPathsAsArray.filter(
-                (item, index) => groupPathsAsArray.indexOf(item) === index,
+                (item, index) => groupPathsAsArray.indexOf(item) === index
             );
 
             const items = await this.groupsService.getBulk(groupPathsAsArray, includeGroups);
             const resources = this.groupsAssembler.toGroupMemberResourceList(
                 items,
-                req['version'],
+                req['version']
             );
             res.status(200);
             return resources;

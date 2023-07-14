@@ -55,7 +55,7 @@ export const owCheckUnprintableChar = (inputStr: string, label: string): void =>
         ow.string.validate((s) => ({
             validator: [...s].every((c) => !UNPRINTABLE_UTF_CHAR.has(c)),
             message: (l) => `Expected ${l} to not have unprintable string, got ${inputStr}`,
-        })),
+        }))
     );
 };
 
@@ -65,6 +65,6 @@ export const owCheckOversizeString = (inputStr: string, size: number, label: str
         label,
         ow.number
             .lessThanOrEqual(size)
-            .message((v, l) => `Expected ${l} to not exceed ${size}, got ${v}`),
+            .message((v, l) => `Expected ${l} to not exceed ${size}, got ${v}`)
     );
 };

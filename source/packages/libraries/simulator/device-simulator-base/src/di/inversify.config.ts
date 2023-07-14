@@ -41,7 +41,7 @@ export const deviceSimulatorContainerModule = new ContainerModule(
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         _isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind,
+        _rebind: interfaces.Rebind
     ) => {
         bind<DeviceContext<D, S, T, U>>(DEVICE_SIMULATOR_TYPES.DeviceStateMachine)
             .to(DeviceContext)
@@ -103,5 +103,5 @@ export const deviceSimulatorContainerModule = new ContainerModule(
                 return mqttClient;
             })
             .inSingletonScope();
-    },
+    }
 );

@@ -20,7 +20,7 @@ import { CustomResourceEvent } from './customResource.model';
 export class EventsCustomResource implements CustomResource {
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {}
 
     protected headers: { [key: string]: string };
@@ -28,8 +28,8 @@ export class EventsCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `EventsCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const functionName = customResourceEvent?.ResourceProperties?.FunctionName;
@@ -70,8 +70,8 @@ export class EventsCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `EventsCustomResource: update: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         return await this.create(customResourceEvent);
     }
@@ -79,8 +79,8 @@ export class EventsCustomResource implements CustomResource {
     public async delete(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `EventsCustomResource: delete: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         // no delete
         return {};

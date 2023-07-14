@@ -48,7 +48,7 @@ describe('UseACMPCAStepProcessor', () => {
             1,
             certUtils,
             () => mockIot,
-            () => mockACMPCA,
+            () => mockACMPCA
         );
     });
 
@@ -123,7 +123,7 @@ describe('UseACMPCAStepProcessor', () => {
         expect(mockedRegisterCertificateWithoutCA).toBeCalledTimes(1);
         expect(mockedRegisterCertificateWithoutCA).toBeCalledWith(
             CERTIFICATE_PEM + '\n' + CERTIFICATE_CHAIN_PEM,
-            CertificateStatus.ACTIVE,
+            CertificateStatus.ACTIVE
         );
     });
 
@@ -196,7 +196,7 @@ describe('UseACMPCAStepProcessor', () => {
         expect(mockedRegisterCertificateWithoutCA).toBeCalledTimes(1);
         expect(mockedRegisterCertificateWithoutCA).toBeCalledWith(
             CERTIFICATE_PEM + '\n' + CERTIFICATE_CHAIN_PEM,
-            CertificateStatus.ACTIVE,
+            CertificateStatus.ACTIVE
         );
     });
 
@@ -244,7 +244,7 @@ describe('UseACMPCAStepProcessor', () => {
         expect(mockedCreateCSR).toBeCalledTimes(1);
         expect(mockedCreateCSR).toBeCalledWith(
             PRIVATE_KEY,
-            (stepData.cdfProvisioningParameters as UseACMPCAParameters).certInfo,
+            (stepData.cdfProvisioningParameters as UseACMPCAParameters).certInfo
         );
 
         expect(mockedIssueCertificate).toBeCalledTimes(1);
@@ -276,7 +276,7 @@ describe('UseACMPCAStepProcessor', () => {
         expect(mockedRegisterCertificateWithoutCA).toBeCalledTimes(1);
         expect(mockedRegisterCertificateWithoutCA).toBeCalledWith(
             CERTIFICATE_PEM + '\n' + CERTIFICATE_CHAIN_PEM,
-            CertificateStatus.ACTIVE,
+            CertificateStatus.ACTIVE
         );
     });
 
@@ -391,7 +391,7 @@ describe('UseACMPCAStepProcessor', () => {
             fail();
         } catch (e) {
             expect(e.message).toContain(
-                'Either `acmpcaCaAlias` or `acmpcaCaArn` must be provided.',
+                'Either `acmpcaCaAlias` or `acmpcaCaArn` must be provided.'
             );
         }
     });

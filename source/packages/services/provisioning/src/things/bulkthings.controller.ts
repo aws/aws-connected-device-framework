@@ -35,10 +35,10 @@ export class BulkThingsController implements interfaces.Controller {
     @httpPost('')
     public async bulkProvisionThings(
         @requestBody() request: BulkProvisionThingsRequest,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<BulkProvisionThingsResponse> {
         logger.info(
-            `bulkthings.controller bulkProvisionThings: in: request: ${JSON.stringify(request)}`,
+            `bulkthings.controller bulkProvisionThings: in: request: ${JSON.stringify(request)}`
         );
         let result: BulkProvisionThingsResponse;
         try {
@@ -46,7 +46,7 @@ export class BulkThingsController implements interfaces.Controller {
 
             result = await this.thingsService.bulkProvision(
                 request.provisioningTemplateId,
-                request.parameters,
+                request.parameters
             );
             res.status(201);
         } catch (e) {
@@ -60,7 +60,7 @@ export class BulkThingsController implements interfaces.Controller {
     @httpGet('/:taskId')
     public async getBulkProvisionTask(
         @requestParam('taskId') taskId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<BulkProvisionThingsResponse> {
         logger.info(`bulkthings.controller getBulkProvisionTask: in: taskId: ${taskId}`);
         let result: BulkProvisionThingsResponse;

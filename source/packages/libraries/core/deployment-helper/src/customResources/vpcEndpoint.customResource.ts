@@ -28,8 +28,8 @@ export class VpcEndpointCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `VpcEndpointCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const vpcId = customResourceEvent.ResourceProperties.VpcId;
@@ -87,13 +87,13 @@ export class VpcEndpointCustomResource implements CustomResource {
             }
 
             const result: AWS.EC2.CreateVpcEndpointResult = await this.createVpcEndpoint(
-                vpcConfig,
+                vpcConfig
             );
 
             logger.debug(
                 `VpcEndpointCustomResource: createVpcEndpoint: out: result: ${JSON.stringify(
-                    result,
-                )}`,
+                    result
+                )}`
             );
 
             return {
@@ -110,8 +110,8 @@ export class VpcEndpointCustomResource implements CustomResource {
     public async delete(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `VpcEndpointCustomResource: delete: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const vpcId = customResourceEvent.ResourceProperties.VpcId;
@@ -131,12 +131,12 @@ export class VpcEndpointCustomResource implements CustomResource {
 
     private async getVpcEndpoint(
         vpcId: string,
-        endpoint: string,
+        endpoint: string
     ): Promise<AWS.EC2.Types.VpcEndpoint[]> {
         logger.debug(
             `VpcEndpointCustomResource: getVpcEndpoint: in: vpcId: ${JSON.stringify(
-                vpcId,
-            )}, endpoint: ${endpoint}`,
+                vpcId
+            )}, endpoint: ${endpoint}`
         );
 
         const params: AWS.EC2.Types.DescribeVpcEndpointsRequest = {
@@ -156,20 +156,20 @@ export class VpcEndpointCustomResource implements CustomResource {
 
         logger.debug(
             `VpcEndpointCustomResource: getVpcEndpoint: out: VpcEndpoints: ${JSON.stringify(
-                result,
-            )}`,
+                result
+            )}`
         );
 
         return result.VpcEndpoints;
     }
 
     private async createVpcEndpoint(
-        vpcConfig: AWS.EC2.CreateVpcEndpointRequest,
+        vpcConfig: AWS.EC2.CreateVpcEndpointRequest
     ): Promise<AWS.EC2.CreateVpcEndpointResult> {
         logger.debug(
             `VpcEndpointCustomResource: createVpcEndpoint: in: vpcConfig: ${JSON.stringify(
-                vpcConfig,
-            )}`,
+                vpcConfig
+            )}`
         );
         return await this.ec2.createVpcEndpoint(vpcConfig).promise();
     }

@@ -25,23 +25,23 @@ import { ClientServiceBase } from './common.service';
 export interface CommandsService {
     createCommand(
         command: EditableCommandResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string>;
     createNamedCommand(
         commandId: string,
         command: EditableCommandResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string>;
     updateCommand(
         commandId: string,
         command: EditableCommandResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void>;
     listCommands(
         tags?: Tags,
         fromCommandIdExclusive?: string,
         count?: number,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<CommandResourceList>;
     getCommand(commandId: string, additionalHeaders?: RequestHeaders): Promise<CommandResource>;
     deleteCommand(commandId: string, additionalHeaders?: RequestHeaders): Promise<void>;

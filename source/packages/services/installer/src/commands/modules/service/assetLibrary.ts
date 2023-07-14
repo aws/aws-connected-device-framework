@@ -67,13 +67,13 @@ export class AssetLibraryInstaller implements RestModule {
 
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
 
         if (updatedAnswers.assetLibrary?.redeploy ?? true) {
             const neptuneInstanceTypes = await getNeptuneInstancetypeList(
                 answers.region,
-                ASSUMED_NEPTUNE_ENGINE_VERSION,
+                ASSUMED_NEPTUNE_ENGINE_VERSION
             );
 
             updatedAnswers = await inquirer.prompt(
@@ -116,7 +116,7 @@ export class AssetLibraryInstaller implements RestModule {
                                 !neptuneInstanceTypes.includes(answer)
                             ) {
                                 return `Neptune DB Instance Type must be one of: ${neptuneInstanceTypes.join(
-                                    ', ',
+                                    ', '
                                 )}`;
                             }
                             return true;
@@ -209,14 +209,14 @@ export class AssetLibraryInstaller implements RestModule {
                     ]),
                     ...customDomainPrompt(this.name, answers),
                 ],
-                updatedAnswers,
+                updatedAnswers
             );
         }
 
         includeOptionalModule(
             'vpc',
             updatedAnswers.modules,
-            updatedAnswers.assetLibrary.mode === 'full',
+            updatedAnswers.assetLibrary.mode === 'full'
         );
         return updatedAnswers;
     }
@@ -235,7 +235,7 @@ export class AssetLibraryInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'assetlibrary',
+                            'assetlibrary'
                         ),
                         parameterOverrides: this.getNeptuneParameterOverrides(answers),
                         needsPackaging: false,
@@ -255,7 +255,7 @@ export class AssetLibraryInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'assetlibrary',
+                            'assetlibrary'
                         ),
                         parameterOverrides: this.getAssetLibraryParameterOverrides(answers),
                     });
@@ -286,19 +286,19 @@ export class AssetLibraryInstaller implements RestModule {
         addIfSpecified('ApplyAutoscaling', answers.assetLibrary.enableAutoScaling);
         addIfSpecified(
             'ProvisionedConcurrentExecutions',
-            answers.assetLibrary.provisionedConcurrentExecutions,
+            answers.assetLibrary.provisionedConcurrentExecutions
         );
         addIfSpecified(
             'CustomResourceVPCLambdaArn',
             answers.assetLibrary.mode === 'full'
                 ? answers.deploymentHelper.vpcLambdaArn
-                : answers.deploymentHelper.lambdaArn,
+                : answers.deploymentHelper.lambdaArn
         );
         addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
 
         return parameterOverrides;
@@ -349,7 +349,7 @@ export class AssetLibraryInstaller implements RestModule {
                             'source',
                             'packages',
                             'services',
-                            'assetlibrary',
+                            'assetlibrary'
                         ),
                         parameterOverrides: this.getNeptuneParameterOverrides(answers),
                         needsCapabilityNamedIAM: true,
@@ -362,7 +362,7 @@ export class AssetLibraryInstaller implements RestModule {
                 task: async () => {
                     const byOutputKey = await getStackOutputs(
                         this.neptuneStackName,
-                        answers.region,
+                        answers.region
                     );
                     answers.assetLibrary.neptuneUrl = byOutputKey('GremlinEndpoint');
                 },
@@ -398,16 +398,16 @@ export class AssetLibraryInstaller implements RestModule {
             .add(`CORS_ORIGIN`, answers.apigw?.corsOrigin)
             .add(
                 `DEFAULTS_DEVICES_PARENT_RELATION`,
-                answers.assetLibrary?.defaultDevicesParentRelationName,
+                answers.assetLibrary?.defaultDevicesParentRelationName
             )
             .add(
                 `DEFAULTS_DEVICES_PARENT_GROUPPATH`,
-                answers.assetLibrary?.defaultDevicesParentPath,
+                answers.assetLibrary?.defaultDevicesParentPath
             )
             .add(`DEFAULTS_DEVICES_STATE`, answers.assetLibrary?.defaultDevicesState)
             .add(
                 `DEFAULTS_GROUPS_VALIDATEALLOWEDPARENTPATHS`,
-                answers.assetLibrary?.defaultGroupsValidateAllowedParentPath,
+                answers.assetLibrary?.defaultGroupsValidateAllowedParentPath
             )
             .add(`ENABLE_DFE_OPTIMIZATION`, answers.assetLibrary?.enableDfeOptimization)
             .add(`AUTHORIZATION_ENABLED`, answers.assetLibrary?.authorizationEnabled);

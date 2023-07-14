@@ -20,10 +20,10 @@ import { ProfilesService } from './profiles.service';
 export class ProfilesServiceLite implements ProfilesService {
     public async get(
         templateId: string,
-        profileId: string,
+        profileId: string
     ): Promise<DeviceProfileItem | GroupProfileItem> {
         logger.debug(
-            `profiles.full.service get: in: templateId:${templateId}, profileId:${profileId}`,
+            `profiles.full.service get: in: templateId:${templateId}, profileId:${profileId}`
         );
         throw new NotSupportedError();
     }
@@ -40,7 +40,7 @@ export class ProfilesServiceLite implements ProfilesService {
 
     public async delete(templateId: string, profileId: string): Promise<void> {
         logger.debug(
-            `profiles.full.service delete: in: templateId:${templateId}, profileId:${profileId}`,
+            `profiles.full.service delete: in: templateId:${templateId}, profileId:${profileId}`
         );
         throw new NotSupportedError();
     }

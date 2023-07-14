@@ -25,7 +25,7 @@ export class AlertDao {
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable: string,
         @inject('aws.dynamoDb.tables.eventNotifications.name')
         private eventNotificationsTable: string,
-        @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
+        @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils
     ) {}
 
     public async create(alerts: AlertItem[]): Promise<void> {
@@ -49,7 +49,7 @@ export class AlertDao {
                         gsi2Sort: createDelimitedAttribute(
                             PkType.Event,
                             alert.event.id,
-                            alert.time,
+                            alert.time
                         ),
                         principal: alert.eventSource.principal,
                         principalValue: alert.subscription.principalValue,
@@ -79,8 +79,8 @@ export class AlertDao {
     }): Promise<void> {
         logger.debug(
             `alert.dao updateChangedSubAlertStatus: in: newSubAlertStatus:${JSON.stringify(
-                newSubAlertStatus,
-            )}`,
+                newSubAlertStatus
+            )}`
         );
 
         const params: DocumentClient.BatchWriteItemInput = {
@@ -101,7 +101,7 @@ export class AlertDao {
                                 PkType.EventSource,
                                 si.eventSource.id,
                                 si.eventSource.principal,
-                                si.principalValue,
+                                si.principalValue
                             ),
                             gsi2Sort: createDelimitedAttribute(PkType.Subscription, subId),
                         },

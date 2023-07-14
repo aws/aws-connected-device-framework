@@ -44,7 +44,7 @@ describe('ETLService', () => {
             mockedLablesService,
             'exportBucket',
             'exportKey',
-            mockedS3Utils,
+            mockedS3Utils
         );
     });
 

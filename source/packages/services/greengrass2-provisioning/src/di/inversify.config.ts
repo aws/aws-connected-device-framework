@@ -144,7 +144,7 @@ container
         return () => {
             if (!container.isBound(TYPES.DynamoDBDocument)) {
                 const ddbFactory = container.get<interfaces.Factory<DynamoDBClient>>(
-                    TYPES.DynamoDBFactory,
+                    TYPES.DynamoDBFactory
                 );
                 const ddb = ddbFactory() as DynamoDBClient;
                 const marshallOptions = {

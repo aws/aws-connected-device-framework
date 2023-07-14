@@ -26,16 +26,16 @@ import { PresignedUrlsService } from './presignedurls.service';
 @controller('/mqtt/presignedurls')
 export class PresignedUrlsController implements interfaces.Controller {
     constructor(
-        @inject(TYPES.PresignedUrlsService) private presignedUrlService: PresignedUrlsService,
+        @inject(TYPES.PresignedUrlsService) private presignedUrlService: PresignedUrlsService
     ) {}
 
     @httpPost('/uploads')
     public async generateForUpload(
         @requestBody() model: PresignedUploadRequestModel,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<PresignedResponseModel> {
         logger.info(
-            `presignedurls.controller  generateForUpload: in: model: ${JSON.stringify(model)}`,
+            `presignedurls.controller  generateForUpload: in: model: ${JSON.stringify(model)}`
         );
 
         let r: PresignedResponseModel;
@@ -51,10 +51,10 @@ export class PresignedUrlsController implements interfaces.Controller {
     @httpPost('/downloads')
     public async generateForDownloads(
         @requestBody() model: PresignedDownloadRequestModel,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<PresignedResponseModel> {
         logger.info(
-            `presignedurls.controller  generateForDownloads: in: model: ${JSON.stringify(model)}`,
+            `presignedurls.controller  generateForDownloads: in: model: ${JSON.stringify(model)}`
         );
 
         let r: PresignedResponseModel;

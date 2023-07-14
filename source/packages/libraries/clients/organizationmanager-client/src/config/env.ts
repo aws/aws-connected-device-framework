@@ -18,5 +18,5 @@ const fileLocations = [__dirname + '/.env.defaults'];
 load(fileLocations);
 
 console.log(
-    `Module organizationmanager-client loaded config: ${JSON.stringify(process.env, null, 2)}`,
+    `Module organizationmanager-client loaded config: ${JSON.stringify(process.env, null, 2)}`
 );

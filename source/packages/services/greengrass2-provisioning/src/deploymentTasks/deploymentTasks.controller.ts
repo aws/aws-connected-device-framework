@@ -39,16 +39,16 @@ import { DeploymentTasksService } from './deploymentTasks.service';
 export class DeploymentTasksController implements interfaces.Controller {
     constructor(
         @inject(TYPES.DeploymentTasksService)
-        private deploymentTasksService: DeploymentTasksService,
+        private deploymentTasksService: DeploymentTasksService
     ) {}
 
     @httpPost('')
     public async createDeploymentTask(
         @requestBody() task: NewDeploymentTask,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.debug(
-            `deploymentTasks.controller createDeploymentTask: in: task: ${JSON.stringify(task)}`,
+            `deploymentTasks.controller createDeploymentTask: in: task: ${JSON.stringify(task)}`
         );
         try {
             const taskId = await this.deploymentTasksService.create(task);
@@ -65,7 +65,7 @@ export class DeploymentTasksController implements interfaces.Controller {
     @httpGet('/:taskId')
     public async getDeploymentTask(
         @requestParam('taskId') taskId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(`deploymentTasks.controller getDeploymentTask: in: taskId:${taskId}`);
 
@@ -77,9 +77,7 @@ export class DeploymentTasksController implements interfaces.Controller {
                 res.status(404).send();
             } else {
                 logger.debug(
-                    `deploymentTasks.controller getDeploymentTask: exit: ${JSON.stringify(
-                        result,
-                    )}`,
+                    `deploymentTasks.controller getDeploymentTask: exit: ${JSON.stringify(result)}`
                 );
                 res.status(200).send(result);
             }
@@ -92,10 +90,10 @@ export class DeploymentTasksController implements interfaces.Controller {
     public async listDeploymentTasks(
         @queryParam('count') count: number,
         @queryParam('exclusiveStartTaskId') exclusiveStartTaskId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `deploymentTasks.controller listDeploymentTasks: in: count:${count}, exclusiveStartTaskId:${exclusiveStartTaskId}`,
+            `deploymentTasks.controller listDeploymentTasks: in: count:${count}, exclusiveStartTaskId:${exclusiveStartTaskId}`
         );
 
         let result: DeploymentTaskList;
@@ -112,7 +110,7 @@ export class DeploymentTasksController implements interfaces.Controller {
                 },
             };
             logger.debug(
-                `deploymentTasks.controller listDeploymentTasks: exit: ${JSON.stringify(result)}`,
+                `deploymentTasks.controller listDeploymentTasks: exit: ${JSON.stringify(result)}`
             );
             res.status(200).send(result);
         } catch (e) {
@@ -124,10 +122,10 @@ export class DeploymentTasksController implements interfaces.Controller {
     public async getCoreDeploymentStatus(
         @requestParam('taskId') taskId: string,
         @requestParam('coreName') coreName: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `deploymentTasks.controller getCoreDeploymentStatus: in: taskId:${taskId}, coreName:${coreName}`,
+            `deploymentTasks.controller getCoreDeploymentStatus: in: taskId:${taskId}, coreName:${coreName}`
         );
 
         let result: Deployment;
@@ -139,8 +137,8 @@ export class DeploymentTasksController implements interfaces.Controller {
             } else {
                 logger.debug(
                     `deploymentTasks.controller getCoreDeploymentStatus: exit: ${JSON.stringify(
-                        result,
-                    )}`,
+                        result
+                    )}`
                 );
                 res.status(200).send(result);
             }
@@ -154,10 +152,10 @@ export class DeploymentTasksController implements interfaces.Controller {
         @requestParam('taskId') taskId: string,
         @queryParam('count') count: number,
         @queryParam('exclusiveStartThingName') exclusiveStartThingName: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `deploymentTasks.controller listCoresByDeploymentTaskId: in: count:${count}, exclusiveStartThingName:${exclusiveStartThingName}`,
+            `deploymentTasks.controller listCoresByDeploymentTaskId: in: count:${count}, exclusiveStartThingName:${exclusiveStartThingName}`
         );
 
         let result: CoreDeploymentList;
@@ -176,8 +174,8 @@ export class DeploymentTasksController implements interfaces.Controller {
             };
             logger.debug(
                 `deploymentTasks.controller listCoresByDeploymentTaskId: exit: ${JSON.stringify(
-                    result,
-                )}`,
+                    result
+                )}`
             );
             res.status(200).send(result);
         } catch (e) {

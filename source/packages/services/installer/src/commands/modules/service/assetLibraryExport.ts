@@ -45,7 +45,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
 
         let updatedAnswers: Answers = await inquirer.prompt(
             [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
-            answers,
+            answers
         );
 
         if ((updatedAnswers.assetLibraryExport?.redeploy ?? true) === false) {
@@ -112,7 +112,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
                     },
                 ]),
             ],
-            updatedAnswers,
+            updatedAnswers
         );
 
         return updatedAnswers;
@@ -137,7 +137,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
 
         addIfSpecified(
             'ApplicationConfigurationOverride',
-            this.generateApplicationConfiguration(answers),
+            this.generateApplicationConfiguration(answers)
         );
         return parameterOverrides;
     }
@@ -157,7 +157,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
                             'source',
                             'packages',
                             'services',
-                            'assetlibrary-export',
+                            'assetlibrary-export'
                         ),
                         parameterOverrides: this.getParameterOverrides(answers),
                     });
@@ -192,7 +192,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
                         'source',
                         'packages',
                         'services',
-                        'assetlibrary-export',
+                        'assetlibrary-export'
                     ),
                     parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,
@@ -216,15 +216,15 @@ export class AssetLibraryExportInstaller implements ServiceModule {
             .add(`DEFAULTS_ETL_LOAD_PATH`, answers.assetLibraryExport.loadPath)
             .add(
                 `DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_ATTRIBUTES`,
-                answers.assetLibraryExport.extractAttributes,
+                answers.assetLibraryExport.extractAttributes
             )
             .add(
                 `DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_EXPANDCOMPONENTS`,
-                answers.assetLibraryExport.extractExpandComponents,
+                answers.assetLibraryExport.extractExpandComponents
             )
             .add(
                 `DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_INCLUDEGROUPS`,
-                answers.assetLibraryExport.extractIncludeGroups,
+                answers.assetLibraryExport.extractIncludeGroups
             );
 
         return configBuilder.config;

@@ -41,7 +41,7 @@ export class DevicesController implements interfaces.Controller {
     constructor(
         @inject(TYPES.DevicesService) private devicesService: DevicesService,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
-        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
+        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler
     ) {}
 
     @httpGet('/:deviceId')
@@ -51,7 +51,7 @@ export class DevicesController implements interfaces.Controller {
         @queryParam('attributes') attributes: string | string[],
         @queryParam('includeGroups') groups: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<Device10Resource | Device20Resource> {
         logger.info(`device.controller getDevice: in: deviceId:${deviceId}, components:${components}, attributes:${attributes},
             groups:${groups}, version:${req['version']}`);
@@ -74,7 +74,7 @@ export class DevicesController implements interfaces.Controller {
                 deviceId,
                 expandComponents,
                 attributesArray,
-                includeGroups,
+                includeGroups
             );
             const resource = this.devicesAssembler.toDeviceResource(model, req['version']);
             logger.debug(`controller exit: ${JSON.stringify(resource)}`);
@@ -94,12 +94,12 @@ export class DevicesController implements interfaces.Controller {
     public async createDevice(
         @requestBody() device: Device10Resource | Device20Resource,
         @response() res: Response,
-        @queryParam('applyProfile') applyProfile?: string,
+        @queryParam('applyProfile') applyProfile?: string
     ): Promise<void> {
         logger.info(
             `device.controller  createDevice: in: device:${JSON.stringify(
-                device,
-            )}, applyProfile:${applyProfile}`,
+                device
+            )}, applyProfile:${applyProfile}`
         );
         try {
             const item = this.devicesAssembler.fromDeviceResource(device);
@@ -114,12 +114,12 @@ export class DevicesController implements interfaces.Controller {
         @requestBody() device: Device10Resource | Device20Resource,
         @response() res: Response,
         @requestParam('deviceId') deviceId: string,
-        @queryParam('applyProfile') applyProfile?: string,
+        @queryParam('applyProfile') applyProfile?: string
     ): Promise<void> {
         logger.info(
             `device.controller updateDevice: in: deviceId: ${deviceId}, device: ${JSON.stringify(
-                device,
-            )}, applyProfile:${applyProfile}`,
+                device
+            )}, applyProfile:${applyProfile}`
         );
         try {
             device.deviceId = deviceId;
@@ -134,7 +134,7 @@ export class DevicesController implements interfaces.Controller {
     @httpDelete('/:deviceId')
     public async deleteDevice(
         @response() res: Response,
-        @requestParam('deviceId') deviceId: string,
+        @requestParam('deviceId') deviceId: string
     ): Promise<void> {
         logger.info(`device.controller deleteDevice: in: deviceId: ${deviceId}`);
         try {
@@ -149,10 +149,10 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('deviceId') deviceId: string,
         @requestParam('relationship') relationship: string,
         @requestParam('groupPath') groupPath: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `devices.controller attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, groupPath:${groupPath}`,
+            `devices.controller attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, groupPath:${groupPath}`
         );
         await this.attachToGroupWithDirection(deviceId, relationship, 'out', groupPath, res);
     }
@@ -162,10 +162,10 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('deviceId') deviceId: string,
         @requestParam('relationship') relationship: string,
         @requestParam('groupPath') groupPath: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `devices.controller detachFromGroup: in: deviceId:${deviceId}, relationship:${relationship}, groupPath:${groupPath}`,
+            `devices.controller detachFromGroup: in: deviceId:${deviceId}, relationship:${relationship}, groupPath:${groupPath}`
         );
         await this.detachFromGroupWithDirection(deviceId, relationship, 'out', groupPath, res);
     }
@@ -174,10 +174,10 @@ export class DevicesController implements interfaces.Controller {
     public async detachFromGroups(
         @requestParam('deviceId') deviceId: string,
         @requestParam('relationship') relationship: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `devices.controller detachFromGroups: in: deviceId:${deviceId}, relationship:${relationship}`,
+            `devices.controller detachFromGroups: in: deviceId:${deviceId}, relationship:${relationship}`
         );
         try {
             await this.devicesService.detachFromGroups(deviceId, relationship, undefined);
@@ -192,10 +192,10 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('relationship') relationship: string,
         @requestParam('direction') direction: string,
         @requestParam('groupPath') groupPath: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `devices.controller attachToGroupWithDirection: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`,
+            `devices.controller attachToGroupWithDirection: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`
         );
         try {
             await this.devicesService.attachToGroup(deviceId, relationship, direction, groupPath);
@@ -210,17 +210,17 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('relationship') relationship: string,
         @requestParam('direction') direction: string,
         @requestParam('groupPath') groupPath: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `devices.controller detachFromGroupWithDirection: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`,
+            `devices.controller detachFromGroupWithDirection: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`
         );
         try {
             await this.devicesService.detachFromGroup(
                 deviceId,
                 relationship,
                 direction,
-                groupPath,
+                groupPath
             );
         } catch (e) {
             handleError(e, res);
@@ -237,10 +237,10 @@ export class DevicesController implements interfaces.Controller {
         @queryParam('count') count: number,
         @queryParam('sort') sort: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<GroupResourceList> {
         logger.info(
-            `devices.controller listDeviceRelatedGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}, sort:${sort}`,
+            `devices.controller listDeviceRelatedGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}, sort:${sort}`
         );
 
         let r: GroupResourceList = { results: [] };
@@ -248,12 +248,12 @@ export class DevicesController implements interfaces.Controller {
         try {
             if (Array.isArray(direction)) {
                 throw new InvalidQueryStringError(
-                    'Only one `direction` query param can be provided.',
+                    'Only one `direction` query param can be provided.'
                 );
             }
             if (Array.isArray(template)) {
                 throw new InvalidQueryStringError(
-                    'Only one `template` query param can be provided.',
+                    'Only one `template` query param can be provided.'
                 );
             }
 
@@ -265,7 +265,7 @@ export class DevicesController implements interfaces.Controller {
                 template,
                 offset,
                 count,
-                sortKeys,
+                sortKeys
             );
             if (r === undefined) {
                 res.status(404);
@@ -284,10 +284,10 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('deviceId') deviceId: string,
         @requestParam('relationship') relationship: string,
         @requestParam('otherDeviceId') otherDeviceId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `devices.controller attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, otherDeviceId:${otherDeviceId}`,
+            `devices.controller attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, otherDeviceId:${otherDeviceId}`
         );
         await this.attachToDeviceWithDirection(deviceId, relationship, 'out', otherDeviceId, res);
     }
@@ -297,17 +297,17 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('deviceId') deviceId: string,
         @requestParam('relationship') relationship: string,
         @requestParam('otherDeviceId') otherDeviceId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `devices.controller detachFromDevice: in: deviceId:${deviceId}, relationship:${relationship}, otherDeviceId:${otherDeviceId}`,
+            `devices.controller detachFromDevice: in: deviceId:${deviceId}, relationship:${relationship}, otherDeviceId:${otherDeviceId}`
         );
         await this.detachFromDeviceWithDirection(
             deviceId,
             relationship,
             'out',
             otherDeviceId,
-            res,
+            res
         );
     }
 
@@ -315,10 +315,10 @@ export class DevicesController implements interfaces.Controller {
     public async detachFromDevices(
         @requestParam('deviceId') deviceId: string,
         @requestParam('relationship') relationship: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `devices.controller detachFromDevices: in: deviceId:${deviceId}, relationship:${relationship}`,
+            `devices.controller detachFromDevices: in: deviceId:${deviceId}, relationship:${relationship}`
         );
         try {
             await this.devicesService.detachFromDevices(deviceId, relationship, undefined);
@@ -333,17 +333,17 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('relationship') relationship: string,
         @requestParam('direction') direction: string,
         @requestParam('otherDeviceId') otherDeviceId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `devices.controller attachToDeviceWithDirection: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`,
+            `devices.controller attachToDeviceWithDirection: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`
         );
         try {
             await this.devicesService.attachToDevice(
                 deviceId,
                 relationship,
                 direction,
-                otherDeviceId,
+                otherDeviceId
             );
         } catch (e) {
             handleError(e, res);
@@ -356,17 +356,17 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('relationship') relationship: string,
         @requestParam('direction') direction: string,
         @requestParam('otherDeviceId') otherDeviceId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `devices.controller detachFromDeviceWithDirection: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`,
+            `devices.controller detachFromDeviceWithDirection: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`
         );
         try {
             await this.devicesService.detachFromDevice(
                 deviceId,
                 relationship,
                 direction,
-                otherDeviceId,
+                otherDeviceId
             );
         } catch (e) {
             handleError(e, res);
@@ -384,12 +384,12 @@ export class DevicesController implements interfaces.Controller {
         @queryParam('count') count: number,
         @queryParam('sort') sort: string,
         @request() req: Request,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<DeviceResourceList> {
         logger.info(
             `devices.controller listDeviceRelatedDevices: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${JSON.stringify(
-                sort,
-            )}`,
+                sort
+            )}`
         );
 
         let r: DeviceResourceList = { results: [] };
@@ -397,12 +397,12 @@ export class DevicesController implements interfaces.Controller {
         try {
             if (Array.isArray(direction)) {
                 throw new InvalidQueryStringError(
-                    'Only one `direction` query param can be provided.',
+                    'Only one `direction` query param can be provided.'
                 );
             }
             if (Array.isArray(template)) {
                 throw new InvalidQueryStringError(
-                    'Only one `template` query param can be provided.',
+                    'Only one `template` query param can be provided.'
                 );
             }
             if (Array.isArray(state)) {
@@ -418,7 +418,7 @@ export class DevicesController implements interfaces.Controller {
                 state,
                 offset,
                 count,
-                sortKeys,
+                sortKeys
             );
             if (items === undefined) {
                 res.status(404);
@@ -437,12 +437,12 @@ export class DevicesController implements interfaces.Controller {
     public async createComponent(
         @requestParam('deviceId') deviceId: string,
         @requestBody() component: Device10Resource | Device20Resource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
             `devices.controller createComponent: in: deviceId:${deviceId}, component:${JSON.stringify(
-                component,
-            )}`,
+                component
+            )}`
         );
         try {
             const item = this.devicesAssembler.fromDeviceResource(component);
@@ -457,12 +457,12 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('deviceId') deviceId: string,
         @requestParam('componentId') componentId: string,
         @requestBody() component: Device10Resource | Device20Resource,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
             `devices.controller updateComponent: in: deviceId:${deviceId}, componentId:${componentId}, component:${JSON.stringify(
-                component,
-            )}`,
+                component
+            )}`
         );
         try {
             const item = this.devicesAssembler.fromDeviceResource(component);
@@ -476,10 +476,10 @@ export class DevicesController implements interfaces.Controller {
     public async deleteComponent(
         @requestParam('deviceId') deviceId: string,
         @requestParam('componentId') componentId: string,
-        @response() res: Response,
+        @response() res: Response
     ): Promise<void> {
         logger.info(
-            `devices.controller deleteComponent: in: deviceId:${deviceId}, componentId:${componentId}`,
+            `devices.controller deleteComponent: in: deviceId:${deviceId}, componentId:${componentId}`
         );
         try {
             await this.devicesService.deleteComponent(deviceId, componentId);

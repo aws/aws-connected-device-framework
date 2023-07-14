@@ -34,7 +34,7 @@ export class OrganizationalUnitsLambdaService
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService,
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -43,7 +43,7 @@ export class OrganizationalUnitsLambdaService
 
     async getOrganizationalUnit(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<OrganizationalUnitResource> {
         ow(organizationalUnitId, ow.string.nonEmpty);
         const event = new LambdaApiGatewayEventBuilder()
@@ -57,7 +57,7 @@ export class OrganizationalUnitsLambdaService
 
     async deleteOrganizationalUnit(
         organizationalUnitId: string,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<void> {
         ow(organizationalUnitId, ow.string.nonEmpty);
         const event = new LambdaApiGatewayEventBuilder()
@@ -70,7 +70,7 @@ export class OrganizationalUnitsLambdaService
 
     async createOrganizationalUnit(
         organizationalUnit: OrganizationalUnitResource,
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<string> {
         ow(organizationalUnit, ow.object.nonEmpty);
 
@@ -85,7 +85,7 @@ export class OrganizationalUnitsLambdaService
     }
 
     async listOrganizationalUnits(
-        additionalHeaders?: RequestHeaders,
+        additionalHeaders?: RequestHeaders
     ): Promise<OrganizationalUnitResource[]> {
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.organizationalUnitsRelativeUrl())

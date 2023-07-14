@@ -26,7 +26,7 @@ export class EventsDao {
     public constructor(
         @inject('aws.dynamoDb.tables.events') private eventsTable: string,
         @inject(TYPES.DocumentClientFactory)
-        documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
     }
@@ -139,20 +139,20 @@ export class EventsDao {
             expressionAttributeNames,
             expressionAttributeValues,
             args.timeFrom,
-            args.timeTo,
+            args.timeTo
         );
         let filterExpression: string;
         filterExpression = this.applyUserFilter(
             filterExpression,
             expressionAttributeNames,
             expressionAttributeValues,
-            args.user,
+            args.user
         );
         filterExpression = this.applyEventFilter(
             filterExpression,
             expressionAttributeNames,
             expressionAttributeValues,
-            args.event,
+            args.event
         );
 
         // apply pagination if provided
@@ -214,7 +214,7 @@ export class EventsDao {
                 expressionAttributeNames,
                 expressionAttributeValues,
                 args.timeFrom,
-                args.timeTo,
+                args.timeTo
             );
         }
 
@@ -224,13 +224,13 @@ export class EventsDao {
             filterExpression,
             expressionAttributeNames,
             expressionAttributeValues,
-            args.user,
+            args.user
         );
         filterExpression = this.applyEventFilter(
             filterExpression,
             expressionAttributeNames,
             expressionAttributeValues,
-            args.event,
+            args.event
         );
 
         // apply pagination if provided
@@ -268,7 +268,7 @@ export class EventsDao {
         expressionAttributeNames: DocumentClient.ExpressionAttributeNameMap,
         expressionAttributeValues: DocumentClient.ExpressionAttributeValueMap,
         timeFrom: string,
-        timeTo: string,
+        timeTo: string
     ): string {
         if (!timeFrom && !timeTo) {
             return keyConditionExpression;
@@ -284,7 +284,7 @@ export class EventsDao {
         filterExpression: string,
         expressionAttributeNames: DocumentClient.ExpressionAttributeNameMap,
         expressionAttributeValues: DocumentClient.ExpressionAttributeValueMap,
-        user: string,
+        user: string
     ): string {
         if (user) {
             filterExpression = this.appendFilterExpression(filterExpression, '#user = :user');
@@ -298,7 +298,7 @@ export class EventsDao {
         filterExpression: string,
         expressionAttributeNames: DocumentClient.ExpressionAttributeNameMap,
         expressionAttributeValues: DocumentClient.ExpressionAttributeValueMap,
-        event: string,
+        event: string
     ): string {
         if (event) {
             filterExpression = this.appendFilterExpression(filterExpression, '#event = :event');
@@ -339,7 +339,7 @@ export class EventsDao {
         if (results.LastEvaluatedKey) {
             response.pagination = {
                 token: btoa(
-                    `${results.LastEvaluatedKey['objectId']}:::${results.LastEvaluatedKey['time']}`,
+                    `${results.LastEvaluatedKey['objectId']}:::${results.LastEvaluatedKey['time']}`
                 ),
                 limit: 1,
             };

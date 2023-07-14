@@ -20,7 +20,7 @@ export const eventPublisherContainerModule = new ContainerModule(
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
-        _rebind: interfaces.Rebind,
+        _rebind: interfaces.Rebind
     ) => {
         if (process.env.ENABLE_PUBLISH_EVENTS == 'true') {
             bind<CDFEventPublisher>(EVENT_PUBLISHER_TYPES.CDFEventPublisher)
@@ -34,17 +34,17 @@ export const eventPublisherContainerModule = new ContainerModule(
 
         decorate(injectable(), EventBridgeClient);
         bind<interfaces.Factory<EventBridgeClient>>(
-            EVENT_PUBLISHER_TYPES.EventBridgeFactory,
+            EVENT_PUBLISHER_TYPES.EventBridgeFactory
         ).toFactory<EventBridgeClient>((ctx: interfaces.Context) => {
             return (region?: string) => {
                 if (!isBound(EVENT_PUBLISHER_TYPES.EventBridge)) {
                     const eventBridgeClient = new EventBridgeClient({ region });
                     bind<EventBridgeClient>(EVENT_PUBLISHER_TYPES.EventBridge).toConstantValue(
-                        eventBridgeClient,
+                        eventBridgeClient
                     );
                 }
                 return ctx.container.get<EventBridgeClient>(EVENT_PUBLISHER_TYPES.EventBridge);
             };
         });
-    },
+    }
 );

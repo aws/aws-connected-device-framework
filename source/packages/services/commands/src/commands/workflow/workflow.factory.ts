@@ -27,14 +27,14 @@ export class WorkflowFactory {
         private invalidTransitionAction: InvalidTransitionAction,
         @inject(TYPES.StartJobAction) private startJobAction: StartJobAction,
         @inject(TYPES.SaveAction) private saveAction: SaveAction,
-        @inject(TYPES.CreateAction) private createAction: CreateAction,
+        @inject(TYPES.CreateAction) private createAction: CreateAction
     ) {}
 
     getAction(existingStatus: CommandStatus, updatedStatus: CommandStatus): WorkflowAction[] {
         logger.debug(
             `workflow.factory execute: existingStatus:${JSON.stringify(
-                existingStatus,
-            )}, updatedStatus:${JSON.stringify(updatedStatus)}`,
+                existingStatus
+            )}, updatedStatus:${JSON.stringify(updatedStatus)}`
         );
 
         // if updated status is undefined, assume no change

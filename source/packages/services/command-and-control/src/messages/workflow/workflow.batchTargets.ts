@@ -33,7 +33,7 @@ export class BatchTargetsAction implements WorkflowAction {
         @inject('aws.sqs.queues.messages.job.batchSize') private jobMessagesBatchSize: number,
         @inject('promises.concurrency') private promisesConcurrency: number,
         @inject(TYPES.MessagesDao) private messagesDao: MessagesDao,
-        @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS,
+        @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS
     ) {
         this.sqs = sqsFactory();
     }
@@ -41,8 +41,8 @@ export class BatchTargetsAction implements WorkflowAction {
     async process(message: MessageItem, command: CommandItem): Promise<boolean> {
         logger.debug(
             `workflow.batchTargets process: message:${JSON.stringify(
-                message,
-            )}, command:${JSON.stringify(command)}`,
+                message
+            )}, command:${JSON.stringify(command)}`
         );
 
         ow(command, ow.object.plain);
@@ -89,7 +89,7 @@ export class BatchTargetsAction implements WorkflowAction {
 
     private async sqsSendMessage(
         message: MessageItem,
-        command: CommandItem,
+        command: CommandItem
     ): Promise<SendMessageResult> {
         return this.sqs
             .sendMessage({

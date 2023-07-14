@@ -46,7 +46,7 @@ export class ExpressionParser {
                             expression = await this.s3Utils.generatePresignedUrl(
                                 bucketName,
                                 key,
-                                expiresIn,
+                                expiresIn
                             );
                             break;
                         }

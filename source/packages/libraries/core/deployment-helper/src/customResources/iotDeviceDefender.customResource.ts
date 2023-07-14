@@ -30,8 +30,8 @@ export class IotDeviceDefenderCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `IotDeviceDefenderSettingCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
 
         const roleArn = customResourceEvent.ResourceProperties.RoleArn;
@@ -40,7 +40,7 @@ export class IotDeviceDefenderCustomResource implements CustomResource {
         const targetEnabled = customResourceEvent.ResourceProperties.TargetEnabled;
         const auditCheckEnabled = customResourceEvent.ResourceProperties.AuditCheckEnabled;
         logger.debug(
-            `roleArn - ${roleArn}, targetArn - ${targetArn}, targetRoleArn -${targetRoleArn}, targetEnabled -${targetEnabled}, auditCheckEnabled -${auditCheckEnabled}`,
+            `roleArn - ${roleArn}, targetArn - ${targetArn}, targetRoleArn -${targetRoleArn}, targetEnabled -${targetEnabled}, auditCheckEnabled -${auditCheckEnabled}`
         );
         ow(roleArn, ow.string.nonEmpty);
         ow(targetArn, ow.string.nonEmpty);
@@ -81,9 +81,7 @@ export class IotDeviceDefenderCustomResource implements CustomResource {
                     .promise();
             resourceExists = true;
             logger.debug(
-                `describeScheduledAuditResponse: ${JSON.stringify(
-                    describeScheduledAuditResponse,
-                )}`,
+                `describeScheduledAuditResponse: ${JSON.stringify(describeScheduledAuditResponse)}`
             );
         } catch (err) {
             if (err.name === 'ResourceNotFoundException') {
@@ -125,8 +123,8 @@ export class IotDeviceDefenderCustomResource implements CustomResource {
     public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(
             `IotDeviceDefender SettingCustomResource: create: in: customResourceEvent: ${JSON.stringify(
-                customResourceEvent,
-            )}`,
+                customResourceEvent
+            )}`
         );
         return await this.create(customResourceEvent);
     }
