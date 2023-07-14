@@ -1,19 +1,19 @@
 {
   "name": "@awssolutions/cdf-lambda-invoke",
-  "version": "0.0.2",
+  "version": "2.2.0",
   "description": "Lambda Invoker Service",
   "author": "Hassan Khokhar",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
+    "clean": "npx shx rm -rf dist *.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
-    "build": "npx tsc -b",
-    "test": "rushx lint && jest --silent --passWithNoTests"
+    "build": "npx tsc -p tsconfig.build.json",
+    "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/simple-cdf-logger": "^2.1.3",
+    "@awssolutions/simple-cdf-logger": "^2.2.0",
     "http-errors": "1.8.0",
     "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",

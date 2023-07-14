@@ -2,8 +2,8 @@ import {
     lstatSync,
     mkdirSync,
     mkdtempSync,
-    readdirSync,
     readFileSync,
+    readdirSync,
     rmSync,
     writeFileSync,
 } from 'fs';

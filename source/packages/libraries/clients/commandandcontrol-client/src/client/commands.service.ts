@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 
 import { injectable } from 'inversify';
+
 import { PathHelper } from '../utils/path.helper';
 import {
     CommandResource,

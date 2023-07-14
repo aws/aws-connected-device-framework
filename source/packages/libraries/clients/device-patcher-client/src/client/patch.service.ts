@@ -11,9 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
+
 import { PathHelper } from '../utils/path.helper';
 import { RequestHeaders } from './common.model';
 import { ClientServiceBase } from './common.service';
+
 import {
     ListPatchResponse,
     PatchResponse,

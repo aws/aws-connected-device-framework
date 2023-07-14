@@ -1,51 +1,27 @@
-# Change Log - @cdf/thing-list-builder
+# Change Log - @awssolutions/cdf-thing-list-builder
 
-This log was last generated on Fri, 08 Apr 2022 07:03:46 GMT and should not be manually modified.
+This log was last generated on Thu, 09 Mar 2023 22:35:00 GMT and should not be manually modified.
 
-## 1.1.2
+## 0.0.0
 
-Fri, 08 Apr 2022 07:03:46 GMT
+Thu, 09 Mar 2023 22:35:00 GMT
 
-### Patches
+_Version update only_
 
-- modified the logic for extracting thingname from resource ARN
+## 0.2.0
 
-## 1.1.1
+Wed, 08 Mar 2023 01:03:23 GMT
 
-Fri, 25 Mar 2022 06:23:54 GMT
+_Version update only_
 
-### Patches
+## 0.1.0
 
-- check if region and iot factory have been bound before
+Tue, 07 Mar 2023 23:22:30 GMT
+
+_Version update only_
 
 ## 1.1.0
 
-Fri, 25 Mar 2022 03:55:57 GMT
+Thu, 16 Feb 2023 18:41:02 GMT
 
-### Minor changes
-
-- adding functionality to support command and control
-
-## 1.0.2
-
-Mon, 21 Mar 2022 21:58:32 GMT
-
-### Patches
-
-- Upgrade dependencies marked as deprecated
-
-## 1.0.1
-
-Thu, 10 Mar 2022 00:08:34 GMT
-
-### Patches
-
-- correct typo in assetlibrary client import
-
-## 1.0.0
-
-Thu, 17 Feb 2022 09:27:38 GMT
-
-### Breaking changes
-
-- migrate configuration to use dotenv-flow and deployment to use installer
+_Initial release_

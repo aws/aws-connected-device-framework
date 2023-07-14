@@ -10,7 +10,6 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-
 import { SearchRequestModel } from '@awssolutions/cdf-assetlibrary-client';
 
 export interface NewDeployment {

@@ -1,20 +1,20 @@
 {
   "name": "@awssolutions/cdf-config-inject",
-  "version": "0.0.0",
+  "version": "2.2.0",
   "description": "this library load config from files and inject it into process.env to make it accessible as environment variables",
   "author": "Atul Bargaje <atulbar@amazon.com>",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "clean": "npx shx rm -rf dist deploy tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
+    "clean": "npx shx rm -rf dist deploy *.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
-    "build": "npx tsc -b",
-    "test": "rushx lint && APP_CONFIG_DIR='src/config' jest --silent --passWithNoTests"
+    "build": "npx tsc -p tsconfig.build.json",
+    "test": "rushx lint && APP_CONFIG_DIR='src/config' jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/cdf-environment-sanitizer": "^0.0.0",
-    "@awssolutions/cdf-errors": "^0.0.0",
-    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-errors": "^2.2.0",
+    "@awssolutions/cdf-logger": "^2.2.0",
+    "@awssolutions/cdf-environment-sanitizer": "^2.2.0",
     "dotenv-flow": "~3.2.0",
     "dotenv": "^8.2.0"
   },
@@ -57,6 +57,5 @@
       "node"
     ]
   },
-  "license": "ISC",
-  "private": true
+  "license": "ISC"
 }

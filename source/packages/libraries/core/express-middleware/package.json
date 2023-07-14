@@ -7,10 +7,10 @@
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
+    "clean": "npx shx rm -rf dist *.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
-    "build": "npx tsc -b",
-    "test": "rushx lint && jest --silent --passWithNoTests"
+    "build": "npx tsc -p tsconfig.build.json",
+    "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
     "express": "4.18.2"

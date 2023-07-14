@@ -1,42 +1,42 @@
 # Change Log for the pre-Rush (<v3) version of Notifications Client
 
-## [@cdf/notifications-client-v2.4.1](@cdf/notifications-client-v2.4.0...@cdf/notifications-client-v2.4.1) (2020-12-21)
+## [@awssolutions/cdf-notifications-client-v2.4.1](@awssolutions/cdf-notifications-client-v2.4.0...@awssolutions/cdf-notifications-client-v2.4.1) (2020-12-21)
 
 ### Bug Fixes
 
 - **events-processor:** safe target deletion ([23c268d](23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
 
-## [@cdf/notifications-client-v2.4.0](@cdf/notifications-client-v2.3.2...@cdf/notifications-client-v2.4.0) (2020-10-02)
+## [@awssolutions/cdf-notifications-client-v2.4.0](@awssolutions/cdf-notifications-client-v2.3.2...@awssolutions/cdf-notifications-client-v2.4.0) (2020-10-02)
 
 ### Features
 
 - **events-processor:** multiple target support ([85fed19](85fed19faa95066b57b74f9f297ca920bd90c15a))
 
-## [@cdf/notifications-client-v2.3.2](@cdf/notifications-client-v2.3.1...@cdf/notifications-client-v2.3.2) (2020-08-26)
+## [@awssolutions/cdf-notifications-client-v2.3.2](@awssolutions/cdf-notifications-client-v2.3.1...@awssolutions/cdf-notifications-client-v2.3.2) (2020-08-26)
 
 ### Bug Fixes
 
 - **notifications:** lint issues ([8b7259e](8b7259e7c6f685bab26f398667fdf5b0106f8c70))
 
-## [@cdf/notifications-client-v2.3.1](@cdf/notifications-client-v2.3.0...@cdf/notifications-client-v2.3.1) (2020-06-24)
+## [@awssolutions/cdf-notifications-client-v2.3.1](@awssolutions/cdf-notifications-client-v2.3.0...@awssolutions/cdf-notifications-client-v2.3.1) (2020-06-24)
 
 ### Bug Fixes
 
 - **clients:** region missing from lambda ([49c8309](49c8309e87fd315267a15a888dcd20d2fc3e209b))
 
-## [@cdf/notifications-client-v2.3.0](@cdf/notifications-client-v2.2.0...@cdf/notifications-client-v2.3.0) (2020-06-10)
+## [@awssolutions/cdf-notifications-client-v2.3.0](@awssolutions/cdf-notifications-client-v2.2.0...@awssolutions/cdf-notifications-client-v2.3.0) (2020-06-10)
 
 ### Features
 
 - **auth:** certain services tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
 
-## [@cdf/notifications-client-v2.2.0](@cdf/notifications-client-v2.1.0...@cdf/notifications-client-v2.2.0) (2020-01-06)
+## [@awssolutions/cdf-notifications-client-v2.2.0](@awssolutions/cdf-notifications-client-v2.1.0...@awssolutions/cdf-notifications-client-v2.2.0) (2020-01-06)
 
 ### Features
 
 - **assetlibrary:** provisioned execution capacity and autoscaling ([b485f47](b485f477c0b1c36d63f74c70fa041c296148b980))
 
-## [@cdf/notifications-client-v2.1.0](@cdf/notifications-client-v2.0.0...@cdf/notifications-client-v2.1.0) (2019-12-19)
+## [@awssolutions/cdf-notifications-client-v2.1.0](@awssolutions/cdf-notifications-client-v2.0.0...@awssolutions/cdf-notifications-client-v2.1.0) (2019-12-19)
 
 ### Bug Fixes
 
@@ -46,7 +46,7 @@
 
 - **cdf:** upgraded from node.js v8 to v12 ([e47299e](e47299ee399acf6554a0845048c4fed99251c2b1))
 
-## [@cdf/notifications-client-v2.0.0](@cdf/notifications-client-v1.0.0...@cdf/notifications-client-v2.0.0) (2019-11-08)
+## [@awssolutions/cdf-notifications-client-v2.0.0](@awssolutions/cdf-notifications-client-v1.0.0...@awssolutions/cdf-notifications-client-v2.0.0) (2019-11-08)
 
 ### Bug Fixes
 
@@ -60,7 +60,7 @@
 
 - **assetlibrary:** asset library device/groups versioned to v2
 
-# @cdf/notifications-client-v1.0.0 (2019-09-12)
+# @awssolutions/cdf-notifications-client-v1.0.0 (2019-09-12)
 
 ### Bug Fixes
 

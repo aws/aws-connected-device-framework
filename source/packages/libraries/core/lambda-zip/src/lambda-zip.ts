@@ -1,10 +1,10 @@
 import archiver from 'archiver';
-import { build, BuildOptions } from 'esbuild';
+import { BuildOptions, build } from 'esbuild';
 import { createWriteStream } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { copy, CopyOptions } from './copy';
+import { CopyOptions, copy } from './copy';
 
 const defaultBuildOptions: BuildOptions = {
     bundle: true,

@@ -1,0 +1,17 @@
+{
+  "name": "@awssolutions/cdf-lambda-zip",
+  "entries": [
+    {
+      "version": "0.2.0",
+      "tag": "@awssolutions/cdf-lambda-zip_v0.2.0",
+      "date": "Wed, 08 Mar 2023 01:03:23 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.1.0",
+      "tag": "@awssolutions/cdf-lambda-zip_v0.1.0",
+      "date": "Tue, 07 Mar 2023 23:22:30 GMT",
+      "comments": {}
+    }
+  ]
+}

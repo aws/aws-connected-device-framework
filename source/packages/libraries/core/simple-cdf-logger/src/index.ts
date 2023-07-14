@@ -1,5 +1,5 @@
 import { format } from 'logform';
-import { createLogger, LoggerOptions, transports } from 'winston';
+import { LoggerOptions, createLogger, transports } from 'winston';
 const { combine, timestamp, printf } = format;
 
 const CONTEXT_KEY = 'context';

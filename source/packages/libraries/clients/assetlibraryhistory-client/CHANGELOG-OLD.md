@@ -1,18 +1,18 @@
 # Change Log for the pre-Rush (<v4) version of Asset Library History Client
 
-## [@cdf/assetlibraryhistory-client-v3.3.2](#@cdf/assetlibraryhistory-client-v3.3.1...@cdf/assetlibraryhistory-client-v3.3.2) (2020-12-21)
+## [@awssolutions/cdf-assetlibraryhistory-client-v3.3.2](#@awssolutions/cdf-assetlibraryhistory-client-v3.3.1...@awssolutions/cdf-assetlibraryhistory-client-v3.3.2) (2020-12-21)
 
 ### Bug Fixes
 
 - **events-processor:** safe target deletion ([23c268d](23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
 
-## [@cdf/assetlibraryhistory-client-v3.3.1](@cdf/assetlibraryhistory-client-v3.3.0...@cdf/assetlibraryhistory-client-v3.3.1) (2020-06-24)
+## [@awssolutions/cdf-assetlibraryhistory-client-v3.3.1](@awssolutions/cdf-assetlibraryhistory-client-v3.3.0...@awssolutions/cdf-assetlibraryhistory-client-v3.3.1) (2020-06-24)
 
 ### Bug Fixes
 
 - **clients:** region missing from lambda ([49c8309](49c8309e87fd315267a15a888dcd20d2fc3e209b))
 
-## [@cdf/assetlibraryhistory-client-v3.3.0](@cdf/assetlibraryhistory-client-v3.2.0...@cdf/assetlibraryhistory-client-v3.3.0) (2020-06-10)
+## [@awssolutions/cdf-assetlibraryhistory-client-v3.3.0](@awssolutions/cdf-assetlibraryhistory-client-v3.2.0...@awssolutions/cdf-assetlibraryhistory-client-v3.3.0) (2020-06-10)
 
 ### Bug Fixes
 
@@ -22,13 +22,13 @@
 
 - **auth:** certain services tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
 
-## [@cdf/assetlibraryhistory-client-v3.2.0](@cdf/assetlibraryhistory-client-v3.1.0...@cdf/assetlibraryhistory-client-v3.2.0) (2020-01-06)
+## [@awssolutions/cdf-assetlibraryhistory-client-v3.2.0](@awssolutions/cdf-assetlibraryhistory-client-v3.1.0...@awssolutions/cdf-assetlibraryhistory-client-v3.2.0) (2020-01-06)
 
 ### Features
 
 - **assetlibrary:** provisioned execution capacity and autoscaling ([b485f47](b485f477c0b1c36d63f74c70fa041c296148b980))
 
-## [@cdf/assetlibraryhistory-client-v3.1.0](@cdf/assetlibraryhistory-client-v3.0.0...@cdf/assetlibraryhistory-client-v3.1.0) (2019-12-19)
+## [@awssolutions/cdf-assetlibraryhistory-client-v3.1.0](@awssolutions/cdf-assetlibraryhistory-client-v3.0.0...@awssolutions/cdf-assetlibraryhistory-client-v3.1.0) (2019-12-19)
 
 ### Bug Fixes
 
@@ -38,7 +38,7 @@
 
 - **cdf:** upgraded from node.js v8 to v12 ([e47299e](e47299ee399acf6554a0845048c4fed99251c2b1))
 
-## [@cdf/assetlibraryhistory-client-v3.0.0](@cdf/assetlibraryhistory-client-v2.2.0...@cdf/assetlibraryhistory-client-v3.0.0) (2019-11-08)
+## [@awssolutions/cdf-assetlibraryhistory-client-v3.0.0](@awssolutions/cdf-assetlibraryhistory-client-v2.2.0...@awssolutions/cdf-assetlibraryhistory-client-v3.0.0) (2019-11-08)
 
 ### Bug Fixes
 
@@ -52,13 +52,13 @@
 
 - **assetlibrary:** asset library device/groups versioned to v2
 
-## [@cdf/assetlibraryhistory-client-v2.2.0](@cdf/assetlibraryhistory-client-v2.1.0...@cdf/assetlibraryhistory-client-v2.2.0) (2019-09-12)
+## [@awssolutions/cdf-assetlibraryhistory-client-v2.2.0](@awssolutions/cdf-assetlibraryhistory-client-v2.1.0...@awssolutions/cdf-assetlibraryhistory-client-v2.2.0) (2019-09-12)
 
 ### Features
 
 - **notifications-client:** added remaining client api ([df7eade](df7eade))
 
-## [@cdf/assetlibraryhistory-client-v2.1.0](@cdf/assetlibraryhistory-client-v2.0.0...@cdf/assetlibraryhistory-client-v2.1.0) (2019-07-15)
+## [@awssolutions/cdf-assetlibraryhistory-client-v2.1.0](@awssolutions/cdf-assetlibraryhistory-client-v2.0.0...@awssolutions/cdf-assetlibraryhistory-client-v2.1.0) (2019-07-15)
 
 ### Features
 

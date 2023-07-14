@@ -1,49 +1,49 @@
 # Change Log for the pre-Rush (<v4) version of Asset Library Client
 
-## [@cdf/assetlibrary-client-v3.4.1](@cdf/assetlibrary-client-v3.4.0...@cdf/assetlibrary-client-v3.4.1) (2020-12-21)
+## [@awssolutions/cdf-assetlibrary-client-v3.4.1](@awssolutions/cdf-assetlibrary-client-v3.4.0...@awssolutions/cdf-assetlibrary-client-v3.4.1) (2020-12-21)
 
 ### Bug Fixes
 
 - **events-processor:** safe target deletion ([23c268d](23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
 
-## [@cdf/assetlibrary-client-v3.4.0](@cdf/assetlibrary-client-v3.3.5...@cdf/assetlibrary-client-v3.4.0) (2020-10-02)
+## [@awssolutions/cdf-assetlibrary-client-v3.4.0](@awssolutions/cdf-assetlibrary-client-v3.3.5...@awssolutions/cdf-assetlibrary-client-v3.4.0) (2020-10-02)
 
 ### Features
 
 - **events-processor:** multiple target support ([85fed19](85fed19faa95066b57b74f9f297ca920bd90c15a))
 
-## [@cdf/assetlibrary-client-v3.3.5](@cdf/assetlibrary-client-v3.3.4...@cdf/assetlibrary-client-v3.3.5) (2020-08-08)
+## [@awssolutions/cdf-assetlibrary-client-v3.3.5](@awssolutions/cdf-assetlibrary-client-v3.3.4...@awssolutions/cdf-assetlibrary-client-v3.3.5) (2020-08-08)
 
 ### Bug Fixes
 
 - **assetlibraryclient:** fixed issue with multi valued search queries ([9d06aed](9d06aed4e365fe019aa855dc5ee53f0e1bcc5a6b))
 - **assetlibraryclient:** fixed issue with multi valued search queries ([af5561f](af5561f5ab31047620d8fad3728822a741236e27))
 
-## [@cdf/assetlibrary-client-v3.3.4](@cdf/assetlibrary-client-v3.3.3...@cdf/assetlibrary-client-v3.3.4) (2020-08-05)
+## [@awssolutions/cdf-assetlibrary-client-v3.3.4](@awssolutions/cdf-assetlibrary-client-v3.3.3...@awssolutions/cdf-assetlibrary-client-v3.3.4) (2020-08-05)
 
 ### Bug Fixes
 
 - **assetlibraryclient:** added directional attach/detach methods ([4f71b1c](4f71b1cc404118d18bd45914af9d0f403e61352c))
 
-## [@cdf/assetlibrary-client-v3.3.3](@cdf/assetlibrary-client-v3.3.2...@cdf/assetlibrary-client-v3.3.3) (2020-07-30)
+## [@awssolutions/cdf-assetlibrary-client-v3.3.3](@awssolutions/cdf-assetlibrary-client-v3.3.2...@awssolutions/cdf-assetlibrary-client-v3.3.3) (2020-07-30)
 
 ### Bug Fixes
 
 - **asset-library:** encode assert library search params ([7a27c52](7a27c5237c0fc11f13c0a14b88ee6257701428ce))
 
-## [@cdf/assetlibrary-client-v3.3.2](@cdf/assetlibrary-client-v3.3.1...@cdf/assetlibrary-client-v3.3.2) (2020-06-24)
+## [@awssolutions/cdf-assetlibrary-client-v3.3.2](@awssolutions/cdf-assetlibrary-client-v3.3.1...@awssolutions/cdf-assetlibrary-client-v3.3.2) (2020-06-24)
 
 ### Bug Fixes
 
 - **clients:** region missing from lambda ([49c8309](49c8309e87fd315267a15a888dcd20d2fc3e209b))
 
-## [@cdf/assetlibrary-client-v3.3.1](@cdf/assetlibrary-client-v3.3.0...@cdf/assetlibrary-client-v3.3.1) (2020-06-16)
+## [@awssolutions/cdf-assetlibrary-client-v3.3.1](@awssolutions/cdf-assetlibrary-client-v3.3.0...@awssolutions/cdf-assetlibrary-client-v3.3.1) (2020-06-16)
 
 ### Bug Fixes
 
 - **clients:** missing bodies in lambda requests ([f33d90d](f33d90de6350002fcddb240fcbea7ae39ab37fba))
 
-## [@cdf/assetlibrary-client-v3.3.0](@cdf/assetlibrary-client-v3.2.1...@cdf/assetlibrary-client-v3.3.0) (2020-06-10)
+## [@awssolutions/cdf-assetlibrary-client-v3.3.0](@awssolutions/cdf-assetlibrary-client-v3.2.1...@awssolutions/cdf-assetlibrary-client-v3.3.0) (2020-06-10)
 
 ### Bug Fixes
 
@@ -54,19 +54,19 @@
 
 - **auth:** certain modules tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
 
-## [@cdf/assetlibrary-client-v3.2.1](@cdf/assetlibrary-client-v3.2.0...@cdf/assetlibrary-client-v3.2.1) (2020-04-20)
+## [@awssolutions/cdf-assetlibrary-client-v3.2.1](@awssolutions/cdf-assetlibrary-client-v3.2.0...@awssolutions/cdf-assetlibrary-client-v3.2.1) (2020-04-20)
 
 ### Bug Fixes
 
 - assetlibrary clients ([9bb27db](9bb27db533330fd8cd4d12e126bdeadf66495491))
 
-## [@cdf/assetlibrary-client-v3.2.0](@cdf/assetlibrary-client-v3.1.0...@cdf/assetlibrary-client-v3.2.0) (2020-01-06)
+## [@awssolutions/cdf-assetlibrary-client-v3.2.0](@awssolutions/cdf-assetlibrary-client-v3.1.0...@awssolutions/cdf-assetlibrary-client-v3.2.0) (2020-01-06)
 
 ### Features
 
 - **assetlibrary:** provisioned execution capacity and autoscaling ([b485f47](b485f477c0b1c36d63f74c70fa041c296148b980))
 
-## [@cdf/assetlibrary-client-v3.1.0](@cdf/assetlibrary-client-v3.0.0...@cdf/assetlibrary-client-v3.1.0) (2019-12-19)
+## [@awssolutions/cdf-assetlibrary-client-v3.1.0](@awssolutions/cdf-assetlibrary-client-v3.0.0...@awssolutions/cdf-assetlibrary-client-v3.1.0) (2019-12-19)
 
 ### Bug Fixes
 
@@ -76,7 +76,7 @@
 
 - **cdf:** upgraded from node.js v8 to v12 ([e47299e](e47299ee399acf6554a0845048c4fed99251c2b1))
 
-## [@cdf/assetlibrary-client-v3.0.0](@cdf/assetlibrary-client-v2.3.0...@cdf/assetlibrary-client-v3.0.0) (2019-11-08)
+## [@awssolutions/cdf-assetlibrary-client-v3.0.0](@awssolutions/cdf-assetlibrary-client-v2.3.0...@awssolutions/cdf-assetlibrary-client-v3.0.0) (2019-11-08)
 
 ### Bug Fixes
 
@@ -93,19 +93,19 @@
 
 - **assetlibrary:** asset library device/groups versioned to v2
 
-## [@cdf/assetlibrary-client-v2.3.0](@cdf/assetlibrary-client-v2.2.0...@cdf/assetlibrary-client-v2.3.0) (2019-09-12)
+## [@awssolutions/cdf-assetlibrary-client-v2.3.0](@awssolutions/cdf-assetlibrary-client-v2.2.0...@awssolutions/cdf-assetlibrary-client-v2.3.0) (2019-09-12)
 
 ### Features
 
 - **notifications-client:** added remaining client api ([df7eade](df7eade))
 
-## [@cdf/assetlibrary-client-v2.2.0](@cdf/assetlibrary-client-v2.1.0...@cdf/assetlibrary-client-v2.2.0) (2019-07-15)
+## [@awssolutions/cdf-assetlibrary-client-v2.2.0](@awssolutions/cdf-assetlibrary-client-v2.1.0...@awssolutions/cdf-assetlibrary-client-v2.2.0) (2019-07-15)
 
 ### Features
 
 - **clients:** client HTTP headers ([941b79b](941b79b))
 
-## [@cdf/assetlibrary-client-v2.1.0](@cdf/assetlibrary-client-v2.0.0...@cdf/assetlibrary-client-v2.1.0) (2019-06-30)
+## [@awssolutions/cdf-assetlibrary-client-v2.1.0](@awssolutions/cdf-assetlibrary-client-v2.0.0...@awssolutions/cdf-assetlibrary-client-v2.1.0) (2019-06-30)
 
 ### Bug Fixes
 

@@ -22,5 +22,6 @@ export * from './client/organizationalUnits.model';
 export * from './client/organizationalUnits.service';
 export * from './client/pagination.model';
 export * from './client/response.model';
+
 export { organizationManagerContainerModule } from './di/inversify.config';
 export { ORGMANLIBRARY_CLIENT_TYPES } from './di/types';

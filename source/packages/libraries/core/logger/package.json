@@ -1,15 +1,15 @@
 {
   "name": "@awssolutions/cdf-logger",
   "description": "Common logging capability for platform.",
-  "version": "0.0.0",
+  "version": "2.2.0",
   "author": "Atul Bargaje <atulbar@amazon.com>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
+    "clean": "npx shx rm -rf dist *.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
-    "build": "npx tsc -b",
-    "test": "rushx lint && jest --silent --passWithNoTests"
+    "build": "npx tsc -p tsconfig.build.json",
+    "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
     "logform": "2.4.2",
@@ -54,6 +54,5 @@
       "node"
     ]
   },
-  "license": "ISC",
-  "private": true
+  "license": "ISC"
 }

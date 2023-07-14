@@ -10,9 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { LambdaApiGatewayEvent, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 import { createMockInstance } from 'jest-create-mock-instance';
 import 'reflect-metadata';
+
+import { LambdaApiGatewayEvent, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 import { ThingsLambdaService } from './things.lambda.service';
 import {
     BulkProvisionThingsRequest,
