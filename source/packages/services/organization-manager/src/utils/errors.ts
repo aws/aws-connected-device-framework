@@ -39,18 +39,17 @@ export function handleError(e: ErrorWithResponse, res: Response): void {
 
     if (status === 400) {
         res.status(400).json({ error: message }).end();
-
     } else if (
         e.name === 'ArgumentError' || // ow input validation error
         e.message === 'FAILED_VALIDATION' ||
         e.message === 'STATUS_PENDING' ||
         e.message === 'INVALID_RELATION'
-    ) { 
-        res.status(400).json({ error: e.message }).end();
+    ) {
+        res.status(400).json({ error: res.statusMessage }).end();
     } else if (status === 404 || e.message === 'NOT_FOUND') {
         res.status(404).json({ error: 'Resource does not exist' }).end();
     } else if (e.message === 'Organizational Unit exists') {
-        res.status(409).json({ error: e.message }).end();
+        res.status(409).json({ error: res.statusMessage }).end();
     } else if (status === 409 || code === 'DuplicateOrganizationalUnitException') {
         res.status(409).json({ error: message }).end();
     } else if (e.hasOwnProperty('code') && ERRORS_429.includes(e['code'])) {

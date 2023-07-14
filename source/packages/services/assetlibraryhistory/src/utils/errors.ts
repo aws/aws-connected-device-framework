@@ -22,7 +22,7 @@ export function handleError(e: Error, res: Response): void {
         e.message === 'UNDEFINED_RELATIONS' ||
         (e.hasOwnProperty('code') && e['code'] === 'ValidationException') // Error object thrown from DynamoDB input validation contains 'code' field
     ) {
-        res.status(400).json({ error: e.message }).end();
+        res.status(400).json({ error: res.statusMessage }).end();
     } else if (e.message === 'NOT_FOUND') {
         res.status(404).json({ error: 'Item not found' }).end();
     } else if (

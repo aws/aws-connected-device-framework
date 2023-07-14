@@ -13,7 +13,7 @@
 import { Response } from 'express';
 import { logger } from '@awssolutions/simple-cdf-logger';
 
-export function handleError(e:Error, res:Response): void {
+export function handleError(e: Error, res: Response): void {
     logger.error(`handleError: ${e}`);
 
     if (
@@ -21,20 +21,22 @@ export function handleError(e:Error, res:Response): void {
         e.message.startsWith('MISSING_REQUIRED') ||
         e.message.startsWith('FAILED_VALIDATION') ||
         e.message === 'UNSUPPORTED_TRANSITION' ||
-        e.hasOwnProperty('code') && e['code'] === 'ValidationException'
+        (e.hasOwnProperty('code') && e['code'] === 'ValidationException')
     ) {
-        res.status(400).json({error: res.statusMessage}).end();
+        res.status(400).json({ error: res.statusMessage }).end();
     } else if (e.message.startsWith('NOT_FOUND')) {
-        res.status(404).json({error: e.message}).end();
-    } else if (e.name==='ResourceNotFoundException') {
-        res.status(404).json({error: e.message}).end();
-    } else if (e.name === 'ConditionalCheckFailedException' ||
-            e.message.indexOf('with id already exists')>=0 ) {
-        res.status(409).json({error: 'Item already exists'}).end();
-    } else if (e.message === 'TEMPLATE_IN_USE' ) {
-        res.status(409).json({error: 'Template in use'}).end();
+        res.status(404).json({ error: res.statusMessage }).end();
+    } else if (e.name === 'ResourceNotFoundException') {
+        res.status(404).json({ error: res.statusMessage }).end();
+    } else if (
+        e.name === 'ConditionalCheckFailedException' ||
+        e.message.indexOf('with id already exists') >= 0
+    ) {
+        res.status(409).json({ error: 'Item already exists' }).end();
+    } else if (e.message === 'TEMPLATE_IN_USE') {
+        res.status(409).json({ error: 'Template in use' }).end();
     } else {
-        res.status(500).json({error: res.statusMessage}).end();
+        res.status(500).json({ error: res.statusMessage }).end();
     }
 
     logger.error(`handleError: res.status: ${res.status}`);

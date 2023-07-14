@@ -13,17 +13,17 @@
 import { Response } from 'express';
 import { logger } from '@awssolutions/simple-cdf-logger';
 
-export function handleError(e:Error, res:Response): void {
+export function handleError(e: Error, res: Response): void {
     logger.error(`handleError: ${e}`);
 
-    if (e.name === 'ArgumentError' || e.message === 'FAILED_VALIDATION' ) {
-        res.status(400).json({error: e.message}).end();
+    if (e.name === 'ArgumentError' || e.message === 'FAILED_VALIDATION') {
+        res.status(400).json({ error: res.statusMessage }).end();
     } else if (e.message === 'STATUS_PENDING') {
-        res.status(400).json({error: e.message});
+        res.status(400).json({ error: res.statusMessage });
     } else if (e.message === 'NOT_FOUND') {
-        res.status(404).json({error: 'Resource does not exist'}).end();
+        res.status(404).json({ error: 'Resource does not exist' }).end();
     } else {
-        res.status(500).json({error: res.statusMessage}).end();
+        res.status(500).json({ error: res.statusMessage }).end();
     }
 
     logger.error(`handleError: res.status: ${res.statusCode} ${res.statusMessage}`);

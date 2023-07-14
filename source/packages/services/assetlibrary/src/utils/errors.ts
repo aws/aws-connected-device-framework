@@ -11,14 +11,17 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Response } from 'express';
-import { SchemaValidationResult, ValidateRelationshipsByIdsResult } from '../types/schemaValidator.full.service';
+import {
+    SchemaValidationResult,
+    ValidateRelationshipsByIdsResult,
+} from '../types/schemaValidator.full.service';
 import { logger } from '@awssolutions/simple-cdf-logger';
 
 export function handleError(e: Error, res: Response): void {
     logger.error(`handleError: ${e}`);
 
     let status: number;
-    let json: unknown = { error: e.message };
+    let json: unknown = { error: res.statusMessage };
     switch (e.name) {
         case 'SchemaValidationError': {
             status = 400;
@@ -44,7 +47,7 @@ export function handleError(e: Error, res: Response): void {
         case 'ArgumentError':
         case 'TypeError':
             status = 400;
-            json = { error: e.message };
+            json = { error: res.statusMessage };
             break;
 
         case 'NotAuthorizedError':
@@ -57,7 +60,7 @@ export function handleError(e: Error, res: Response): void {
         case 'DeviceNotFoundError':
         case 'GroupNotFoundError':
             status = 404;
-            json = { error: e.message };
+            json = { error: res.statusMessage };
             break;
 
         case 'TemplateInUseError':
@@ -97,11 +100,11 @@ export function handleError(e: Error, res: Response): void {
                     error: 'Too Many Requests',
                 };
             } else if (
-                e.message.indexOf('TimeLimitExceededException') >= 0 // thrown when large volume of data is taking too long to retrieve 
+                e.message.indexOf('TimeLimitExceededException') >= 0 // thrown when large volume of data is taking too long to retrieve
             ) {
                 status = 598; // this is the status code returned by the underlying service
                 json = {
-                    error: 'Underlying service timed out'
+                    error: 'Underlying service timed out',
                 };
             } else {
                 status = 500;

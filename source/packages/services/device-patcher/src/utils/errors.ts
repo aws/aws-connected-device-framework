@@ -37,7 +37,7 @@ export function handleError(e: Error, res: Response): void {
         res.status(400).json({ error: res.statusMessage }).end();
     } else if (e.name === 'ArgumentError') {
         // ow input validation error
-        res.status(400).json({ error: e.message }).end();
+        res.status(400).json({ error: res.statusMessage }).end();
     } else if (e.message.endsWith('NOT_FOUND')) {
         res.status(404).json({ error: 'Item not found' }).end();
     } else if (e.name === 'ResourceNotFoundException') {
