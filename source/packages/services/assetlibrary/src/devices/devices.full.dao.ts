@@ -11,40 +11,42 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { process, structure } from 'gremlin';
-import { inject, injectable } from 'inversify';
-import ow from 'ow';
-import { Claims } from '../authz/claims';
+import { injectable, inject } from 'inversify';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
+import { Node } from '../data/node';
+import { FullAssembler } from '../data/full.assembler';
+import { DevicesAssembler } from './devices.assembler';
+import {
+    ModelAttributeValue,
+    SortKeys,
+    DirectionToRelatedEntityArrayMap,
+    RelatedEntityArrayMap,
+    RelationDirection,
+    RelatedEntityIdentifer,
+} from '../data/model';
 import { BaseDaoFull } from '../data/base.full.dao';
 import { CommonDaoFull } from '../data/common.full.dao';
-import { FullAssembler } from '../data/full.assembler';
-import { RelatedEntityDto, VertexDto, isRelatedEntityDto, isVertexDto } from '../data/full.model';
-import {
-    DirectionToRelatedEntityArrayMap,
-    EntityTypeMap,
-    ModelAttributeValue,
-    RelatedEntityArrayMap,
-    RelatedEntityIdentifer,
-    RelationDirection,
-    SortKeys,
-} from '../data/model';
-import { Node } from '../data/node';
-import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import { DevicesAssembler } from './devices.assembler';
+import { EntityTypeMap } from '../data/model';
+import { isRelatedEntityDto, isVertexDto, RelatedEntityDto, VertexDto } from '../data/full.model';
+import { Claims } from '../authz/claims';
+import ow from 'ow';
 import { DeviceItem } from './devices.models';
 
 const __ = process.statics;
+
+const MAX_DEVICE_RELATIONS = 500;
 
 /*  associate device with the related devices and/or groups  */
 const associateRels = (
     traversal: process.GraphTraversal,
     rels: RelatedEntityArrayMap,
     category: 'device' | 'group',
-    direction: RelationDirection
+    direction: RelationDirection,
 ) => {
     console.debug(
         'devices.full.dao associateRels:',
-        JSON.stringify({ rels, category, direction })
+        JSON.stringify({ rels, category, direction }),
     );
     if (Object.keys(rels ?? {}).length > 0) {
         Object.entries(rels).forEach(([rel, entities]) => {
@@ -69,11 +71,11 @@ const diassociateRels = (
     dropTraversals: process.GraphTraversal[],
     rels: RelatedEntityArrayMap,
     category: 'device' | 'group',
-    direction: RelationDirection
+    direction: RelationDirection,
 ) => {
     console.debug(
         'devices.full.dao diassociateRels:',
-        JSON.stringify({ rels, category, direction })
+        JSON.stringify({ rels, category, direction }),
     );
     if (Object.keys(rels ?? {}).length > 0) {
         Object.entries(rels).forEach(([rel, entities]) => {
@@ -100,7 +102,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
         @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
-        @inject('authorization.enabled') private isAuthzEnabled: boolean
+        @inject('authorization.enabled') private isAuthzEnabled: boolean,
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -113,12 +115,12 @@ export class DevicesDaoFull extends BaseDaoFull {
         filterRelatedBy: { [key: string]: ModelAttributeValue },
         offset: number,
         count: number,
-        sort: SortKeys
+        sort: SortKeys,
     ): Promise<Node> {
         logger.debug(
             `devices.full.dao listRelated: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(
-                filterRelatedBy
-            )}, offset:${offset}, count:${count}, sort:${sort}`
+                filterRelatedBy,
+            )}, offset:${offset}, count:${count}, sort:${sort}`,
         );
 
         const id = `device___${deviceId}`;
@@ -137,7 +139,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             offset,
             count,
             sort,
-            authorizedPaths
+            authorizedPaths,
         );
     }
 
@@ -145,10 +147,10 @@ export class DevicesDaoFull extends BaseDaoFull {
         deviceIds: string[],
         expandComponents: boolean,
         attributes: string[],
-        includeGroups: boolean
+        includeGroups: boolean,
     ): Promise<Node[]> {
         logger.debug(
-            `device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`
+            `device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`,
         );
 
         const dbIds: string[] = deviceIds.map((d) => `device___${d}`);
@@ -174,7 +176,8 @@ export class DevicesDaoFull extends BaseDaoFull {
             .as('vProps')
             .constant('in')
             .as('dir')
-            .select('entityId', 'dir', 'e', 'vProps');
+            .select('entityId', 'dir', 'e', 'vProps')
+            .range(0, MAX_DEVICE_RELATIONS);
 
         relatedOut
             .as('e')
@@ -185,7 +188,8 @@ export class DevicesDaoFull extends BaseDaoFull {
             .as('vProps')
             .constant('out')
             .as('dir')
-            .select('entityId', 'dir', 'e', 'vProps');
+            .select('entityId', 'dir', 'e', 'vProps')
+            .range(0, MAX_DEVICE_RELATIONS);
 
         // build the traverser for returning the devices, optionally filtering the returned attributes
         const deviceProps =
@@ -209,7 +213,7 @@ export class DevicesDaoFull extends BaseDaoFull {
 
             // execute and retrieve the results
             logger.debug(
-                `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`
+                `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`,
             );
             results = await traverser.toList();
             logger.debug(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
@@ -254,7 +258,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         const result = await this.commonDao.getLabels(dbIds);
         Object.entries(result).forEach(
             ([id, labels]) =>
-                (result[id] = labels.filter((l) => l !== 'device' && l !== 'component'))
+                (result[id] = labels.filter((l) => l !== 'device' && l !== 'component')),
         );
         logger.debug(`devices.full.dao getLabels: result: ${JSON.stringify(result)}`);
         return result;
@@ -264,12 +268,12 @@ export class DevicesDaoFull extends BaseDaoFull {
         n: Node,
         groups: DirectionToRelatedEntityArrayMap,
         devices: DirectionToRelatedEntityArrayMap,
-        components: Node[]
+        components: Node[],
     ): Promise<string> {
         logger.debug(
             `devices.full.dao create: in: n:${JSON.stringify(n)}, groups:${JSON.stringify(
-                groups
-            )}, devices:${JSON.stringify(devices)}, components:${components}`
+                groups,
+            )}, devices:${JSON.stringify(devices)}, components:${components}`,
         );
 
         const id = `device___${n.attributes['deviceId']}`;
@@ -325,7 +329,7 @@ export class DevicesDaoFull extends BaseDaoFull {
 
     public async createComponent(deviceId: string, n: Node): Promise<string> {
         logger.debug(
-            `devices.full.dao createComponent: in: deviceId:${deviceId}, n:${JSON.stringify(n)}`
+            `devices.full.dao createComponent: in: deviceId:${deviceId}, n:${JSON.stringify(n)}`,
         );
 
         const id = `device___${deviceId}`;
@@ -363,7 +367,7 @@ export class DevicesDaoFull extends BaseDaoFull {
     public async update(
         n: Node,
         groups?: DirectionToRelatedEntityArrayMap,
-        devices?: DirectionToRelatedEntityArrayMap
+        devices?: DirectionToRelatedEntityArrayMap,
     ): Promise<void> {
         logger.debug(`devices.full.dao update: in: n:${JSON.stringify(n)}`);
 
@@ -386,13 +390,13 @@ export class DevicesDaoFull extends BaseDaoFull {
             }
 
             // Check if related groups or devices part of update request
-            if (groups !== undefined && (groups.in || groups.out || devices.in || devices.out)){
+            if (groups !== undefined && (groups.in || groups.out || devices.in || devices.out)) {
                 // Update request contains relationships to enforce. This requires current
                 // relationships be dropped where specified and new relations created.
                 logger.info(
                     `devices.full.dao update groups/devices relations specified as part of update: ${JSON.stringify(
-                        { groups: groups }
-                    )}/${JSON.stringify({ devices: devices })}`
+                        { groups: groups },
+                    )}/${JSON.stringify({ devices: devices })}`,
                 );
                 const result = await this.get([`${n.attributes['deviceId']}`], false, [], false);
                 let currentDevice: DeviceItem;
@@ -411,70 +415,70 @@ export class DevicesDaoFull extends BaseDaoFull {
                 if (groups.in && 'in' in existingGroups) {
                     logger.debug(
                         `devices.full.dao update device ${id} dropping existing relations for groups.in: ${JSON.stringify(
-                            existingGroups.in
-                        )}`
+                            existingGroups.in,
+                        )}`,
                     );
                     diassociateRels(relationsToDropTraversals, existingGroups.in, 'group', 'in');
                 }
                 if (groups.out && 'out' in existingGroups) {
                     logger.debug(
                         `devices.full.dao update device ${id} dropping existing relations for groups.out: ${JSON.stringify(
-                            existingGroups.out
-                        )}`
+                            existingGroups.out,
+                        )}`,
                     );
                     diassociateRels(relationsToDropTraversals, existingGroups.out, 'group', 'out');
                 }
                 if (devices.in && 'in' in existingDevices) {
                     logger.debug(
                         `devices.full.dao update device ${id} dropping existing relations for devices.in: ${JSON.stringify(
-                            existingDevices.in
-                        )}`
+                            existingDevices.in,
+                        )}`,
                     );
                     diassociateRels(relationsToDropTraversals, existingDevices.in, 'device', 'in');
                 }
                 if (devices.out && 'out' in existingDevices) {
                     logger.debug(
                         `devices.full.dao update device ${id} dropping existing relations for devices.out:: ${JSON.stringify(
-                            existingDevices.out
-                        )}`
+                            existingDevices.out,
+                        )}`,
                     );
                     diassociateRels(
                         relationsToDropTraversals,
                         existingDevices.out,
                         'device',
-                        'out'
+                        'out',
                     );
                 }
                 traversal.sideEffect(__.union(...relationsToDropTraversals).drop());
                 if (groups.in) {
                     logger.debug(
                         `devices.full.dao update device ${id} adding relations for groups.in: ${JSON.stringify(
-                            groups.in
-                        )}`
+                            groups.in,
+                        )}`,
                     );
                     associateRels(traversal, groups.in, 'group', 'in');
                 }
                 if (groups.out) {
                     logger.debug(
                         `devices.full.dao update device ${id} adding relations for groups.out: ${JSON.stringify(
-                            groups.out
-                        )}`
+                            groups.out,
+                        )}`,
                     );
                     associateRels(traversal, groups.out, 'group', 'out');
                 }
                 if (devices.in) {
                     logger.debug(
                         `devices.full.dao update device ${id} adding relations for devices.in: ${JSON.stringify(
-                            devices.in
-                        )}`
+                            devices.in,
+                        )}`,
                     );
                     associateRels(traversal, devices.in, 'device', 'in');
                 }
                 if (devices.out) {
                     logger.debug(
                         `devices.full.dao update device ${id} adding relations for devices.out: ${JSON.stringify(
-                            devices.out
-                        )}`
+                            devices.out,
+                        )}`,
                     );
                     associateRels(traversal, devices.out, 'device', 'out');
                 }
@@ -483,7 +487,9 @@ export class DevicesDaoFull extends BaseDaoFull {
                 traversal.local(__.union(...dropTraversals)).drop();
             }
             logger.debug(
-                `devices.full.dao update traversal before iterate is: ${JSON.stringify(traversal)}`
+                `devices.full.dao update traversal before iterate is: ${JSON.stringify(
+                    traversal,
+                )}`,
             );
             await traversal.iterate();
         } finally {
@@ -512,10 +518,10 @@ export class DevicesDaoFull extends BaseDaoFull {
         relationship: string,
         direction: RelationDirection,
         groupPath: string,
-        isAuthCheck: boolean
+        isAuthCheck: boolean,
     ): Promise<void> {
         logger.debug(
-            `device.full.dao attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`
+            `device.full.dao attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`,
         );
 
         let sourceId: string;
@@ -555,12 +561,12 @@ export class DevicesDaoFull extends BaseDaoFull {
 
     public async detachFromGroups(
         deviceId: string,
-        relations: RelatedEntityIdentifer[]
+        relations: RelatedEntityIdentifer[],
     ): Promise<void> {
         logger.debug(
             `device.full.dao detachFromGroups: in: deviceId:${deviceId}, relations:${JSON.stringify(
-                relations
-            )}`
+                relations,
+            )}`,
         );
 
         await this.detachFromOthers(
@@ -569,7 +575,7 @@ export class DevicesDaoFull extends BaseDaoFull {
                 relationship: r.relationship,
                 direction: r.direction,
                 targetId: `group___${r.targetId}`,
-            }))
+            })),
         );
 
         logger.debug(`devices.full.dao detachFromGroups: exit:`);
@@ -580,10 +586,10 @@ export class DevicesDaoFull extends BaseDaoFull {
         relationship: string,
         direction: RelationDirection,
         otherDeviceId: string,
-        isAuthCheck: boolean
+        isAuthCheck: boolean,
     ): Promise<void> {
         logger.debug(
-            `device.full.dao attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`
+            `device.full.dao attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`,
         );
 
         const source = direction === 'out' ? deviceId : otherDeviceId;
@@ -616,12 +622,12 @@ export class DevicesDaoFull extends BaseDaoFull {
 
     public async detachFromDevices(
         deviceId: string,
-        relations: RelatedEntityIdentifer[]
+        relations: RelatedEntityIdentifer[],
     ): Promise<void> {
         logger.debug(
             `device.full.dao detachFromDevices: in: deviceId:${deviceId}, relations:${JSON.stringify(
-                relations
-            )}`
+                relations,
+            )}`,
         );
 
         await this.detachFromOthers(
@@ -630,7 +636,7 @@ export class DevicesDaoFull extends BaseDaoFull {
                 relationship: r.relationship,
                 direction: r.direction,
                 targetId: `device___${r.targetId}`,
-            }))
+            })),
         );
 
         logger.debug(`devices.full.dao detachFromDevices: exit:`);
@@ -638,12 +644,12 @@ export class DevicesDaoFull extends BaseDaoFull {
 
     public async detachFromOthers(
         deviceId: string,
-        relations: RelatedEntityIdentifer[]
+        relations: RelatedEntityIdentifer[],
     ): Promise<void> {
         logger.debug(
             `device.full.dao detachFromOthers: in: deviceId:${deviceId}, relations:${JSON.stringify(
-                relations
-            )}`
+                relations,
+            )}`,
         );
 
         ow(deviceId, ow.string.nonEmpty);
