@@ -10,17 +10,17 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
+import 'reflect-metadata';
 
 import AWS = require('aws-sdk');
 
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
-import '../simulations/simulations.controller';
 import '../runs/runs.controller';
 import { RunsDao } from '../runs/runs.dao';
 import { RunsService } from '../runs/runs.service';
+import '../simulations/simulations.controller';
 import { SimulationsDao } from '../simulations/simulations.dao';
 import { SimulationsService } from '../simulations/simulations.service';
 import { HttpHeaderUtils } from '../utils/httpHeaders';

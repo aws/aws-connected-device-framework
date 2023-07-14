@@ -13,23 +13,23 @@
 import { Response } from 'express';
 import { inject } from 'inversify';
 import {
-    interfaces,
     controller,
-    response,
+    httpDelete,
+    httpGet,
+    httpPost,
+    interfaces,
     requestBody,
     requestParam,
-    httpPost,
-    httpGet,
-    httpDelete,
+    response,
 } from 'inversify-express-utils';
 
-import { handleError } from '../utils/errors';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { handleError } from '../utils/errors';
 
 import { TYPES } from '../di/types';
-import { ActivationService } from './activation.service';
 import { ActivationAssembler } from './activation.assember';
 import { ActivationResource } from './activation.model';
+import { ActivationService } from './activation.service';
 
 @controller('')
 export class ActivationController implements interfaces.Controller {

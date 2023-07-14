@@ -12,11 +12,11 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 
-import { PatchService } from './patch.service';
+import { createMockInstance } from 'jest-create-mock-instance';
 import { PatchDao } from './patch.dao';
 import { PatchManager } from './patch.manager';
-import { createMockInstance } from 'jest-create-mock-instance';
 import { PatchStatus, PatchType } from './patch.model';
+import { PatchService } from './patch.service';
 
 describe('PatchService', () => {
     let mockedPatchDao: jest.Mocked<PatchDao>;

@@ -10,26 +10,26 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Response } from 'express';
 import {
-    interfaces,
     controller,
-    response,
     httpPost,
+    interfaces,
     requestBody,
     requestParam,
+    response,
 } from 'inversify-express-utils';
-import { logger } from '@awssolutions/simple-cdf-logger';
 
 import { inject } from 'inversify';
 import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors';
-import { CertificatesTaskService } from './certificatestask.service';
 import {
     CertificateBatchRequest,
-    TaskStatus,
     CertificateBatchTask,
+    TaskStatus,
 } from './certificatestask.models';
+import { CertificatesTaskService } from './certificatestask.service';
 
 @controller('/supplier')
 export class SupplierCertificatesController implements interfaces.Controller {

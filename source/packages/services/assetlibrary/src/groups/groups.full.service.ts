@@ -10,36 +10,36 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { GroupItem, BulkGroupsResult, GroupMemberItemList, GroupItemList } from './groups.models';
-import { GroupsAssembler } from './groups.assembler';
-import { TYPES } from '../di/types';
-import { GroupsDaoFull } from './groups.full.dao';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { TypesService } from '../types/types.service';
-import { TypeCategory, Operation } from '../types/constants';
-import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { GroupProfileItem } from '../profiles/profiles.models';
-import { ProfilesService } from '../profiles/profiles.service';
-import { GroupsService } from './groups.service';
-import { DevicesAssembler } from '../devices/devices.assembler';
-import { DeviceItemList } from '../devices/devices.models';
-import { SortKeys, DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap } from '../data/model';
 import { AuthzServiceFull } from '../authz/authz.full.service';
 import { ClaimAccess } from '../authz/claims';
-import { TypeUtils } from '../utils/typeUtils';
-import { TypeDefinitionStatus } from '../types/types.models';
+import { DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap, SortKeys } from '../data/model';
+import { DevicesAssembler } from '../devices/devices.assembler';
+import { DeviceItemList } from '../devices/devices.models';
+import { TYPES } from '../di/types';
+import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
+import { GroupProfileItem } from '../profiles/profiles.models';
+import { ProfilesService } from '../profiles/profiles.service';
+import { Operation, TypeCategory } from '../types/constants';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
+import { TypeDefinitionStatus } from '../types/types.models';
+import { TypesService } from '../types/types.service';
 import {
-    RelationValidationError,
-    ProfileNotFoundError,
-    SchemaValidationError,
-    TemplateNotFoundError,
     GroupNotFoundError,
     NotFoundError,
+    ProfileNotFoundError,
+    RelationValidationError,
+    SchemaValidationError,
+    TemplateNotFoundError,
 } from '../utils/errors';
 import { owCheckOptionalNumber } from '../utils/inputValidation.util';
+import { TypeUtils } from '../utils/typeUtils';
+import { GroupsAssembler } from './groups.assembler';
+import { GroupsDaoFull } from './groups.full.dao';
+import { BulkGroupsResult, GroupItem, GroupItemList, GroupMemberItemList } from './groups.models';
+import { GroupsService } from './groups.service';
 
 @injectable()
 export class GroupsServiceFull implements GroupsService {

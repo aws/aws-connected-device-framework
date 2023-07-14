@@ -22,10 +22,10 @@ import {
     UpdateCommandInput,
 } from '@aws-sdk/lib-dynamodb';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 import { DocumentDbClientItem } from '../utils/dynamoDb.util';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import { createDelimitedAttribute, expandDelimitedAttribute, PkType } from '../utils/pkUtils.util';
+import { PkType, createDelimitedAttribute, expandDelimitedAttribute } from '../utils/pkUtils.util';
 
 @injectable()
 export class FleetDao {

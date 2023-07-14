@@ -13,8 +13,8 @@
 import 'reflect-metadata';
 
 import AWS, { AWSError } from 'aws-sdk';
-import { CertificateService } from './certificates.service';
 import { RegistryManager } from '../registry/registry.interfaces';
+import { CertificateService } from './certificates.service';
 
 let mockedRegistryManager: RegistryManager;
 let mockedIot: AWS.Iot;

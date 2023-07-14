@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
-import { S3Loader } from './loaders/s3.loader';
+import 'reflect-metadata';
 import { LoadService } from './load.service';
+import { S3Loader } from './loaders/s3.loader';
 
 describe('LoadService', () => {
     let mockedS3Loader: S3Loader;

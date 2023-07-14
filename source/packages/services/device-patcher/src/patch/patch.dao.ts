@@ -13,15 +13,15 @@
 import AWS = require('aws-sdk');
 import { inject, injectable } from 'inversify';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { createDelimitedAttribute, expandDelimitedAttribute, PkType } from '../utils/pKUtils.util';
+import { TYPES } from '../di/types';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
+import { PkType, createDelimitedAttribute, expandDelimitedAttribute } from '../utils/pKUtils.util';
 
-import { PatchItem } from './patch.model';
-import { PatchListPaginationKey, DynamoDbPaginationKey } from './patchTask.dao';
 import atob from 'atob';
 import btoa from 'btoa';
+import { PatchItem } from './patch.model';
+import { DynamoDbPaginationKey, PatchListPaginationKey } from './patchTask.dao';
 
 @injectable()
 export class PatchDao {

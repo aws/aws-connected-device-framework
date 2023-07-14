@@ -10,14 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
 import AWS from 'aws-sdk';
+import 'reflect-metadata';
 // import AWSXRay from 'aws-xray-sdk-core';
-import { Container, decorate, injectable, interfaces } from 'inversify';
 import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-client';
 import { provisioningContainerModule } from '@awssolutions/cdf-provisioning-client';
 import { thingListBuilderContainerModule } from '@awssolutions/cdf-thing-list-builder';
+import { Container, decorate, injectable, interfaces } from 'inversify';
 import { CommandsAssembler } from '../commands/commands.assembler';
 import { CommandsDao } from '../commands/commands.dao';
 import { CommandsService } from '../commands/commands.service';

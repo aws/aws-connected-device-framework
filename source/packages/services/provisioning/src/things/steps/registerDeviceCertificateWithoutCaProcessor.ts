@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../../di/types';
 
+import { CertUtils } from '../../utils/cert';
+import { RegisterDeviceCertificateWithoutCAParameters } from '../things.models';
 import { ProvisioningStepData } from './provisioningStep.model';
 import { ProvisioningStepProcessor } from './provisioningStepProcessor';
-import { RegisterDeviceCertificateWithoutCAParameters } from '../things.models';
-import { CertUtils } from '../../utils/cert';
 
 @injectable()
 export class RegisterDeviceCertificateWithoutCAStepProcessor implements ProvisioningStepProcessor {

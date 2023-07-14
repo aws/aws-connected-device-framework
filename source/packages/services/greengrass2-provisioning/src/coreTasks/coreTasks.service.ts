@@ -15,19 +15,19 @@ import ow from 'ow';
 import pLimit from 'p-limit';
 import { generate } from 'shortid';
 
-import { SendMessageCommand, SendMessageCommandOutput, SQSClient } from '@aws-sdk/client-sqs';
+import { SQSClient, SendMessageCommand, SendMessageCommandOutput } from '@aws-sdk/client-sqs';
 
-import { CoreItem } from '../cores/cores.models';
-import { CoresService } from '../cores/cores.service';
-import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import { CoreTaskListPaginationKey, CoreTasksDao } from './coreTasks.dao';
-import { CoreTaskItem } from './coreTasks.models';
-import { DeviceTasksService } from '../deviceTasks/deviceTasks.service';
 import {
     GreengrassV2Client,
     ListClientDevicesAssociatedWithCoreDeviceCommand,
 } from '@aws-sdk/client-greengrassv2';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { CoreItem } from '../cores/cores.models';
+import { CoresService } from '../cores/cores.service';
+import { DeviceTasksService } from '../deviceTasks/deviceTasks.service';
+import { TYPES } from '../di/types';
+import { CoreTaskListPaginationKey, CoreTasksDao } from './coreTasks.dao';
+import { CoreTaskItem } from './coreTasks.models';
 
 @injectable()
 export class CoreTasksService {

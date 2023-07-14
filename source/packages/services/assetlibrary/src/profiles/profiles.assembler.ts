@@ -10,28 +10,28 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { TypeCategory } from '../types/constants';
-import { TYPES } from '../di/types';
-import { GroupsAssembler } from '../groups/groups.assembler';
-import {
-    ProfileNode,
-    DeviceProfileItem,
-    GroupProfileItem,
-    DeviceProfile10Resource,
-    DeviceProfile20Resource,
-    GroupProfile10Resource,
-    GroupProfile20Resource,
-    DeviceProfileResource,
-    GroupProfileResource,
-    ProfileItemList,
-    ProfileResourceList,
-} from './profiles.models';
-import { GroupItem } from '../groups/groups.models';
+import { inject, injectable } from 'inversify';
+import { RelatedEntityArrayMap, StringArrayMap } from '../data/model';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { DeviceItem } from '../devices/devices.models';
-import { RelatedEntityArrayMap, StringArrayMap } from '../data/model';
+import { TYPES } from '../di/types';
+import { GroupsAssembler } from '../groups/groups.assembler';
+import { GroupItem } from '../groups/groups.models';
+import { TypeCategory } from '../types/constants';
+import {
+    DeviceProfile10Resource,
+    DeviceProfile20Resource,
+    DeviceProfileItem,
+    DeviceProfileResource,
+    GroupProfile10Resource,
+    GroupProfile20Resource,
+    GroupProfileItem,
+    GroupProfileResource,
+    ProfileItemList,
+    ProfileNode,
+    ProfileResourceList,
+} from './profiles.models';
 
 @injectable()
 export class ProfilesAssembler {

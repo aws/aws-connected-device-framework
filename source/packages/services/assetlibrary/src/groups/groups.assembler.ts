@@ -10,34 +10,34 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import ow from 'ow';
-import {
-    GroupItem,
-    GroupMemberItemList,
-    determineIfGroup20Resource,
-    Group10Resource,
-    Group20Resource,
-    GroupBaseResource,
-    GroupItemList,
-    GroupResourceList,
-    GroupMemberResourceList,
-    determineIfGroupItem,
-    BulkGroupsResource,
-} from './groups.models';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { Node } from '../data/node';
-import { DevicesAssembler } from '../devices/devices.assembler';
-import { TYPES } from '../di/types';
-import { TypeCategory } from '../types/constants';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
 import { FullAssembler } from '../data/full.assembler';
-import { determineIfDeviceItem } from '../devices/devices.models';
 import {
     DirectionToRelatedEntityArrayMap,
     RelatedEntityArrayMap,
     RelationDirection,
     StringArrayMap,
 } from '../data/model';
+import { Node } from '../data/node';
+import { DevicesAssembler } from '../devices/devices.assembler';
+import { determineIfDeviceItem } from '../devices/devices.models';
+import { TYPES } from '../di/types';
+import { TypeCategory } from '../types/constants';
+import {
+    BulkGroupsResource,
+    Group10Resource,
+    Group20Resource,
+    GroupBaseResource,
+    GroupItem,
+    GroupItemList,
+    GroupMemberItemList,
+    GroupMemberResourceList,
+    GroupResourceList,
+    determineIfGroup20Resource,
+    determineIfGroupItem,
+} from './groups.models';
 
 @injectable()
 export class GroupsAssembler {

@@ -11,18 +11,18 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import 'reflect-metadata';
-import { ManifestDao } from './manifest.dao';
-import { ManifestService } from './manifest.service';
-import { createMockInstance } from 'jest-create-mock-instance';
-import { ManifestAssembler } from './manifest.assembler';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import AWS from 'aws-sdk';
-import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';
+import S3, { ManagedUpload } from 'aws-sdk/clients/s3';
+import { createMockInstance } from 'jest-create-mock-instance';
+import JSZip from 'jszip';
+import 'reflect-metadata';
 import { ComponentsDao } from '../components/components.dao';
 import { ComponentItem } from '../components/components.model';
-import S3, { ManagedUpload } from 'aws-sdk/clients/s3';
-import JSZip from 'jszip';
-import { logger } from '@awssolutions/simple-cdf-logger';
+import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';
+import { ManifestAssembler } from './manifest.assembler';
+import { ManifestDao } from './manifest.dao';
+import { ManifestService } from './manifest.service';
 
 const expectedManifestFile = `region: ap-southeast-2
 version: 2021-03-15

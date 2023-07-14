@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import * as awsServerlessExpress from 'aws-serverless-express';
 import { serverInstance } from './app';
-import { SnsToApiGatewayEvents, Message } from './utils/snsToApiGatewayEvents';
+import { Message, SnsToApiGatewayEvents } from './utils/snsToApiGatewayEvents';
 
 // 3rd argument is binary mime types - required to serve zip files for /certificates
 const server = awsServerlessExpress.createServer(serverInstance, null, ['application/zip']);

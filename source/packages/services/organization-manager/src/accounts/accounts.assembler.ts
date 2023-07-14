@@ -11,16 +11,16 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { injectable } from 'inversify';
 import {
     AccountCreationRequest,
     AccountListPaginationKey,
     AccountResource,
     AccountResourceList,
-    AccountsItem,
     AccountStatus,
+    AccountsItem,
 } from './accounts.models';
-import { logger } from '@awssolutions/simple-cdf-logger';
 
 @injectable()
 export class AccountsAssembler {

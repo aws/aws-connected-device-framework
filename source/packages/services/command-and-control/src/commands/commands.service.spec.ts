@@ -18,10 +18,9 @@ import { createMockInstance } from 'jest-create-mock-instance';
 
 import { MessagesService } from '../messages/messages.service';
 import { CommandsDao } from './commands.dao';
-import { CommandItem, JobDeliveryMethod } from './commands.models';
+import { CommandItem, CommandListIdsByTagPaginationKey, JobDeliveryMethod } from './commands.models';
 import { CommandsService } from './commands.service';
 import { CommandsValidator } from './commands.validator';
-import { CommandListIdsByTagPaginationKey } from './commands.models';
 
 describe('CommandsService', () => {
     let mockedDao: jest.Mocked<CommandsDao>;

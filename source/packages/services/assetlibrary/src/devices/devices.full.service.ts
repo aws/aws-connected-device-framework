@@ -14,6 +14,7 @@
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { AuthzServiceFull } from '../authz/authz.full.service';
 import { ClaimAccess } from '../authz/claims';
 import {
@@ -44,13 +45,12 @@ import {
     SchemaValidationError,
     TemplateNotFoundError,
 } from '../utils/errors';
-import { logger } from '@awssolutions/simple-cdf-logger';
+import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 import { TypeUtils } from '../utils/typeUtils';
 import { DevicesAssembler } from './devices.assembler';
 import { DevicesDaoFull } from './devices.full.dao';
 import { BulkDevicesResult, DeviceItem, DeviceItemList, DeviceState } from './devices.models';
 import { DevicesService } from './devices.service';
-import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 
 @injectable()
 export class DevicesServiceFull implements DevicesService {

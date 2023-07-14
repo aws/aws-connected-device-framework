@@ -16,11 +16,15 @@ import ow from 'ow';
 import path from 'path';
 
 import { Answers } from '../../../models/answers';
-import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
-import { ConfigBuilder } from '../../../utils/configBuilder';
+import { ModuleName, PostmanEnvironment, RestModule } from '../../../models/modules';
+import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
+import {
+    enableAutoScaling,
+    provisionedConcurrentExecutions,
+} from '../../../prompts/autoscaling.prompt';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
-import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 import {
     deleteStack,
     getStackOutputs,
@@ -28,12 +32,8 @@ import {
     packageAndDeployStack,
     packageAndUploadTemplate,
 } from '../../../utils/cloudformation.util';
-import {
-    enableAutoScaling,
-    provisionedConcurrentExecutions,
-} from '../../../prompts/autoscaling.prompt';
+import { ConfigBuilder } from '../../../utils/configBuilder';
 import { includeOptionalModule } from '../../../utils/modules.util';
-import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class Greengrass2ProvisioningInstaller implements RestModule {
     public readonly friendlyName = 'Greengrass V2 Provisioning';

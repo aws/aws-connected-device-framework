@@ -10,12 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { inject, injectable } from 'inversify';
 import { ClaimAccess, Claims } from '../authz/claims';
 import { EntityTypeMap, RelatedEntityArrayMap, StringArrayMap } from '../data/model';
 import { TYPES } from '../di/types';
 import { NotAuthorizedError, NotFoundError } from '../utils/errors';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { AuthzDaoFull } from './authz.full.dao';
 
 @injectable()

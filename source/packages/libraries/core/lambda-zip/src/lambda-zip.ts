@@ -2,8 +2,8 @@ import archiver from 'archiver';
 import { build, BuildOptions } from 'esbuild';
 import { createWriteStream } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
-import path from 'node:path';
 import os from 'node:os';
+import path from 'node:path';
 import { copy, CopyOptions } from './copy';
 
 const defaultBuildOptions: BuildOptions = {

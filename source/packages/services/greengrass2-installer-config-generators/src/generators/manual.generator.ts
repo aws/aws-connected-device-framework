@@ -13,8 +13,8 @@
 import ow from 'ow';
 import { Document } from 'yaml';
 
-import { InstallerConfig } from '../installerConfig/installer.models';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { InstallerConfig } from '../installerConfig/installer.models';
 import { ConfigGeneratorEvent, ConfigGeneratorHandler } from './models';
 
 export type ManualProvisioningConfig = {

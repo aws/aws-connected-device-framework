@@ -25,9 +25,9 @@ import {
     response,
 } from 'inversify-express-utils';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors.util';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { TemplatesAssembler } from './templates.assembler';
 import { EditableTemplateResource } from './templates.models';
 import { TemplatesService } from './templates.service';

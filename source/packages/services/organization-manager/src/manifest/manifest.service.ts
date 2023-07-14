@@ -10,17 +10,17 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { PutObjectRequest } from 'aws-sdk/clients/s3';
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../di/types';
-import { ManifestDao } from './manifest.dao';
-import { ManifestAssembler } from './manifest.assembler';
 import yaml from 'js-yaml';
 import JSZip from 'jszip';
-import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';
-import { Manifest, ComponentsByOrganizationalUnitMap } from './manifest.model';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { ComponentsDao } from '../components/components.dao';
-import { PutObjectRequest } from 'aws-sdk/clients/s3';
+import { TYPES } from '../di/types';
+import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';
+import { ManifestAssembler } from './manifest.assembler';
+import { ManifestDao } from './manifest.dao';
+import { ComponentsByOrganizationalUnitMap, Manifest } from './manifest.model';
 
 @injectable()
 export class ManifestService {

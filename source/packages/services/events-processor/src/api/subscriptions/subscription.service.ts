@@ -10,20 +10,20 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import pLimit from 'p-limit';
+import { ListSubscriptionsByTopicResponse } from 'aws-sdk/clients/sns';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
+import pLimit from 'p-limit';
 import { v1 as uuid } from 'uuid';
-import { SubscriptionItem, UpdateSubcriptionRequest } from './subscription.models';
-import { SubscriptionAssembler } from './subscription.assembler';
-import { SubscriptionDao, PaginationKey } from './subscription.dao';
+import { TYPES } from '../../di/types';
 import { EventDao } from '../events/event.dao';
 import { SNSTarget } from '../targets/processors/sns.target';
 import { TargetService } from '../targets/target.service';
-import { TargetItem, TargetTypeStrings, TargetItemBase } from '../targets/targets.models';
-import { ListSubscriptionsByTopicResponse } from 'aws-sdk/clients/sns';
+import { TargetItem, TargetItemBase, TargetTypeStrings } from '../targets/targets.models';
+import { SubscriptionAssembler } from './subscription.assembler';
+import { PaginationKey, SubscriptionDao } from './subscription.dao';
+import { SubscriptionItem, UpdateSubcriptionRequest } from './subscription.models';
 
 @injectable()
 export class SubscriptionService {

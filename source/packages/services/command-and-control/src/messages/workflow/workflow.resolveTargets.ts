@@ -10,18 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { WorkflowAction } from './workflow.interfaces';
-import { TYPES } from '../../di/types';
-import { injectable, inject } from 'inversify';
-import { MessageItem, Recipient } from '../messages.models';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import ow from 'ow';
 import {
     AwsIotThingListBuilder,
     THING_LIST_BUILDER_TYPES,
 } from '@awssolutions/cdf-thing-list-builder';
-import { MessagesDao } from '../messages.dao';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
 import { CommandItem } from '../../commands/commands.models';
+import { TYPES } from '../../di/types';
+import { MessagesDao } from '../messages.dao';
+import { MessageItem, Recipient } from '../messages.models';
+import { WorkflowAction } from './workflow.interfaces';
 
 @injectable()
 export class ResolveTargetsAction implements WorkflowAction {

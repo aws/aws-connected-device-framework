@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts';
-import { IoTClient, DescribeEndpointCommand } from '@aws-sdk/client-iot';
+import { DescribeEndpointCommand, IoTClient } from '@aws-sdk/client-iot';
+import { GetCallerIdentityCommand, STSClient } from '@aws-sdk/client-sts';
 import { Question } from 'inquirer';
 
 export async function getCurrentAwsAccountId(region: string): Promise<string> {

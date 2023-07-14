@@ -10,9 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { injectable } from 'inversify';
 import { NotSupportedError } from '../utils/errors';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { DeviceProfileItem, GroupProfileItem, ProfileItemList } from './profiles.models';
 import { ProfilesService } from './profiles.service';
 

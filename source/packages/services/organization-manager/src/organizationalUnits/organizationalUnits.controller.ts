@@ -10,6 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { Response } from 'express';
+import { inject } from 'inversify';
 import {
     controller,
     httpDelete,
@@ -20,14 +23,11 @@ import {
     requestParam,
     response,
 } from 'inversify-express-utils';
-import { Response } from 'express';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import { handleError } from '../utils/errors';
-import { inject } from 'inversify';
-import { TYPES } from '../di/types';
-import { OrganizationalUnitsService } from './organizationalUnits.service';
 import { ComponentsService } from '../components/components.service';
+import { TYPES } from '../di/types';
+import { handleError } from '../utils/errors';
 import { OrganizationalUnitResource } from './organizationalUnits.model';
+import { OrganizationalUnitsService } from './organizationalUnits.service';
 
 @controller('')
 export class OrganizationalUnitsController implements interfaces.Controller {

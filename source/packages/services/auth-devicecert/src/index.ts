@@ -11,10 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import '@awssolutions/cdf-config-inject';
-import { logger } from './utils/logger';
 import * as Errors from '@awssolutions/cdf-errors';
 import { ApiGwCustomAuthorizer } from './api-gw.custom.authorizer';
 import { APIGWAuthPolicyBuilder, ApiOptions, Policy } from './api-gw.policy.builder';
+import { logger } from './utils/logger';
 
 /**
  * overridable for unit testing

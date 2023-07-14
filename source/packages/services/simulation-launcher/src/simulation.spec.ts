@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import { Simulation, LaunchParams } from './simulation';
+import { LaunchParams, Simulation } from './simulation';
 
 describe('LaunchSimulation', () => {
     it.skip('happy path should launch Fargate cluster', async () => {

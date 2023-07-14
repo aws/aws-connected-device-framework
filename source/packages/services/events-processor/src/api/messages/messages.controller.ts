@@ -10,12 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { interfaces, controller, requestBody, httpPost } from 'inversify-express-utils';
-import { inject } from 'inversify';
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { DDBStreamTransformer } from '../../transformers/ddbstream.transformer';
+import { inject } from 'inversify';
+import { controller, httpPost, interfaces, requestBody } from 'inversify-express-utils';
+import { TYPES } from '../../di/types';
 import { FilterService } from '../../filter/filter.service';
+import { DDBStreamTransformer } from '../../transformers/ddbstream.transformer';
 
 @controller('')
 export class MessagesController implements interfaces.Controller {

@@ -11,8 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { DirectionStringToArrayMap, ModelAttributeValue, StringToArrayMap } from '../data/model';
 import { TypeCategory } from '../types/constants';
-import { ModelAttributeValue, StringToArrayMap, DirectionStringToArrayMap } from '../data/model';
 export class DeviceBaseResource {
     deviceId: string;
     category: TypeCategory;

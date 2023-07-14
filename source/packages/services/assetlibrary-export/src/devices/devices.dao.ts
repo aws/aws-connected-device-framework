@@ -10,14 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { process, structure } from 'gremlin';
-import { injectable, inject } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { TYPES } from '../di/types';
-import { Node } from '../data/node';
-import { FullAssembler } from '../data/full.assembler';
+import { process, structure } from 'gremlin';
+import { inject, injectable } from 'inversify';
 import { BaseDaoFull } from '../data/base.full.dao';
-import { isRelatedEntityDto, isVertexDto, RelatedEntityDto, VertexDto } from '../data/full.model';
+import { FullAssembler } from '../data/full.assembler';
+import { RelatedEntityDto, VertexDto, isRelatedEntityDto, isVertexDto } from '../data/full.model';
+import { Node } from '../data/node';
+import { TYPES } from '../di/types';
 
 const __ = process.statics;
 

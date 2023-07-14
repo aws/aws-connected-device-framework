@@ -11,8 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { StringArrayMap } from '../data/model';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { StringArrayMap } from '../data/model';
 import { TypeCategory } from './constants';
 
 export interface TypeModel {

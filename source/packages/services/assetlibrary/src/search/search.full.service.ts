@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { inject, injectable } from 'inversify';
 import { Claims } from '../authz/claims';
-import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { DeviceItem } from '../devices/devices.models';
 import { TYPES } from '../di/types';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { GroupItem } from '../groups/groups.models';
 import { TypeCategory } from '../types/constants';
-import { logger } from '@awssolutions/simple-cdf-logger';
+import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 import { SearchDaoFull } from './search.full.dao';
 import { FacetResults, SearchRequestModel } from './search.models';
 import { SearchService } from './search.service';

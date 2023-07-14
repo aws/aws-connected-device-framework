@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import AWS from 'aws-sdk';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import 'reflect-metadata';
 import { TargetDao } from './target.dao';
-import AWS from 'aws-sdk';
 import {
-    EmailTargetItem,
-    SMSTargetItem,
-    PushTargetItem,
     DynamodDBTargetItem,
+    EmailTargetItem,
+    PushTargetItem,
+    SMSTargetItem,
 } from './targets.models';
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
 describe('TargetDao', () => {
     let mockedCachedDocumentClient: AWS.DynamoDB.DocumentClient;

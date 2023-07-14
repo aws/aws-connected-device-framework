@@ -11,16 +11,16 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Response } from 'express';
-import { interfaces, controller, response, httpPost, requestBody } from 'inversify-express-utils';
 import { inject } from 'inversify';
+import { controller, httpPost, interfaces, requestBody, response } from 'inversify-express-utils';
 import { TYPES } from '../di/types';
+import { handleError } from '../utils/errors';
 import { logger } from '../utils/logger';
 import {
-    PresignedUploadRequestModel,
     PresignedDownloadRequestModel,
     PresignedResponseModel,
+    PresignedUploadRequestModel,
 } from './presignedurls.models';
-import { handleError } from '../utils/errors';
 import { PresignedUrlsService } from './presignedurls.service';
 
 @controller('/mqtt/presignedurls')

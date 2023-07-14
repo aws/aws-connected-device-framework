@@ -18,5 +18,6 @@ export * from './client/commands.service';
 export * from './client/messages.model';
 export * from './client/messages.service';
 
-export { COMMANDANDCONTROL_CLIENT_TYPES } from './di/types';
 export { commandAndControlContainerModule } from './di/inversify.config';
+export { COMMANDANDCONTROL_CLIENT_TYPES } from './di/types';
+

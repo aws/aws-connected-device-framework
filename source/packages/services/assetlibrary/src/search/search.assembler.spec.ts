@@ -10,13 +10,13 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
+import 'reflect-metadata';
 
-import { SearchAssembler } from './search.assembler';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { TypeUtils } from '../utils/typeUtils';
+import { SearchAssembler } from './search.assembler';
 
 describe('SearchServiceAssembler', () => {
     let instance: SearchAssembler;

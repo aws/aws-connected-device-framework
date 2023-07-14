@@ -1,8 +1,8 @@
+import fs from 'fs';
 import { injectable } from 'inversify';
+import yaml from 'js-yaml';
 import ow from 'ow';
 import { logger } from '../utils/logger';
-import fs from 'fs';
-import yaml from 'js-yaml';
 
 @injectable()
 export class LocalStateManager {

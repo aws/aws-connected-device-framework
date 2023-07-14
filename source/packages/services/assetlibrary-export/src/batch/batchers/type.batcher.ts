@@ -11,17 +11,17 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
-import { generate } from 'shortid';
 import * as _ from 'lodash';
+import { generate } from 'shortid';
 
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../../di/types';
 
+import { LabelsService } from '../../labels/labels.service';
 import { TypeCategory } from '../../types/constants';
+import { TypeModel } from '../../types/types.models';
 import { TypesService } from '../../types/types.service';
 import { Batch, Batcher, Batches } from '../batch.service';
-import { TypeModel } from '../../types/types.models';
-import { LabelsService } from '../../labels/labels.service';
 import { BatcherBase } from '../batcher.base';
 
 @injectable()

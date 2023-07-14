@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import * as als from 'async-local-storage';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { decode } from 'jsonwebtoken';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { Claims } from './claims';
 
 const JWT_HEADER = 'authz';

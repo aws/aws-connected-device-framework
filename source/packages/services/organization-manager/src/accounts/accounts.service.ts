@@ -11,25 +11,25 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { ProvisionProductInput } from 'aws-sdk/clients/servicecatalog';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import { ComponentResourceList } from '../components/components.model';
+import { TYPES } from '../di/types';
+import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';
+import { owCheckOversizeString, owCheckUnprintableChar } from '../utils/inputValidation.util';
+import { AccountsAssembler } from './accounts.assembler';
+import { AccountsDao } from './accounts.dao';
 import {
-    AccountResource,
-    AccountCreationRequest,
-    AccountUpdateRequest,
     AccountComponentModel,
-    AccountRegionUpdateRequest,
+    AccountCreationRequest,
     AccountListPaginationKey,
+    AccountRegionUpdateRequest,
+    AccountResource,
+    AccountUpdateRequest,
     AccountsItem,
 } from './accounts.models';
-import ow from 'ow';
-import { ProvisionProductInput } from 'aws-sdk/clients/servicecatalog';
-import { AccountsDao } from './accounts.dao';
-import { AccountsAssembler } from './accounts.assembler';
-import { ComponentResourceList } from '../components/components.model';
-import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';
-import { owCheckUnprintableChar, owCheckOversizeString } from '../utils/inputValidation.util';
 
 @injectable()
 export class AccountsService {

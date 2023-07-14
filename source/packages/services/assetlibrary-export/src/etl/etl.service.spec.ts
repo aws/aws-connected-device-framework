@@ -10,14 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
+import 'reflect-metadata';
 
-import { ExtractService } from './extract.service';
-import { TransformService } from './transform.service';
-import { LoadService } from './load.service';
-import { ETLService } from './etl.service';
 import { LabelsService } from '../labels/labels.service';
+import { ETLService } from './etl.service';
+import { ExtractService } from './extract.service';
+import { LoadService } from './load.service';
+import { TransformService } from './transform.service';
 
 import { S3Utils } from '../utils/s3.util';
 

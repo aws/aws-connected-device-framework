@@ -10,22 +10,22 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { v1 as uuid } from 'uuid';
-import AWS = require('aws-sdk');
-import { TYPES } from '../di/types';
+import { SNS } from 'aws-sdk';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
+import { v1 as uuid } from 'uuid';
+import { TYPES } from '../di/types';
+import { CertificateChunkRequest } from './certificates.models';
 import { CertificatesTaskDao } from './certificatestask.dao';
 import {
-    TaskStatus,
+    CertInfoValidationResult,
     CertificateBatchTaskWithChunks,
     CertificateInfo,
-    CertInfoValidationResult,
     CommonNameGenerator,
+    TaskStatus,
 } from './certificatestask.models';
-import { CertificateChunkRequest } from './certificates.models';
-import { SNS } from 'aws-sdk';
+import AWS = require('aws-sdk');
 
 @injectable()
 export class CertificatesTaskService {

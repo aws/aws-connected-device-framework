@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { logger } from './utils/logger';
-import { verify } from 'jsonwebtoken';
 import axios from 'axios';
+import { verify } from 'jsonwebtoken';
 import * as jwkToBuffer from 'jwk-to-pem';
 import ow from 'ow';
+import { logger } from './utils/logger';
 
 export interface ClaimVerifyRequest {
     readonly token?: string;

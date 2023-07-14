@@ -10,27 +10,27 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { SubscriptionDao } from '../subscriptions/subscription.dao';
+import { TYPES } from '../../di/types';
 import { EventDao } from '../events/event.dao';
+import { EventItem } from '../events/event.models';
+import { SubscriptionDao } from '../subscriptions/subscription.dao';
+import { SubscriptionItem } from '../subscriptions/subscription.models';
+import { DynamodDBTarget } from './processors/dynamodb.target';
+import { EmailTarget } from './processors/email.target';
+import { PushTarget } from './processors/push.target';
+import { SMSTarget } from './processors/sms.target';
+import { TargetDao } from './target.dao';
 import {
+    DynamodDBTargetItem,
+    EmailTargetItem,
+    PushTargetItem,
+    SMSTargetItem,
     TargetItem,
     TargetTypeStrings,
-    EmailTargetItem,
-    SMSTargetItem,
-    DynamodDBTargetItem,
-    PushTargetItem,
 } from './targets.models';
-import { EventItem } from '../events/event.models';
-import { EmailTarget } from './processors/email.target';
-import { DynamodDBTarget } from './processors/dynamodb.target';
-import { SMSTarget } from './processors/sms.target';
-import { PushTarget } from './processors/push.target';
-import { SubscriptionItem } from '../subscriptions/subscription.models';
-import { TargetDao } from './target.dao';
 
 @injectable()
 export class TargetService {

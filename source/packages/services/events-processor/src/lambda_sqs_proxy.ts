@@ -11,10 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { SubscriptionService } from './api/subscriptions/subscription.service';
 import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
 
 let subscriptionService: SubscriptionService;
 

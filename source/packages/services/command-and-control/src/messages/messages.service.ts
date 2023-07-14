@@ -16,10 +16,12 @@ import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import pLimit from 'p-limit';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
+import ShortUniqueId from 'short-unique-id';
 import { CommandsDao } from '../commands/commands.dao';
 import { CommandItem } from '../commands/commands.models';
 import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
+import { ResponseAction } from '../responses/responses.models';
 import { MessagesDao } from './messages.dao';
 import {
     MessageItem,
@@ -32,8 +34,6 @@ import {
 import { WorkflowFactory } from './workflow/workflow.factory';
 import { WorkflowAction } from './workflow/workflow.interfaces';
 import { InvalidTransitionAction } from './workflow/workflow.invalidTransition';
-import ShortUniqueId from 'short-unique-id';
-import { ResponseAction } from '../responses/responses.models';
 
 @injectable()
 export class MessagesService {

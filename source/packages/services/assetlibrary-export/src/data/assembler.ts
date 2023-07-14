@@ -10,12 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { process } from 'gremlin';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { Node } from './node';
 import { ThingDocument, ThingGroupDocument } from 'aws-sdk/clients/iot';
-import { TypeCategory } from '../types/constants';
+import { process } from 'gremlin';
 import { injectable } from 'inversify';
+import { TypeCategory } from '../types/constants';
+import { Node } from './node';
 
 @injectable()
 export class NodeAssembler {

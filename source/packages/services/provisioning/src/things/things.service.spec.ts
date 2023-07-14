@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
-import { ThingsService } from './things.service';
 import AWS from 'aws-sdk';
+import createMockInstance from 'jest-create-mock-instance';
+import 'reflect-metadata';
+import { AttachAdditionalPoliciesProcessor } from './steps/attachAdditionalPoliciesProcessor';
 import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientIdEnforcementPolicyStepProcessor';
+import { CreateAwsCertiticateProcessor } from './steps/createAwsCertificateProcessor';
 import { CreateDeviceCertificateStepProcessor } from './steps/createDeviceCertificateProcessor';
 import { RegisterDeviceCertificateWithoutCAStepProcessor } from './steps/registerDeviceCertificateWithoutCaProcessor';
-import { AttachAdditionalPoliciesProcessor } from './steps/attachAdditionalPoliciesProcessor';
 import { UseACMPCAStepProcessor } from './steps/useACMPCAProcessor';
-import createMockInstance from 'jest-create-mock-instance';
-import { CreateAwsCertiticateProcessor } from './steps/createAwsCertificateProcessor';
+import { ThingsService } from './things.service';
 
 let mockIot: AWS.Iot;
 let mockS3: AWS.S3;

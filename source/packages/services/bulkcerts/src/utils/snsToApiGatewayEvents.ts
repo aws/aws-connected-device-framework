@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import ow from 'ow';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import ow from 'ow';
 export class SnsToApiGatewayEvents {
     public buildApiGatewayEventFromSnsEvent(subject: string, snsMessage: Message): string {
         logger.debug(

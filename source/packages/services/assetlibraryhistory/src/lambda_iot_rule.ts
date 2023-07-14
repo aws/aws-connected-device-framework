@@ -10,12 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import 'reflect-metadata';
 import { container } from './di/inversify.config';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import { EventsService } from './events/events.service';
 import { TYPES } from './di/types';
 import { EventModel } from './events/events.models';
+import { EventsService } from './events/events.service';
 
 const eventsService: EventsService = container.get(TYPES.EventsService);
 

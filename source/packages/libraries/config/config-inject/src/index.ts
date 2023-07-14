@@ -1,6 +1,6 @@
 import { sanitized } from '@awssolutions/cdf-environment-sanitizer';
-import { load } from 'dotenv-flow';
 import dotenv from 'dotenv';
+import { load } from 'dotenv-flow';
 
 // APP_CONFIG contains list of environment variables
 // This will be loaded first

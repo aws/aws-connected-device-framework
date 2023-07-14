@@ -10,13 +10,13 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
+import { TYPES } from '../di/types';
 import { MessagesDao } from '../messages/messages.dao';
-import { Response } from './responses.models';
 import { ResponsesDao } from './responses.dao';
+import { Response } from './responses.models';
 
 @injectable()
 export class ResponsesService {

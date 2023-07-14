@@ -10,12 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { CustomResourceEvent } from './customResource.model';
+import { TYPES } from '../di/types';
 import { CustomResource } from './customResource';
+import { CustomResourceEvent } from './customResource.model';
 
 @injectable()
 export class AppConfigOverrideCustomResource implements CustomResource {

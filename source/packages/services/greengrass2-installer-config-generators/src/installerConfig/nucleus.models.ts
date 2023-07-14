@@ -125,8 +125,8 @@ export interface GreengrassNucleusConfig {
 
     /**
      * This feature is available in v2.0.4 and later of this component.
-        (Optional) The port to use for data plane connections. 
-        Important: You must specify a port where the device can make outbound connections. If you specify a port that is blocked, the device won't be able to connect to AWS IoT Greengrass to receive deployments.
+        (Optional) The port to use for data plane connections.
+        important: You must specify a port where the device can make outbound connections. If you specify a port that is blocked, the device won't be able to connect to AWS IoT Greengrass to receive deployments.
         Choose from the following options:
         - 443
         - 8443
@@ -265,7 +265,7 @@ export interface GreengrassNucleusConfig {
     componentStoreMaxSizeBytes?: number;
 
     /**
-     * (Optional) A dictionary of attributes that identify the core device's platform. Use this to define custom platform attributes that component recipes can use to identify the correct lifecycle and artifacts for the component. For example, you might define a hardware capability attribute to deploy only the minimal set of artifacts for a component to run. 
+     * (Optional) A dictionary of attributes that identify the core device's platform. Use this to define custom platform attributes that component recipes can use to identify the correct lifecycle and artifacts for the component. For example, you might define a hardware capability attribute to deploy only the minimal set of artifacts for a component to run.
         You can also use this parameter to override the os and architecture platform attributes of the core device.
         */
     platformOverride?: {

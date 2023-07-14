@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { WorkflowAction } from './workflow.interfaces';
-import { TYPES } from '../../di/types';
-import { injectable, inject } from 'inversify';
-import { MessageItem } from '../messages.models';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import ow from 'ow';
-import { MessagesDao } from '../messages.dao';
-import { CommandItem, DeliveryMethod } from '../../commands/commands.models';
-import pLimit from 'p-limit';
 import { SendMessageResult } from 'aws-sdk/clients/sqs';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import pLimit from 'p-limit';
+import { CommandItem, DeliveryMethod } from '../../commands/commands.models';
+import { TYPES } from '../../di/types';
+import { MessagesDao } from '../messages.dao';
+import { MessageItem } from '../messages.models';
+import { WorkflowAction } from './workflow.interfaces';
 
 @injectable()
 export class BatchTargetsAction implements WorkflowAction {

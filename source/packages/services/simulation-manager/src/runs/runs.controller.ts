@@ -13,19 +13,19 @@
 import { Response } from 'express';
 import { inject } from 'inversify';
 import {
-    interfaces,
     controller,
-    response,
-    requestBody,
     httpPost,
+    interfaces,
+    requestBody,
     requestParam,
+    response,
 } from 'inversify-express-utils';
 
+import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { RunItem } from './runs.models';
 import { RunsService } from './runs.service';
-import { TYPES } from '../di/types';
 
 @controller('/simulations/:simulationId/runs')
 export class RunsController implements interfaces.Controller {

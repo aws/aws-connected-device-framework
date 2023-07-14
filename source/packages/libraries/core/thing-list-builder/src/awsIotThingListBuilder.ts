@@ -23,11 +23,11 @@ import {
     SearchService,
 } from '@awssolutions/cdf-assetlibrary-client';
 
-import { THING_LIST_BUILDER_TYPES } from './di/types';
-import { ListThingsRequest, ListThingsResponse, TargetType } from './models';
+import { IoTClient, ListThingsInThingGroupCommand } from '@aws-sdk/client-iot';
 import { logger } from '@awssolutions/simple-cdf-logger';
 import ow from 'ow';
-import { IoTClient, ListThingsInThingGroupCommand } from '@aws-sdk/client-iot';
+import { THING_LIST_BUILDER_TYPES } from './di/types';
+import { ListThingsRequest, ListThingsResponse, TargetType } from './models';
 
 @injectable()
 export class AwsIotThingListBuilder {

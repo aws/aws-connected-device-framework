@@ -10,9 +10,6 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import inquirer from 'inquirer';
-import { ListrTask } from 'listr2';
-import ow from 'ow';
 import {
     CreateAliasCommand,
     CreateKeyCommand,
@@ -22,6 +19,9 @@ import {
     ListAliasesCommand,
     UpdateAliasCommand,
 } from '@aws-sdk/client-kms';
+import inquirer from 'inquirer';
+import { ListrTask } from 'listr2';
+import ow from 'ow';
 import { Answers } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
 

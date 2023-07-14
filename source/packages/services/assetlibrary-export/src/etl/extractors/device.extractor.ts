@@ -12,15 +12,15 @@
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
 
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../../di/types';
 
-import { Extractor, Extracted } from '../extract.service';
 import { DevicesService } from '../../devices/devices.service';
+import { Extracted, Extractor } from '../extract.service';
 
+import ow from 'ow';
 import { Batch } from '../../batch/batch.service';
 import { TypeCategory } from '../../types/constants';
-import ow from 'ow';
 
 @injectable()
 export class DeviceExtractor implements Extractor {

@@ -10,19 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import ow from 'ow';
-import { CommonEvent } from '../transformers/transformers.model';
-import { SubscriptionItem } from '../api/subscriptions/subscription.models';
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
-import { Rule, Engine, TopLevelCondition, EngineResult } from 'json-rules-engine';
+import { inject, injectable } from 'inversify';
+import { Engine, EngineResult, Rule, TopLevelCondition } from 'json-rules-engine';
+import ow from 'ow';
 import { AlertDao } from '../alerts/alert.dao';
 import { AlertItem } from '../alerts/alert.models';
-import { EventConditionsUtils, TemplatePropertiesData } from '../api/events/event.models';
 import { EventDao } from '../api/events/event.dao';
+import { EventConditionsUtils, TemplatePropertiesData } from '../api/events/event.models';
 import { TemplateCache } from '../api/messages/messageTemplates.model';
+import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
+import { SubscriptionItem } from '../api/subscriptions/subscription.models';
+import { TYPES } from '../di/types';
+import { CommonEvent } from '../transformers/transformers.model';
 
 @injectable()
 export class FilterService {

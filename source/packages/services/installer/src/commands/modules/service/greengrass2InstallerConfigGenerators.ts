@@ -16,15 +16,15 @@ import ow from 'ow';
 import path from 'path';
 import { Answers } from '../../../models/answers';
 import { ModuleName, ServiceModule } from '../../../models/modules';
-import { ConfigBuilder } from '../../../utils/configBuilder';
-import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
+import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 import {
     deleteStack,
     packageAndDeployStack,
     packageAndUploadTemplate,
 } from '../../../utils/cloudformation.util';
-import { getMonorepoRoot } from '../../../prompts/paths.prompt';
+import { ConfigBuilder } from '../../../utils/configBuilder';
 
 export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceModule {
     public readonly friendlyName = 'Greengrass V2 Installer Config Generators';

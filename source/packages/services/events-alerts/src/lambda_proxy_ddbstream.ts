@@ -11,13 +11,13 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { getRequestIdFromContext, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
-import { container } from './di/inversify.config';
-import { SNSTarget, SNSMessages } from './targets/sns.target';
-import { TYPES } from './di/types';
-import { MessageCompilerService } from './targets/messageCompiler.service';
-import { DynamoDBTarget } from './targets/dynamodb.target';
-import { RawAlert, TargetItems } from './alerts/models';
 import { AlertAssembler } from './alerts/assembler';
+import { RawAlert, TargetItems } from './alerts/models';
+import { container } from './di/inversify.config';
+import { TYPES } from './di/types';
+import { DynamoDBTarget } from './targets/dynamodb.target';
+import { MessageCompilerService } from './targets/messageCompiler.service';
+import { SNSMessages, SNSTarget } from './targets/sns.target';
 
 const sns: SNSTarget = container.get(TYPES.SNSTarget);
 const ddbTarget: DynamoDBTarget = container.get(TYPES.DynamoDBTarget);

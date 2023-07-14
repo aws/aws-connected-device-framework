@@ -10,8 +10,6 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import ow from 'ow';
-import execa from 'execa';
 import {
     CloudFormationClient,
     DeleteStackCommand,
@@ -22,13 +20,15 @@ import {
     StackResourceSummary,
     waitUntilStackDeleteComplete,
 } from '@aws-sdk/client-cloudformation';
-import { Answers } from '../models/answers';
-import { TagsList } from '../utils/tags';
+import execa from 'execa';
 import fs from 'fs';
-import path from 'path';
-import { S3Utils } from './s3.util';
 import yaml from 'js-yaml';
 import { CLOUDFORMATION_SCHEMA } from 'js-yaml-cloudformation-schema';
+import ow from 'ow';
+import path from 'path';
+import { Answers } from '../models/answers';
+import { TagsList } from '../utils/tags';
+import { S3Utils } from './s3.util';
 
 const inMemoryStackOutputs: { [key: string]: Output[] } = {};
 const inMemoryStackResourceSummaries: { [key: string]: StackResourceSummary[] } = {};
@@ -334,9 +334,7 @@ const packageAndDeployStack = async ({
 
 export {
     deleteStack,
-    getStackOutputs,
-    getStackResourceSummaries,
-    getStackParameters,
-    packageAndDeployStack,
-    packageAndUploadTemplate,
+    getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack,
+    packageAndUploadTemplate
 };
+

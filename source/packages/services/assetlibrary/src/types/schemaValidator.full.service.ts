@@ -10,27 +10,27 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { inject, injectable } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
 import Ajv from 'ajv';
-import { Operation, TypeCategory } from './constants';
-import { TemplateDefinitionJson, TypeDefinitionModel, TypeModel } from './types.models';
+import fs from 'fs';
+import { inject, injectable } from 'inversify';
+import * as NodeCache from 'node-cache';
+import ow from 'ow';
+import path from 'path';
+import util from 'util';
 import {
     DirectionToRelatedEntityArrayMap,
     DirectionToStringArrayMap,
     EntityTypeMap,
     RelatedEntityArrayMap,
 } from '../data/model';
-import { TYPES } from '../di/types';
 import { DevicesDaoFull } from '../devices/devices.full.dao';
+import { TYPES } from '../di/types';
 import { GroupsDaoFull } from '../groups/groups.full.dao';
-import fs from 'fs';
-import path from 'path';
-import util from 'util';
-import ow from 'ow';
-import * as NodeCache from 'node-cache';
-import { TypesDaoFull } from './types.full.dao';
 import { SchemaValidationError, TemplateNotFoundError } from '../utils/errors';
+import { Operation, TypeCategory } from './constants';
+import { TypesDaoFull } from './types.full.dao';
+import { TemplateDefinitionJson, TypeDefinitionModel, TypeModel } from './types.models';
 
 @injectable()
 export class SchemaValidatorService {

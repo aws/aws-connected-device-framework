@@ -11,28 +11,28 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
+import 'reflect-metadata';
 
-import { DevicesServiceFull } from './devices.full.service';
-import { DevicesAssembler } from './devices.assembler';
-import { TypesService } from '../types/types.service';
-import { TypesServiceFull } from '../types/types.full.service';
-import { GroupsService } from '../groups/groups.service';
-import { DevicesDaoFull } from './devices.full.dao';
-import { Node } from '../data/node';
-import { DeviceItem } from './devices.models';
-import { EventEmitter } from '../events/eventEmitter.service';
-import { ProfilesService } from '../profiles/profiles.service';
-import { DeviceProfileItem } from '../profiles/profiles.models';
-import { TypeCategory } from '../types/constants';
-import { DevicesService } from './devices.service';
-import { GroupsServiceFull } from '../groups/groups.full.service';
-import { ProfilesServiceFull } from '../profiles/profiles.full.service';
-import { GroupsAssembler } from '../groups/groups.assembler';
 import { AuthzServiceFull } from '../authz/authz.full.service';
-import { TypeUtils } from '../utils/typeUtils';
+import { Node } from '../data/node';
+import { EventEmitter } from '../events/eventEmitter.service';
+import { GroupsAssembler } from '../groups/groups.assembler';
+import { GroupsServiceFull } from '../groups/groups.full.service';
+import { GroupsService } from '../groups/groups.service';
+import { ProfilesServiceFull } from '../profiles/profiles.full.service';
+import { DeviceProfileItem } from '../profiles/profiles.models';
+import { ProfilesService } from '../profiles/profiles.service';
+import { TypeCategory } from '../types/constants';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
+import { TypesServiceFull } from '../types/types.full.service';
+import { TypesService } from '../types/types.service';
+import { TypeUtils } from '../utils/typeUtils';
+import { DevicesAssembler } from './devices.assembler';
+import { DevicesDaoFull } from './devices.full.dao';
+import { DevicesServiceFull } from './devices.full.service';
+import { DeviceItem } from './devices.models';
+import { DevicesService } from './devices.service';
 
 const validDeviceId1 = 'ABC123';
 const validDeviceId2 = 'XYZ890';

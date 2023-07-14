@@ -10,22 +10,22 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Response } from 'express';
+import { inject } from 'inversify';
 import {
-    interfaces,
     controller,
-    response,
     httpGet,
+    interfaces,
     queryParam,
     requestParam,
+    response,
 } from 'inversify-express-utils';
-import { inject } from 'inversify';
 import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
+import { ListCategoryEventsArgs, ListObjectEventsArgs, SortDirection } from '../events/events.dao';
+import { StateHistoryListModel } from '../events/events.models';
 import { handleError } from '../utils/errors';
 import { QueryService } from './queries.service';
-import { StateHistoryListModel } from '../events/events.models';
-import { ListCategoryEventsArgs, ListObjectEventsArgs, SortDirection } from '../events/events.dao';
 
 @controller('')
 export class QueryController implements interfaces.Controller {

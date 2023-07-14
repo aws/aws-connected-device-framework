@@ -11,13 +11,13 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
-import { createMockInstance } from 'jest-create-mock-instance';
-import { CertificatesService } from './certificates.service';
 import AWS, { AWSError } from 'aws-sdk';
-import { CertificatesTaskDao } from './certificatestask.dao';
+import { createMockInstance } from 'jest-create-mock-instance';
+import 'reflect-metadata';
 import { CertificateChunkRequest, CommonNameGenerator } from './certificates.models';
+import { CertificatesService } from './certificates.service';
+import { CertificatesTaskDao } from './certificatestask.dao';
 
 describe('CertificatesService', () => {
     let mockedCertificatesTaskDao: jest.Mocked<CertificatesTaskDao>;

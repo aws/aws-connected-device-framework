@@ -23,15 +23,15 @@ import {
     response,
 } from 'inversify-express-utils';
 
-import { handleError } from '../utils/errors';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { handleError } from '../utils/errors';
 
 import { TYPES } from '../di/types';
 
-import { PatchTaskService } from './patchTask.service';
+import { PatchAssembler } from './patch.assembler';
 import { PatchTaskAssembler } from './patchTask.assembler';
 import { PatchTaskResource } from './patchTask.model';
-import { PatchAssembler } from './patch.assembler';
+import { PatchTaskService } from './patchTask.service';
 
 @controller('/patchTasks')
 export class PatchTaskController implements interfaces.Controller {

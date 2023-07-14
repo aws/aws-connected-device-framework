@@ -15,6 +15,7 @@ import { inject, injectable } from 'inversify';
 import clone from 'just-clone';
 import ow from 'ow';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
 import { Operation } from '../types/constants';
@@ -27,12 +28,11 @@ import {
     SchemaValidationError,
     TemplateNotFoundError,
 } from '../utils/errors';
-import { logger } from '@awssolutions/simple-cdf-logger';
+import { owCheckUnprintableChar } from '../utils/inputValidation.util';
 import { ProfilesAssembler } from './profiles.assembler';
 import { ProfilesDaoFull } from './profiles.full.dao';
 import { DeviceProfileItem, GroupProfileItem, ProfileItemList } from './profiles.models';
 import { ProfilesService } from './profiles.service';
-import { owCheckUnprintableChar } from '../utils/inputValidation.util';
 
 @injectable()
 export class ProfilesServiceFull implements ProfilesService {

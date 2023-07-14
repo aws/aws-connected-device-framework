@@ -10,22 +10,22 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import {
-    EventSourceType,
-    EventSourceResourceList,
-    EventSourceDetailResource,
-    EventSourceSummaryResource,
-} from './eventsource.models';
-import { EventSourceDao } from './eventsource.dao';
-import { EventSourceAssembler } from './eventsource.assembler';
+import { TYPES } from '../../di/types';
 import { EventService } from '../events/event.service';
+import { EventSourceAssembler } from './eventsource.assembler';
+import { EventSourceDao } from './eventsource.dao';
+import {
+    EventSourceDetailResource,
+    EventSourceResourceList,
+    EventSourceSummaryResource,
+    EventSourceType,
+} from './eventsource.models';
+import { ApiGatewayEventSource } from './sources/apigateway.source';
 import { DynamoDbEventSource } from './sources/dynamodb.source';
 import { IotCoreEventSource } from './sources/iotcore.source';
-import { ApiGatewayEventSource } from './sources/apigateway.source';
 
 @injectable()
 export class EventSourceService {

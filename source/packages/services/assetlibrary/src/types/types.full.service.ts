@@ -10,25 +10,25 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { TypesDaoFull } from './types.full.dao';
-import {
-    TypeModel,
-    TypeDefinitionModel,
-    TypeDefinitionStatus,
-    isRelationTargetExpanded,
-    RelationTarget,
-} from './types.models';
-import { TypeCategory, Operation } from './constants';
-import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { TypesService } from './types.service';
 import { SortKeys } from '../data/model';
-import { SchemaValidationResult, SchemaValidatorService } from './schemaValidator.full.service';
+import { TYPES } from '../di/types';
+import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
 import { InvalidCategoryError, TemplateInUseError, TemplateNotFoundError } from '../utils/errors';
 import { owCheckOptionalNumber } from '../utils/inputValidation.util';
+import { Operation, TypeCategory } from './constants';
+import { SchemaValidationResult, SchemaValidatorService } from './schemaValidator.full.service';
+import { TypesDaoFull } from './types.full.dao';
+import {
+    RelationTarget,
+    TypeDefinitionModel,
+    TypeDefinitionStatus,
+    TypeModel,
+    isRelationTargetExpanded,
+} from './types.models';
+import { TypesService } from './types.service';
 
 @injectable()
 export class TypesServiceFull implements TypesService {

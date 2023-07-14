@@ -10,18 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus } from './types.models';
-import { SchemaValidationResult } from './schemaValidator.full.service';
-import { TypeCategory } from './constants';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { TypesService } from './types.service';
-import { TYPES } from '../di/types';
-import { TypesDaoLite } from './types.lite.dao';
-import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
 import { SortKeys } from '../data/model';
+import { TYPES } from '../di/types';
+import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
 import { NotSupportedError } from '../utils/errors';
+import { TypeCategory } from './constants';
+import { SchemaValidationResult } from './schemaValidator.full.service';
+import { TypesDaoLite } from './types.lite.dao';
+import { TypeDefinitionModel, TypeDefinitionStatus, TypeModel } from './types.models';
+import { TypesService } from './types.service';
 
 @injectable()
 export class TypesServiceLite implements TypesService {

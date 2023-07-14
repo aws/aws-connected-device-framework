@@ -1,20 +1,3 @@
-import inquirer from 'inquirer';
-import { ListrTask } from 'listr2';
-import { Answers } from '../../../models/answers';
-import { ModuleName, PostmanEnvironment, RestModule } from '../../../models/modules';
-import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
-import { customDomainPrompt } from '../../../prompts/domain.prompt';
-import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
-import { chooseS3BucketPrompt } from '../../../prompts/s3.prompt';
-import {
-    deleteStack,
-    getStackOutputs,
-    getStackResourceSummaries,
-    packageAndDeployStack,
-    packageAndUploadTemplate,
-} from '../../../utils/cloudformation.util';
-import ow from 'ow';
-import { ConfigBuilder } from '../../../utils/configBuilder';
 import { DescribeRegionsCommand, EC2Client } from '@aws-sdk/client-ec2';
 import {
     CreateBucketCommand,
@@ -24,7 +7,24 @@ import {
     S3Client,
 } from '@aws-sdk/client-s3';
 import execa from 'execa';
+import inquirer from 'inquirer';
+import { ListrTask } from 'listr2';
+import ow from 'ow';
+import { Answers } from '../../../models/answers';
+import { ModuleName, PostmanEnvironment, RestModule } from '../../../models/modules';
+import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
+import { customDomainPrompt } from '../../../prompts/domain.prompt';
+import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { getMonorepoRoot } from '../../../prompts/paths.prompt';
+import { chooseS3BucketPrompt } from '../../../prompts/s3.prompt';
+import {
+    deleteStack,
+    getStackOutputs,
+    getStackResourceSummaries,
+    packageAndDeployStack,
+    packageAndUploadTemplate,
+} from '../../../utils/cloudformation.util';
+import { ConfigBuilder } from '../../../utils/configBuilder';
 
 export class OrganizationManagerInstaller implements RestModule {
     public readonly type = 'SERVICE';

@@ -10,20 +10,20 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Answers } from '../../../models/answers';
-import { ListrTask } from 'listr2';
-import { ModuleName, ServiceModule } from '../../../models/modules';
-import ow from 'ow';
 import inquirer from 'inquirer';
+import { ListrTask } from 'listr2';
+import ow from 'ow';
 import path from 'path';
-import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
+import { Answers } from '../../../models/answers';
+import { ModuleName, ServiceModule } from '../../../models/modules';
 import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
+import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 import {
     deleteStack,
     packageAndDeployStack,
     packageAndUploadTemplate,
 } from '../../../utils/cloudformation.util';
-import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class AuthDeviceCertInstaller implements ServiceModule {
     public readonly friendlyName = 'Auth (by device cert)';

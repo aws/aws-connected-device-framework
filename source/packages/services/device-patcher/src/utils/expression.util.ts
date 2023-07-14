@@ -11,8 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
-import { S3Utils } from './s3.util';
 import { TYPES } from '../di/types';
+import { S3Utils } from './s3.util';
 
 @injectable()
 export class ExpressionParser {

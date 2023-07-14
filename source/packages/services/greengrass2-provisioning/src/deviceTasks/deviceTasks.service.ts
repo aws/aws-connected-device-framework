@@ -10,18 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../di/types';
+import { GetCoreDeviceCommand, GreengrassV2Client } from '@aws-sdk/client-greengrassv2';
+import { SQSClient, SendMessageCommand, SendMessageCommandOutput } from '@aws-sdk/client-sqs';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { DeviceTasksDao } from './deviceTasks.dao';
-import { DeviceTaskItem } from './deviceTasks.model';
-import { generate } from 'shortid';
-import { SendMessageCommand, SendMessageCommandOutput, SQSClient } from '@aws-sdk/client-sqs';
 import pLimit from 'p-limit';
+import { generate } from 'shortid';
 import { DeviceItem } from '../devices/devices.model';
 import { DevicesService } from '../devices/devices.service';
-import { GetCoreDeviceCommand, GreengrassV2Client } from '@aws-sdk/client-greengrassv2';
+import { TYPES } from '../di/types';
+import { DeviceTasksDao } from './deviceTasks.dao';
+import { DeviceTaskItem } from './deviceTasks.model';
 
 @injectable()
 export class DeviceTasksService {

@@ -1,7 +1,7 @@
-import { Calculation } from './calculation';
-import { logger } from '../utils/logger';
 import { injectable } from 'inversify';
 import ow from 'ow';
+import { logger } from '../utils/logger';
+import { Calculation } from './calculation';
 
 /**
  * Manages all calculations defined for the simulator.

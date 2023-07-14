@@ -11,15 +11,14 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { process, structure } from 'gremlin';
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 
-import { TypeModel, TypeDefinitionStatus } from './types.models';
-import { TypeCategory } from './constants';
 import { BaseDaoFull } from '../data/base.full.dao';
-import { TypeRelationsModel, TypeVersionModel } from './types.models';
+import { TypeCategory } from './constants';
+import { TypeDefinitionStatus, TypeModel, TypeRelationsModel, TypeVersionModel } from './types.models';
 
 const __ = process.statics;
 

@@ -13,9 +13,9 @@
 import AWS = require('aws-sdk');
 import { inject, injectable } from 'inversify';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { createDelimitedAttribute, PkType } from '../utils/pKUtils.util';
+import { TYPES } from '../di/types';
+import { PkType, createDelimitedAttribute } from '../utils/pKUtils.util';
 
 import { AssociationModel } from './patch.model';
 

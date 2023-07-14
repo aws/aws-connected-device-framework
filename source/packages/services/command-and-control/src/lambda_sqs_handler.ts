@@ -13,10 +13,10 @@
 
 import { container } from './di/inversify.config';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CommandsService } from './commands/commands.service';
 import { TYPES } from './di/types';
 import { MessagesService } from './messages/messages.service';
-import { logger } from '@awssolutions/simple-cdf-logger';
 
 const messagesService: MessagesService = container.get(TYPES.MessagesService);
 const commandsService: CommandsService = container.get(TYPES.CommandsService);

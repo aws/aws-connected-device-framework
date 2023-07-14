@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import clone from 'just-clone';
 import { Answers } from '../models/answers';
-import { loadModules, ModuleName } from '../models/modules';
+import { ModuleName, loadModules } from '../models/modules';
 import { getCurrentAwsAccountId } from '../prompts/account.prompt';
 import {
     buildServicesList,
@@ -13,7 +13,7 @@ import {
 } from '../prompts/modules.prompt';
 import { chooseS3BucketPrompt } from '../prompts/s3.prompt';
 import { AnswersStorage } from './answersStorage';
-import { isValidTagKey, isValidTagValue, TagsList } from './tags';
+import { TagsList, isValidTagKey, isValidTagValue } from './tags';
 
 async function configWizard(
     environment: string,

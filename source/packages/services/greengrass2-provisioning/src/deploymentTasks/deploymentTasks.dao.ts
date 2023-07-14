@@ -16,22 +16,22 @@ import ow from 'ow';
 import {
     BatchWriteCommandInput,
     DynamoDBDocumentClient,
+    GetCommand,
+    GetCommandInput,
     PutCommand,
     PutCommandInput,
     QueryCommand,
     QueryCommandInput,
     UpdateCommand,
     UpdateCommandInput,
-    GetCommand,
-    GetCommandInput,
 } from '@aws-sdk/lib-dynamodb';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { DynamoDbPaginationKey, GSI1_INDEX_NAME, GSI3_INDEX_NAME } from '../common/common.models';
 import { Deployment } from '../deployments/deployments.models';
 import { TYPES } from '../di/types';
 import { DocumentDbClientItem, DynamoDbUtils } from '../utils/dynamoDb.util';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import { createDelimitedAttribute, expandDelimitedAttribute, PkType } from '../utils/pkUtils.util';
+import { PkType, createDelimitedAttribute, expandDelimitedAttribute } from '../utils/pkUtils.util';
 import { DeploymentTask } from './deploymentTasks.models';
-import { DynamoDbPaginationKey, GSI1_INDEX_NAME, GSI3_INDEX_NAME } from '../common/common.models';
 
 @injectable()
 export class DeploymentTasksDao {

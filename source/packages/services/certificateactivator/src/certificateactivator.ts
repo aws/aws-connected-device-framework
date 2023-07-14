@@ -10,12 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { logger, setRequestId, getRequestIdFromContext } from '@awssolutions/simple-cdf-logger';
+import { getRequestIdFromContext, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
+import ow from 'ow';
+import { RegistrationEvent } from './activation/activation.models';
+import { ActivationService } from './activation/activation.service';
 import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
-import { ActivationService } from './activation/activation.service';
-import { RegistrationEvent } from './activation/activation.models';
-import ow from 'ow';
 
 let service: ActivationService;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

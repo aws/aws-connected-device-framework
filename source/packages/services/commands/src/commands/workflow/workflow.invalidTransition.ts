@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { WorkflowAction } from './workflow.interfaces';
-import { CommandModel } from '../commands.models';
-import { logger } from '../../utils/logger';
 import { injectable } from 'inversify';
+import { logger } from '../../utils/logger';
+import { CommandModel } from '../commands.models';
+import { WorkflowAction } from './workflow.interfaces';
 
 @injectable()
 export class InvalidTransitionAction implements WorkflowAction {

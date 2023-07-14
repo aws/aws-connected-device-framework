@@ -10,25 +10,25 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { inject, injectable } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TransactWriteItemList, Update } from 'aws-sdk/clients/dynamodb';
+import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
 import {
-    AccountsItem,
-    AccountComponentModel,
-    AccountResource,
-    AccountUpdateRequest,
-    DynamoDbPaginationKey,
-    AccountListPaginationKey,
-} from './accounts.models';
-import {
+    PkType,
     createDelimitedAttribute,
     createDelimitedAttributePrefix,
     expandDelimitedAttribute,
-    PkType,
 } from '../utils/pkUtils.util';
+import {
+    AccountComponentModel,
+    AccountListPaginationKey,
+    AccountResource,
+    AccountUpdateRequest,
+    AccountsItem,
+    DynamoDbPaginationKey,
+} from './accounts.models';
 import AWS = require('aws-sdk');
-import { TransactWriteItemList, Update } from 'aws-sdk/clients/dynamodb';
 @injectable()
 export class AccountsDao {
     private _dc: AWS.DynamoDB.DocumentClient;

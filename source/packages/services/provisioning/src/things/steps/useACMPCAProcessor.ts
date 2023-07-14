@@ -10,17 +10,17 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../../di/types';
 
-import { ProvisioningStepData } from './provisioningStep.model';
-import { ProvisioningStepProcessor } from './provisioningStepProcessor';
-import { UseACMPCAParameters, CertInfo, CertificateStatus } from '../things.models';
 import { ACMPCA } from 'aws-sdk';
 import { CertUtils } from '../../utils/cert';
+import { CertInfo, CertificateStatus, UseACMPCAParameters } from '../things.models';
+import { ProvisioningStepData } from './provisioningStep.model';
+import { ProvisioningStepProcessor } from './provisioningStepProcessor';
 
 @injectable()
 export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {

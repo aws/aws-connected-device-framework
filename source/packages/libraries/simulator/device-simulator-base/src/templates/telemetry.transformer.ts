@@ -1,8 +1,8 @@
-import ow from 'ow';
 import fs from 'fs';
-import { logger } from '../utils/logger';
 import { injectable } from 'inversify';
 import mustache from 'mustache';
+import ow from 'ow';
+import { logger } from '../utils/logger';
 
 /**
  * Handles translating device attributes to telemetry

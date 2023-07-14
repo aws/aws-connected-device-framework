@@ -10,15 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { logger } from './utils/logger';
+import { CommandsService } from './commands/commands.service';
 import { container } from './di/inversify.config';
-import { PresignedUrlsService } from './presignedurls/presignedurls.service';
 import { TYPES } from './di/types';
 import {
     PresignedResponseModel,
     PresignedUploadRequestModel,
 } from './presignedurls/presignedurls.models';
-import { CommandsService } from './commands/commands.service';
+import { PresignedUrlsService } from './presignedurls/presignedurls.service';
+import { logger } from './utils/logger';
 
 let presignedUrlService: PresignedUrlsService;
 let commandService: CommandsService;

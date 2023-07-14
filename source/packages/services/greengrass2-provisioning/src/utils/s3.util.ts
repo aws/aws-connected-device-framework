@@ -16,8 +16,8 @@ import { Readable } from 'stream';
 import { S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
 
 @injectable()
 export class S3Utils {

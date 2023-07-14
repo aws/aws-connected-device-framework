@@ -10,22 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import {
-    DeviceState,
-    DeviceItem,
-    DeviceItemList,
-    DeviceBaseResource,
-    Device10Resource,
-    Device20Resource,
-    determineIfDevice20Resource,
-    DeviceResourceList,
-    BulkDevicesResource,
-} from './devices.models';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { Node, StringNodeMap } from '../data/node';
-import { TypeCategory } from '../types/constants';
-import { TYPES } from '../di/types';
+import { inject, injectable } from 'inversify';
 import { FullAssembler } from '../data/full.assembler';
 import {
     DirectionToRelatedEntityArrayMap,
@@ -33,6 +19,20 @@ import {
     RelationDirection,
     StringArrayMap,
 } from '../data/model';
+import { Node, StringNodeMap } from '../data/node';
+import { TYPES } from '../di/types';
+import { TypeCategory } from '../types/constants';
+import {
+    BulkDevicesResource,
+    Device10Resource,
+    Device20Resource,
+    DeviceBaseResource,
+    DeviceItem,
+    DeviceItemList,
+    DeviceResourceList,
+    DeviceState,
+    determineIfDevice20Resource,
+} from './devices.models';
 
 @injectable()
 export class DevicesAssembler {

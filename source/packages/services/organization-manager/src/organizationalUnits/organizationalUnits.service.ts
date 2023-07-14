@@ -11,16 +11,16 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { owCheckUnprintableChar, owCheckOversizeString } from '../utils/inputValidation.util';
-import ow from 'ow';
-import { OrganizationalUnitResource } from './organizationalUnits.model';
 import { Tag, Tags } from 'aws-sdk/clients/organizations';
-import { OrganizationalUnitsDao } from './organizationalUnits.dao';
-import { OrganizationalUnitsAssembler } from './organizationalUnits.assembler';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
 import { AccountsDao } from '../accounts/accounts.dao';
+import { TYPES } from '../di/types';
+import { owCheckOversizeString, owCheckUnprintableChar } from '../utils/inputValidation.util';
+import { OrganizationalUnitsAssembler } from './organizationalUnits.assembler';
+import { OrganizationalUnitsDao } from './organizationalUnits.dao';
+import { OrganizationalUnitResource } from './organizationalUnits.model';
 
 const convertAWSTagsToCDFTags = (tagResult: { [key: string]: string }, currentTag: Tag) => {
     tagResult[currentTag.Key] = currentTag.Value;

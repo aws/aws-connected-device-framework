@@ -10,9 +10,29 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { inject, injectable } from 'inversify';
-import { DeviceTaskItem } from '../deviceTasks/deviceTasks.model';
+import {
+    BatchAssociateClientDeviceWithCoreDeviceCommand,
+    BatchDisassociateClientDeviceFromCoreDeviceCommand,
+    GreengrassV2Client,
+} from '@aws-sdk/client-greengrassv2';
+import { DescribeThingCommand, IoTClient } from '@aws-sdk/client-iot';
+import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
+import {
+    PROVISIONING_CLIENT_TYPES,
+    ProvisionThingRequest,
+    ProvisionThingResponse,
+    ThingsService,
+} from '@awssolutions/cdf-provisioning-client';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AdmZip from 'adm-zip';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import pLimit from 'p-limit';
+import { DeviceTasksDao } from '../deviceTasks/deviceTasks.dao';
+import { DeviceTaskItem } from '../deviceTasks/deviceTasks.model';
+import { TYPES } from '../di/types';
+import { S3Utils } from '../utils/s3.util';
+import { DevicesDao } from './devices.dao';
 import {
     DeviceCreatedEvent,
     DeviceCreatedPayload,
@@ -20,26 +40,6 @@ import {
     DeviceDeletedPayload,
     DeviceItem,
 } from './devices.model';
-import ow from 'ow';
-import { TYPES } from '../di/types';
-import { DeviceTasksDao } from '../deviceTasks/deviceTasks.dao';
-import { DescribeThingCommand, IoTClient } from '@aws-sdk/client-iot';
-import {
-    BatchAssociateClientDeviceWithCoreDeviceCommand,
-    BatchDisassociateClientDeviceFromCoreDeviceCommand,
-    GreengrassV2Client,
-} from '@aws-sdk/client-greengrassv2';
-import {
-    PROVISIONING_CLIENT_TYPES,
-    ProvisionThingRequest,
-    ProvisionThingResponse,
-    ThingsService,
-} from '@awssolutions/cdf-provisioning-client';
-import AdmZip from 'adm-zip';
-import { S3Utils } from '../utils/s3.util';
-import { DevicesDao } from './devices.dao';
-import pLimit from 'p-limit';
-import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
 
 @injectable()
 export class DevicesService {

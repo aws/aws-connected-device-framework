@@ -10,41 +10,41 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import {
-    ProvisionThingResponse,
-    ThingDetailModel,
-    ThingCertificateModel,
-    CertificateStatus,
-    ThingPolicyModel,
-    ThingGroupModel,
-    BulkProvisionThingsResponse,
-    CdfProvisioningParameters,
-} from './things.models';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import AWS = require('aws-sdk');
-import { TYPES } from '../di/types';
-import { CDFProvisioningTemplate } from './templates/template.models';
+import { AWSError, Iot } from 'aws-sdk';
 import {
-    RegisterThingRequest,
-    StartThingRegistrationTaskResponse,
-    StartThingRegistrationTaskRequest,
     DescribeThingGroupResponse,
     DescribeThingRegistrationTaskRequest,
+    GetPolicyResponse,
+    RegisterThingRequest,
+    StartThingRegistrationTaskRequest,
+    StartThingRegistrationTaskResponse,
 } from 'aws-sdk/clients/iot';
-import { AWSError, Iot } from 'aws-sdk';
-import clone from 'just-clone';
-import { GetObjectRequest, GetObjectOutput, PutObjectRequest } from 'aws-sdk/clients/s3';
-import { v1 as uuid } from 'uuid';
-import { GetPolicyResponse } from 'aws-sdk/clients/iot';
+import { GetObjectOutput, GetObjectRequest, PutObjectRequest } from 'aws-sdk/clients/s3';
 import { PromiseResult } from 'aws-sdk/lib/request';
-import { ProvisioningStepData } from './steps/provisioningStep.model';
-import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientIdEnforcementPolicyStepProcessor';
-import { CreateDeviceCertificateStepProcessor } from './steps/createDeviceCertificateProcessor';
-import { RegisterDeviceCertificateWithoutCAStepProcessor } from './steps/registerDeviceCertificateWithoutCaProcessor';
+import { inject, injectable } from 'inversify';
+import clone from 'just-clone';
+import { v1 as uuid } from 'uuid';
+import { TYPES } from '../di/types';
 import { AttachAdditionalPoliciesProcessor } from './steps/attachAdditionalPoliciesProcessor';
-import { UseACMPCAStepProcessor } from './steps/useACMPCAProcessor';
+import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientIdEnforcementPolicyStepProcessor';
 import { CreateAwsCertiticateProcessor } from './steps/createAwsCertificateProcessor';
+import { CreateDeviceCertificateStepProcessor } from './steps/createDeviceCertificateProcessor';
+import { ProvisioningStepData } from './steps/provisioningStep.model';
+import { RegisterDeviceCertificateWithoutCAStepProcessor } from './steps/registerDeviceCertificateWithoutCaProcessor';
+import { UseACMPCAStepProcessor } from './steps/useACMPCAProcessor';
+import { CDFProvisioningTemplate } from './templates/template.models';
+import {
+    BulkProvisionThingsResponse,
+    CdfProvisioningParameters,
+    CertificateStatus,
+    ProvisionThingResponse,
+    ThingCertificateModel,
+    ThingDetailModel,
+    ThingGroupModel,
+    ThingPolicyModel,
+} from './things.models';
+import AWS = require('aws-sdk');
 
 @injectable()
 export class ThingsService {

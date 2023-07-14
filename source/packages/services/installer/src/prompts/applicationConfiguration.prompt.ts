@@ -10,9 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { ModuleName } from '../models/modules';
-import { Answers, ServiceModuleAttributes } from '../models/answers';
 import { Question } from 'inquirer';
+import { Answers, ServiceModuleAttributes } from '../models/answers';
+import { ModuleName } from '../models/modules';
 
 export interface ApplicationConfigurationMapping {
     question: string;

@@ -10,23 +10,23 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
-import { SubscriptionDao } from './subscription.dao';
-import { SubscriptionItem } from './subscription.models';
+import AWS from 'aws-sdk';
+import { ListSubscriptionsResponse } from 'aws-sdk/clients/sns';
 import { createMockInstance } from 'jest-create-mock-instance';
+import 'reflect-metadata';
 import { EventDao } from '../events/event.dao';
-import { SubscriptionAssembler } from './subscription.assembler';
 import { SNSTarget } from '../targets/processors/sns.target';
 import { TargetService } from '../targets/target.service';
-import { SubscriptionService } from './subscription.service';
 import {
     DynamodDBTargetItem,
     EmailTargetItem,
     PushTargetItem,
     TargetTypeStrings,
 } from '../targets/targets.models';
-import { ListSubscriptionsResponse } from 'aws-sdk/clients/sns';
-import AWS from 'aws-sdk';
+import { SubscriptionAssembler } from './subscription.assembler';
+import { SubscriptionDao } from './subscription.dao';
+import { SubscriptionItem } from './subscription.models';
+import { SubscriptionService } from './subscription.service';
 
 describe('SubscriptionService', () => {
     const asyncProcessingQueue = '';

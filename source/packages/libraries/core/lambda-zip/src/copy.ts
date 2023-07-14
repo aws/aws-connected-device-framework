@@ -1,7 +1,7 @@
-import path from 'node:path';
-import { promisify } from 'node:util';
 import globCb from 'glob';
 import { cp, lstat, mkdir } from 'node:fs/promises';
+import path from 'node:path';
+import { promisify } from 'node:util';
 
 const glob = promisify(globCb);
 

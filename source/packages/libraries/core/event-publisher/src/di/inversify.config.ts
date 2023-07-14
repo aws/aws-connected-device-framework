@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
-import { NoOpEventPublisher, CDFEventPublisher, EventBridgePublisher } from '../index';
-import { EVENT_PUBLISHER_TYPES } from './types';
 import { EventBridgeClient } from '@aws-sdk/client-eventbridge';
+import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
+import { CDFEventPublisher, EventBridgePublisher, NoOpEventPublisher } from '../index';
+import { EVENT_PUBLISHER_TYPES } from './types';
 
 export const eventPublisherContainerModule = new ContainerModule(
     (

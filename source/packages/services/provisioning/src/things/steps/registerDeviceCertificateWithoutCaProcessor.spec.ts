@@ -12,11 +12,11 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 
-import { RegisterDeviceCertificateWithoutCAStepProcessor } from './registerDeviceCertificateWithoutCaProcessor';
-import { ProvisioningStepData } from './provisioningStep.model';
-import { CertificateStatus } from '../things.models';
-import { CertUtils } from '../../utils/cert';
 import createMockInstance from 'jest-create-mock-instance';
+import { CertUtils } from '../../utils/cert';
+import { CertificateStatus } from '../things.models';
+import { ProvisioningStepData } from './provisioningStep.model';
+import { RegisterDeviceCertificateWithoutCAStepProcessor } from './registerDeviceCertificateWithoutCaProcessor';
 
 describe('RegisterDeviceCertificateWithoutCAStepProcessor', () => {
     let certUtils: jest.Mocked<CertUtils>;

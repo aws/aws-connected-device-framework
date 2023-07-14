@@ -10,15 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import AWS from 'aws-sdk';
+import createMockInstance from 'jest-create-mock-instance';
+import clone from 'just-clone';
+import * as pem from 'pem';
+import 'reflect-metadata';
+import { CertUtils } from '../../utils/cert';
+import { CreateDeviceCertificateParameters } from '../things.models';
 import { CreateDeviceCertificateStepProcessor } from './createDeviceCertificateProcessor';
 import { ProvisioningStepData } from './provisioningStep.model';
-import * as pem from 'pem';
-import { CreateDeviceCertificateParameters } from '../things.models';
-import clone from 'just-clone';
-import { CertUtils } from '../../utils/cert';
-import createMockInstance from 'jest-create-mock-instance';
 
 describe('CreateDeviceCertificateStepProcessor', () => {
     let instance: CreateDeviceCertificateStepProcessor;

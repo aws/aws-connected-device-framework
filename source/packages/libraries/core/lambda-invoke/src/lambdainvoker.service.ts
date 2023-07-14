@@ -12,11 +12,11 @@
  *********************************************************************************************************************/
 import * as AWS from 'aws-sdk';
 
-import { inject, injectable } from 'inversify';
 import createHttpError from 'http-errors';
+import { inject, injectable } from 'inversify';
 
-import { LAMBDAINVOKE_TYPES } from './di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { LAMBDAINVOKE_TYPES } from './di/types';
 
 import {
     LambdaApiGatewayEventBuilder,

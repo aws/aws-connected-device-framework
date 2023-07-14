@@ -14,19 +14,19 @@
 import 'reflect-metadata';
 
 import AWS from 'aws-sdk';
-import { AccountsService } from './accounts.service';
+import { ProvisionProductInput } from 'aws-sdk/clients/servicecatalog';
+import { createMockInstance } from 'jest-create-mock-instance';
+import { ComponentResource } from '../components/components.model';
+import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';
+import { AccountsAssembler } from './accounts.assembler';
+import { AccountsDao } from './accounts.dao';
 import {
     AccountComponentModel,
     AccountCreationRequest,
     AccountResource,
     AccountsItem,
 } from './accounts.models';
-import { ProvisionProductInput } from 'aws-sdk/clients/servicecatalog';
-import { createMockInstance } from 'jest-create-mock-instance';
-import { AccountsDao } from './accounts.dao';
-import { AccountsAssembler } from './accounts.assembler';
-import { ComponentResource } from '../components/components.model';
-import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';
+import { AccountsService } from './accounts.service';
 
 describe('AccountsService', function () {
     let mockedAccountsDao: jest.Mocked<AccountsDao>;

@@ -1,6 +1,6 @@
-import { buildServicesList } from '../prompts/modules.prompt';
 import { loadModules } from '../models/modules';
 import { getCurrentAwsAccountId } from '../prompts/account.prompt';
+import { buildServicesList } from '../prompts/modules.prompt';
 import { AnswersStorage } from '../utils/answersStorage';
 
 async function postmanAction(name: string, environment: string, region: string): Promise<void> {

@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Response } from 'express';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { Response } from 'express';
 
 // https://github.com/aws/aws-sdk-net/issues/1495
 const ERRORS_429 = [

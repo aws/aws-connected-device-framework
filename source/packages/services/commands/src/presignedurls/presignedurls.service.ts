@@ -10,21 +10,21 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { Iot } from 'aws-sdk';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import { CommandModel } from '../commands/commands.models';
+import { CommandsService } from '../commands/commands.service';
 import { TYPES } from '../di/types';
+import { TemplateModel } from '../templates/templates.models';
+import { TemplatesService } from '../templates/templates.service';
 import { logger } from '../utils/logger';
 import {
-    PresignedUploadRequestModel,
     PresignedDownloadRequestModel,
     PresignedResponseModel,
     PresignedResponseStatusType,
+    PresignedUploadRequestModel,
 } from './presignedurls.models';
-import ow from 'ow';
-import { CommandsService } from '../commands/commands.service';
-import { TemplatesService } from '../templates/templates.service';
-import { CommandModel } from '../commands/commands.models';
-import { TemplateModel } from '../templates/templates.models';
-import { Iot } from 'aws-sdk';
 
 @injectable()
 export class PresignedUrlsService {

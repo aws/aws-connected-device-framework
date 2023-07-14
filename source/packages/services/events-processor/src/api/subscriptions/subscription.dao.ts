@@ -10,20 +10,20 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { TYPES } from '../../di/types';
 import DynamoDB, { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { SubscriptionItem } from './subscription.models';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../../di/types';
+import { DynamoDbUtils } from '../../utils/dynamoDb.util';
 import {
-    createDelimitedAttribute,
     PkType,
+    createDelimitedAttribute,
+    createDelimitedAttributePrefix,
     expandDelimitedAttribute,
     isPkType,
-    createDelimitedAttributePrefix,
 } from '../../utils/pkUtils.util';
-import { DynamoDbUtils } from '../../utils/dynamoDb.util';
 import { TargetDao } from '../targets/target.dao';
+import { SubscriptionItem } from './subscription.models';
 
 type SubscriptionItemMap = { [subscriptionId: string]: SubscriptionItem };
 export type PaginationKey = { [key: string]: string };

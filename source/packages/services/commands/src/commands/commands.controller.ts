@@ -10,36 +10,36 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Response, Request } from 'express';
-import {
-    interfaces,
-    controller,
-    response,
-    httpPost,
-    requestBody,
-    httpPatch,
-    requestParam,
-    httpGet,
-    httpPut,
-    request,
-    httpDelete,
-    queryParam,
-} from 'inversify-express-utils';
+import * as Busboy from 'busboy';
+import { Request, Response } from 'express';
+import * as fs from 'fs';
 import { inject } from 'inversify';
-import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
-import { CommandsService } from './commands.service';
 import {
-    CommandModel,
+    controller,
+    httpDelete,
+    httpGet,
+    httpPatch,
+    httpPost,
+    httpPut,
+    interfaces,
+    queryParam,
+    request,
+    requestBody,
+    requestParam,
+    response,
+} from 'inversify-express-utils';
+import * as path from 'path';
+import { TYPES } from '../di/types';
+import { handleError } from '../utils/errors';
+import { logger } from '../utils/logger';
+import {
     CommandListModel,
+    CommandModel,
+    ExecutionModel,
     ExecutionStatus,
     ExecutionSummaryListModel,
-    ExecutionModel,
 } from './commands.models';
-import * as Busboy from 'busboy';
-import * as path from 'path';
-import * as fs from 'fs';
-import { handleError } from '../utils/errors';
+import { CommandsService } from './commands.service';
 
 @controller('/commands')
 export class CommandsController implements interfaces.Controller {

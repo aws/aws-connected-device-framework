@@ -10,15 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
-import { SubscriptionDao } from './subscription.dao';
 import AWS from 'aws-sdk';
-import { SubscriptionItem } from './subscription.models';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { DynamoDbUtils } from '../../utils/dynamoDb.util';
 import { createMockInstance } from 'jest-create-mock-instance';
-import { EmailTargetItem, SMSTargetItem, PushTargetItem } from '../targets/targets.models';
+import 'reflect-metadata';
+import { DynamoDbUtils } from '../../utils/dynamoDb.util';
 import { TargetDao } from '../targets/target.dao';
+import { EmailTargetItem, PushTargetItem, SMSTargetItem } from '../targets/targets.models';
+import { SubscriptionDao } from './subscription.dao';
+import { SubscriptionItem } from './subscription.models';
 
 describe('SubscriptionDao', () => {
     let mockedTargetDao: jest.Mocked<TargetDao>;

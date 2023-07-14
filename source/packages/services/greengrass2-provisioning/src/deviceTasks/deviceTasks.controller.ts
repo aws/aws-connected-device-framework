@@ -10,6 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { Response } from 'express';
 import { inject } from 'inversify';
 import {
     controller,
@@ -21,12 +23,10 @@ import {
     response,
 } from 'inversify-express-utils';
 import { TYPES } from '../di/types';
-import { DeviceTasksService } from './deviceTasks.service';
-import { Response } from 'express';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { handleError } from '../utils/errors.util';
-import { NewDeviceTaskResource } from './deviceTasks.model';
 import { DeviceTasksAssembler } from './deviceTasks.assembler';
+import { NewDeviceTaskResource } from './deviceTasks.model';
+import { DeviceTasksService } from './deviceTasks.service';
 
 @controller('')
 export class DeviceTasksController implements interfaces.Controller {

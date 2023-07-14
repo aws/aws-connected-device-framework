@@ -10,30 +10,30 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Response } from 'express';
-import {
-    interfaces,
-    controller,
-    response,
-    requestBody,
-    requestParam,
-    httpPost,
-    httpGet,
-    httpDelete,
-    httpPatch,
-} from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {
+    controller,
+    httpDelete,
+    httpGet,
+    httpPatch,
+    httpPost,
+    interfaces,
+    requestBody,
+    requestParam,
+    response,
+} from 'inversify-express-utils';
+import ow from 'ow';
+import { TYPES } from '../di/types';
+import { handleError } from '../utils/errors';
+import {
+    PatchCertificateRequest,
     ProvisionThingRequest,
     ProvisionThingResponse,
     ThingDetailModel,
-    PatchCertificateRequest,
 } from './things.models';
 import { ThingsService } from './things.service';
-import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import { handleError } from '../utils/errors';
-import ow from 'ow';
 
 @controller('/things')
 export class ThingsController implements interfaces.Controller {

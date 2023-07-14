@@ -10,9 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { DeviceItem, BulkDevicesResult, DeviceItemList } from './devices.models';
-import { GroupItemList } from '../groups/groups.models';
 import { SortKeys } from '../data/model';
+import { GroupItemList } from '../groups/groups.models';
+import { BulkDevicesResult, DeviceItem, DeviceItemList } from './devices.models';
 
 export interface DevicesService {
     get(

@@ -12,8 +12,8 @@
  *********************************************************************************************************************/
 import { getRequestIdFromContext, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
 
-import { TYPES } from './di/types';
 import { container } from './di/inversify.config';
+import { TYPES } from './di/types';
 
 import { BatchService } from './batch/batch.service';
 

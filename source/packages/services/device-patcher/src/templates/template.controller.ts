@@ -12,29 +12,29 @@
  *********************************************************************************************************************/
 import { Response } from 'express';
 import { inject } from 'inversify';
-import ow from 'ow';
 import multer from 'multer';
+import ow from 'ow';
 
+import { Request } from 'express';
 import {
-    interfaces,
     controller,
-    response,
-    request,
-    requestParam,
+    httpDelete,
     httpGet,
     httpPatch,
     httpPost,
-    httpDelete,
+    interfaces,
     queryParam,
+    request,
+    requestParam,
+    response,
 } from 'inversify-express-utils';
-import { Request } from 'express';
 
-import { handleError } from '../utils/errors';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { handleError } from '../utils/errors';
 
 import { TYPES } from '../di/types';
-import { PatchTemplatesService } from './template.service';
 import { PatchTemplateAssembler } from './template.assembler';
+import { PatchTemplatesService } from './template.service';
 
 import { PatchTemplateItem } from './template.model';
 

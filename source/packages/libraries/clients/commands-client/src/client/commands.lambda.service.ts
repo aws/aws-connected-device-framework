@@ -10,7 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@awssolutions/cdf-lambda-invoke';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import {
     CommandListModel,
@@ -20,11 +25,6 @@ import {
     RequestHeaders,
 } from './commands.model';
 import { CommandsService, CommandsServiceBase } from './commands.service';
-import {
-    LAMBDAINVOKE_TYPES,
-    LambdaInvokerService,
-    LambdaApiGatewayEventBuilder,
-} from '@awssolutions/cdf-lambda-invoke';
 
 @injectable()
 export class CommandsLambdaService extends CommandsServiceBase implements CommandsService {

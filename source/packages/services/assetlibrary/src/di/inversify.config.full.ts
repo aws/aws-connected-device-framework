@@ -37,10 +37,10 @@ import { ProfilesService } from '../profiles/profiles.service';
 import { SearchDaoFull } from '../search/search.full.dao';
 import { SearchServiceFull } from '../search/search.full.service';
 import { SearchService } from '../search/search.service';
+import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { TypesDaoFull } from '../types/types.full.dao';
 import { TypesServiceFull } from '../types/types.full.service';
 import { TypesService } from '../types/types.service';
-import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { TYPES } from './types';
 
 export const FullContainerModule = new ContainerModule(

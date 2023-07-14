@@ -16,18 +16,18 @@ import ow from 'ow';
 import path from 'path';
 
 import { Answers } from '../../../models/answers';
-import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
-import { ConfigBuilder } from '../../../utils/configBuilder';
+import { ModuleName, PostmanEnvironment, RestModule } from '../../../models/modules';
+import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
-import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 import {
     deleteStack,
     getStackOutputs,
     packageAndDeployStack,
     packageAndUploadTemplate,
 } from '../../../utils/cloudformation.util';
-import { getMonorepoRoot } from '../../../prompts/paths.prompt';
+import { ConfigBuilder } from '../../../utils/configBuilder';
 
 export class DevicePatcherInstaller implements RestModule {
     public readonly friendlyName = 'Device Patcher';

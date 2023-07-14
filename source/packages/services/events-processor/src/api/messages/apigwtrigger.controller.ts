@@ -10,14 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Response } from 'express';
-import { interfaces, controller, response, requestBody, httpPost } from 'inversify-express-utils';
-import { inject } from 'inversify';
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { Response } from 'express';
+import { inject } from 'inversify';
+import { controller, httpPost, interfaces, requestBody, response } from 'inversify-express-utils';
+import { TYPES } from '../../di/types';
+import { CommonEvent } from '../../transformers/transformers.model';
 import { handleError } from '../../utils/errors.util';
 import { ApigwTriggerService } from './apigwtrigger.service';
-import { CommonEvent } from '../../transformers/transformers.model';
 
 @controller('')
 export class ApigwTriggerController implements interfaces.Controller {

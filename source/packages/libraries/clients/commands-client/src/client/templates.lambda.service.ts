@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { inject, injectable } from 'inversify';
-import ow from 'ow';
-import { TemplateModel } from './templates.models';
-import { RequestHeaders } from './commands.model';
-import { TemplatesService, TemplatesServiceBase } from './templates.service';
 import {
-    LambdaApiGatewayEventBuilder,
     LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
     LambdaInvokerService,
 } from '@awssolutions/cdf-lambda-invoke';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import { RequestHeaders } from './commands.model';
+import { TemplateModel } from './templates.models';
+import { TemplatesService, TemplatesServiceBase } from './templates.service';
 
 @injectable()
 export class TemplatesLambdaService extends TemplatesServiceBase implements TemplatesService {

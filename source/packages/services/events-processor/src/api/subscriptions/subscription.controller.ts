@@ -10,31 +10,31 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Response, Request } from 'express';
-import {
-    interfaces,
-    controller,
-    request,
-    response,
-    requestBody,
-    httpPost,
-    httpGet,
-    requestParam,
-    httpDelete,
-    httpPatch,
-    queryParam,
-} from 'inversify-express-utils';
-import { inject } from 'inversify';
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { handleError } from '../../utils/errors.util';
-import { SubscriptionService } from './subscription.service';
+import { Request, Response } from 'express';
+import { inject } from 'inversify';
 import {
-    SubscriptionResourceList,
+    controller,
+    httpDelete,
+    httpGet,
+    httpPatch,
+    httpPost,
+    interfaces,
+    queryParam,
+    request,
+    requestBody,
+    requestParam,
+    response,
+} from 'inversify-express-utils';
+import { TYPES } from '../../di/types';
+import { handleError } from '../../utils/errors.util';
+import { SubscriptionAssembler } from './subscription.assembler';
+import {
     SubscriptionBaseResource,
+    SubscriptionResourceList,
     UpdateSubcriptionRequest,
 } from './subscription.models';
-import { SubscriptionAssembler } from './subscription.assembler';
+import { SubscriptionService } from './subscription.service';
 
 @controller('')
 export class SubscriptionController implements interfaces.Controller {

@@ -10,20 +10,20 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
-import { container } from './di/inversify.config';
-import { Context, EventBridgeEvent } from 'aws-lambda';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { TYPES } from './di/types';
-import { ManifestService } from './manifest/manifest.service';
-import { AccountsService } from './accounts/accounts.service';
+import { Context, EventBridgeEvent } from 'aws-lambda';
+import 'reflect-metadata';
 import {
     AccountComponentModel as AccountComponentResource,
     AccountStatus,
     AccountUpdateRequest,
     ComponentStatus,
 } from './accounts/accounts.models';
+import { AccountsService } from './accounts/accounts.service';
 import { ComponentsService } from './components/components.service';
+import { container } from './di/inversify.config';
+import { TYPES } from './di/types';
+import { ManifestService } from './manifest/manifest.service';
 
 let manifestService: ManifestService;
 let accountService: AccountsService;

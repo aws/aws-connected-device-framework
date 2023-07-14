@@ -14,9 +14,9 @@ import { Response } from 'express';
 import { inject } from 'inversify';
 import { controller, httpGet, interfaces, response } from 'inversify-express-utils';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors.util';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { TemplateUsage } from './fleet.model';
 import { FleetService } from './fleet.service';
 

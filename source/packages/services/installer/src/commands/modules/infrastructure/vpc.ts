@@ -16,13 +16,13 @@ import ow from 'ow';
 import path from 'path';
 import { Answers } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 import {
     deleteStack,
-    packageAndDeployStack,
     getStackOutputs,
+    packageAndDeployStack,
     packageAndUploadTemplate,
 } from '../../../utils/cloudformation.util';
-import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class VpcInstaller implements InfrastructureModule {
     public readonly friendlyName = 'VPC';

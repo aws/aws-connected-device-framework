@@ -15,29 +15,29 @@ import ow from 'ow';
 import pLimit from 'p-limit';
 import { generate } from 'shortid';
 
-import { SendMessageCommand, SendMessageCommandOutput, SQSClient } from '@aws-sdk/client-sqs';
+import { SQSClient, SendMessageCommand, SendMessageCommandOutput } from '@aws-sdk/client-sqs';
 import {
     AwsIotThingListBuilder,
     THING_LIST_BUILDER_TYPES,
 } from '@awssolutions/cdf-thing-list-builder';
 
+import { DescribeJobCommand, IoTClient, ListTagsForResourceCommand } from '@aws-sdk/client-iot';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { FailedCoreDeployment } from '../cores/cores.models';
 import { CoresService } from '../cores/cores.service';
 import { Deployment } from '../deployments/deployments.models';
 import {
-    DeploymentsService,
     DEPLOYMENT_TASK_ID_TAG_KEY,
+    DeploymentsService,
 } from '../deployments/deployments.service';
 import { TYPES } from '../di/types';
 import { TemplatesService } from '../templates/templates.service';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import {
     CoreDeploymentListPaginationKey,
     DeploymentTaskListPaginationKey,
     DeploymentTasksDao,
 } from './deploymentTasks.dao';
 import { DeploymentTask, NewDeploymentTask } from './deploymentTasks.models';
-import { DescribeJobCommand, IoTClient, ListTagsForResourceCommand } from '@aws-sdk/client-iot';
 
 @injectable()
 export class DeploymentTasksService {

@@ -10,7 +10,6 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { inject, injectable } from 'inversify';
 import {
     BatchGetCommand,
     BatchGetCommandInput,
@@ -21,9 +20,10 @@ import {
     DynamoDBDocumentClient,
 } from '@aws-sdk/lib-dynamodb';
 import { NativeAttributeValue } from '@aws-sdk/util-dynamodb';
+import { inject, injectable } from 'inversify';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
 
 @injectable()
 export class DynamoDbUtils {

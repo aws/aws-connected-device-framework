@@ -10,9 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { Context } from 'aws-lambda';
 import * as awsServerlessExpress from 'aws-serverless-express';
 import { serverInstance } from './app';
-import { Context } from 'aws-lambda';
 
 const server = awsServerlessExpress.createServer(serverInstance);
 

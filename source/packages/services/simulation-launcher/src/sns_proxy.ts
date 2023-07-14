@@ -11,9 +11,9 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import '@awssolutions/cdf-config-inject';
-import { logger } from './utils/logger';
 import ow from 'ow';
 import { Simulation } from './simulation';
+import { logger } from './utils/logger';
 
 exports.handler = async (event: any, _context: any) => {
     logger.debug(`handler: event: ${JSON.stringify(event)}`);

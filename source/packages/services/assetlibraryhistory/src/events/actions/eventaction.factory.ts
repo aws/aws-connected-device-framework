@@ -13,14 +13,14 @@
 import { logger } from '@awssolutions/simple-cdf-logger';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../di/types';
-import { EventModel, Category, EventType } from '../events.models';
+import { Category, EventModel, EventType } from '../events.models';
 import { CreateAction } from './eventaction.create';
+import { DeleteAction } from './eventaction.delete';
 import { EventAction } from './eventaction.interfaces';
+import { PublishTemplateAction } from './eventaction.publishTemplate';
 import { UnsupportedAction } from './eventaction.unsupported';
 import { UpdateAction } from './eventaction.update';
-import { DeleteAction } from './eventaction.delete';
 import { UpdateComponentParentAction } from './eventaction.updateComponentParent';
-import { PublishTemplateAction } from './eventaction.publishTemplate';
 
 @injectable()
 export class EventActionFactory {

@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Answers } from '../../../models/answers';
-import { ListrTask } from 'listr2';
-import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
-import { ConfigBuilder } from '../../../utils/configBuilder';
 import inquirer from 'inquirer';
-import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
-import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
-import { customDomainPrompt } from '../../../prompts/domain.prompt';
+import { ListrTask } from 'listr2';
 import ow from 'ow';
 import path from 'path';
+import { Answers } from '../../../models/answers';
+import { ModuleName, PostmanEnvironment, RestModule } from '../../../models/modules';
+import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
+import { customDomainPrompt } from '../../../prompts/domain.prompt';
+import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 import {
     deleteStack,
     getStackOutputs,
@@ -27,8 +27,8 @@ import {
     packageAndDeployStack,
     packageAndUploadTemplate,
 } from '../../../utils/cloudformation.util';
+import { ConfigBuilder } from '../../../utils/configBuilder';
 import { includeOptionalModule } from '../../../utils/modules.util';
-import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class CommandAndControlInstaller implements RestModule {
     public readonly friendlyName = 'Command And Control';

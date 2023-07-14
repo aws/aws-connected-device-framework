@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import * as fs from 'fs';
+import { createMockInstance } from 'jest-create-mock-instance';
+import * as path from 'path';
 import 'reflect-metadata';
 import * as util from 'util';
-import * as fs from 'fs';
-import * as path from 'path';
-import { createMockInstance } from 'jest-create-mock-instance';
 import { EventSourceDao } from '../api/eventsources/eventsource.dao';
 import { DDBStreamTransformer } from './ddbstream.transformer';
 import { CommonEvent } from './transformers.model';

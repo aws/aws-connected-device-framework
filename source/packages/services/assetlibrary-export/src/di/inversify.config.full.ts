@@ -10,19 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { ContainerModule, interfaces, decorate, injectable } from 'inversify';
 import { structure } from 'gremlin';
+import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 
 import { TYPES } from './types';
 
 import { DevicesService } from '../devices/devices.service';
 import { GroupsService } from '../groups/groups.service';
 
+import { FullAssembler } from '../data/full.assembler';
 import { DevicesDao } from '../devices/devices.dao';
 import { GroupsDao } from '../groups/groups.dao';
-import { FullAssembler } from '../data/full.assembler';
-import { TypesService } from '../types/types.service';
 import { TypesDao } from '../types/types.dao';
+import { TypesService } from '../types/types.service';
 
 export const FullContainerModule = new ContainerModule(
     (

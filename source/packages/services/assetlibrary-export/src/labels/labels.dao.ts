@@ -18,7 +18,7 @@ import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 
 import { BaseDaoFull } from '../data/base.full.dao';
-import { isVertexDto, VertexDto } from '../data/full.model';
+import { VertexDto, isVertexDto } from '../data/full.model';
 
 @injectable()
 export class LabelsDao extends BaseDaoFull {

@@ -10,19 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { PolicyModel, AttachedPolicy } from './policies.models';
-import { PoliciesAssembler } from './policies.assembler';
-import { TYPES } from '../di/types';
-import { PoliciesDaoFull } from './policies.full.dao';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
-import { Operation, TypeCategory } from '../types/constants';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { PoliciesService } from './policies.service';
+import { TYPES } from '../di/types';
+import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
+import { Operation, TypeCategory } from '../types/constants';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { NotFoundError, SchemaValidationError } from '../utils/errors';
 import { owCheckOptionalNumber } from '../utils/inputValidation.util';
+import { PoliciesAssembler } from './policies.assembler';
+import { PoliciesDaoFull } from './policies.full.dao';
+import { AttachedPolicy, PolicyModel } from './policies.models';
+import { PoliciesService } from './policies.service';
 
 @injectable()
 export class PoliciesServiceFull implements PoliciesService {

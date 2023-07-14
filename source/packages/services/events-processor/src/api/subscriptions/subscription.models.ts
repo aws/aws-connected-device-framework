@@ -12,16 +12,16 @@
  *********************************************************************************************************************/
 import { EventConditions } from '../events/event.models';
 import {
-    EmailTargetResource,
-    SMSTargetResource,
-    MQTTTargetResource,
-    DynamodDBTargetResource,
-    PushTargetResource,
-    EmailTargetItem,
-    SMSTargetItem,
-    MQTTTargetItem,
     DynamodDBTargetItem,
+    DynamodDBTargetResource,
+    EmailTargetItem,
+    EmailTargetResource,
+    MQTTTargetItem,
+    MQTTTargetResource,
     PushTargetItem,
+    PushTargetResource,
+    SMSTargetItem,
+    SMSTargetResource,
 } from '../targets/targets.models';
 
 export abstract class SubscriptionBaseResource {

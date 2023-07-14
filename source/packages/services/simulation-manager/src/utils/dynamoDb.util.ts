@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { logger } from './logger';
-import { TYPES } from '../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../di/types';
+import { logger } from './logger';
 
 @injectable()
 export class DynamoDbUtils {

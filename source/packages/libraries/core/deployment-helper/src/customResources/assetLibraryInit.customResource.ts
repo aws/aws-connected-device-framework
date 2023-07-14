@@ -15,9 +15,9 @@ import {
     LambdaApiGatewayEventBuilder,
     LambdaInvokerService,
 } from '@awssolutions/cdf-lambda-invoke';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { inject, injectable } from 'inversify';
 import { sign } from 'jsonwebtoken';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { CustomResource } from './customResource';
 import { CustomResourceEvent } from './customResource.model';
 

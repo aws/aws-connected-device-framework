@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import AWS from 'aws-sdk';
+import 'reflect-metadata';
 
 import { DynamoDbUtils } from './dynamoDb.util';
 

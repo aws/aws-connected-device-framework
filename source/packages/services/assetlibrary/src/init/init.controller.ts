@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Response } from 'express';
-import { interfaces, controller, response, httpPost } from 'inversify-express-utils';
-import { inject } from 'inversify';
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { Response } from 'express';
+import { inject } from 'inversify';
+import { controller, httpPost, interfaces, response } from 'inversify-express-utils';
+import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors';
 import { InitService } from './init.service';
 

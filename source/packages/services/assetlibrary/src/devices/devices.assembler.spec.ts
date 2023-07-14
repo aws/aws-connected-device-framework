@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
-import { DevicesAssembler } from './devices.assembler';
-import { DeviceItem, Device10Resource, Device20Resource } from './devices.models';
+import 'reflect-metadata';
 import { FullAssembler } from '../data/full.assembler';
+import { DevicesAssembler } from './devices.assembler';
+import { Device10Resource, Device20Resource, DeviceItem } from './devices.models';
 
 describe('DevicesAssembler', () => {
     let mockedFullAssembler: jest.Mocked<FullAssembler>;

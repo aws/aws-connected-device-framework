@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import fs from 'fs/promises';
 import { LocalStorage } from 'node-localstorage';
-import { Answers } from '../models/answers';
 import os from 'os';
 import path from 'path';
-import fs from 'fs/promises';
+import { Answers } from '../models/answers';
 
 const configurationRootPath = path.join(os.homedir(), 'aws-connected-device-framework', 'config');
 

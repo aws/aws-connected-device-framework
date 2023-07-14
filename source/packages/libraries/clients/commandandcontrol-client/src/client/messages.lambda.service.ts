@@ -15,8 +15,8 @@ import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
 import {
-    LambdaApiGatewayEventBuilder,
     LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
     LambdaInvokerService,
 } from '@awssolutions/cdf-lambda-invoke';
 import { RequestHeaders } from './common.model';

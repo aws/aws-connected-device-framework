@@ -10,25 +10,25 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Response, Request } from 'express';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { Request, Response } from 'express';
+import { inject } from 'inversify';
 import {
-    interfaces,
     controller,
-    response,
+    httpDelete,
+    httpPost,
+    interfaces,
     request,
     requestBody,
-    httpPost,
     requestParam,
-    httpDelete,
+    response,
 } from 'inversify-express-utils';
-import { inject } from 'inversify';
 import { TYPES } from '../../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { handleError } from '../../utils/errors.util';
-import { TargetAssembler } from './target.assembler';
-import { TargetResource, TargetTypeStrings } from './targets.models';
-import { TargetService } from './target.service';
 import { SubscriptionService } from '../subscriptions/subscription.service';
+import { TargetAssembler } from './target.assembler';
+import { TargetService } from './target.service';
+import { TargetResource, TargetTypeStrings } from './targets.models';
 
 @controller('/subscriptions/:subscriptionId/targets/:targetType')
 export class TargetController implements interfaces.Controller {

@@ -10,18 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { GroupItem, BulkGroupsResult, GroupMemberItemList, GroupItemList } from './groups.models';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { TypeCategory } from '../types/constants';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { GroupsService } from './groups.service';
+import { DeviceItemList } from '../devices/devices.models';
 import { TYPES } from '../di/types';
-import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
+import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
+import { TypeCategory } from '../types/constants';
+import { GroupNotFoundError, NotSupportedError } from '../utils/errors';
 import { GroupsAssembler } from './groups.assembler';
 import { GroupsDaoLite, ListMembersResponse } from './groups.lite.dao';
-import { DeviceItemList } from '../devices/devices.models';
-import { GroupNotFoundError, NotSupportedError } from '../utils/errors';
+import { BulkGroupsResult, GroupItem, GroupItemList, GroupMemberItemList } from './groups.models';
+import { GroupsService } from './groups.service';
 
 @injectable()
 export class GroupsServiceLite implements GroupsService {

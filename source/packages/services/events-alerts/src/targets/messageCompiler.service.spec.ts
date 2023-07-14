@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
-import { MessageCompilerService } from './messageCompiler.service';
+import 'reflect-metadata';
 import { MessageCompilerDao } from './messageCompiler.dao';
 import { MessageTemplates } from './messageCompiler.model';
+import { MessageCompilerService } from './messageCompiler.service';
 
 describe('MessageCompiler', () => {
     let mockedMessageCompilerDao: jest.Mocked<MessageCompilerDao>;

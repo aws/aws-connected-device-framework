@@ -11,11 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
-import createError from 'http-errors';
 import { RequestHeaders } from './common.model';
 import { DeploymentTask, NewDeploymentTask } from './deployments.model';
 import { DeploymentsService, DeploymentsServiceBase } from './deployments.service';

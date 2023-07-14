@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { logger } from './utils/logger';
+import { DeleteThingGroupRequest } from 'aws-sdk/clients/iot';
+import { CommandsService } from './commands/commands.service';
 import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
-import { CommandsService } from './commands/commands.service';
-import { DeleteThingGroupRequest } from 'aws-sdk/clients/iot';
+import { logger } from './utils/logger';
 
 let commandService: CommandsService;
 let iot: AWS.Iot;

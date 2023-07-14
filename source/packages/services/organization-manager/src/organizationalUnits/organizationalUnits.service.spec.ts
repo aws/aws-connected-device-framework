@@ -14,13 +14,13 @@
 import 'reflect-metadata';
 
 import AWS from 'aws-sdk';
-import { OrganizationalUnitsService } from './organizationalUnits.service';
 import { CreateOrganizationalUnitRequest } from 'aws-sdk/clients/organizations';
-import { OrganizationalUnitResource } from './organizationalUnits.model';
 import { createMockInstance } from 'jest-create-mock-instance';
-import { OrganizationalUnitsDao } from './organizationalUnits.dao';
-import { OrganizationalUnitsAssembler } from './organizationalUnits.assembler';
 import { AccountsDao } from '../accounts/accounts.dao';
+import { OrganizationalUnitsAssembler } from './organizationalUnits.assembler';
+import { OrganizationalUnitsDao } from './organizationalUnits.dao';
+import { OrganizationalUnitResource } from './organizationalUnits.model';
+import { OrganizationalUnitsService } from './organizationalUnits.service';
 
 describe('OrganizationalUnitService', function () {
     let instance: OrganizationalUnitsService;

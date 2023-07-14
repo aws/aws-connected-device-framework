@@ -10,6 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Response } from 'express';
 import { inject } from 'inversify';
 import {
@@ -34,7 +35,6 @@ import {
     TypeResourceList,
 } from '../types/types.models';
 import { handleError } from '../utils/errors';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { TypeCategory } from './constants';
 import { TypesService } from './types.service';
 

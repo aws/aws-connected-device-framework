@@ -10,24 +10,24 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { process, structure } from 'gremlin';
-import { injectable, inject } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import * as jsonpatch from 'fast-json-patch';
+import { process, structure } from 'gremlin';
+import { inject, injectable } from 'inversify';
+import { BaseDaoFull } from '../data/base.full.dao';
+import { DirectionToStringArrayMap, SortKeys } from '../data/model';
 import { TYPES } from '../di/types';
+import { TemplateNotFoundError } from '../utils/errors';
+import { TypeCategory } from './constants';
 import {
-    TypeModel,
-    TypeVersionModel,
-    TypeRelationsModel,
-    TypeDefinitionStatus,
-    isRelationTargetExpanded,
     RelationTarget,
     RelationTargetExpanded,
+    TypeDefinitionStatus,
+    TypeModel,
+    TypeRelationsModel,
+    TypeVersionModel,
+    isRelationTargetExpanded,
 } from './types.models';
-import * as jsonpatch from 'fast-json-patch';
-import { TypeCategory } from './constants';
-import { DirectionToStringArrayMap, SortKeys } from '../data/model';
-import { BaseDaoFull } from '../data/base.full.dao';
-import { TemplateNotFoundError } from '../utils/errors';
 
 const __ = process.statics;
 

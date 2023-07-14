@@ -6,23 +6,23 @@ import { KmsKeyInstaller } from '../commands/modules/infrastructure/kms';
 import { OpenSslInstaller } from '../commands/modules/infrastructure/openSsl';
 import { VpcInstaller } from '../commands/modules/infrastructure/vpc';
 import { AssetLibraryInstaller } from '../commands/modules/service/assetLibrary';
+import { AssetLibraryExportInstaller } from '../commands/modules/service/assetLibraryExport';
 import { AssetLibraryHistoryInstaller } from '../commands/modules/service/assetLibraryHistory';
 import { AuthDeviceCertInstaller } from '../commands/modules/service/authDeviceCert';
 import { BulkCertificatesInstaller } from '../commands/modules/service/bulkCerts';
 import { CertificateActivatorInstaller } from '../commands/modules/service/certificateActivator';
 import { CertificateVendorInstaller } from '../commands/modules/service/certificateVendor';
+import { CommandAndControlInstaller } from '../commands/modules/service/commandAndControl';
 import { CommandsInstaller } from '../commands/modules/service/commands';
 import { DeviceMonitoringInstaller } from '../commands/modules/service/deviceMonitoring';
+import { DevicePatcherInstaller } from '../commands/modules/service/devicePatcher';
+import { FleetSimulatorInstaller } from '../commands/modules/service/fleetSimulator';
 import { Greengrass2InstallerConfigGeneratorsInstaller } from '../commands/modules/service/greengrass2InstallerConfigGenerators';
 import { Greengrass2ProvisioningInstaller } from '../commands/modules/service/greengrass2Provisioning';
+import { NotificationsInstaller } from '../commands/modules/service/notifications';
+import { OrganizationManagerInstaller } from '../commands/modules/service/organizationManager';
 import { ProvisioningInstaller } from '../commands/modules/service/provisioning';
 import { Answers } from './answers';
-import { NotificationsInstaller } from '../commands/modules/service/notifications';
-import { FleetSimulatorInstaller } from '../commands/modules/service/fleetSimulator';
-import { DevicePatcherInstaller } from '../commands/modules/service/devicePatcher';
-import { AssetLibraryExportInstaller } from '../commands/modules/service/assetLibraryExport';
-import { CommandAndControlInstaller } from '../commands/modules/service/commandAndControl';
-import { OrganizationManagerInstaller } from '../commands/modules/service/organizationManager';
 
 export type ModuleName =
     // infrastructure modules:

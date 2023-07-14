@@ -10,31 +10,30 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
+import 'reflect-metadata';
 
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
-import '../api/eventsources/eventsource.controller';
-import '../api/events/event.controller';
-import '../api/subscriptions/subscription.controller';
-import '../api/messages/messages.controller';
-import '../api/targets/target.controller';
-import '../api/messages/apigwtrigger.controller';
 import { AlertDao } from '../alerts/alert.dao';
 import { EventAssembler } from '../api/events/event.assembler';
+import '../api/events/event.controller';
 import { EventDao } from '../api/events/event.dao';
 import { EventConditionsUtils } from '../api/events/event.models';
 import { EventService } from '../api/events/event.service';
 import { EventSourceAssembler } from '../api/eventsources/eventsource.assembler';
+import '../api/eventsources/eventsource.controller';
 import { EventSourceDao } from '../api/eventsources/eventsource.dao';
 import { EventSourceService } from '../api/eventsources/eventsource.service';
 import { ApiGatewayEventSource } from '../api/eventsources/sources/apigateway.source';
 import { DynamoDbEventSource } from '../api/eventsources/sources/dynamodb.source';
 import { IotCoreEventSource } from '../api/eventsources/sources/iotcore.source';
+import '../api/messages/apigwtrigger.controller';
 import { ApigwTriggerService } from '../api/messages/apigwtrigger.service';
+import '../api/messages/messages.controller';
 import { SubscriptionAssembler } from '../api/subscriptions/subscription.assembler';
+import '../api/subscriptions/subscription.controller';
 import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
 import { SubscriptionService } from '../api/subscriptions/subscription.service';
 import { DynamodDBTarget } from '../api/targets/processors/dynamodb.target';
@@ -43,6 +42,7 @@ import { PushTarget } from '../api/targets/processors/push.target';
 import { SMSTarget } from '../api/targets/processors/sms.target';
 import { SNSTarget } from '../api/targets/processors/sns.target';
 import { TargetAssembler } from '../api/targets/target.assembler';
+import '../api/targets/target.controller';
 import { TargetDao } from '../api/targets/target.dao';
 import { TargetService } from '../api/targets/target.service';
 import { FilterService } from '../filter/filter.service';

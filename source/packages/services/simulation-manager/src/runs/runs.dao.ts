@@ -15,7 +15,7 @@ import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
-import { createDelimitedAttribute, PkType } from '../utils/pkUtils.util';
+import { PkType, createDelimitedAttribute } from '../utils/pkUtils.util';
 import { RunItem } from './runs.models';
 
 @injectable()

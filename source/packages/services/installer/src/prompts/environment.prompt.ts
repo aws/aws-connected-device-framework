@@ -11,8 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import fs from 'fs';
-import path from 'path';
 import { Question } from 'inquirer';
+import path from 'path';
 
 export function overwriteEnvironmentPrompt(): Question {
     return {

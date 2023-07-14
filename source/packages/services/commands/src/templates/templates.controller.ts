@@ -11,24 +11,24 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Response } from 'express';
-import {
-    interfaces,
-    controller,
-    response,
-    httpPost,
-    requestBody,
-    httpGet,
-    requestParam,
-    httpPatch,
-    httpDelete,
-} from 'inversify-express-utils';
 import { inject } from 'inversify';
+import {
+    controller,
+    httpDelete,
+    httpGet,
+    httpPatch,
+    httpPost,
+    interfaces,
+    requestBody,
+    requestParam,
+    response,
+} from 'inversify-express-utils';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
-import { TemplatesService } from './templates.service';
-import { TemplateModel, TemplateListModel } from './templates.models';
-import { PathHelper } from '../utils/path.helper';
 import { handleError } from '../utils/errors';
+import { logger } from '../utils/logger';
+import { PathHelper } from '../utils/path.helper';
+import { TemplateListModel, TemplateModel } from './templates.models';
+import { TemplatesService } from './templates.service';
 
 @controller('/templates')
 export class TemplatesController implements interfaces.Controller {

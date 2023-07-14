@@ -24,9 +24,9 @@ import {
 } from 'inversify-express-utils';
 import { Deployment } from '../deployments/deployments.models';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors.util';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import {
     CoreDeploymentList,
     DeploymentTask,

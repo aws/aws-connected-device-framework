@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { process } from 'gremlin';
 import { injectable } from 'inversify';
-import { PolicyModel, AttachedPolicy, Policy } from './policies.models';
-import { logger } from '@awssolutions/simple-cdf-logger';
+import { AttachedPolicy, Policy, PolicyModel } from './policies.models';
 
 @injectable()
 export class PoliciesAssembler {

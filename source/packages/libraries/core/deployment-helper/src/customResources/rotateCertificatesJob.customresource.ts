@@ -11,8 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { inject, injectable } from 'inversify';
-import ow from 'ow';
 import {
     COMMANDANDCONTROL_CLIENT_TYPES,
     CommandsService,
@@ -20,8 +18,10 @@ import {
     MessagesService,
     NewMessageResource,
 } from '@awssolutions/cdf-commandandcontrol-client';
-import { CustomResourceEvent } from './customResource.model';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
 import { CustomResource } from './customResource';
+import { CustomResourceEvent } from './customResource.model';
 
 @injectable()
 export class RotateCertificatesJobCustomResource implements CustomResource {

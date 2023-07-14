@@ -21,12 +21,12 @@ import {
     GreengrassV2Client,
 } from '@aws-sdk/client-greengrassv2';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
 import {
     TemplateListPaginationKey,
-    TemplatesDao,
     TemplateVersionListPaginationKey,
+    TemplatesDao,
 } from './templates.dao';
 import { Component, TemplateItem } from './templates.models';
 

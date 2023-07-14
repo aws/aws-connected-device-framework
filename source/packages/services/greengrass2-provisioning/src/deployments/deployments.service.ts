@@ -30,19 +30,19 @@ import {
     TagResourceCommand,
 } from '@aws-sdk/client-iot';
 
+import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CoresService } from '../cores/cores.service';
 import { DeploymentTasksDao } from '../deploymentTasks/deploymentTasks.dao';
 import { TYPES } from '../di/types';
 import { TemplateItem } from '../templates/templates.models';
 import { TemplatesService } from '../templates/templates.service';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import {
     Deployment,
     DeploymentTaskCreatedEvent,
     DeploymentTaskCreatedPayload,
     NewDeployment,
 } from './deployments.models';
-import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
 
 export const DEPLOYMENT_TASK_ID_TAG_KEY = 'cdf-greengrass2-provisioning-deployment-task-id';
 

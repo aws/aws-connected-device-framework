@@ -14,13 +14,13 @@ import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
 import JSZip from 'jszip';
 import ow from 'ow';
+import pLimit from 'p-limit';
 import * as pem from 'pem';
 import { promisify } from 'util';
 import { v1 as uuid } from 'uuid';
-import pLimit from 'p-limit';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
 import {
     ACMCertificate,
     CertificateChunkRequest,

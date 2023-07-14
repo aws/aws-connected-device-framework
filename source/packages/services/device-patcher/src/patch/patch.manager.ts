@@ -11,8 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import ow from 'ow';
 import { inject, injectable } from 'inversify';
+import ow from 'ow';
 
 import { TYPES } from '../di/types';
 

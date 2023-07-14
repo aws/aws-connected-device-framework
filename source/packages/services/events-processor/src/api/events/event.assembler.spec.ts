@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
-import { EventConditionsUtils } from './event.models';
-import { EventAssembler } from './event.assembler';
 import { createMockInstance } from 'jest-create-mock-instance';
+import 'reflect-metadata';
+import { EventAssembler } from './event.assembler';
+import { EventConditionsUtils } from './event.models';
 
 describe('EventAssembler', () => {
     let mockedEventConditionsUtil: jest.Mocked<EventConditionsUtils>;

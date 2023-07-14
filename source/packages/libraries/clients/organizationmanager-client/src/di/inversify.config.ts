@@ -10,21 +10,21 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
+import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import 'reflect-metadata';
+import { AccountsApigwService } from '../client/accounts.apigw.service';
+import { AccountsLambdaService } from '../client/accounts.lambda.service';
+import { AccountsService } from '../client/accounts.service';
+import { BulkComponentsApigwService } from '../client/bulkComponents.apigw.service';
+import { BulkComponentsLambdaService } from '../client/bulkComponents.lambda.service';
+import { BulkComponentsService } from '../client/bulkComponents.service';
+import { OrganizationalUnitsApigwService } from '../client/organizationalUnits.apigw.service';
+import { OrganizationalUnitsLambdaService } from '../client/organizationalUnits.lambda.service';
+import { OrganizationalUnitsService } from '../client/organizationalUnits.service';
 import '../config/env';
 import { ORGMANLIBRARY_CLIENT_TYPES } from './types';
-import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 import AWS = require('aws-sdk');
-import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
-import { AccountsService } from '../client/accounts.service';
-import { AccountsLambdaService } from '../client/accounts.lambda.service';
-import { AccountsApigwService } from '../client/accounts.apigw.service';
-import { OrganizationalUnitsApigwService } from '../client/organizationalUnits.apigw.service';
-import { OrganizationalUnitsService } from '../client/organizationalUnits.service';
-import { BulkComponentsApigwService } from '../client/bulkComponents.apigw.service';
-import { BulkComponentsService } from '../client/bulkComponents.service';
-import { OrganizationalUnitsLambdaService } from '../client/organizationalUnits.lambda.service';
-import { BulkComponentsLambdaService } from '../client/bulkComponents.lambda.service';
 
 export const organizationManagerContainerModule = new ContainerModule(
     (

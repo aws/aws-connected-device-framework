@@ -14,12 +14,12 @@ import { inject, injectable } from 'inversify';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../../di/types';
 
-import { Loader, Loaded } from '../load.service';
-import { Transformed } from '../transform.service';
 import ow from 'ow';
+import { Loaded, Loader } from '../load.service';
+import { Transformed } from '../transform.service';
 
 @injectable()
 export class S3Loader implements Loader {

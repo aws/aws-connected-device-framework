@@ -10,18 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import * as fs from 'fs';
 import * as path from 'path';
+import 'reflect-metadata';
 
-import { SchemaValidatorService } from './schemaValidator.full.service';
-import { Operation, TypeCategory } from './constants';
-import { DevicesDaoFull } from '../devices/devices.full.dao';
-import { GroupsDaoFull } from '../groups/groups.full.dao';
 import createMockInstance from 'jest-create-mock-instance';
 import { DirectionToRelatedEntityArrayMap, EntityTypeMap } from '../data/model';
-import { TypeModel, TypeRelationsModel } from './types.models';
+import { DevicesDaoFull } from '../devices/devices.full.dao';
+import { GroupsDaoFull } from '../groups/groups.full.dao';
+import { Operation, TypeCategory } from './constants';
+import { SchemaValidatorService } from './schemaValidator.full.service';
 import { TypesDaoFull } from './types.full.dao';
+import { TypeModel, TypeRelationsModel } from './types.models';
 
 describe('SchemaValidatorService', () => {
     let mockedDevicesDaoFull: jest.Mocked<DevicesDaoFull>;

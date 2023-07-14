@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Response } from 'express';
 import { inject } from 'inversify';
 import {
@@ -27,7 +28,6 @@ import {
 } from 'inversify-express-utils';
 import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { CommandsAssembler } from './commands.assembler';
 import {
     CommandResource,

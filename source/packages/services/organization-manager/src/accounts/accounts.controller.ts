@@ -11,32 +11,32 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Response } from 'express';
+import { inject } from 'inversify';
 import {
-    interfaces,
     controller,
-    response,
+    httpDelete,
+    httpGet,
+    httpPatch,
     httpPost,
+    interfaces,
+    queryParam,
     requestBody,
     requestParam,
-    httpGet,
-    httpDelete,
-    httpPatch,
-    queryParam,
+    response,
 } from 'inversify-express-utils';
-import { inject } from 'inversify';
 import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import { AccountsService } from './accounts.service';
 import {
     AccountCreationRequest,
     AccountRegionUpdateRequest,
     AccountResource,
     AccountResourceList,
 } from './accounts.models';
+import { AccountsService } from './accounts.service';
 
-import { handleError } from '../utils/errors';
 import { ManifestService } from '../manifest/manifest.service';
+import { handleError } from '../utils/errors';
 import { AccountsAssembler } from './accounts.assembler';
 
 @controller('')

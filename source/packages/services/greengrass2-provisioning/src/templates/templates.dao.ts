@@ -23,6 +23,7 @@ import {
     QueryCommandInput,
 } from '@aws-sdk/lib-dynamodb';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import {
     DynamoDbPaginationKey,
     GSI1_INDEX_NAME,
@@ -31,12 +32,11 @@ import {
 } from '../common/common.models';
 import { TYPES } from '../di/types';
 import { DocumentDbClientItem, DynamoDbUtils } from '../utils/dynamoDb.util';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import {
+    PkType,
     createDelimitedAttribute,
     createDelimitedAttributePrefix,
     expandDelimitedAttribute,
-    PkType,
 } from '../utils/pkUtils.util';
 import { Component, TemplateItem } from './templates.models';
 

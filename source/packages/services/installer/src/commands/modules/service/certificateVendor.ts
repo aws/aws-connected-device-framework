@@ -10,22 +10,22 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import ow from 'ow';
 import inquirer from 'inquirer';
-import path from 'path';
 import { ListrTask } from 'listr2';
+import ow from 'ow';
+import path from 'path';
 import { Answers } from '../../../models/answers';
 import { ModuleName, ServiceModule } from '../../../models/modules';
-import { ConfigBuilder } from '../../../utils/configBuilder';
-import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
+import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 import {
     deleteStack,
     getStackResourceSummaries,
     packageAndDeployStack,
     packageAndUploadTemplate,
 } from '../../../utils/cloudformation.util';
-import { getMonorepoRoot } from '../../../prompts/paths.prompt';
+import { ConfigBuilder } from '../../../utils/configBuilder';
 
 export class CertificateVendorInstaller implements ServiceModule {
     public readonly friendlyName = 'Certificate Vendor';

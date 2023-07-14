@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
+import 'reflect-metadata';
 
-import { PoliciesServiceFull } from './policies.full.service';
+import { EventEmitter } from '../events/eventEmitter.service';
+import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { PoliciesAssembler } from './policies.assembler';
 import { PoliciesDaoFull } from './policies.full.dao';
+import { PoliciesServiceFull } from './policies.full.service';
 import { AttachedPolicy, PolicyModel } from './policies.models';
-import { EventEmitter } from '../events/eventEmitter.service';
 import { PoliciesService } from './policies.service';
-import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 
 describe('PoliciesService', () => {
     let mockedDao: jest.Mocked<PoliciesDaoFull>;

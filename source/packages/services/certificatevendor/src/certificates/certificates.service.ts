@@ -10,26 +10,26 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import * as pem from 'pem';
-import ow from 'ow';
 import { Iot } from 'aws-sdk';
-import { CertificateResponseModel } from './certificates.models';
 import {
-    UpdateCertificateRequest,
+    AttachThingPrincipalRequest,
     DescribeCACertificateRequest,
     DescribeCACertificateResponse,
-    RegisterCertificateRequest,
-    RegisterCertificateResponse,
-    ListThingPrincipalsResponse,
-    AttachThingPrincipalRequest,
-    ListPrincipalThingsResponse,
     GetEffectivePoliciesResponse,
     ListAttachedPoliciesResponse,
+    ListPrincipalThingsResponse,
+    ListThingPrincipalsResponse,
+    RegisterCertificateRequest,
+    RegisterCertificateResponse,
+    UpdateCertificateRequest,
 } from 'aws-sdk/clients/iot';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import * as pem from 'pem';
+import { TYPES } from '../di/types';
 import { RegistryManager } from '../registry/registry.interfaces';
+import { CertificateResponseModel } from './certificates.models';
 
 @injectable()
 export class CertificateService {

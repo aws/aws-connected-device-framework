@@ -1,11 +1,11 @@
-import { logger } from '../utils/logger';
-import { DeviceState } from './device.state';
 import { EventEmitter } from 'events';
 import { inject, injectable } from 'inversify';
-import { DEVICE_SIMULATOR_TYPES } from '../di/types';
 import ow from 'ow';
-import { AwsIotThing } from '../iot/awsIotThing';
 import { CalcEngine } from '../calculations/calc.engine';
+import { DEVICE_SIMULATOR_TYPES } from '../di/types';
+import { AwsIotThing } from '../iot/awsIotThing';
+import { logger } from '../utils/logger';
+import { DeviceState } from './device.state';
 
 /**
  * Represents the `Context` of a finite state machine (see https://refactoring.guru/design-patterns/state for a description of this pattern).

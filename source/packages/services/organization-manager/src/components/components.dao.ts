@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
-import AWS = require('aws-sdk');
-import { ComponentItem } from './components.model';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import {
+    PkType,
     createDelimitedAttribute,
     createDelimitedAttributePrefix,
-    PkType,
 } from '../utils/pkUtils.util';
+import { ComponentItem } from './components.model';
+import AWS = require('aws-sdk');
 
 @injectable()
 export class ComponentsDao {

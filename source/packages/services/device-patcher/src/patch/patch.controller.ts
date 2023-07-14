@@ -24,13 +24,13 @@ import {
     response,
 } from 'inversify-express-utils';
 
-import { handleError } from '../utils/errors';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { handleError } from '../utils/errors';
 
 import { TYPES } from '../di/types';
-import { PatchService } from './patch.service';
 import { PatchAssembler } from './patch.assembler';
 import { PatchResource } from './patch.model';
+import { PatchService } from './patch.service';
 
 @controller('')
 export class PatchController implements interfaces.Controller {

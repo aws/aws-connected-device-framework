@@ -10,15 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { TypeCategory } from '../types/constants';
 import {
-    ModelAttributeValue,
-    StringArrayMap,
-    DirectionToStringArrayMap,
     DirectionToRelatedEntityArrayMap,
+    DirectionToStringArrayMap,
+    ModelAttributeValue,
     RelationDirection,
+    StringArrayMap,
 } from '../data/model';
-import { DeviceItem, DeviceBaseResource } from '../devices/devices.models';
+import { DeviceBaseResource, DeviceItem } from '../devices/devices.models';
+import { TypeCategory } from '../types/constants';
 
 export class GroupBaseResource {
     name: string;

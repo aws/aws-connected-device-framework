@@ -12,8 +12,8 @@
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
 
 import AWS = require('aws-sdk');
 

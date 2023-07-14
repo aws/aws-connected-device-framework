@@ -13,11 +13,11 @@
 
 import { inject, injectable } from 'inversify';
 
-import { TYPES } from '../di/types';
-import { CustomResourceEvent } from './customResource.model';
-import { CustomResource } from './customResource';
-import ow from 'ow';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import ow from 'ow';
+import { TYPES } from '../di/types';
+import { CustomResource } from './customResource';
+import { CustomResourceEvent } from './customResource.model';
 
 interface IotThingGroupCustomResourceOutput {
     thingGroupName?: string;

@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
+import 'reflect-metadata';
 
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
@@ -37,15 +37,15 @@ if (process.env.MODE === 'lite') {
 }
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
-import '../search/search.controller';
-import '../devices/devices.controller';
 import '../devices/bulkdevices.controller';
-import '../groups/groups.controller';
+import '../devices/devices.controller';
 import '../groups/bulkgroups.controller';
-import '../types/types.controller';
+import '../groups/groups.controller';
+import '../init/init.controller';
 import '../policies/policies.controller';
 import '../profiles/profiles.controller';
-import '../init/init.controller';
+import '../search/search.controller';
+import '../types/types.controller';
 
 container.bind<HttpHeaderUtils>(TYPES.HttpHeaderUtils).to(HttpHeaderUtils).inSingletonScope();
 container.bind<TypeUtils>(TYPES.TypeUtils).to(TypeUtils).inSingletonScope();

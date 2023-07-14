@@ -10,13 +10,13 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { normalisePath } from '@awssolutions/cdf-express-middleware';
+import { getRequestIdFromRequest, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
+import * as bodyParser from 'body-parser';
+import { Application, NextFunction, Request, Response } from 'express';
+import { InversifyExpressServer } from 'inversify-express-utils';
 import 'reflect-metadata';
 import { container } from './di/inversify.config';
-import { InversifyExpressServer } from 'inversify-express-utils';
-import * as bodyParser from 'body-parser';
-import { getRequestIdFromRequest, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
-import { Request, Response, NextFunction, Application } from 'express';
-import { normalisePath } from '@awssolutions/cdf-express-middleware';
 import cors = require('cors');
 
 const PORT = 3002;

@@ -10,23 +10,23 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
+import 'reflect-metadata';
 
-import { TemplatesService } from '../../templates/templates.service';
 import {
     DevicesService,
     GroupsService,
-    SearchService,
     SearchRequestModel,
     SearchResultsModel,
+    SearchService,
 } from '@awssolutions/cdf-assetlibrary-client';
 import { ThingsService } from '@awssolutions/cdf-provisioning-client';
+import { TemplatesService } from '../../templates/templates.service';
 import { StartJobAction, TargetType } from './workflow.startjob';
 
 import AWS from 'aws-sdk';
-import { CommandsDao } from '../commands.dao';
 import { mock } from 'jest-mock-extended';
+import { CommandsDao } from '../commands.dao';
 import { CommandsValidator } from '../commands.validator';
 
 let mockedTemplatesService: jest.Mocked<TemplatesService>;

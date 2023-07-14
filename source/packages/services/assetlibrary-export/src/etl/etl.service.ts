@@ -13,15 +13,15 @@
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
 
 import { Batch } from '../batch/batch.service';
-import { ExtractService } from './extract.service';
-import { TransformService } from './transform.service';
-import { LoadService, Loaded } from './load.service';
-import { S3Utils } from '../utils/s3.util';
 import { LabelsService } from '../labels/labels.service';
+import { S3Utils } from '../utils/s3.util';
+import { ExtractService } from './extract.service';
+import { LoadService, Loaded } from './load.service';
+import { TransformService } from './transform.service';
 
 @injectable()
 export class ETLService {

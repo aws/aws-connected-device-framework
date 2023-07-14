@@ -10,24 +10,24 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Response, Request } from 'express';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { Request, Response } from 'express';
+import { inject } from 'inversify';
 import {
-    interfaces,
     controller,
-    response,
+    httpGet,
+    httpPost,
+    interfaces,
+    queryParam,
     request,
     requestBody,
-    httpPost,
-    httpGet,
-    queryParam,
+    response,
 } from 'inversify-express-utils';
-import { inject } from 'inversify';
-import { BulkGroupsResource, BulkGroupsResult, GroupMemberResourceList } from './groups.models';
-import { GroupsService } from './groups.service';
 import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { InvalidQueryStringError, handleError } from '../utils/errors';
 import { GroupsAssembler } from './groups.assembler';
+import { BulkGroupsResource, BulkGroupsResult, GroupMemberResourceList } from './groups.models';
+import { GroupsService } from './groups.service';
 
 @controller('/bulkgroups')
 export class BulkGroupsController implements interfaces.Controller {

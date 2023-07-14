@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
+import { Container, decorate, injectable, interfaces } from 'inversify';
+import 'reflect-metadata';
 
 import AWS = require('aws-sdk');
-import { Container, decorate, injectable, interfaces } from 'inversify';
 
 import { BatchService } from '../batch/batch.service';
 import { CategoryBatcher } from '../batch/batchers/category.batcher';

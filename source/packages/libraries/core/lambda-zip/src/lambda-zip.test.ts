@@ -1,8 +1,8 @@
-import * as copyModule from './copy';
 import * as esbuild from 'esbuild';
 import { existsSync, mkdtempSync, rmSync } from 'fs';
 import { tmpdir } from 'os';
 import path from 'path';
+import * as copyModule from './copy';
 import { lambdaZip } from './lambda-zip';
 
 jest.mock('./copy');

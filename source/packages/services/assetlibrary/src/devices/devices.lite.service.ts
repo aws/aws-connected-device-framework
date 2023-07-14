@@ -10,19 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { BulkDevicesResult, DeviceItemList, DeviceItem } from './devices.models';
-import { DevicesService } from './devices.service';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { TYPES } from '../di/types';
-import { DevicesDaoLite } from './devices.lite.dao';
-import { DevicesAssembler } from './devices.assembler';
-import { TypeCategory } from '../types/constants';
-import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
-import { GroupItemList } from '../groups/groups.models';
+import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
 import { GroupsDaoLite } from '../groups/groups.lite.dao';
+import { GroupItemList } from '../groups/groups.models';
+import { TypeCategory } from '../types/constants';
 import { DeviceNotFoundError, NotSupportedError } from '../utils/errors';
+import { DevicesAssembler } from './devices.assembler';
+import { DevicesDaoLite } from './devices.lite.dao';
+import { BulkDevicesResult, DeviceItem, DeviceItemList } from './devices.models';
+import { DevicesService } from './devices.service';
 
 @injectable()
 export class DevicesServiceLite implements DevicesService {

@@ -10,32 +10,32 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Request, Response } from 'express';
-import {
-    interfaces,
-    controller,
-    httpGet,
-    response,
-    request,
-    requestParam,
-    httpPost,
-    requestBody,
-    queryParam,
-    httpDelete,
-    httpPatch,
-    httpPut,
-} from 'inversify-express-utils';
-import { inject } from 'inversify';
-import { GroupBaseResource, GroupResourceList, GroupMemberResourceList } from './groups.models';
-import { GroupsService } from './groups.service';
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { Request, Response } from 'express';
+import { inject } from 'inversify';
+import {
+    controller,
+    httpDelete,
+    httpGet,
+    httpPatch,
+    httpPost,
+    httpPut,
+    interfaces,
+    queryParam,
+    request,
+    requestBody,
+    requestParam,
+    response,
+} from 'inversify-express-utils';
+import { assembleSortKeys } from '../data/model';
+import { DevicesAssembler } from '../devices/devices.assembler';
+import { DeviceResourceList } from '../devices/devices.models';
+import { TYPES } from '../di/types';
 import { TypeCategory } from '../types/constants';
 import { InvalidQueryStringError, handleError } from '../utils/errors';
-import { DeviceResourceList } from '../devices/devices.models';
 import { GroupsAssembler } from './groups.assembler';
-import { DevicesAssembler } from '../devices/devices.assembler';
-import { assembleSortKeys } from '../data/model';
+import { GroupBaseResource, GroupMemberResourceList, GroupResourceList } from './groups.models';
+import { GroupsService } from './groups.service';
 
 @controller('/groups')
 export class GroupsController implements interfaces.Controller {

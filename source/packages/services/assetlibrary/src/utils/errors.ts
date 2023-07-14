@@ -10,12 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Response } from 'express';
 import {
     SchemaValidationResult,
     ValidateRelationshipsByIdsResult,
 } from '../types/schemaValidator.full.service';
-import { logger } from '@awssolutions/simple-cdf-logger';
 
 export function handleError(e: Error, res: Response): void {
     logger.error(`handleError: ${e}`);

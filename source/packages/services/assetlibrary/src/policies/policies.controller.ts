@@ -10,25 +10,25 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Response } from 'express';
-import {
-    interfaces,
-    controller,
-    response,
-    httpPost,
-    requestBody,
-    httpGet,
-    queryParam,
-    httpPatch,
-    requestParam,
-    httpDelete,
-} from 'inversify-express-utils';
-import { inject } from 'inversify';
-import { PolicyModel, PolicyListModel } from './policies.models';
-import { PoliciesService } from './policies.service';
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { Response } from 'express';
+import { inject } from 'inversify';
+import {
+    controller,
+    httpDelete,
+    httpGet,
+    httpPatch,
+    httpPost,
+    interfaces,
+    queryParam,
+    requestBody,
+    requestParam,
+    response,
+} from 'inversify-express-utils';
+import { TYPES } from '../di/types';
 import { ArgumentError, handleError } from '../utils/errors';
+import { PolicyListModel, PolicyModel } from './policies.models';
+import { PoliciesService } from './policies.service';
 
 @controller('/policies')
 export class PoliciesController implements interfaces.Controller {

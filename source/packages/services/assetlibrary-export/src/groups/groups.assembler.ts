@@ -10,27 +10,27 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
+import { FullAssembler } from '../data/full.assembler';
+import { Node } from '../data/node';
+import { DevicesAssembler } from '../devices/devices.assembler';
+import { determineIfDeviceItem } from '../devices/devices.models';
+import { TYPES } from '../di/types';
+import { TypeCategory } from '../types/constants';
 import {
-    GroupItem,
-    GroupMemberItemList,
-    determineIfGroup20Resource,
+    BulkGroupsResource,
     Group10Resource,
     Group20Resource,
     GroupBaseResource,
+    GroupItem,
     GroupItemList,
-    GroupResourceList,
+    GroupMemberItemList,
     GroupMemberResourceList,
+    GroupResourceList,
+    determineIfGroup20Resource,
     determineIfGroupItem,
-    BulkGroupsResource,
 } from './groups.models';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import { Node } from '../data/node';
-import { DevicesAssembler } from '../devices/devices.assembler';
-import { TYPES } from '../di/types';
-import { TypeCategory } from '../types/constants';
-import { FullAssembler } from '../data/full.assembler';
-import { determineIfDeviceItem } from '../devices/devices.models';
 
 @injectable()
 export class GroupsAssembler {

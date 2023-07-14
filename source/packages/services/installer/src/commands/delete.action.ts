@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { Listr, ListrTask } from 'listr2';
-import { loadModules, Module } from '../models/modules';
+import { Module, loadModules } from '../models/modules';
 import { getCurrentAwsAccountId } from '../prompts/account.prompt';
 import { topologicallySortModules } from '../prompts/modules.prompt';
 import { AnswersStorage } from '../utils/answersStorage';

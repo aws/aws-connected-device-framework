@@ -10,15 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { TYPES } from './di/types';
-import { container } from './di/inversify.config';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { container } from './di/inversify.config';
+import { TYPES } from './di/types';
 
-import { ActivationService } from './activation/activation.service';
 import { ActivationItem } from './activation/activation.model';
+import { ActivationService } from './activation/activation.service';
 
-import { PatchService } from './patch/patch.service';
 import { PatchItem } from './patch/patch.model';
+import { PatchService } from './patch/patch.service';
 
 import { AgentbasedPatchService } from './patch/agentbased-patch.service';
 

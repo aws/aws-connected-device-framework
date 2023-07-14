@@ -11,17 +11,17 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import AWS = require('aws-sdk');
-import { inject, injectable } from 'inversify';
-import btoa from 'btoa';
 import atob from 'atob';
+import btoa from 'btoa';
+import { inject, injectable } from 'inversify';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { createDelimitedAttribute, expandDelimitedAttribute, PkType } from '../utils/pKUtils.util';
+import { TYPES } from '../di/types';
+import { PkType, createDelimitedAttribute, expandDelimitedAttribute } from '../utils/pKUtils.util';
 
-import { PatchTaskItem, PatchTaskList } from './patchTask.model';
-import { PatchItem } from './patch.model';
 import { PatchDao } from './patch.dao';
+import { PatchItem } from './patch.model';
+import { PatchTaskItem, PatchTaskList } from './patchTask.model';
 
 @injectable()
 export class PatchTaskDao {

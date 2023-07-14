@@ -11,10 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus } from './types.models';
-import { SchemaValidationResult } from './schemaValidator.full.service';
-import { TypeCategory } from './constants';
 import { SortKeys } from '../data/model';
+import { TypeCategory } from './constants';
+import { SchemaValidationResult } from './schemaValidator.full.service';
+import { TypeDefinitionModel, TypeDefinitionStatus, TypeModel } from './types.models';
 
 export interface TypesService {
     get(

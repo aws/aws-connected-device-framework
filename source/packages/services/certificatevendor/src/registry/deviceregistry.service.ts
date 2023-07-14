@@ -10,12 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import ow from 'ow';
-import { RegistryManager } from './registry.interfaces';
-import { TYPES } from '../di/types';
 import { Iot } from 'aws-sdk';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import { TYPES } from '../di/types';
+import { RegistryManager } from './registry.interfaces';
 
 @injectable()
 export class DeviceRegistryManager implements RegistryManager {

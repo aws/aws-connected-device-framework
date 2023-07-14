@@ -14,17 +14,17 @@
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CommandItem } from '../../commands/commands.models';
 import { TYPES } from '../../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { MessageItem } from '../messages.models';
+import { BatchTargetsAction } from './workflow.batchTargets';
 import { WorkflowAction } from './workflow.interfaces';
 import { InvalidTransitionAction } from './workflow.invalidTransition';
+import { JobAction } from './workflow.job';
+import { ResolveTargetsAction } from './workflow.resolveTargets';
 import { ShadowAction } from './workflow.shadow';
 import { TopicAction } from './workflow.topic';
-import { ResolveTargetsAction } from './workflow.resolveTargets';
-import { BatchTargetsAction } from './workflow.batchTargets';
-import { JobAction } from './workflow.job';
 
 @injectable()
 export class WorkflowFactory {

@@ -13,10 +13,10 @@
 import AWS = require('aws-sdk');
 import { inject, injectable } from 'inversify';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { createDelimitedAttribute, expandDelimitedAttribute, PkType } from '../utils/pKUtils.util';
+import { TYPES } from '../di/types';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
+import { PkType, createDelimitedAttribute, expandDelimitedAttribute } from '../utils/pKUtils.util';
 
 import { PatchTemplateItem } from './template.model';
 

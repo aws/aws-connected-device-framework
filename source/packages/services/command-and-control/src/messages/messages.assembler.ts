@@ -14,17 +14,17 @@ import { injectable } from 'inversify';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
 import {
+    MessageItem,
+    MessageListPaginationKey,
+    MessageResource,
+    MessageResourceList,
+    NewMessageResource,
     Recipient,
     RecipientList,
     RecipientListPaginationKey,
+    ReplyItem,
     ReplyListPaginationKey,
     ReplyResourceList,
-    MessageItem,
-    MessageListPaginationKey,
-    MessageResourceList,
-    NewMessageResource,
-    ReplyItem,
-    MessageResource,
 } from './messages.models';
 
 @injectable()

@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Response } from 'express';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { Response } from 'express';
 
 export function handleError(e: Error, res: Response): void {
     logger.error(`handleError: ${e}`);

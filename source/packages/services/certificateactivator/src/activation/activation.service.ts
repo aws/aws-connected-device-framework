@@ -10,29 +10,29 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import * as pem from 'pem';
-import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import ow from 'ow';
 import {
-    RegistrationEvent,
-    CertificateRevocationList,
-    CertificateStatus,
-} from './activation.models';
-import {
-    DevicesService,
-    Device10Resource,
-    PoliciesService,
     ASSETLIBRARY_CLIENT_TYPES,
+    Device10Resource,
+    DevicesService,
+    PoliciesService,
 } from '@awssolutions/cdf-assetlibrary-client';
 import {
-    ThingsService,
+    PROVISIONING_CLIENT_TYPES,
     ProvisionThingRequest,
     ProvisionThingResponse,
-    PROVISIONING_CLIENT_TYPES,
+    ThingsService,
 } from '@awssolutions/cdf-provisioning-client';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import atob from 'atob';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import * as pem from 'pem';
+import { TYPES } from '../di/types';
+import {
+    CertificateRevocationList,
+    CertificateStatus,
+    RegistrationEvent,
+} from './activation.models';
 
 @injectable()
 export class ActivationService {

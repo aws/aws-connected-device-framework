@@ -14,13 +14,13 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { inject, injectable } from 'inversify';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
 import {
+    PkType,
     createDelimitedAttribute,
     createDelimitedAttributePrefix,
     expandDelimitedAttribute,
-    PkType,
 } from '../utils/pkUtils.util';
 import {
     CommandItem,

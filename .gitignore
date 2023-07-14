@@ -67,7 +67,6 @@ source/common/autoinstallers/*/.npmrc
 source/packages/**/deploy
 source/infrastructure/deployment-helper/deploy
 
-.vscode
 .idea
 .history
 dist
@@ -96,11 +95,9 @@ builds
 # misc
 **/npm-debug.log
 **/testem.log
-**/.vscode/settings.json
 
 # System Files
 **/.DS_Store
-**/.vscode
 
 **/build
 **/nyc_output

@@ -19,8 +19,8 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 
 import { DEFAULT_MIME_TYPE, normalisePath } from '@awssolutions/cdf-express-middleware';
 
-import { setClaims } from './authz/authz.middleware';
 import { getRequestIdFromRequest, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
+import { setClaims } from './authz/authz.middleware';
 
 import cors = require('cors');
 

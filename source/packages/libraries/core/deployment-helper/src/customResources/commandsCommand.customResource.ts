@@ -14,14 +14,14 @@ import { inject, injectable } from 'inversify';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
 
-import { CustomResourceEvent } from './customResource.model';
 import {
-    LambdaInvokerService,
     LAMBDAINVOKE_TYPES,
     LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
 } from '@awssolutions/cdf-lambda-invoke';
-import { CustomResource } from './customResource';
 import ow from 'ow';
+import { CustomResource } from './customResource';
+import { CustomResourceEvent } from './customResource.model';
 
 @injectable()
 export class CommandsCommandCustomResource implements CustomResource {

@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable } from 'inversify';
-import { PolicyModel } from './policies.models';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { PoliciesService } from './policies.service';
+import { injectable } from 'inversify';
 import { NotSupportedError } from '../utils/errors';
+import { PolicyModel } from './policies.models';
+import { PoliciesService } from './policies.service';
 
 @injectable()
 export class PoliciesServiceLite implements PoliciesService {

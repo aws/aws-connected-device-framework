@@ -12,15 +12,15 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 
-import AWS, { AWSError } from 'aws-sdk';
-import { ActivationService } from './activation.service';
 import {
+    Device20Resource,
     DevicesService,
     PoliciesService,
-    Device20Resource,
 } from '@awssolutions/cdf-assetlibrary-client';
 import { ThingsService } from '@awssolutions/cdf-provisioning-client';
+import AWS, { AWSError } from 'aws-sdk';
 import { mock } from 'jest-mock-extended';
+import { ActivationService } from './activation.service';
 
 let mockedIot: AWS.Iot;
 let mockedS3: AWS.S3;

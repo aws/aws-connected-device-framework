@@ -10,13 +10,13 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
-import { createMockInstance } from 'jest-create-mock-instance';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { CertificatesTaskService } from './certificatestask.service';
-import { CertificateInfo } from './certificatestask.models';
 import AWS, { AWSError } from 'aws-sdk';
+import { createMockInstance } from 'jest-create-mock-instance';
+import 'reflect-metadata';
 import { CertificatesTaskDao } from './certificatestask.dao';
+import { CertificateInfo } from './certificatestask.models';
+import { CertificatesTaskService } from './certificatestask.service';
 
 describe('CertificatesService', () => {
     let mockedCertificatesTaskDao: jest.Mocked<CertificatesTaskDao>;

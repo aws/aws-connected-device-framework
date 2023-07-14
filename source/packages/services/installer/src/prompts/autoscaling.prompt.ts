@@ -10,12 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { Question } from 'inquirer';
 import {
     Answers,
     ProvisionedConcurrencyModuleAttribues as ProvisionedConcurrencyModuleAttributes,
 } from '../models/answers';
 import { ModuleName } from '../models/modules';
-import { Question } from 'inquirer';
 
 export function enableAutoScaling(moduleName: ModuleName, answers: Answers): Question {
     return {

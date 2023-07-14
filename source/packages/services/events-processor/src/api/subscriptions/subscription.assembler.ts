@@ -10,20 +10,20 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../../di/types';
+import { EventItem } from '../events/event.models';
+import { SNSTarget } from '../targets/processors/sns.target';
+import { TargetAssembler } from '../targets/target.assembler';
+import { PaginationKey } from './subscription.dao';
 import {
+    SubscriptionBaseResource,
     SubscriptionItem,
     SubscriptionResourceList,
-    SubscriptionBaseResource,
     SubscriptionV1Resource,
     SubscriptionV2Resource,
 } from './subscription.models';
-import { TargetAssembler } from '../targets/target.assembler';
-import { EventItem } from '../events/event.models';
-import { PaginationKey } from './subscription.dao';
-import { TYPES } from '../../di/types';
-import { SNSTarget } from '../targets/processors/sns.target';
 
 @injectable()
 export class SubscriptionAssembler {

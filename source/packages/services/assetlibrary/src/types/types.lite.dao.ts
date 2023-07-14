@@ -10,19 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 
-import {
-    TypeModel,
-    TypeVersionModel,
-    TypeDefinitionModel,
-    TypeDefinitionStatus,
-} from './types.models';
-import { TYPES } from '../di/types';
 import { Iot } from 'aws-sdk';
 import { ThingTypeDefinition } from 'aws-sdk/clients/iot';
+import { TYPES } from '../di/types';
 import { TypeCategory } from './constants';
+import {
+    TypeDefinitionModel,
+    TypeDefinitionStatus,
+    TypeModel,
+    TypeVersionModel,
+} from './types.models';
 
 @injectable()
 export class TypesDaoLite {

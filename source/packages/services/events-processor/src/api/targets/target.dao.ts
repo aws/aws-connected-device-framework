@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { TYPES } from '../../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../../di/types';
 import {
-    createDelimitedAttribute,
     PkType,
+    createDelimitedAttribute,
     expandDelimitedAttribute,
 } from '../../utils/pkUtils.util';
-import { TargetItem, TargetTypeStrings, TargetItemFactory } from './targets.models';
+import { TargetItem, TargetItemFactory, TargetTypeStrings } from './targets.models';
 
 @injectable()
 export class TargetDao {

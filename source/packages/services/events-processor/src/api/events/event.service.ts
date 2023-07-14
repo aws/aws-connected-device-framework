@@ -10,17 +10,17 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { v1 as uuid } from 'uuid';
-import { EventResource, EventResourceList } from './event.models';
+import { TYPES } from '../../di/types';
+import { EventSourceDao } from '../eventsources/eventsource.dao';
+import { PaginationKey } from '../subscriptions/subscription.dao';
+import { SubscriptionService } from '../subscriptions/subscription.service';
 import { EventAssembler } from './event.assembler';
 import { EventDao } from './event.dao';
-import { SubscriptionService } from '../subscriptions/subscription.service';
-import { PaginationKey } from '../subscriptions/subscription.dao';
-import { EventSourceDao } from '../eventsources/eventsource.dao';
+import { EventResource, EventResourceList } from './event.models';
 
 @injectable()
 export class EventService {

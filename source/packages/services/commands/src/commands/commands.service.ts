@@ -10,29 +10,29 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import * as fs from 'fs';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import * as stream from 'stream';
+import * as util from 'util';
+import { v1 as uuid } from 'uuid';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
-import {
-    CommandModel,
-    CommandListModel,
-    CommandType,
-    ExecutionSummaryListModel,
-    ExecutionStatus,
-    JobStatus,
-    ExecutionModel,
-    CommandStatus,
-} from './commands.models';
 import { CommandsDao } from './commands.dao';
+import {
+    CommandListModel,
+    CommandModel,
+    CommandStatus,
+    CommandType,
+    ExecutionModel,
+    ExecutionStatus,
+    ExecutionSummaryListModel,
+    JobStatus,
+} from './commands.models';
+import { CommandsValidator } from './commands.validator';
 import { WorkflowFactory } from './workflow/workflow.factory';
 import { WorkflowAction } from './workflow/workflow.interfaces';
 import { InvalidTransitionAction } from './workflow/workflow.invalidTransition';
-import { v1 as uuid } from 'uuid';
-import * as fs from 'fs';
-import * as stream from 'stream';
-import * as util from 'util';
-import ow from 'ow';
-import { CommandsValidator } from './commands.validator';
 
 @injectable()
 export class CommandsService {

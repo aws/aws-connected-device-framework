@@ -10,13 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
+import 'reflect-metadata';
 
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
-import '../queries/queries.controller';
 import { CreateAction } from '../events/actions/eventaction.create';
 import { DeleteAction } from '../events/actions/eventaction.delete';
 import { EventActionFactory } from '../events/actions/eventaction.factory';
@@ -26,6 +25,7 @@ import { UpdateAction } from '../events/actions/eventaction.update';
 import { UpdateComponentParentAction } from '../events/actions/eventaction.updateComponentParent';
 import { EventsDao } from '../events/events.dao';
 import { EventsService } from '../events/events.service';
+import '../queries/queries.controller';
 import { QueryService } from '../queries/queries.service';
 import { HttpHeaderUtils } from '../utils/httpHeaders';
 import { TYPES } from './types';

@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import inquirer, { Question, ListQuestionOptions } from 'inquirer';
+import inquirer, { ListQuestionOptions, Question } from 'inquirer';
 import inquirerS3 from 'inquirer-s3';
 
 inquirer.registerPrompt('s3-object', inquirerS3);

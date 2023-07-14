@@ -12,7 +12,7 @@ import {
     LambdaClient,
 } from '@aws-sdk/client-lambda';
 
-import { loadModules, RestModule } from '../models/modules';
+import { RestModule, loadModules } from '../models/modules';
 import { getCurrentAwsAccountId } from '../prompts/account.prompt';
 import { getMonorepoRoot } from '../prompts/paths.prompt';
 
@@ -110,7 +110,7 @@ async function generateLocalConfigAction(
 
         appConfig = `
 ##########################################################################################
-####               '${module.friendlyName}' application configuration           
+####               '${module.friendlyName}' application configuration
 ##########################################################################################
 
 # To run the module locally

@@ -12,13 +12,13 @@
  *********************************************************************************************************************/
 import { Response } from 'express';
 import { inject } from 'inversify';
-import { interfaces, controller, response, requestBody, httpPost } from 'inversify-express-utils';
+import { controller, httpPost, interfaces, requestBody, response } from 'inversify-express-utils';
 
+import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { CreateSimulationRequest } from './simulations.model';
 import { SimulationsService } from './simulations.service';
-import { TYPES } from '../di/types';
 
 @controller('/simulations')
 export class SimulationsController implements interfaces.Controller {

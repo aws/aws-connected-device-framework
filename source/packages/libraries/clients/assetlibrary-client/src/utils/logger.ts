@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { format } from 'logform';
-import { createLogger, LoggerOptions, transports } from 'winston';
+import { LoggerOptions, createLogger, transports } from 'winston';
 const { combine, timestamp, printf } = format;
 
 export const logger = createLogger(<LoggerOptions>{

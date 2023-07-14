@@ -11,12 +11,12 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { Context, SNSEvent } from 'aws-lambda';
+import ow from 'ow';
+import { CertificateChunkRequest } from './certificates/certificates.models';
+import { CertificatesService } from './certificates/certificates.service';
 import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
-import ow from 'ow';
-import { CertificatesService } from './certificates/certificates.service';
-import { CertificateChunkRequest } from './certificates/certificates.models';
-import { SNSEvent, Context } from 'aws-lambda';
 
 let service: CertificatesService;
 

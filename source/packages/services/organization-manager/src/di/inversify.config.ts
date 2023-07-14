@@ -12,26 +12,26 @@
  *********************************************************************************************************************/
 import '@awssolutions/cdf-config-inject';
 import { Container, decorate, injectable, interfaces } from 'inversify';
-import { TYPES } from './types';
 import { HttpHeaderUtils } from '../utils/httpHeaders';
+import { TYPES } from './types';
 import AWS = require('aws-sdk');
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
 import '../accounts/accounts.controller';
-import '../organizationalUnits/organizationalUnits.controller';
 import '../components/bulkcomponents.controller';
+import '../organizationalUnits/organizationalUnits.controller';
 
+import { AccountsAssembler } from '../accounts/accounts.assembler';
 import { AccountsDao } from '../accounts/accounts.dao';
 import { AccountsService } from '../accounts/accounts.service';
-import { OrganizationalUnitsService } from '../organizationalUnits/organizationalUnits.service';
-import { AccountsAssembler } from '../accounts/accounts.assembler';
-import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';
-import { ManifestService } from '../manifest/manifest.service';
-import { ManifestDao } from '../manifest/manifest.dao';
-import { ManifestAssembler } from '../manifest/manifest.assembler';
 import { ComponentsDao } from '../components/components.dao';
 import { ComponentsService } from '../components/components.service';
+import { ManifestAssembler } from '../manifest/manifest.assembler';
+import { ManifestDao } from '../manifest/manifest.dao';
+import { ManifestService } from '../manifest/manifest.service';
 import { OrganizationalUnitsAssembler } from '../organizationalUnits/organizationalUnits.assembler';
+import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';
+import { OrganizationalUnitsService } from '../organizationalUnits/organizationalUnits.service';
 
 // Load everything needed to the Container
 export const container = new Container();

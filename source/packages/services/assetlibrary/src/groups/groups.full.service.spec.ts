@@ -10,28 +10,28 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
+import 'reflect-metadata';
 
-import { TypesService } from '../types/types.service';
-import { TypesServiceFull } from '../types/types.full.service';
-import { GroupsService } from './groups.service';
-import { EventEmitter } from '../events/eventEmitter.service';
-import { ProfilesService } from '../profiles/profiles.service';
-import { GroupProfileItem } from '../profiles/profiles.models';
-import { GroupsAssembler } from './groups.assembler';
-import { GroupsDaoFull } from './groups.full.dao';
-import { GroupItem } from './groups.models';
-import { GroupsServiceFull } from './groups.full.service';
-import { ProfilesServiceFull } from '../profiles/profiles.full.service';
-import { DevicesAssembler } from '../devices/devices.assembler';
 import { AuthzServiceFull } from '../authz/authz.full.service';
 import { DirectionToRelatedEntityArrayMap, EntityTypeMap } from '../data/model';
 import { Node } from '../data/node';
-import { TypeUtils } from '../utils/typeUtils';
+import { DevicesAssembler } from '../devices/devices.assembler';
+import { EventEmitter } from '../events/eventEmitter.service';
+import { ProfilesServiceFull } from '../profiles/profiles.full.service';
+import { GroupProfileItem } from '../profiles/profiles.models';
+import { ProfilesService } from '../profiles/profiles.service';
 import { Operation, TypeCategory } from '../types/constants';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
+import { TypesServiceFull } from '../types/types.full.service';
 import { TypeDefinitionStatus, TypeModel } from '../types/types.models';
+import { TypesService } from '../types/types.service';
+import { TypeUtils } from '../utils/typeUtils';
+import { GroupsAssembler } from './groups.assembler';
+import { GroupsDaoFull } from './groups.full.dao';
+import { GroupsServiceFull } from './groups.full.service';
+import { GroupItem } from './groups.models';
+import { GroupsService } from './groups.service';
 
 describe('GroupsService', () => {
     let isAuthzEnabled: boolean;

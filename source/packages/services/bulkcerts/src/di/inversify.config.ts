@@ -10,15 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
 import { Container, decorate, injectable, interfaces } from 'inversify';
+import 'reflect-metadata';
 
+import '../certificates/certificates.controller';
 import { CertificatesDao } from '../certificates/certificates.dao';
 import { CertificatesService } from '../certificates/certificates.service';
 import { CertificatesTaskDao } from '../certificates/certificatestask.dao';
 import { CertificatesTaskService } from '../certificates/certificatestask.service';
-import '../certificates/certificates.controller';
 import '../certificates/supplier.controller';
 import { TYPES } from './types';
 

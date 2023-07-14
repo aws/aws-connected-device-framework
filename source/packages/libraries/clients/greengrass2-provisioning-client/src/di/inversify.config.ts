@@ -24,18 +24,18 @@ import { CoresService } from '../client/cores.service';
 import { DeploymentsApigwService } from '../client/deployments.apigw.service';
 import { DeploymentsLambdaService } from '../client/deployments.lambda.service';
 import { DeploymentsService } from '../client/deployments.service';
+import { DevicesApigwService } from '../client/devices.apigw.service';
+import { DevicesLambdaService } from '../client/devices.lambda.service';
+import { DevicesService } from '../client/devices.service';
+import { FleetApigwService } from '../client/fleet.apigw.service';
+import { FleetLambdaService } from '../client/fleet.lambda.service';
+import { FleetService } from '../client/fleet.service';
 import { TemplatesApigwService } from '../client/templates.apigw.service';
 import { TemplatesLambdaService } from '../client/templates.lambda.service';
 import { TemplatesService } from '../client/templates.service';
 import { GREENGRASS2_PROVISIONING_CLIENT_TYPES } from './types';
 
 import AWS = require('aws-sdk');
-import { FleetLambdaService } from '../client/fleet.lambda.service';
-import { FleetService } from '../client/fleet.service';
-import { FleetApigwService } from '../client/fleet.apigw.service';
-import { DevicesLambdaService } from '../client/devices.lambda.service';
-import { DevicesService } from '../client/devices.service';
-import { DevicesApigwService } from '../client/devices.apigw.service';
 export const greengrass2ProvisioningContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,

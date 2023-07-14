@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
-import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
-import { FilterService } from './filter.service';
 import { createMockInstance } from 'jest-create-mock-instance';
-import { CommonEvent } from '../transformers/transformers.model';
-import { SubscriptionItem } from '../api/subscriptions/subscription.models';
+import 'reflect-metadata';
 import { AlertDao } from '../alerts/alert.dao';
+import { AlertItem } from '../alerts/alert.models';
 import { EventDao } from '../api/events/event.dao';
 import { EventConditionsUtils } from '../api/events/event.models';
-import { AlertItem } from '../alerts/alert.models';
+import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
+import { SubscriptionItem } from '../api/subscriptions/subscription.models';
+import { CommonEvent } from '../transformers/transformers.model';
+import { FilterService } from './filter.service';
 
 describe('FilterService', () => {
     let mockedSubscriptionDao: jest.Mocked<SubscriptionDao>;

@@ -10,33 +10,33 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Request, Response } from 'express';
+import { inject } from 'inversify';
 import {
-    interfaces,
     controller,
-    request,
-    response,
-    requestParam,
-    requestBody,
-    httpPost,
+    httpDelete,
     httpGet,
     httpPatch,
-    httpDelete,
+    httpPost,
+    interfaces,
+    request,
+    requestBody,
+    requestParam,
+    response,
 } from 'inversify-express-utils';
-import { inject } from 'inversify';
 import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import { handleError } from '../utils/errors';
 import { TypeCategory } from '../types/constants';
+import { handleError } from '../utils/errors';
+import { ProfilesAssembler } from './profiles.assembler';
 import {
     DeviceProfileItem,
-    GroupProfileItem,
     DeviceProfileResource,
+    GroupProfileItem,
     GroupProfileResource,
     ProfileResourceList,
 } from './profiles.models';
 import { ProfilesService } from './profiles.service';
-import { ProfilesAssembler } from './profiles.assembler';
 
 @controller('/profiles/:category/:templateId')
 export class ProfilesController implements interfaces.Controller {

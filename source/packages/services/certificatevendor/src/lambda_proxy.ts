@@ -11,12 +11,12 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { getRequestIdFromContext, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
-import { handleError } from './utils/errors';
+import ow from 'ow';
+import { Action, CertificateRequestModel } from './certificates/certificates.models';
+import { CertificateService } from './certificates/certificates.service';
 import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
-import { CertificateService } from './certificates/certificates.service';
-import { Action, CertificateRequestModel } from './certificates/certificates.models';
-import ow from 'ow';
+import { handleError } from './utils/errors';
 
 let service: CertificateService;
 

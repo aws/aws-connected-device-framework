@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
+import 'reflect-metadata';
 
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
@@ -23,41 +23,41 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { SQSClient } from '@aws-sdk/client-sqs';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-client';
+import { eventPublisherContainerModule } from '@awssolutions/cdf-event-publisher';
 import { provisioningContainerModule } from '@awssolutions/cdf-provisioning-client';
 import { thingListBuilderContainerModule } from '@awssolutions/cdf-thing-list-builder';
-import { eventPublisherContainerModule } from '@awssolutions/cdf-event-publisher';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
-import '../templates/templates.controller';
-import '../coreTasks/coreTasks.controller';
-import '../deviceTasks/deviceTasks.controller';
-import '../devices/devices.controller';
-import '../cores/cores.controller';
-import '../fleet/fleet.controller';
-import '../deploymentTasks/deploymentTasks.controller';
-import { CoresAssembler } from '../cores/cores.assembler';
-import { CoresDao } from '../cores/cores.dao';
-import { CoresService } from '../cores/cores.service';
 import { CoreTasksAssembler } from '../coreTasks/coreTasks.assembler';
+import '../coreTasks/coreTasks.controller';
 import { CoreTasksDao } from '../coreTasks/coreTasks.dao';
 import { CoreTasksService } from '../coreTasks/coreTasks.service';
-import { DeploymentsService } from '../deployments/deployments.service';
+import { CoresAssembler } from '../cores/cores.assembler';
+import '../cores/cores.controller';
+import { CoresDao } from '../cores/cores.dao';
+import { CoresService } from '../cores/cores.service';
+import '../deploymentTasks/deploymentTasks.controller';
 import { DeploymentTasksDao } from '../deploymentTasks/deploymentTasks.dao';
 import { DeploymentTasksService } from '../deploymentTasks/deploymentTasks.service';
+import { DeploymentsService } from '../deployments/deployments.service';
+import { DeviceTasksAssembler } from '../deviceTasks/deviceTasks.assembler';
+import '../deviceTasks/deviceTasks.controller';
+import { DeviceTasksDao } from '../deviceTasks/deviceTasks.dao';
+import { DeviceTasksService } from '../deviceTasks/deviceTasks.service';
+import { DevicesAssembler } from '../devices/devices.assembler';
+import '../devices/devices.controller';
+import { DevicesDao } from '../devices/devices.dao';
+import { DevicesService } from '../devices/devices.service';
+import '../fleet/fleet.controller';
 import { FleetDao } from '../fleet/fleet.dao';
 import { FleetService } from '../fleet/fleet.service';
 import { TemplatesAssembler } from '../templates/templates.assembler';
+import '../templates/templates.controller';
 import { TemplatesDao } from '../templates/templates.dao';
 import { TemplatesService } from '../templates/templates.service';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
 import { S3Utils } from '../utils/s3.util';
 import { TYPES } from './types';
-import { DevicesAssembler } from '../devices/devices.assembler';
-import { DevicesService } from '../devices/devices.service';
-import { DevicesDao } from '../devices/devices.dao';
-import { DeviceTasksAssembler } from '../deviceTasks/deviceTasks.assembler';
-import { DeviceTasksService } from '../deviceTasks/deviceTasks.service';
-import { DeviceTasksDao } from '../deviceTasks/deviceTasks.dao';
 
 // Load everything needed to the Container
 export const container = new Container();

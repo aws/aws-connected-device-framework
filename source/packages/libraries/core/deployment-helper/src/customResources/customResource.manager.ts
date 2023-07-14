@@ -14,32 +14,32 @@ import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../di/types';
 
-import { CustomResourceEvent } from './customResource.model';
-import { AppConfigOverrideCustomResource } from './appConfigOverride.customResource';
-import { IotFleetIndexCustomResource } from './iotFleetIndex.customresource';
-import { AssetLibraryInitCustomResource } from './assetLibraryInit.customResource';
-import { IotEndpointCustomResource } from './iotEndpoint.customresource';
-import { VpcEndpointCheckCustomResource } from './vpcEndpointCheck.customResource';
-import { NeptuneEngineVersionCustomResource } from './neptuneEngineVersion.customResource';
-import { IotPoliciesCustomResource } from './iotPolicies.customresource';
-import { IotEventsCustomResource } from './iotEvents.customresource';
-import { CustomResource } from './customResource';
-import { IotThingGroupCustomResource } from './iotThingGroup.customresource';
-import { S3PutObjectCustomResource } from './s3PutObject.customResource';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { AppConfigOverrideCustomResource } from './appConfigOverride.customResource';
 import { AssetLibraryBulkGroupsCustomResource } from './assetLibraryBulkGroups.customResource';
+import { AssetLibraryInitCustomResource } from './assetLibraryInit.customResource';
 import { AssetLibraryPolicyCustomResource } from './assetLibraryPolicy.customResource';
 import { AssetLibraryTemplateCustomResource } from './assetLibraryTemplate.customResource';
-import { CommandsTemplateCustomResource } from './commandsTemplate.customResource';
 import { CommandsCommandCustomResource } from './commandsCommand.customResource';
-import { IotThingTypeCustomResource } from './iotThingType.customresource';
-import { IotDeviceDefenderCustomResource } from './iotDeviceDefender.customResource';
-import { VpcEndpointCustomResource } from './vpcEndpoint.customResource';
-import { RotateCertificatesJobCustomResource } from './rotateCertificatesJob.customresource';
+import { CommandsTemplateCustomResource } from './commandsTemplate.customResource';
+import { CustomResource } from './customResource';
+import { CustomResourceEvent } from './customResource.model';
 import { EventSourceCustomResource } from './eventSource.customResource';
 import { EventsCustomResource } from './events.customResource';
+import { IotDeviceDefenderCustomResource } from './iotDeviceDefender.customResource';
+import { IotEndpointCustomResource } from './iotEndpoint.customresource';
+import { IotEventsCustomResource } from './iotEvents.customresource';
+import { IotFleetIndexCustomResource } from './iotFleetIndex.customresource';
+import { IotPoliciesCustomResource } from './iotPolicies.customresource';
 import { IotRoleAliasCustomResource } from './iotRoleAlias.customResource';
+import { IotThingGroupCustomResource } from './iotThingGroup.customresource';
+import { IotThingTypeCustomResource } from './iotThingType.customresource';
+import { NeptuneEngineVersionCustomResource } from './neptuneEngineVersion.customResource';
+import { RotateCertificatesJobCustomResource } from './rotateCertificatesJob.customresource';
+import { S3PutObjectCustomResource } from './s3PutObject.customResource';
 import { StackEventsCustomResource } from './stackEvents.customResource';
+import { VpcEndpointCustomResource } from './vpcEndpoint.customResource';
+import { VpcEndpointCheckCustomResource } from './vpcEndpointCheck.customResource';
 
 @injectable()
 export class CustomResourceManager {

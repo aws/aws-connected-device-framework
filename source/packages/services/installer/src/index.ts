@@ -2,9 +2,9 @@
 
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { generateLocalConfigCmd } from './commands/generate-local-config.cmd';
 import { deleteCmd } from './commands/delete.cmd';
 import { deployCmd } from './commands/deploy.cmd';
+import { generateLocalConfigCmd } from './commands/generate-local-config.cmd';
 import { packageCmd } from './commands/package.cmd';
 import { postmanCmd } from './commands/postman.cmd';
 

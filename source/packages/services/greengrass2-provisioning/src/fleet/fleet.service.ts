@@ -13,10 +13,10 @@
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 import { TemplateItem } from '../templates/templates.models';
 import { TemplatesService } from '../templates/templates.service';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { FleetDao } from './fleet.dao';
 import { TemplateUsage } from './fleet.model';
 

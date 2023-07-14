@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Module, ModuleName } from '../models/modules';
-import { Answers } from '../models/answers';
-import clone from 'just-clone';
 import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
 import { CheckboxQuestion, ConfirmQuestion, ListQuestion } from 'inquirer';
+import clone from 'just-clone';
+import { Answers } from '../models/answers';
+import { Module, ModuleName } from '../models/modules';
 
 export interface ModuleListItem {
     name: string;

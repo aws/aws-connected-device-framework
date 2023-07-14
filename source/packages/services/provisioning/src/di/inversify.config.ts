@@ -17,19 +17,19 @@ import '@awssolutions/cdf-config-inject';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
-import '../things/things.controller';
 import '../things/bulkthings.controller';
 import { AttachAdditionalPoliciesProcessor } from '../things/steps/attachAdditionalPoliciesProcessor';
 import { ClientIdEnforcementPolicyStepProcessor } from '../things/steps/clientIdEnforcementPolicyStepProcessor';
+import { CreateAwsCertiticateProcessor } from '../things/steps/createAwsCertificateProcessor';
 import { CreateDeviceCertificateStepProcessor } from '../things/steps/createDeviceCertificateProcessor';
 import { RegisterDeviceCertificateWithoutCAStepProcessor } from '../things/steps/registerDeviceCertificateWithoutCaProcessor';
-import { ThingsService } from '../things/things.service';
-import { TYPES } from './types';
 import { UseACMPCAStepProcessor } from '../things/steps/useACMPCAProcessor';
+import '../things/things.controller';
+import { ThingsService } from '../things/things.service';
+import { CertUtils } from '../utils/cert';
+import { TYPES } from './types';
 
 import AWS = require('aws-sdk');
-import { CertUtils } from '../utils/cert';
-import { CreateAwsCertiticateProcessor } from '../things/steps/createAwsCertificateProcessor';
 
 // Load everything needed to the Container
 export const container = new Container();

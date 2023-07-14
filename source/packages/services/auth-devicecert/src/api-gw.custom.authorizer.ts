@@ -12,9 +12,9 @@
  *********************************************************************************************************************/
 import * as Errors from '@awssolutions/cdf-errors';
 import * as pem from 'pem';
-import AWS = require('aws-sdk');
-import { logger } from './utils/logger';
 import { promisify } from 'util';
+import { logger } from './utils/logger';
+import AWS = require('aws-sdk');
 
 /**
  * Class implementing custom authorization needed by CDF APIs.

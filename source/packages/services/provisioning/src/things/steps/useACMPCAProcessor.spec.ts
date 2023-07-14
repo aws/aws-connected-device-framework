@@ -10,14 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import { ACMPCA, AWSError, Iot } from 'aws-sdk';
+import 'reflect-metadata';
 
+import createMockInstance from 'jest-create-mock-instance';
+import { CertUtils } from '../../utils/cert';
+import { CertificateStatus, UseACMPCAParameters } from '../things.models';
 import { ProvisioningStepData } from './provisioningStep.model';
 import { UseACMPCAStepProcessor } from './useACMPCAProcessor';
-import { CertUtils } from '../../utils/cert';
-import createMockInstance from 'jest-create-mock-instance';
-import { CertificateStatus, UseACMPCAParameters } from '../things.models';
 
 // mocked values
 const ACMCPA_CA_ARN = 'arn:aws:acm-pca:us-west-2:123456789012:certificate-authority/abcde';

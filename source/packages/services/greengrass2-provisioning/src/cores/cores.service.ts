@@ -39,10 +39,10 @@ import {
     ThingsService,
 } from '@awssolutions/cdf-provisioning-client';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CoreTasksDao } from '../coreTasks/coreTasks.dao';
 import { CoreTaskItem } from '../coreTasks/coreTasks.models';
 import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { S3Utils } from '../utils/s3.util';
 import { CoreListPaginationKey, CoresDao } from './cores.dao';
 import {

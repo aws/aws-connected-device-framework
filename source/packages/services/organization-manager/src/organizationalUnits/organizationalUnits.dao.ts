@@ -11,10 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
-import { createDelimitedAttribute, PkType } from '../utils/pkUtils.util';
+import { PkType, createDelimitedAttribute } from '../utils/pkUtils.util';
 import { OrganizationalUnitItem } from './organizationalUnits.model';
 
 @injectable()

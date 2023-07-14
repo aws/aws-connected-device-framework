@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 
-import { AWSError, SQS, Iot } from 'aws-sdk';
+import { AWSError, Iot, SQS } from 'aws-sdk';
 import createMockInstance from 'jest-create-mock-instance';
 
 import { CommandsDao } from '../commands/commands.dao';

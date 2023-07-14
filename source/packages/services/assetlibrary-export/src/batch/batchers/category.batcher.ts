@@ -10,15 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { generate } from 'shortid';
 
-import { TYPES } from '../../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../../di/types';
 
-import { Batch, Batcher, Batches } from '../batch.service';
-import { TypeCategory } from '../../types/constants';
 import { LabelsService } from '../../labels/labels.service';
+import { TypeCategory } from '../../types/constants';
+import { Batch, Batcher, Batches } from '../batch.service';
 import { BatcherBase } from '../batcher.base';
 
 @injectable()

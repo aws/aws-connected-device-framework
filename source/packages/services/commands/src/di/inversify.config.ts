@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
+import 'reflect-metadata';
 
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
@@ -19,9 +19,7 @@ import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-clie
 import { provisioningContainerModule } from '@awssolutions/cdf-provisioning-client';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
-import '../templates/templates.controller';
 import '../commands/commands.controller';
-import '../presignedurls/presignedurls.controller';
 import { CommandsDao } from '../commands/commands.dao';
 import { CommandsService } from '../commands/commands.service';
 import { CommandsValidator } from '../commands/commands.validator';
@@ -30,8 +28,10 @@ import { WorkflowFactory } from '../commands/workflow/workflow.factory';
 import { InvalidTransitionAction } from '../commands/workflow/workflow.invalidTransition';
 import { SaveAction } from '../commands/workflow/workflow.save';
 import { StartJobAction } from '../commands/workflow/workflow.startjob';
+import '../presignedurls/presignedurls.controller';
 import { PresignedUrlsService } from '../presignedurls/presignedurls.service';
 import { RolloutsValidator } from '../rollouts/rollouts.validator';
+import '../templates/templates.controller';
 import { TemplatesDao } from '../templates/templates.dao';
 import { TemplatesService } from '../templates/templates.service';
 import { TemplatesValidator } from '../templates/templates.validator';

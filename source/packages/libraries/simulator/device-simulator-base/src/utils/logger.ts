@@ -11,8 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { createLogger, LoggerOptions, transports } from 'winston';
 import { format } from 'logform';
+import { createLogger, LoggerOptions, transports } from 'winston';
 
 const jsonWithColorsAndTime = format.combine(
     format.colorize({ all: true }),

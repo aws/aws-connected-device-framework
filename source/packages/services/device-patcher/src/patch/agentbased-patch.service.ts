@@ -10,18 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import ow from 'ow';
 import { inject, injectable } from 'inversify';
+import ow from 'ow';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
 
-import { AssociationModel, PatchItem, PatchSource } from './patch.model';
-import { ActivationDao } from '../activation/activation.dao';
-import { AgentbasedPatchDao } from './agentbased-patch.dao';
-import { ExpressionParser } from '../utils/expression.util';
 import { DescribeInstanceInformationRequest } from 'aws-sdk/clients/ssm';
+import { ActivationDao } from '../activation/activation.dao';
 import { PatchTemplatesService } from '../templates/template.service';
+import { ExpressionParser } from '../utils/expression.util';
+import { AgentbasedPatchDao } from './agentbased-patch.dao';
+import { AssociationModel, PatchItem, PatchSource } from './patch.model';
 
 @injectable()
 export class AgentbasedPatchService {

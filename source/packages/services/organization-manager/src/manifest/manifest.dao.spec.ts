@@ -11,8 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import AWS = require('aws-sdk');
 import { ManifestDao } from './manifest.dao';
+import AWS = require('aws-sdk');
 
 describe('Templates Dao', () => {
     let mockedDynamoDb: AWS.DynamoDB.DocumentClient;

@@ -10,38 +10,42 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
+import { Container, decorate, injectable, interfaces } from 'inversify';
+import 'reflect-metadata';
 
 import AWS = require('aws-sdk');
-import { Container, decorate, injectable, interfaces } from 'inversify';
 
-import { TYPES } from './types';
 import { HttpHeaderUtils } from '../utils/httpHeaders';
+import { TYPES } from './types';
 
 import { ActivationAssembler } from '../activation/activation.assember';
-import { ActivationService } from '../activation/activation.service';
 import { ActivationDao } from '../activation/activation.dao';
+import { ActivationService } from '../activation/activation.service';
 
+import { PatchAssembler } from '../patch/patch.assembler';
+import { PatchDao } from '../patch/patch.dao';
 import { PatchManager } from '../patch/patch.manager';
 import { PatchService } from '../patch/patch.service';
-import { PatchDao } from '../patch/patch.dao';
-import { PatchAssembler } from '../patch/patch.assembler';
 
 import { AgentbasedPatchDao } from '../patch/agentbased-patch.dao';
 import { AgentbasedPatchService } from '../patch/agentbased-patch.service';
 
+import { PatchTemplateAssembler } from '../templates/template.assembler';
 import { PatchTemplatesDao } from '../templates/template.dao';
 import { PatchTemplatesService } from '../templates/template.service';
-import { PatchTemplateAssembler } from '../templates/template.assembler';
 
-import { PatchTaskService } from '../patch/patchTask.service';
 import { PatchTaskAssembler } from '../patch/patchTask.assembler';
 import { PatchTaskDao } from '../patch/patchTask.dao';
+import { PatchTaskService } from '../patch/patchTask.service';
 
-import { S3Utils } from '../utils/s3.util';
+import '../activation/activation.controller';
+import '../patch/patch.controller';
+import '../patch/patchTask.controller';
+import '../templates/template.controller';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
 import { ExpressionParser } from '../utils/expression.util';
+import { S3Utils } from '../utils/s3.util';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -57,7 +61,6 @@ container
     .to(PatchTaskAssembler)
     .inSingletonScope();
 container.bind<PatchTaskService>(TYPES.PatchTaskService).to(PatchTaskService).inRequestScope();
-import '../patch/patchTask.controller';
 
 container
     .bind<AgentbasedPatchService>(TYPES.AgentbasedPatchService)
@@ -71,7 +74,6 @@ container.bind<PatchService>(TYPES.PatchService).to(PatchService).inSingletonSco
 container.bind<PatchManager>(TYPES.PatchManager).to(PatchManager).inSingletonScope();
 container.bind<PatchDao>(TYPES.PatchDao).to(PatchDao).inSingletonScope();
 container.bind<PatchAssembler>(TYPES.PatchAssembler).to(PatchAssembler).inSingletonScope();
-import '../patch/patch.controller';
 
 container
     .bind<PatchTemplatesService>(TYPES.PatchTemplatesService)
@@ -82,7 +84,6 @@ container
     .bind<PatchTemplateAssembler>(TYPES.PatchTemplateAssembler)
     .to(PatchTemplateAssembler)
     .inSingletonScope();
-import '../templates/template.controller';
 
 container
     .bind<ActivationAssembler>(TYPES.ActivationAssembler)
@@ -93,7 +94,6 @@ container
     .to(ActivationService)
     .inSingletonScope();
 container.bind<ActivationDao>(TYPES.ActivationDao).to(ActivationDao).inSingletonScope();
-import '../activation/activation.controller';
 
 container.bind<DynamoDbUtils>(TYPES.DynamoDbUtils).to(DynamoDbUtils).inSingletonScope();
 container.bind<ExpressionParser>(TYPES.ExpressionParser).to(ExpressionParser).inSingletonScope();

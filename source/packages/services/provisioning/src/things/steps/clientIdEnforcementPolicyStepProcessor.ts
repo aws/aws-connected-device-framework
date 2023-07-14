@@ -10,14 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { ProvisioningStepProcessor } from './provisioningStepProcessor';
-import { ProvisioningStepData } from './provisioningStep.model';
-import { CDFProvisioningTemplate, ParamaterReference } from '../templates/template.models';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { TYPES } from '../../di/types';
-import AWS = require('aws-sdk');
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
+import { TYPES } from '../../di/types';
+import { CDFProvisioningTemplate, ParamaterReference } from '../templates/template.models';
+import { ProvisioningStepData } from './provisioningStep.model';
+import { ProvisioningStepProcessor } from './provisioningStepProcessor';
+import AWS = require('aws-sdk');
 @injectable()
 export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepProcessor {
     private _clientIdEnforcementPolicyTemplate: string;

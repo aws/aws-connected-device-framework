@@ -13,8 +13,8 @@
 import { logger } from '@awssolutions/simple-cdf-logger';
 import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
-import { DDBStreamTransformer } from './transformers/ddbstream.transformer';
 import { FilterService } from './filter/filter.service';
+import { DDBStreamTransformer } from './transformers/ddbstream.transformer';
 
 let transformer: DDBStreamTransformer;
 let filter: FilterService;

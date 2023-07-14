@@ -10,9 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { ActivationResource, ActivationItem } from './activation.model';
+import { injectable } from 'inversify';
+import { ActivationItem, ActivationResource } from './activation.model';
 
 @injectable()
 export class ActivationAssembler {

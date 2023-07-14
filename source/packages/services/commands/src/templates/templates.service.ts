@@ -10,12 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
-import { TemplateModel, TemplateListModel } from './templates.models';
 import { TemplatesDao } from './templates.dao';
-import ow from 'ow';
+import { TemplateListModel, TemplateModel } from './templates.models';
 import { TemplatesValidator } from './templates.validator';
 
 @injectable()

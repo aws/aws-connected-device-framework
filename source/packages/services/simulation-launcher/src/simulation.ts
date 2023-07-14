@@ -11,10 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import '@awssolutions/cdf-config-inject';
-
-import AWS = require('aws-sdk');
 import { TaskOverride } from 'aws-sdk/clients/ecs';
 import { logger } from './utils/logger';
+
+import AWS = require('aws-sdk');
 
 export type SimulationTaskOverride = Pick<TaskOverride, 'taskRoleArn'>;
 

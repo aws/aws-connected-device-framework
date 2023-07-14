@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { GroupItem, BulkGroupsResult, GroupMemberItemList, GroupItemList } from './groups.models';
-import { TypeCategory } from '../types/constants';
-import { DeviceItemList } from '../devices/devices.models';
 import { SortKeys } from '../data/model';
+import { DeviceItemList } from '../devices/devices.models';
+import { TypeCategory } from '../types/constants';
+import { BulkGroupsResult, GroupItem, GroupItemList, GroupMemberItemList } from './groups.models';
 
 export interface GroupsService {
     get(groupPath: string, includeGroups: boolean): Promise<GroupItem>;

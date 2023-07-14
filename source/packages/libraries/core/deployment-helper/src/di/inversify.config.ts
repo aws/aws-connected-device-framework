@@ -11,13 +11,14 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
+import 'reflect-metadata';
 
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 
+import { commandAndControlContainerModule } from '@awssolutions/cdf-commandandcontrol-client';
 import { AppConfigOverrideCustomResource } from '../customResources/appConfigOverride.customResource';
 import { AssetLibraryBulkGroupsCustomResource } from '../customResources/assetLibraryBulkGroups.customResource';
 import { AssetLibraryInitCustomResource } from '../customResources/assetLibraryInit.customResource';
@@ -26,26 +27,25 @@ import { AssetLibraryTemplateCustomResource } from '../customResources/assetLibr
 import { CommandsCommandCustomResource } from '../customResources/commandsCommand.customResource';
 import { CommandsTemplateCustomResource } from '../customResources/commandsTemplate.customResource';
 import { CustomResourceManager } from '../customResources/customResource.manager';
-import { EventsCustomResource } from '../customResources/events.customResource';
 import { EventSourceCustomResource } from '../customResources/eventSource.customResource';
+import { EventsCustomResource } from '../customResources/events.customResource';
 import { IotDeviceDefenderCustomResource } from '../customResources/iotDeviceDefender.customResource';
 import { IotEndpointCustomResource } from '../customResources/iotEndpoint.customresource';
 import { IotEventsCustomResource } from '../customResources/iotEvents.customresource';
 import { IotFleetIndexCustomResource } from '../customResources/iotFleetIndex.customresource';
 import { IotPoliciesCustomResource } from '../customResources/iotPolicies.customresource';
+import { IotRoleAliasCustomResource } from '../customResources/iotRoleAlias.customResource';
 import { IotThingGroupCustomResource } from '../customResources/iotThingGroup.customresource';
 import { IotThingTypeCustomResource } from '../customResources/iotThingType.customresource';
-import { IotRoleAliasCustomResource } from '../customResources/iotRoleAlias.customResource';
 import { NeptuneEngineVersionCustomResource } from '../customResources/neptuneEngineVersion.customResource';
 import { RotateCertificatesJobCustomResource } from '../customResources/rotateCertificatesJob.customresource';
 import { S3PutObjectCustomResource } from '../customResources/s3PutObject.customResource';
+import { StackEventsCustomResource } from '../customResources/stackEvents.customResource';
 import { VpcEndpointCustomResource } from '../customResources/vpcEndpoint.customResource';
 import { VpcEndpointCheckCustomResource } from '../customResources/vpcEndpointCheck.customResource';
-import { commandAndControlContainerModule } from '@awssolutions/cdf-commandandcontrol-client';
 import { TYPES } from './types';
 
 import AWS = require('aws-sdk');
-import { StackEventsCustomResource } from '../customResources/stackEvents.customResource';
 // Load everything needed to the Container
 export const container = new Container();
 

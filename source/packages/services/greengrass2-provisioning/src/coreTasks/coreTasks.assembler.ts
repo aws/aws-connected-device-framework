@@ -12,9 +12,9 @@
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CoresAssembler } from '../cores/cores.assembler';
 import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { CoreTaskListPaginationKey } from './coreTasks.dao';
 import {
     CoreTaskItem,

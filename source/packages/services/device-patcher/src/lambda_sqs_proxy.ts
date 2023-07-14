@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { container } from './di/inversify.config';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
-import { PatchService } from './patch/patch.service';
 import { PatchItem } from './patch/patch.model';
+import { PatchService } from './patch/patch.service';
 
 const patchService: PatchService = container.get<PatchService>(TYPES.PatchService);
 

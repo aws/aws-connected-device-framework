@@ -15,8 +15,8 @@ import * as request from 'superagent';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
 
-import { CustomResourceEvent } from './customResource.model';
 import { CustomResource } from './customResource';
+import { CustomResourceEvent } from './customResource.model';
 
 // min supported versions
 const minSupportedVersion = '1.2.0.0.R2';

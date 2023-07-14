@@ -10,24 +10,24 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { Lambda } from '@aws-sdk/client-lambda';
 import inquirer, { Question } from 'inquirer';
 import { ListrTask } from 'listr2';
-import { Answers, CAAliases } from '../../../models/answers';
-import { RestModule, ModuleName, PostmanEnvironment } from '../../../models/modules';
-import { ConfigBuilder } from '../../../utils/configBuilder';
-import { customDomainPrompt } from '../../../prompts/domain.prompt';
-import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
-import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
 import ow from 'ow';
 import path from 'path';
+import { Answers, CAAliases } from '../../../models/answers';
+import { ModuleName, PostmanEnvironment, RestModule } from '../../../models/modules';
+import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
+import { customDomainPrompt } from '../../../prompts/domain.prompt';
+import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 import {
     deleteStack,
     getStackOutputs,
     packageAndDeployStack,
     packageAndUploadTemplate,
 } from '../../../utils/cloudformation.util';
-import { Lambda } from '@aws-sdk/client-lambda';
-import { getMonorepoRoot } from '../../../prompts/paths.prompt';
+import { ConfigBuilder } from '../../../utils/configBuilder';
 
 export class ProvisioningInstaller implements RestModule {
     public readonly friendlyName = 'Provisioning';

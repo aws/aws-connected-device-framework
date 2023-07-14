@@ -10,25 +10,25 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Request, Response } from 'express';
+import { inject } from 'inversify';
 import {
-    interfaces,
     controller,
-    response,
+    httpGet,
+    httpPatch,
+    httpPost,
+    interfaces,
+    queryParam,
     request,
     requestBody,
-    httpPost,
-    httpPatch,
-    httpGet,
-    queryParam,
+    response,
 } from 'inversify-express-utils';
-import { inject } from 'inversify';
-import { DevicesService } from './devices.service';
 import { TYPES } from '../di/types';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { InvalidQueryStringError, handleError } from '../utils/errors';
-import { BulkDevicesResource, BulkDevicesResult, DeviceResourceList } from './devices.models';
 import { DevicesAssembler } from './devices.assembler';
+import { BulkDevicesResource, BulkDevicesResult, DeviceResourceList } from './devices.models';
+import { DevicesService } from './devices.service';
 
 @controller('/bulkdevices')
 export class BulkDevicesController implements interfaces.Controller {

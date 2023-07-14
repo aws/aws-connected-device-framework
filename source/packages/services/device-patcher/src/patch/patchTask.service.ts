@@ -10,19 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { v1 as uuid } from 'uuid';
-import { inject, injectable } from 'inversify';
 
-import { TYPES } from '../di/types';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
 
 import { PatchListPaginationKey, PatchTaskDao } from './patchTask.dao';
 
 import { PatchTaskItem } from './patchTask.model';
 
-import { PatchService } from './patch.service';
 import { PatchItem } from './patch.model';
+import { PatchService } from './patch.service';
 
 @injectable()
 export class PatchTaskService {

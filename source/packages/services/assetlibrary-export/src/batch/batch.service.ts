@@ -10,14 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import pLimit from 'p-limit';
 
 import { TYPES } from '../di/types';
 
-import { TypeBatcher } from './batchers/type.batcher';
-import { CategoryBatcher } from './batchers/category.batcher';
 import { S3Utils } from '../utils/s3.util';
+import { CategoryBatcher } from './batchers/category.batcher';
+import { TypeBatcher } from './batchers/type.batcher';
 
 @injectable()
 export class BatchService implements Batcher {
