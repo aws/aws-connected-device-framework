@@ -92,7 +92,8 @@ const toUpdateAccountCreatedRequest = (
 };
 
 export const handler = async (
-    event: EventBridgeEvent<any, any>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    event: EventBridgeEvent<string, any>,
     _context: Context
 ): Promise<void> => {
     logger.debug(`handler: event: ${JSON.stringify(event)}`);

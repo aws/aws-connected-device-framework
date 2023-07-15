@@ -1,4 +1,4 @@
-# Change Log - @cdf/auth-jwt
+# Change Log - @awssolutions/auth-jwt
 
 This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
 

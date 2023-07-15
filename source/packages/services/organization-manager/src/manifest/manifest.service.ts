@@ -94,7 +94,7 @@ export class ManifestService {
         logger.debug(
             `manifest.service uploadStreamToS3: in: bucket: ${this.bucket} key: ${configurationKey}`
         );
-        return new Promise((resolve: any, reject: any) => {
+        return new Promise((resolve, reject) => {
             const params: PutObjectRequest = {
                 ACL: 'bucket-owner-full-control',
                 Bucket: this.bucket,
@@ -102,7 +102,7 @@ export class ManifestService {
                 Body: body,
             };
 
-            this._s3.upload(params, (err: any, data: any) => {
+            this._s3.upload(params, (err, data) => {
                 if (err) {
                     logger.debug(`manifest.service uploadStreamToS3: out: ${err}`);
                     return reject(err);

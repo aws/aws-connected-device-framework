@@ -11,13 +11,14 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { logger } from '@awssolutions/simple-cdf-logger';
-import { SendMessageResult } from 'aws-sdk/clients/sqs';
 import merge from 'deepmerge';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import pLimit from 'p-limit';
 import ShortUniqueId from 'short-unique-id';
+
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { SendMessageResult } from 'aws-sdk/clients/sqs';
 import { TYPES } from '../di/types';
 import { MessageItem, MessageListPaginationKey } from '../messages/messages.models';
 import { MessagesService } from '../messages/messages.service';

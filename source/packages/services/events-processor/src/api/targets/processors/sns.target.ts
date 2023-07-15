@@ -139,6 +139,9 @@ export class SNSTarget {
         logger.debug(`sns.target createTopic: in: userId:${userId}`);
         const params: AWS.SNS.CreateTopicInput = {
             Name: this.topicName(userId),
+            Attributes: {
+                KmsMasterKeyId: 'alias/aws/sns',
+            },
         };
         await this._sns.createTopic(params).promise();
         logger.debug(`sns.target createTopic: exit:`);

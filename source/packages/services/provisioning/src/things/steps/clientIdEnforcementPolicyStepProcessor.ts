@@ -18,6 +18,7 @@ import { CDFProvisioningTemplate, ParamaterReference } from '../templates/templa
 import { ProvisioningStepData } from './provisioningStep.model';
 import { ProvisioningStepProcessor } from './provisioningStepProcessor';
 import AWS = require('aws-sdk');
+
 @injectable()
 export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepProcessor {
     private _clientIdEnforcementPolicyTemplate: string;

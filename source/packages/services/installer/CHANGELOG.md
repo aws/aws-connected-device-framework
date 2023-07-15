@@ -1,4 +1,4 @@
-# Change Log - @cdf/installer
+# Change Log - @awssolutions/installer
 
 This log was last generated on Thu, 04 Aug 2022 18:39:36 GMT and should not be manually modified.
 

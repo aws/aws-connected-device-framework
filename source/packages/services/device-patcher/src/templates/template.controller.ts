@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { Response } from 'express';
 import { inject } from 'inversify';
-import multer from 'multer';
+import { Buffer } from 'node:buffer';
 import ow from 'ow';
 
 import { Request } from 'express';
@@ -30,16 +30,12 @@ import {
 } from 'inversify-express-utils';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors';
 
-import { TYPES } from '../di/types';
 import { PatchTemplateAssembler } from './template.assembler';
-import { PatchTemplatesService } from './template.service';
-
 import { PatchTemplateItem } from './template.model';
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+import { PatchTemplatesService } from './template.service';
 
 @controller('/patchTemplates')
 export class PatchTemplateController implements interfaces.Controller {
@@ -49,7 +45,7 @@ export class PatchTemplateController implements interfaces.Controller {
         private patchTemplateAssembler: PatchTemplateAssembler
     ) {}
 
-    @httpPost('', upload.single('playbookFile'))
+    @httpPost('')
     public async createTemplate(
         @response() res: Response,
         @request() req: Request
@@ -58,24 +54,23 @@ export class PatchTemplateController implements interfaces.Controller {
 
         try {
             ow(req, ow.object.nonEmpty);
-            ow(req.file, ow.object.hasKeys('buffer'));
             ow(req.body, ow.object.nonEmpty);
 
             const template: PatchTemplateItem = req.body;
 
             ow(template.name, ow.string.nonEmpty);
             ow(template.patchType, ow.string.nonEmpty);
-            //ow(template.playbookFileContents, ow.string.nonEmpty);
+            ow(template.playbookFileContents, ow.string.nonEmpty);
 
             template.playbookName = template.playbookName ?? template.name;
-            template.playbookFile = req.file.buffer;
-            template.playbookName = req.file.originalname;
+            template.playbookFile = Buffer.from(template.playbookFileContents, 'base64');
 
             if (template.extraVars) {
                 if (typeof template.extraVars === 'string') {
                     throw new Error('BAD_REQUEST');
                 }
             }
+
             await this.patchTemplatesService.create(template);
         } catch (err) {
             logger.error(`PatchTemplate.controller : err: ${err}`);
@@ -85,7 +80,7 @@ export class PatchTemplateController implements interfaces.Controller {
         logger.debug(`PatchTemplate.controller createTemplate: exit:`);
     }
 
-    @httpPatch('/:name', upload.single('playbookFile'))
+    @httpPatch('/:name')
     public async updateTemplate(
         @response() res: Response,
         @requestParam('name') name: string,
@@ -99,11 +94,11 @@ export class PatchTemplateController implements interfaces.Controller {
             ow(name, ow.string.nonEmpty);
 
             const template: PatchTemplateItem = req.body;
+
             template.name = name;
 
-            if (req.file) {
-                template.playbookFile = req.file.buffer;
-                template.playbookName = req.file.originalname;
+            if (template.playbookFileContents) {
+                template.playbookFile = Buffer.from(template.playbookFileContents, 'base64');
             }
 
             if (template.extraVars) {

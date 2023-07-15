@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 import { createMockInstance } from 'jest-create-mock-instance';
 import 'reflect-metadata';
-
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { TypeUtils } from '../utils/typeUtils';
@@ -22,6 +21,7 @@ describe('SearchServiceAssembler', () => {
     let instance: SearchAssembler;
     let mockedDeviceAssembler: jest.Mocked<DevicesAssembler>;
     let mockedGroupAssembler: jest.Mocked<GroupsAssembler>;
+
     let mockedTypeUtils: jest.Mocked<TypeUtils>;
 
     let mockedSearchRequest: {

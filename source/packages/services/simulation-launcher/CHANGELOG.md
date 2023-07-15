@@ -1,4 +1,4 @@
-# Change Log - @cdf/simulation-launcher
+# Change Log - @awssolutions/simulation-launcher
 
 This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
 

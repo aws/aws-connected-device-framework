@@ -272,7 +272,7 @@ paths:
 
         When `Create`, if the referenced `thingName` does not exist, an AWS IoT Thing is provisioned using the provided `provisioningTemplate`, then configured as a Greengrass V2 Core device. If it exists, the AWS IoT Thing is not updated but the Greengrass V2 Core device configuration is.
 
-        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the cores are being created/deleted in the background. Use the `GET /coreTasks/:taskId` to retrieve the status of the task.
+        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the cores are being created/deleted in the background. Use the `GET /coreTasks/{taskId}` to retrieve the status of the task.
 
       operationId: createCoreTask
       requestBody:
@@ -367,7 +367,7 @@ paths:
         - Core Devices
       summary: Lists Greengrass V2 cores managed by this service.
       description: >
-        Lists all Greengrass V2 cores managed by this service. 
+        Lists all Greengrass V2 cores managed by this service.
 
         May optionally filter by `templateName`, `templateVersion`, and `failedOnly`.
 
@@ -398,7 +398,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Core'
 
-  '/cores/:thingName/deviceTasks':
+  '/cores/{thingName}/deviceTasks':
     parameters:
       - $ref: '#/components/parameters/thingName'
     post:
@@ -412,7 +412,7 @@ paths:
 
         The AWS IoT thing is then associated with the Greengrass V2 core.
 
-        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the cores are being created in the background. Use the `GET /deviceTasks/:taskId` to retrieve the status of the task.
+        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the cores are being created in the background. Use the `GET /deviceTasks/{taskId}` to retrieve the status of the task.
 
       operationId: createDeviceTask
       requestBody:
@@ -433,7 +433,7 @@ paths:
         '409':
           $ref: '#/components/responses/Conflict'
 
-  '/deviceTasks/:taskId':
+  '/deviceTasks/{taskId}':
     parameters:
       - $ref: '#/components/parameters/taskId'
     get:
@@ -453,7 +453,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  '/devices/:thingName':
+  '/devices/{thingName}':
     parameters:
       - $ref: '#/components/parameters/thingName'
     get:
@@ -497,7 +497,7 @@ paths:
       description: >
         Deploy the components as configured per the template/version assigned to 1 or more Greengrass V2 cores.
 
-        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the deployments are being created in the background. Use the `GET /deployments/:taskId` to retrieve the status of the task.
+        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the deployments are being created in the background. Use the `GET /deployments/{taskId}` to retrieve the status of the task.
 
       operationId: createDeploymentTask
       requestBody:
@@ -539,7 +539,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  '/deploymentTasks/:taskId':
+  '/deploymentTasks/{taskId}':
     parameters:
       - $ref: '#/components/parameters/taskId'
     get:
@@ -557,7 +557,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DeploymentTask'
 
-  '/deploymentTasks/:taskId/cores':
+  '/deploymentTasks/{taskId}/cores':
     parameters:
       - $ref: '#/components/parameters/taskId'
     get:
@@ -578,7 +578,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CoreDeploymentList'
 
-  '/deploymentTasks/:taskId/cores/:thingName':
+  '/deploymentTasks/{taskId}/cores/{thingName}':
     parameters:
       - $ref: '#/components/parameters/taskId'
       - $ref: '#/components/parameters/thingName'
@@ -599,7 +599,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  '/cores/:thingName/deployments':
+  '/cores/{thingName}/deployments':
     parameters:
       - $ref: '#/components/parameters/thingName'
     get:

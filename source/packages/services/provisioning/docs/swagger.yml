@@ -187,7 +187,7 @@ paths:
   /bulkthings:
     post:
       tags:
-        - Bulkr Registrations
+        - Bulk Registrations
       summary: Bulk provision a set of new things within the AWS IoT Device Registry
       operationId: bulkProvisionThings
       requestBody:

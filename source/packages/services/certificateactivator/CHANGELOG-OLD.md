@@ -1,18 +1,18 @@
-# Change Log for the pre-Rush (<v4) version of @cdf/certificate-vendor
+# Change Log for the pre-Rush (<v4) version of @awssolutions/cdf-certificate-vendor
 
-## [@cdf/certificate-vendor-v3.3.2](@cdf/certificate-vendor-v3.3.1...@cdf/certificate-vendor-v3.3.2) (2020-12-21)
+## [@awssolutions/cdf-certificate-vendor-v3.3.2](@awssolutions/cdf-certificate-vendor-v3.3.1...@awssolutions/cdf-certificate-vendor-v3.3.2) (2020-12-21)
 
 ### Bug Fixes
 
 - **events-processor:** safe target deletion ([23c268d](23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
 
-## [@cdf/certificate-vendor-v3.3.1](@cdf/certificate-vendor-v3.3.0...@cdf/certificate-vendor-v3.3.1) (2020-06-10)
+## [@awssolutions/cdf-certificate-vendor-v3.3.1](@awssolutions/cdf-certificate-vendor-v3.3.0...@awssolutions/cdf-certificate-vendor-v3.3.1) (2020-06-10)
 
 ### Bug Fixes
 
 - **cicd:** cicd building extra node_modules layer ([b019111](b019111adadea7bac04ed3aaa35254c3137615e0))
 
-## [@cdf/certificate-vendor-v3.3.0](@cdf/certificate-vendor-v3.2.0...@cdf/certificate-vendor-v3.3.0) (2020-06-10)
+## [@awssolutions/cdf-certificate-vendor-v3.3.0](@awssolutions/cdf-certificate-vendor-v3.2.0...@awssolutions/cdf-certificate-vendor-v3.3.0) (2020-06-10)
 
 ### Bug Fixes
 
@@ -25,31 +25,31 @@
 - **auth:** certain modules tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
 - **auth:** complete private api and api key auth modes ([46d0183](46d0183e779e21a7ad39e879481b369bec2d060f))
 
-## [@cdf/certificate-vendor-v3.2.0](@cdf/certificate-vendor-v3.1.3...@cdf/certificate-vendor-v3.2.0) (2020-05-29)
+## [@awssolutions/cdf-certificate-vendor-v3.2.0](@awssolutions/cdf-certificate-vendor-v3.1.3...@awssolutions/cdf-certificate-vendor-v3.2.0) (2020-05-29)
 
 ### Features
 
 - **greengrass:** provisioning and deployment module ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
 
-## [@cdf/certificate-vendor-v3.1.3](@cdf/certificate-vendor-v3.1.2...@cdf/certificate-vendor-v3.1.3) (2020-01-31)
+## [@awssolutions/cdf-certificate-vendor-v3.1.3](@awssolutions/cdf-certificate-vendor-v3.1.2...@awssolutions/cdf-certificate-vendor-v3.1.3) (2020-01-31)
 
 ### Bug Fixes
 
 - **openssl:** replace export values as they cannot be updated ([fabf047](fabf047016b3c57b3bf56108fc9a6ce9fbeb44e5))
 
-## [@cdf/certificate-vendor-v3.1.2](@cdf/certificate-vendor-v3.1.1...@cdf/certificate-vendor-v3.1.2) (2020-01-30)
+## [@awssolutions/cdf-certificate-vendor-v3.1.2](@awssolutions/cdf-certificate-vendor-v3.1.1...@awssolutions/cdf-certificate-vendor-v3.1.2) (2020-01-30)
 
 ### Bug Fixes
 
 - **openssl:** openssl now available via a lambda layer ([8399408](8399408649b2a8f3074500c1ae43844dd3f5147a))
 
-## [@cdf/certificate-vendor-v3.1.1](@cdf/certificate-vendor-v3.1.0...@cdf/certificate-vendor-v3.1.1) (2020-01-15)
+## [@awssolutions/cdf-certificate-vendor-v3.1.1](@awssolutions/cdf-certificate-vendor-v3.1.0...@awssolutions/cdf-certificate-vendor-v3.1.1) (2020-01-15)
 
 ### Bug Fixes
 
 - **assetlibrary:** search query updated to support authz ([e5c31db](e5c31db609841406d98733e62e3ed93073ffbb1f))
 
-## [@cdf/certificate-vendor-v3.1.0](@cdf/certificate-vendor-v3.0.0...@cdf/certificate-vendor-v3.1.0) (2019-12-19)
+## [@awssolutions/cdf-certificate-vendor-v3.1.0](@awssolutions/cdf-certificate-vendor-v3.0.0...@awssolutions/cdf-certificate-vendor-v3.1.0) (2019-12-19)
 
 ### Bug Fixes
 
@@ -59,7 +59,7 @@
 
 - **cdf:** upgraded from node.js v8 to v12 ([e47299e](e47299ee399acf6554a0845048c4fed99251c2b1))
 
-## [@cdf/certificate-vendor-v3.0.0](@cdf/certificate-vendor-v2.2.4...@cdf/certificate-vendor-v3.0.0) (2019-11-08)
+## [@awssolutions/cdf-certificate-vendor-v3.0.0](@awssolutions/cdf-certificate-vendor-v2.2.4...@awssolutions/cdf-certificate-vendor-v3.0.0) (2019-11-08)
 
 ### Bug Fixes
 
@@ -73,31 +73,31 @@
 
 - **assetlibrary:** asset library device/groups versioned to v2
 
-## [@cdf/certificate-vendor-v2.2.4](@cdf/certificate-vendor-v2.2.3...@cdf/certificate-vendor-v2.2.4) (2019-07-15)
+## [@awssolutions/cdf-certificate-vendor-v2.2.4](@awssolutions/cdf-certificate-vendor-v2.2.3...@awssolutions/cdf-certificate-vendor-v2.2.4) (2019-07-15)
 
 ### Bug Fixes
 
 - **certificate vendor:** certificate vendor error handling ([78e3ee0](78e3ee0))
 
-## [@cdf/certificate-vendor-v2.2.3](@cdf/certificate-vendor-v2.2.2...@cdf/certificate-vendor-v2.2.3) (2019-06-20)
+## [@awssolutions/cdf-certificate-vendor-v2.2.3](@awssolutions/cdf-certificate-vendor-v2.2.2...@awssolutions/cdf-certificate-vendor-v2.2.3) (2019-06-20)
 
 ### Bug Fixes
 
 - **versioning:** fixed supported versioning of rest apis ([a8659ad](a8659ad))
 
-## [@cdf/certificate-vendor-v2.2.2](@cdf/certificate-vendor-v2.2.1...@cdf/certificate-vendor-v2.2.2) (2019-06-17)
+## [@awssolutions/cdf-certificate-vendor-v2.2.2](@awssolutions/cdf-certificate-vendor-v2.2.1...@awssolutions/cdf-certificate-vendor-v2.2.2) (2019-06-17)
 
 ### Bug Fixes
 
 - **certvendor:** certvendor config bugfix ([cd0b583](cd0b583))
 
-## [@cdf/certificate-vendor-v2.2.1](@cdf/certificate-vendor-v2.2.0...@cdf/certificate-vendor-v2.2.1) (2019-06-03)
+## [@awssolutions/cdf-certificate-vendor-v2.2.1](@awssolutions/cdf-certificate-vendor-v2.2.0...@awssolutions/cdf-certificate-vendor-v2.2.1) (2019-06-03)
 
 ### Bug Fixes
 
 - **certvendor deploy fix:** cert vendor deploy to create cdf command ([f57db93](f57db93))
 
-## [@cdf/certificate-vendor-v2.2.0](@cdf/certificate-vendor-v2.1.0...@cdf/certificate-vendor-v2.2.0) (2019-05-24)
+## [@awssolutions/cdf-certificate-vendor-v2.2.0](@awssolutions/cdf-certificate-vendor-v2.1.0...@awssolutions/cdf-certificate-vendor-v2.2.0) (2019-05-24)
 
 ### Features
 
@@ -105,7 +105,7 @@
 - 🎸 cert vendor csr ([4145102](4145102))
 - 🎸 certvendor with csr ([c5907d8](c5907d8))
 
-## [@cdf/certificate-vendor-v2.1.0](@cdf/certificate-vendor-v2.0.0...@cdf/certificate-vendor-v2.1.0) (2019-05-14)
+## [@awssolutions/cdf-certificate-vendor-v2.1.0](@awssolutions/cdf-certificate-vendor-v2.0.0...@awssolutions/cdf-certificate-vendor-v2.1.0) (2019-05-14)
 
 ### Features
 

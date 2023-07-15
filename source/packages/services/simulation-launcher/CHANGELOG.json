@@ -1,9 +1,9 @@
 {
-  "name": "@cdf/simulation-launcher",
+  "name": "@awssolutions/simulation-launcher",
   "entries": [
     {
       "version": "3.1.1",
-      "tag": "@cdf/simulation-launcher_v3.1.1",
+      "tag": "@awssolutions/simulation-launcher_v3.1.1",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",
       "comments": {
         "patch": [
@@ -13,14 +13,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^4.0.1` to `^4.0.2`"
+            "comment": "Updating dependency \"@awssolutions/config-inject\" from `^4.0.1` to `^4.0.2`"
           }
         ]
       }
     },
     {
       "version": "3.1.0",
-      "tag": "@cdf/simulation-launcher_v3.1.0",
+      "tag": "@awssolutions/simulation-launcher_v3.1.0",
       "date": "Fri, 10 Jun 2022 03:02:06 GMT",
       "comments": {
         "minor": [
@@ -32,7 +32,7 @@
     },
     {
       "version": "3.0.0",
-      "tag": "@cdf/simulation-launcher_v3.0.0",
+      "tag": "@awssolutions/simulation-launcher_v3.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",
       "comments": {
         "major": [
@@ -42,14 +42,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/config-inject\" from `^3.0.0` to `^4.0.0`"
           }
         ]
       }
     },
     {
       "version": "2.0.3",
-      "tag": "@cdf/simulation-launcher_v2.0.3",
+      "tag": "@awssolutions/simulation-launcher_v2.0.3",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",
       "comments": {
         "patch": [
@@ -64,7 +64,7 @@
     },
     {
       "version": "2.0.2",
-      "tag": "@cdf/simulation-launcher_v2.0.2",
+      "tag": "@awssolutions/simulation-launcher_v2.0.2",
       "date": "Tue, 21 Dec 2021 05:06:27 GMT",
       "comments": {
         "patch": [
@@ -79,7 +79,7 @@
     },
     {
       "version": "2.0.1",
-      "tag": "@cdf/simulation-launcher_v2.0.1",
+      "tag": "@awssolutions/simulation-launcher_v2.0.1",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",
       "comments": {
         "patch": [
@@ -91,7 +91,7 @@
     },
     {
       "version": "2.0.0",
-      "tag": "@cdf/simulation-launcher_v2.0.0",
+      "tag": "@awssolutions/simulation-launcher_v2.0.0",
       "date": "Wed, 11 Aug 2021 01:26:49 GMT",
       "comments": {
         "major": [

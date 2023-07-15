@@ -1,9 +1,96 @@
 {
-  "name": "@cdf/certificate-activator",
+  "name": "@awssolutions/cdf-certificate-activator",
   "entries": [
     {
+      "version": "0.0.0",
+      "tag": "@awssolutions/cdf-certificate-activator_v0.0.0",
+      "date": "Thu, 09 Mar 2023 22:35:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.2.0",
+      "tag": "@awssolutions/cdf-certificate-activator_v0.2.0",
+      "date": "Wed, 08 Mar 2023 01:03:23 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-assetlibrary-client version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-provisioning-client version bump from ^0.1.0 to ^0.2.0."
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.0",
+      "tag": "@awssolutions/cdf-certificate-activator_v0.1.0",
+      "date": "Tue, 07 Mar 2023 23:22:30 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-assetlibrary-client version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-provisioning-client version bump from ^0.0.0 to ^0.1.0."
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.0",
+      "tag": "@awssolutions/cdf-certificate-activator_v1.1.0",
+      "date": "Thu, 16 Feb 2023 18:41:01 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-assetlibrary-client version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-provisioning-client version bump from ^1.0.0 to ^1.1.0."
+          }
+        ]
+      }
+    },
+    {
       "version": "4.0.4",
-      "tag": "@cdf/certificate-activator_v4.0.4",
+      "tag": "@awssolutions/cdf-certificate-activator_v4.0.4",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",
       "comments": {
         "patch": [
@@ -13,17 +100,17 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^4.0.1` to `^4.0.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-config-inject\" from `^4.0.1` to `^4.0.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.4` to `^5.0.5`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^5.0.4` to `^5.0.5`"
           }
         ]
       }
     },
     {
       "version": "4.0.3",
-      "tag": "@cdf/certificate-activator_v4.0.3",
+      "tag": "@awssolutions/cdf-certificate-activator_v4.0.3",
       "date": "Tue, 22 Mar 2022 07:59:08 GMT",
       "comments": {
         "patch": [
@@ -35,7 +122,7 @@
     },
     {
       "version": "4.0.1",
-      "tag": "@cdf/certificate-activator_v4.0.1",
+      "tag": "@awssolutions/cdf-certificate-activator_v4.0.1",
       "date": "Thu, 10 Mar 2022 00:08:34 GMT",
       "comments": {
         "patch": [
@@ -45,14 +132,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.0` to `^5.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^5.0.0` to `^5.0.1`"
           }
         ]
       }
     },
     {
       "version": "4.0.0",
-      "tag": "@cdf/certificate-activator_v4.0.0",
+      "tag": "@awssolutions/cdf-certificate-activator_v4.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",
       "comments": {
         "major": [
@@ -62,29 +149,29 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-errors\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-config-inject\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-logger\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.2` to `^3.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-lambda-invoke\" from `^2.0.2` to `^3.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.2.3` to `^5.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^4.2.3` to `^5.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^4.0.3` to `^5.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-provisioning-client\" from `^4.0.3` to `^5.0.0`"
           }
         ]
       }
     },
     {
       "version": "3.1.4",
-      "tag": "@cdf/certificate-activator_v3.1.4",
+      "tag": "@awssolutions/cdf-certificate-activator_v3.1.4",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",
       "comments": {
         "patch": [
@@ -94,20 +181,20 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^2.0.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-lambda-invoke\" from `^2.0.1` to `^2.0.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.2.0` to `^4.2.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^4.2.0` to `^4.2.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^4.0.2` to `^4.0.3`"
+            "comment": "Updating dependency \"@awssolutions/cdf-provisioning-client\" from `^4.0.2` to `^4.0.3`"
           }
         ]
       }
     },
     {
       "version": "3.1.3",
-      "tag": "@cdf/certificate-activator_v3.1.3",
+      "tag": "@awssolutions/cdf-certificate-activator_v3.1.3",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",
       "comments": {
         "patch": [
@@ -117,23 +204,23 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.0` to `^2.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-lambda-invoke\" from `^2.0.0` to `^2.0.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.1` to `^4.1.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^4.1.1` to `^4.1.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^3.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-config-inject\" from `^3.0.0` to `^3.0.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^4.0.1` to `^4.0.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-provisioning-client\" from `^4.0.1` to `^4.0.2`"
           }
         ]
       }
     },
     {
       "version": "3.1.2",
-      "tag": "@cdf/certificate-activator_v3.1.2",
+      "tag": "@awssolutions/cdf-certificate-activator_v3.1.2",
       "date": "Wed, 11 Aug 2021 01:26:49 GMT",
       "comments": {
         "patch": [
@@ -143,14 +230,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.0` to `^4.1.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^4.1.0` to `^4.1.1`"
           }
         ]
       }
     },
     {
       "version": "4.0.2",
-      "tag": "@cdf/certificate-vendor_v4.0.2",
+      "tag": "@awssolutions/cdf-certificate-vendor_v4.0.2",
       "date": "Wed, 21 Jul 2021 16:46:57 GMT",
       "comments": {
         "patch": [

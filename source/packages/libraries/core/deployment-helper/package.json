@@ -11,7 +11,7 @@
     "test": "rushx lint && jest  --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS",
     "bundle": "npm run bundle:build && npm run bundle:deploy",
     "bundle:build": "lambda-zip --entry-point src/lambda_custom_resource_proxy.ts --copy config:src/config:.env.defaults",
-    "bundle:deploy": "node ../../../../infrastructure/deploy-bundle-to-constructs.js"
+    "bundle:deploy": "node ../../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
     "@awssolutions/cdf-lambda-invoke": "^2.2.0",

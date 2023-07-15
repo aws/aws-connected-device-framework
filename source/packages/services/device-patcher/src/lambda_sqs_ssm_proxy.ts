@@ -125,11 +125,11 @@ exports.handler = async (event: Event): Promise<void> => {
     logger.debug(`lambda_sqs_proxy handler: exit:`);
 };
 
-export interface Event {
+interface Event {
     Records: SQSEvent[];
 }
 
-export interface SQSEvent {
+interface SQSEvent {
     messageId: string;
     receiptHandle: string;
     body: string;

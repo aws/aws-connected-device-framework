@@ -30,6 +30,7 @@ export class PatchTemplateItem {
     playbookName?: string;
     playbookSource?: PatchSource;
     playbookFile?: Buffer;
+    playbookFileContents?: string;
     patchType?: PatchType;
     updatedAt?: Date;
     versionNo?: number;

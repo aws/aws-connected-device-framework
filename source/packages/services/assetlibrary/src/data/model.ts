@@ -12,8 +12,8 @@
  *********************************************************************************************************************/
 import { InvalidQueryStringError } from '../utils/errors';
 import { NodeAttributeValue } from './node';
-
 export type ModelAttributeValue = string | number | boolean;
+
 export type StringArrayMap = { [key: string]: string[] };
 export type RelatedEntity = { id: string; isAuthCheck?: boolean };
 export type RelatedEntityArrayMap = { [key: string]: RelatedEntity[] };

@@ -45,6 +45,7 @@ export class AuthzServiceFull {
         if (groupPaths === undefined || groupPaths === null) {
             groupPaths = [];
         }
+
         const combinedIds: string[] = [...new Set([...deviceIds, ...groupPaths])];
 
         logger.debug(

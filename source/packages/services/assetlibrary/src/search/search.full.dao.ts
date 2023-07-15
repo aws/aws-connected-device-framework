@@ -80,7 +80,7 @@ export class SearchDaoFull extends BaseDaoFull {
             request.ntypes.forEach((t) => traverser.select('a').not(__.hasLabel(t)));
         }
 
-        if (request.eq! == undefined) {
+        if (request.eq !== undefined) {
             request.eq.forEach((f) => {
                 traverser.select('a');
                 this.buildSearchFilterVBase(f, traverser);

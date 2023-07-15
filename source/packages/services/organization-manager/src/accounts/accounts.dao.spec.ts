@@ -32,12 +32,12 @@ describe('AccountsDao', function () {
 
     it('createAccount: happy path', async () => {
         let createAccountItem: AccountsItem = {
-            email: 'cdf@cdf.com',
+            email: 'cdf@awssolutions.com',
             status: 'ACTIVE',
             name: 'cdf-test',
             organizationalUnitId: 'wl-development-tenant',
             regions: ['us-west-2', 'ap-southeast-1'],
-            ssoEmail: 'cdf@cdf.com',
+            ssoEmail: 'cdf@awssolutions.com',
             ssoFirstName: 'John',
             ssoLastName: 'Smith',
         };
@@ -51,9 +51,9 @@ describe('AccountsDao', function () {
             Item: {
                 pk: 'AC:cdf-test',
                 sk: 'OU:wl-development-tenant',
-                email: 'cdf@cdf.com',
+                email: 'cdf@awssolutions.com',
                 regions: ['us-west-2', 'ap-southeast-1'],
-                ssoEmail: 'cdf@cdf.com',
+                ssoEmail: 'cdf@awssolutions.com',
                 ssoFirstName: 'John',
                 ssoLastName: 'Smith',
                 status: 'ACTIVE',

@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { logger } from '@awssolutions/simple-cdf-logger';
 import AWS from 'aws-sdk';
 import S3, { ManagedUpload } from 'aws-sdk/clients/s3';
 import { createMockInstance } from 'jest-create-mock-instance';
@@ -23,81 +22,6 @@ import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUni
 import { ManifestAssembler } from './manifest.assembler';
 import { ManifestDao } from './manifest.dao';
 import { ManifestService } from './manifest.service';
-
-const expectedManifestFile = `region: ap-southeast-2
-version: 2021-03-15
-resources:
-  - name: cfn-provisioning-ap-southeast-2
-    description: stack set for cfn-provisioning
-    regions:
-      - ap-southeast-2
-    deployment_targets:
-      accounts:
-        - cdf-one
-    deploy_method: stack_set
-    resource_file: https://cdf-organization-manager-xxxx-artifacts-ap-southeast-2.s3.ap-southeast-2.amazonaws.com/cfn-provisioning-output.yml
-    parameters: []
-  - name: cfn-device-monitor-ap-southeast-2
-    description: stack set for cfn-device-monitor
-    regions:
-      - ap-southeast-2
-    deployment_targets:
-      accounts:
-        - cdf-one
-    deploy_method: stack_set
-    resource_file: s3://somebucket/somezipfile.zip
-    parameters:
-      - parameter_key: environment
-        parameter_value: production
-  - name: cfn-provisioning-ap-southeast-1
-    description: stack set for cfn-provisioning
-    regions:
-      - ap-southeast-1
-    deployment_targets:
-      accounts:
-        - cdf-two
-    deploy_method: stack_set
-    resource_file: https://cdf-organization-manager-xxxx-artifacts-ap-southeast-2.s3.ap-southeast-2.amazonaws.com/cfn-provisioning-output.yml
-    parameters: []
-  - name: cfn-device-monitor-ap-southeast-1
-    description: stack set for cfn-device-monitor
-    regions:
-      - ap-southeast-1
-    deployment_targets:
-      accounts:
-        - cdf-two
-    deploy_method: stack_set
-    resource_file: s3://somebucket/somezipfile.zip
-    parameters:
-      - parameter_key: environment
-        parameter_value: production
-  - name: cfn-provisioning-us-west-1-us-west-2
-    description: stack set for cfn-provisioning
-    regions:
-      - us-west-1
-      - us-west-2
-    deployment_targets:
-      accounts:
-        - cdf-three
-        - cdf-four
-    deploy_method: stack_set
-    resource_file: https://cdf-organization-manager-xxxx-artifacts-ap-southeast-2.s3.ap-southeast-2.amazonaws.com/cfn-provisioning-output.yml
-    parameters: []
-  - name: cfn-device-monitor-us-west-1-us-west-2
-    description: stack set for cfn-device-monitor
-    regions:
-      - us-west-1
-      - us-west-2
-    deployment_targets:
-      accounts:
-        - cdf-three
-        - cdf-four
-    deploy_method: stack_set
-    resource_file: s3://somebucket/somezipfile.zip
-    parameters:
-      - parameter_key: environment
-        parameter_value: production
-`;
 
 describe('TemplatesService', function () {
     let mockedManifestDao: jest.Mocked<ManifestDao>;
@@ -172,31 +96,29 @@ describe('TemplatesService', function () {
     });
 
     it('createManifestFile: happy path', async () => {
-        let fileStream: NodeJS.ReadableStream;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        mockS3.upload = (
-            params: S3.Types.PutObjectRequest,
-            callback?: (err: Error, data: ManagedUpload.SendData) => void
-        ): ManagedUpload => {
-            fileStream = params.Body as NodeJS.ReadableStream;
-            callback(null, { eTag: 'somefakeEtag' } as unknown as ManagedUpload.SendData);
-            return undefined;
-        };
+        const manifestZipFile = new Promise<Buffer>((resolve) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            mockS3.upload = (
+                params: S3.Types.PutObjectRequest,
+                callback?: (err: Error, data: ManagedUpload.SendData) => void
+            ): ManagedUpload => {
+                const fileStream = params.Body as NodeJS.ReadableStream;
+
+                const chunks: Buffer[] = [];
+                fileStream.on('data', (chunk) => chunks.push(chunk));
+                fileStream.on('end', () => resolve(Buffer.concat(chunks)));
+
+                callback(null, { eTag: 'somefakeEtag' } as unknown as ManagedUpload.SendData);
+                return undefined;
+            };
+        });
 
         await instance.updateManifestFile();
 
-        var manifestZipFile = '';
-        fileStream.on('data', function (chunk) {
-            manifestZipFile += chunk;
-        });
-
-        fileStream.on('end', async () => {
-            const jsZip = new JSZip();
-            const result = await jsZip.loadAsync(manifestZipFile);
-            const manifestFile = await result.file('manifest.yaml').async('string');
-            logger.info(manifestFile);
-            expect(manifestFile).toEqual(expectedManifestFile);
-        });
+        const jsZip = new JSZip();
+        const result = await jsZip.loadAsync(await manifestZipFile);
+        const manifestFile = await result.file('manifest.yaml').async('string');
+        expect(manifestFile).toMatchSnapshot();
     });
 });

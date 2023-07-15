@@ -1,4 +1,4 @@
-# Change Log - @cdf/commands
+# Change Log - @awssolutions/commands
 
 This log was last generated on Fri, 24 Jun 2022 21:00:45 GMT and should not be manually modified.
 
