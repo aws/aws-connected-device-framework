@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import '../config/env';
 
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';

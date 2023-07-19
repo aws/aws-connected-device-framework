@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-device-patcher-client",
-  "version": "0.0.0",
+  "version": "2.2.0",
   "description": "CDF Device Patcher Client",
   "author": "Hassan khokhar <hkhokhar@amazon.com>",
   "main": "dist/index.js",

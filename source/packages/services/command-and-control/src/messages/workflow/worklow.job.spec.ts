@@ -1,8 +1,9 @@
+import 'reflect-metadata';
+
 import { ThingsService } from '@awssolutions/cdf-provisioning-client';
 import { ThingsLambdaService } from '@awssolutions/cdf-provisioning-client/src/client/things.lambda.service';
 import { Iot } from 'aws-sdk';
 import createMockInstance from 'jest-create-mock-instance';
-import 'reflect-metadata';
 import { CommandItem } from '../../commands/commands.models';
 import { MessageItem } from '../messages.models';
 import { JobAction } from './workflow.job';

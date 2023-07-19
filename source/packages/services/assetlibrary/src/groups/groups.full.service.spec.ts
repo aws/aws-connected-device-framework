@@ -10,8 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { createMockInstance } from 'jest-create-mock-instance';
 import 'reflect-metadata';
+
+import { createMockInstance } from 'jest-create-mock-instance';
 
 import { AuthzServiceFull } from '../authz/authz.full.service';
 import { DirectionToRelatedEntityArrayMap, EntityTypeMap } from '../data/model';

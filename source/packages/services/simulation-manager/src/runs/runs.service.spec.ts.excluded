@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 // import { createMockInstance } from 'jest-create-mock-instance';
 import * as AWS from 'aws-sdk';
 import config from 'config';

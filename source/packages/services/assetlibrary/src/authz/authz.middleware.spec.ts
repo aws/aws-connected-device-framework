@@ -10,8 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { sign } from 'jsonwebtoken';
 import 'reflect-metadata';
+
+import { sign } from 'jsonwebtoken';
 
 import { Request } from 'jest-express/lib/request';
 import { Response } from 'jest-express/lib/response';

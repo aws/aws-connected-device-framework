@@ -10,6 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+
 import {
     ASSETLIBRARY_CLIENT_TYPES,
     DeviceProfile20Resource,
@@ -21,7 +23,6 @@ import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucum
 import { fail } from 'assert';
 import { expect, use } from 'chai';
 import stringify from 'json-stable-stringify';
-import 'reflect-metadata';
 import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
 import { container } from '../../di/inversify.config';
 import { AUTHORIZATION_TOKEN, RESPONSE_STATUS, buildModel } from '../common/common.steps';

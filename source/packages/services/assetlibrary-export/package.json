@@ -1,13 +1,13 @@
 {
   "name": "@awssolutions/cdf-assetlibrary-export",
-  "version": "0.0.2",
+  "version": "0.0.0",
   "description": "CDF Asset Library Export Service",
   "author": "Hassan Khokhar",
   "files": [
     "bundle.zip"
   ],
   "scripts": {
-    "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/config'",
+    "build": "tsc && npx shx cp -R 'src/config' 'dist/config'",
     "bundle": "npm run bundle:build && npm run bundle:deploy",
     "bundle:build": "lambda-zip --entry-point src/lambda_sf_*.ts --copy config:src/config:.env.defaults",
     "bundle:deploy": "node ../../../infrastructure/bundle-package.js",
@@ -38,9 +38,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^2.2.0",
     "@awssolutions/cdf-lambda-zip": "^0.0.0",
-    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-logger": "^2.2.0",
     "@awssolutions/simple-cdf-logger": "^2.1.3",
     "@rushstack/eslint-config": "2.3.1",
     "@types/body-parser": "1.19.2",
@@ -51,7 +51,7 @@
     "@types/express-version-request": "1.7.1",
     "@types/jest": "26.0.18",
     "@types/json-stable-stringify": "1.0.32",
-    "@types/jsonwebtoken": "8.5.0",
+    "@types/jsonwebtoken": "9.0.1",
     "@types/lodash": "4.14.168",
     "@types/luxon": "2.0.9",
     "@types/prettyjson": "0.0.29",
@@ -74,7 +74,7 @@
     "jest-mock-extended": "1.0.10",
     "jest-resolve": "26.6.2",
     "js-yaml": "3.13.1",
-    "jsonwebtoken": "8.5.1",
+    "jsonwebtoken": "9.0.0",
     "lodash": "4.17.21",
     "logform": "2.4.2",
     "luxon": "2.3.0",

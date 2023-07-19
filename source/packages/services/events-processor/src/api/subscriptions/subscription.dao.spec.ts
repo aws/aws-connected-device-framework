@@ -10,10 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+
 import AWS from 'aws-sdk';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { createMockInstance } from 'jest-create-mock-instance';
-import 'reflect-metadata';
 import { DynamoDbUtils } from '../../utils/dynamoDb.util';
 import { TargetDao } from '../targets/target.dao';
 import { EmailTargetItem, PushTargetItem, SMSTargetItem } from '../targets/targets.models';

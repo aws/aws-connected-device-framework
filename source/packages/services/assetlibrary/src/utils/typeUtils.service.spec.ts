@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import { TypeUtils } from './typeUtils';
 
 describe('typeUtils', () => {

@@ -10,15 +10,21 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+
 import { Device20Resource, DevicesService } from '@awssolutions/cdf-assetlibrary-client';
 import { ASSETLIBRARY_CLIENT_TYPES } from '@awssolutions/cdf-assetlibrary-client/dist';
 import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
 import { expect, use } from 'chai';
-import 'reflect-metadata';
 import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
 import { container } from '../../di/inversify.config';
-import { AUTHORIZATION_TOKEN, RESPONSE_STATUS, replaceTokens, validateExpectedAttributes } from '../common/common.steps';
+import {
+    AUTHORIZATION_TOKEN,
+    RESPONSE_STATUS,
+    replaceTokens,
+    validateExpectedAttributes,
+} from '../common/common.steps';
 
 import chai_string = require('chai-string');
 use(chai_string);

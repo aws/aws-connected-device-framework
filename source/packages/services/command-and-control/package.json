@@ -1,13 +1,13 @@
 {
   "name": "@awssolutions/cdf-command-and-control",
-  "version": "0.0.2",
+  "version": "0.0.0",
   "description": "CDF Command & Control",
   "author": "Dean Hart",
   "files": [
     "bundle.zip"
   ],
   "scripts": {
-    "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
+    "build": "tsc && npx shx cp -R 'src/config' 'dist/'",
     "bundle": "npm run bundle:build && npm run bundle:deploy",
     "bundle:build": "lambda-zip --entry-point src/lambda_*_handler.ts --copy config:src/config:.env.defaults",
     "bundle:deploy": "node ../../../infrastructure/bundle-package.js",
@@ -41,15 +41,15 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@awssolutions/cdf-assetlibrary-client": "^0.0.2",
-    "@awssolutions/cdf-config-inject": "^0.0.0",
-    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-assetlibrary-client": "^2.2.0",
+    "@awssolutions/cdf-config-inject": "^2.2.0",
+    "@awssolutions/cdf-errors": "^2.2.0",
     "@awssolutions/cdf-express-middleware": "^0.0.0",
-    "@awssolutions/cdf-lambda-invoke": "^0.0.2",
+    "@awssolutions/cdf-lambda-invoke": "^2.2.0",
     "@awssolutions/cdf-lambda-zip": "^0.0.0",
-    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-logger": "^2.2.0",
     "@awssolutions/simple-cdf-logger": "^2.1.3",
-    "@awssolutions/cdf-provisioning-client": "^0.0.2",
+    "@awssolutions/cdf-provisioning-client": "^2.2.0",
     "@awssolutions/cdf-thing-list-builder": "^0.0.0",
     "@rushstack/eslint-config": "2.3.4",
     "@types/aws-lambda": "8.10.89",

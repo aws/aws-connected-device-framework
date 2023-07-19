@@ -36,16 +36,17 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-const fleetService: FleetService = container.get(GREENGRASS2_PROVISIONING_CLIENT_TYPES.FleetService);
+const fleetService: FleetService = container.get(
+    GREENGRASS2_PROVISIONING_CLIENT_TYPES.FleetService
+);
 
 Then('fleet summary should be updated with this attributes:', async function (data: DataTable) {
-    let summary
+    let summary;
     try {
-        summary = await fleetService.getFleetSummary(getAdditionalHeaders(world.authToken))
+        summary = await fleetService.getFleetSummary(getAdditionalHeaders(world.authToken));
     } catch (err) {
         world.errStatus = err.status;
         fail(`getFleetSummary failed, err: ${JSON.stringify(err)}`);
     }
     validateExpectedAttributes(summary, data);
 });
-

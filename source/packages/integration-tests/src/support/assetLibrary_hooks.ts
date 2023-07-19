@@ -10,23 +10,23 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {
-    ASSETLIBRARY_CLIENT_TYPES,
-    CategoryEnum,
-    Device20Resource,
-    DevicesService,
-    Group20Resource,
-    GroupsService,
-    ProfilesService,
-    RelationTargetExpanded,
-    RequestHeaders,
-    TemplatesService,
-    TypeResource,
-} from '@awssolutions/cdf-assetlibrary-client/dist';
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
+import {
+    GroupsService,
+    DevicesService,
+    TemplatesService,
+    CategoryEnum,
+    TypeResource,
+    Group20Resource,
+    ProfilesService,
+    ASSETLIBRARY_CLIENT_TYPES,
+    Device20Resource,
+    RequestHeaders,
+} from '@awssolutions/cdf-assetlibrary-client/dist';
 import { sign } from 'jsonwebtoken';
 import { container } from '../di/inversify.config';
 import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
+import { RelationTargetExpanded } from '@awssolutions/cdf-assetlibrary-client/dist';
 
 setDefaultTimeout(30 * 1000);
 

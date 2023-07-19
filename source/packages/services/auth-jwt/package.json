@@ -16,11 +16,11 @@
     "bundle": "../../../infrastructure/bundle-package.bash auth-jwt"
   },
   "dependencies": {
-    "@awssolutions/cdf-errors": "^0.0.0",
-    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-errors": "^2.2.0",
+    "@awssolutions/cdf-config-inject": "^2.2.0",
     "axios": "0.21.2",
     "js-yaml": "4.1.0",
-    "jsonwebtoken": "8.5.1",
+    "jsonwebtoken": "9.0.0",
     "jwk-to-pem": "2.0.4",
     "logform": "2.4.2",
     "ow": "0.23.0",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.65",
-    "@types/jsonwebtoken": "8.5.0",
+    "@types/jsonwebtoken": "9.0.1",
     "@types/jwk-to-pem": "2.0.0",
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",

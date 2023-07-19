@@ -10,6 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+
 import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-client';
 import { assetLibraryHistoryContainerModule } from '@awssolutions/cdf-assetlibraryhistory-client';
 import { commandAndControlContainerModule } from '@awssolutions/cdf-commandandcontrol-client';
@@ -21,7 +23,7 @@ import { notificationsContainerModule } from '@awssolutions/cdf-notifications-cl
 import { organizationManagerContainerModule } from '@awssolutions/cdf-organizationmanager-client';
 import { provisioningContainerModule } from '@awssolutions/cdf-provisioning-client';
 import { Container } from 'inversify';
-import 'reflect-metadata';
+
 // Load everything needed to the Container
 export const container = new Container();
 
@@ -32,6 +34,6 @@ container.load(commandsContainerModule);
 container.load(provisioningContainerModule);
 container.load(notificationsContainerModule);
 container.load(greengrass2ProvisioningContainerModule);
-container.load(devicePatcherContainerModule)
+container.load(devicePatcherContainerModule);
 container.load(commandAndControlContainerModule);
 container.load(organizationManagerContainerModule);

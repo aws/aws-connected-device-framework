@@ -10,12 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
 
 import AWS from 'aws-sdk';
 import S3, { ManagedUpload } from 'aws-sdk/clients/s3';
 import { createMockInstance } from 'jest-create-mock-instance';
 import JSZip from 'jszip';
-import 'reflect-metadata';
 import { ComponentsDao } from '../components/components.dao';
 import { ComponentItem } from '../components/components.model';
 import { OrganizationalUnitsDao } from '../organizationalUnits/organizationalUnits.dao';

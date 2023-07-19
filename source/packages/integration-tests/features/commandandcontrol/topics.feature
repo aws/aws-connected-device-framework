@@ -70,6 +70,5 @@ Feature: Command & Control - Topics
       | $.replies.[2].action     | reply                                                                  |
       | $.replies.[2].payload    | {"response":"second"}                                                  |
 
-
   @teardown_commandandcontrol_topics
   Scenario: Teardown

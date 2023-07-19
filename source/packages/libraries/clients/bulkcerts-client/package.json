@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-bulkcerts-client",
-  "version": "0.0.0",
+  "version": "2.2.0",
   "description": "Bulkcerts Client",
   "author": "Pouya Bahavar",
   "main": "dist/index.js",

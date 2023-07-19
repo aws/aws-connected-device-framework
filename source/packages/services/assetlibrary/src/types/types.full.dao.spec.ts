@@ -10,9 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+
 import { structure } from 'gremlin';
 import { createMockInstance } from 'jest-create-mock-instance';
-import 'reflect-metadata';
 import { TypesDaoFull } from './types.full.dao';
 import { TypeRelationsModel } from './types.models';
 

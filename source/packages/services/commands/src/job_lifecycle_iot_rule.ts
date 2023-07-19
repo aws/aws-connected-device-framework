@@ -10,9 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { container } from './di/inversify.config';
+
 import { DeleteThingGroupRequest } from 'aws-sdk/clients/iot';
 import { CommandsService } from './commands/commands.service';
-import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
 import { logger } from './utils/logger';
 

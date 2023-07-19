@@ -10,8 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { ACMPCA, AWSError, Iot } from 'aws-sdk';
 import 'reflect-metadata';
+
+import { ACMPCA, AWSError, Iot } from 'aws-sdk';
 
 import createMockInstance from 'jest-create-mock-instance';
 import { CertUtils } from '../../utils/cert';

@@ -10,8 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable } from 'inversify';
 import 'reflect-metadata';
+
+import { injectable } from 'inversify';
 import { NotSupportedError } from '../utils/errors';
 import { RelatedEntityDto, VertexDto } from './full.model';
 import { ModelAttributeValue } from './model';

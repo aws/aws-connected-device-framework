@@ -11,8 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { container } from '../../di/inversify.config';
+
+import { DataTable, Given, setDefaultTimeout, Then, When } from '@cucumber/cucumber';
 import { expect } from 'chai';
-import { Given, setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 import stringify from 'json-stable-stringify';
 
 import {
@@ -22,7 +24,6 @@ import {
 } from '@awssolutions/cdf-commands-client';
 
 import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
-import { container } from '../../di/inversify.config';
 import { AUTHORIZATION_TOKEN, replaceTokens, RESPONSE_STATUS } from '../common/common.steps';
 
 import AWS = require('aws-sdk');
@@ -38,27 +39,27 @@ export const COMMAND_DETAILS = 'commandDetails';
 
 setDefaultTimeout(10 * 1000);
 
-const commandsService:CommandsService = container.get(COMMANDS_CLIENT_TYPES.CommandsService);
-function getAdditionalHeaders(world:unknown) : Dictionary {
-    return  {
-        Authorization: world[AUTHORIZATION_TOKEN]
+const commandsService: CommandsService = container.get(COMMANDS_CLIENT_TYPES.CommandsService);
+function getAdditionalHeaders(world: unknown): Dictionary {
+    return {
+        Authorization: world[AUTHORIZATION_TOKEN],
     };
 }
 
-const iot: AWS.Iot = new AWS.Iot({region: process.env.AWS_REGION});
+const iot: AWS.Iot = new AWS.Iot({ region: process.env.AWS_REGION });
 
-function buildCommandModel(data:DataTable) {
+function buildCommandModel(data: DataTable) {
     const d = data.rowsHash();
 
-    const command = { } as CommandModel;
+    const command = {} as CommandModel;
 
-    Object.keys(d).forEach( key => {
+    Object.keys(d).forEach((key) => {
         const value = replaceTokens(d[key]);
         if (value.startsWith('{') || value.startsWith('[')) {
             command[key] = JSON.parse(value);
-        } else if (value==='___null___') {
+        } else if (value === '___null___') {
             command[key] = null;
-        } else if (value==='___undefined___') {
+        } else if (value === '___undefined___') {
             delete command[key];
         } else {
             command[key] = value;
@@ -68,20 +69,20 @@ function buildCommandModel(data:DataTable) {
     return command;
 }
 
-async function createCommand (world:unknown, data:DataTable) {
+async function createCommand(world: unknown, data: DataTable) {
     const command = buildCommandModel(data);
     return await commandsService.createCommand(command, getAdditionalHeaders(world));
 }
 
-async function updateCommand (world:unknown, commandId:string, data:DataTable) {
+async function updateCommand(world: unknown, commandId: string, data: DataTable) {
     const command = buildCommandModel(data);
     command.commandId = commandId;
     return await commandsService.updateCommand(command, getAdditionalHeaders(world));
 }
 
 Given('last command exists', async function () {
-    this[RESPONSE_STATUS]=null;
-    this[COMMAND_DETAILS]=null;
+    this[RESPONSE_STATUS] = null;
+    this[COMMAND_DETAILS] = null;
     const commandId = this[COMMAND_ID];
 
     expect(commandId).exist.and.length(36);
@@ -89,100 +90,103 @@ Given('last command exists', async function () {
     try {
         const r = await commandsService.getCommand(commandId, getAdditionalHeaders(this));
         expect(commandId).equals(r.commandId);
-        this[COMMAND_DETAILS]=r;
+        this[COMMAND_DETAILS] = r;
     } catch (err) {
-        this[RESPONSE_STATUS]=err.status;
+        this[RESPONSE_STATUS] = err.status;
     }
-
 });
 
-When('I create a command with attributes', async function (data:DataTable) {
-    this[COMMAND_ID]=null;
-    this[RESPONSE_STATUS]=null;
+When('I create a command with attributes', async function (data: DataTable) {
+    this[COMMAND_ID] = null;
+    this[RESPONSE_STATUS] = null;
     try {
-        this[COMMAND_ID]=await createCommand(this, data);
+        this[COMMAND_ID] = await createCommand(this, data);
     } catch (err) {
-        this[RESPONSE_STATUS]=err.status;
+        this[RESPONSE_STATUS] = err.status;
     }
 });
 
-When('I update last command with attributes', async function (data:DataTable) {
-    this[RESPONSE_STATUS]=null;
+When('I update last command with attributes', async function (data: DataTable) {
+    this[RESPONSE_STATUS] = null;
 
     const commandId = this[COMMAND_ID];
 
     try {
         await updateCommand(this, commandId, data);
     } catch (err) {
-        this[RESPONSE_STATUS]=err.status;
+        this[RESPONSE_STATUS] = err.status;
     }
 });
 
-When('I upload file {string} to last command as file alias {string}', async function (testResource:string, alias:string) {
-    this[RESPONSE_STATUS]=null;
-    const commandId = this[COMMAND_ID];
+When(
+    'I upload file {string} to last command as file alias {string}',
+    async function (testResource: string, alias: string) {
+        this[RESPONSE_STATUS] = null;
+        const commandId = this[COMMAND_ID];
 
-    const fileLocation = `${__dirname}/../../../../src/testResources/${testResource}`;
+        const fileLocation = `${__dirname}/../../../../src/testResources/${testResource}`;
 
-    await commandsService.uploadCommandFile(commandId, alias, fileLocation, getAdditionalHeaders(this));
+        await commandsService.uploadCommandFile(
+            commandId,
+            alias,
+            fileLocation,
+            getAdditionalHeaders(this)
+        );
+    }
+);
 
-});
-
-Then('last command exists with attributes', async function (data:DataTable) {
-    this[RESPONSE_STATUS]=null;
-    this[COMMAND_DETAILS]=null;
+Then('last command exists with attributes', async function (data: DataTable) {
+    this[RESPONSE_STATUS] = null;
+    this[COMMAND_DETAILS] = null;
     const commandId = this[COMMAND_ID];
 
     const d = data.rowsHash();
-    let r:CommandModel;
+    let r: CommandModel;
     try {
         r = await commandsService.getCommand(commandId, getAdditionalHeaders(this));
         expect(commandId).equals(r.commandId);
-        this[COMMAND_DETAILS]=r;
+        this[COMMAND_DETAILS] = r;
     } catch (err) {
-        this[RESPONSE_STATUS]=err.status;
+        this[RESPONSE_STATUS] = err.status;
     }
 
-    Object.keys(d).forEach( key => {
+    Object.keys(d).forEach((key) => {
         const val = replaceTokens(d[key]);
         if (val.startsWith('{') || val.startsWith('[')) {
-            expect(stringify(r[key])).eq( stringify(JSON.parse(val)));
-        } else if (val==='___null___') {
+            expect(stringify(r[key])).eq(stringify(JSON.parse(val)));
+        } else if (val === '___null___') {
             expect(r[key]).eq(null);
-        } else if (val==='___undefined___') {
+        } else if (val === '___undefined___') {
             expect(r[key]).eq(undefined);
-        } else if (val==='___any___') {
-            expect(r[key]!==undefined).eq(true);
+        } else if (val === '___any___') {
+            expect(r[key] !== undefined).eq(true);
         } else {
-            expect(r[key]).eq( val);
+            expect(r[key]).eq(val);
         }
     });
-
 });
 
-Then('last command has a file uploaded as file alias {string}', async function (alias:string) {
-    const command:CommandModel = this[COMMAND_DETAILS];
+Then('last command has a file uploaded as file alias {string}', async function (alias: string) {
+    const command: CommandModel = this[COMMAND_DETAILS];
 
     // tslint:disable-next-line:no-unused-expression
     expect(command.files[alias]).exist;
-
 });
 
 Then('job for last command exists', async function () {
-    this[RESPONSE_STATUS]=null;
+    this[RESPONSE_STATUS] = null;
     const commandId = this[COMMAND_ID];
     expect(commandId).exist.and.length(36);
 
-    let command:CommandModel;
+    let command: CommandModel;
     try {
         command = await commandsService.getCommand(commandId, getAdditionalHeaders(this));
         expect(commandId).equals(command.commandId);
-        this[COMMAND_DETAILS]=command;
+        this[COMMAND_DETAILS] = command;
 
-        const job = await iot.describeJob({jobId:command.jobId}).promise();
+        const job = await iot.describeJob({ jobId: command.jobId }).promise();
         expect(command.jobId).equals(job.job.jobId);
     } catch (err) {
-        this[RESPONSE_STATUS]=err.status;
+        this[RESPONSE_STATUS] = err.status;
     }
-
 });

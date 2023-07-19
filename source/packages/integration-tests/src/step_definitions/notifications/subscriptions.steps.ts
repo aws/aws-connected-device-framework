@@ -10,40 +10,40 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {
-    EventsService,
-    EventsourcesService,
-    MessagesDebugService,
-    NOTIFICATIONS_CLIENT_TYPES,
-    SubscriptionsService,
-} from '@awssolutions/cdf-notifications-client/dist';
-import { SimulateIoTCoreMessageRequest } from '@awssolutions/cdf-notifications-client/dist/client/messages.model';
-import { SubscriptionResource } from '@awssolutions/cdf-notifications-client/dist/client/subscriptions.model';
-import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
-import { fail } from 'assert';
 import { expect, use } from 'chai';
-import { container } from '../../di/inversify.config';
+import { fail } from 'assert';
+import chaiUuid = require('chai-uuid');
+use(chaiUuid);
+
+import { setDefaultTimeout, When, DataTable, Then, Given } from '@cucumber/cucumber';
 import {
     AUTHORIZATION_TOKEN,
     RESPONSE_STATUS,
     validateExpectedAttributes,
 } from '../common/common.steps';
+import { container } from '../../di/inversify.config';
+import {
+    EventsourcesService,
+    EventsService,
+    MessagesDebugService,
+    NOTIFICATIONS_CLIENT_TYPES,
+    SubscriptionsService,
+} from '@awssolutions/cdf-notifications-client/dist';
 import {
     EVENTSOURCE_NAME,
-    EVENT_NAME,
-    PRINCIPAL_VALUE,
-    SUBSCRIPTION_DETAILS,
     SUBSCRIPTION_ID,
-    USER_ID,
-    createSubscription,
-    getAdditionalHeaders,
+    EVENT_NAME,
     getEventIdFromName,
+    createSubscription,
+    SUBSCRIPTION_DETAILS,
+    getAdditionalHeaders,
     getSubscriptionIdFromPrincipal,
+    PRINCIPAL_VALUE,
+    USER_ID,
     updateSubscription,
 } from './notifications.utils';
-import chaiUuid = require('chai-uuid');
-
-use(chaiUuid);
+import { SubscriptionResource } from '@awssolutions/cdf-notifications-client/dist/client/subscriptions.model';
+import { SimulateIoTCoreMessageRequest } from '@awssolutions/cdf-notifications-client/dist/client/messages.model';
 
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
@@ -70,6 +70,9 @@ const messagesService: MessagesDebugService = container.get(
 Given(
     'subscription for principal {string} user {string} does not exist',
     async function (principalValue: string, userId: string) {
+        // logger.debug(`subscription for principal '${principalValue}' user '${userId}' does not exist`);
+        // logger.debug(`\t EVENTSOURCE_NAME: ${this[EVENTSOURCE_NAME]}`);
+        // logger.debug(`\t EVENT_NAME: ${this[EVENT_NAME]}`);
         expect(this[EVENTSOURCE_NAME], 'EVENTSOURCE_NAME').to.not.be.undefined;
 
         expect(this[EVENT_NAME], 'EVENT_NAME').to.not.be.undefined;
@@ -83,6 +86,7 @@ Given(
             this[EVENT_NAME],
             principalValue
         );
+        // logger.debug(`\t subId: ${subId}`);
         expect(subId).to.be.undefined;
     }
 );
@@ -90,6 +94,9 @@ Given(
 Given(
     'I am using subscription for principal {string} user {string}',
     async function (principalValue: string, userId: string) {
+        // logger.debug(`'I am using subscription for principal '${principalValue}' user '${userId}'`);
+        // logger.debug(`\t EVENTSOURCE_NAME: ${this[EVENTSOURCE_NAME]}`);
+        // logger.debug(`\t EVENT_NAME: ${this[EVENT_NAME]}`);
         expect(this[EVENTSOURCE_NAME], 'EVENTSOURCE_NAME').to.not.be.undefined;
         expect(this[EVENT_NAME], 'EVENT_NAME').to.not.be.undefined;
 
@@ -108,6 +115,7 @@ Given(
             this[EVENT_NAME],
             principalValue
         );
+        // logger.debug(`\t SUBSCRIPTION_ID: ${this[SUBSCRIPTION_ID]}`);
         expect(this[SUBSCRIPTION_ID], 'SUBSCRIPTION_ID').to.not.be.undefined;
     }
 );
@@ -224,6 +232,7 @@ Then('no subscriptions exist for event {string}', async function (eventName: str
     this[RESPONSE_STATUS] = null;
 
     const eventId = this[`EVENTID___${eventName}`];
+    // logger.debug(`\t eventId: ${eventId}`);
     expect(eventId, 'eventId').to.not.be.undefined;
 
     try {

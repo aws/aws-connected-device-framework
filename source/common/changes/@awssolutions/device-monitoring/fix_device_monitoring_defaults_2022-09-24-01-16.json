@@ -1,11 +1,11 @@
 {
   "changes": [
     {
-      "packageName": "@cdf/device-monitoring",
+      "packageName": "@awssolutions/device-monitoring",
       "comment": "added asset library mode default value for device monitor package",
       "type": "patch"
     }
   ],
-  "packageName": "@cdf/device-monitoring",
+  "packageName": "@awssolutions/device-monitoring",
   "email": "aaron.pittenger@bissell.com"
 }

@@ -10,11 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { container } from './di/inversify.config';
+
 import { json } from 'body-parser';
 import cors from 'cors';
 import { Application, NextFunction, Request, Response } from 'express';
 import { InversifyExpressServer } from 'inversify-express-utils';
-import { container } from './di/inversify.config';
 
 import { normalisePath } from '@awssolutions/cdf-express-middleware';
 

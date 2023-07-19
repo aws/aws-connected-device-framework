@@ -14,7 +14,9 @@
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 
 import {
-    DescribeInstancesCommand, EC2Client, TerminateInstancesCommand
+    DescribeInstancesCommand,
+    EC2Client,
+    TerminateInstancesCommand,
 } from '@aws-sdk/client-ec2';
 import {
     CoresService,
@@ -42,9 +44,13 @@ setDefaultTimeout(30 * 1000);
 const s3 = new AWS.S3({ region: process.env.AWS_REGION });
 const ec2 = new EC2Client({ region: process.env.AWS_REGION });
 
-const templatesSvc: TemplatesService = container.get(GREENGRASS2_PROVISIONING_CLIENT_TYPES.TemplatesService);
+const templatesSvc: TemplatesService = container.get(
+    GREENGRASS2_PROVISIONING_CLIENT_TYPES.TemplatesService
+);
 const coresSvc: CoresService = container.get(GREENGRASS2_PROVISIONING_CLIENT_TYPES.CoresService);
-const deviceSvc: DevicesService = container.get(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DevicesService);
+const deviceSvc: DevicesService = container.get(
+    GREENGRASS2_PROVISIONING_CLIENT_TYPES.DevicesService
+);
 
 const templateBucket = process.env.PROVISIONING_TEMPLATES_BUCKET;
 const templatePrefix = process.env.PROVISIONING_TEMPLATES_PREFIX;
@@ -52,10 +58,10 @@ const templatePrefix = process.env.PROVISIONING_TEMPLATES_PREFIX;
 async function teardown(world: unknown) {
     // logger.debug(`\ngreengrass_provisioning_hooks: teardown: in:`);
 
-    logger.debug(`\ngreengrass_provisioning_hooks: teardown: in: ${JSON.stringify(world)}`)
+    logger.debug(`\ngreengrass_provisioning_hooks: teardown: in: ${JSON.stringify(world)}`);
 
     // service cleanup
-    const templates = ["IntegrationTest"];
+    const templates = ['IntegrationTest'];
     for (const t of templates) {
         try {
             await templatesSvc.deleteTemplate(t, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
@@ -64,7 +70,7 @@ async function teardown(world: unknown) {
         }
     }
 
-    const clientDevices: string[] = ['ClientDevice1', 'ClientDevice2']
+    const clientDevices: string[] = ['ClientDevice1', 'ClientDevice2'];
     for (const clientDevice of clientDevices) {
         try {
             await deviceSvc.deleteDevice(clientDevice);
@@ -74,28 +80,44 @@ async function teardown(world: unknown) {
     }
 
     // core cleanup
-    const gg2Cores: string[] = ['IntegrationTestCore1', 'IntegrationTestCore2', 'IntegrationTestCore3'];
+    const gg2Cores: string[] = [
+        'IntegrationTestCore1',
+        'IntegrationTestCore2',
+        'IntegrationTestCore3',
+    ];
     try {
-        await coresSvc.createCoreTask({ options: { deprovisionClientDevices: true, deprovisionCores: true }, type: 'Delete', coreVersion: '2.4.0', cores: gg2Cores.map(o => { return { name: o, provisioningTemplate: 'UNKNOWN' } }) });
+        await coresSvc.createCoreTask({
+            options: { deprovisionClientDevices: true, deprovisionCores: true },
+            type: 'Delete',
+            coreVersion: '2.4.0',
+            cores: gg2Cores.map((o) => {
+                return { name: o, provisioningTemplate: 'UNKNOWN' };
+            }),
+        });
     } catch (err) {
         // swallow the error
     }
 
     // ec2 cleanup
-    const instances = await ec2.send(new DescribeInstancesCommand({
-        Filters: [{
-            Name: 'tag:Name',
-            Values: gg2Cores
-        }, {
-            Name: 'tag:cdf',
-            Values: ['greengrass2-provisioning-integration-test']
-        }]
-    }));
-    const instanceIds = instances?.Reservations?.map(r => r.Instances?.map(i => i.InstanceId))?.flat() ?? [];
+    const instances = await ec2.send(
+        new DescribeInstancesCommand({
+            Filters: [
+                {
+                    Name: 'tag:Name',
+                    Values: gg2Cores,
+                },
+                {
+                    Name: 'tag:cdf',
+                    Values: ['greengrass2-provisioning-integration-test'],
+                },
+            ],
+        })
+    );
+    const instanceIds =
+        instances?.Reservations?.map((r) => r.Instances?.map((i) => i.InstanceId))?.flat() ?? [];
     if (instanceIds.length > 0) {
         await ec2.send(new TerminateInstancesCommand({ InstanceIds: instanceIds }));
     }
-
 }
 
 Before({ tags: '@setup_greengrass2_provisioning' }, async function () {
@@ -105,62 +127,64 @@ Before({ tags: '@setup_greengrass2_provisioning' }, async function () {
     const integrationTestTemplate = {
         Parameters: {
             ThingName: {
-                Type: "String"
+                Type: 'String',
             },
             CertificatePem: {
-                Type: "String"
+                Type: 'String',
             },
             CaCertificatePem: {
-                Type: "String"
-            }
+                Type: 'String',
+            },
         },
         Resources: {
             thing: {
-                Type: "AWS::IoT::Thing",
+                Type: 'AWS::IoT::Thing',
                 Properties: {
                     ThingName: {
-                        Ref: "ThingName"
-                    }
+                        Ref: 'ThingName',
+                    },
                 },
                 OverrideSettings: {
-                    ThingTypeName: "REPLACE"
-                }
+                    ThingTypeName: 'REPLACE',
+                },
             },
             certificate: {
-                Type: "AWS::IoT::Certificate",
+                Type: 'AWS::IoT::Certificate',
                 Properties: {
                     CACertificatePem: {
-                        Ref: "CaCertificatePem"
+                        Ref: 'CaCertificatePem',
                     },
                     CertificatePem: {
-                        Ref: "CertificatePem"
+                        Ref: 'CertificatePem',
                     },
-                    Status: "ACTIVE"
+                    Status: 'ACTIVE',
                 },
                 OverrideSettings: {
-                    Status: "REPLACE"
-                }
+                    Status: 'REPLACE',
+                },
             },
             policy: {
-                Type: "AWS::IoT::Policy",
+                Type: 'AWS::IoT::Policy',
                 Properties: {
-                    PolicyName: "CDFGreengrass2CorePolicy"
-                }
-            }
+                    PolicyName: 'CDFGreengrass2CorePolicy',
+                },
+            },
         },
         CDF: {
             createDeviceCertificate: true,
-            attachAdditionalPolicies: [{
-                name: "CDFGreengrass2CorePolicy"
-            }]
-        }
+            attachAdditionalPolicies: [
+                {
+                    name: 'CDFGreengrass2CorePolicy',
+                },
+            ],
+        },
     };
 
     // upload to S3
     const putObjectRequest = {
         Bucket: templateBucket,
         Key: `${templatePrefix}Greengrass2IntegrationTestProvisioningTemplate.json`,
-        Body: JSON.stringify(integrationTestTemplate)
+        Body: JSON.stringify(integrationTestTemplate),
     };
     await s3.putObject(putObjectRequest).promise();
 });

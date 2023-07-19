@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import { LaunchParams, Simulation } from './simulation';
 
 describe('LaunchSimulation', () => {

@@ -24,9 +24,9 @@ import {
     SubscriptionResource,
     SubscriptionV2Resource,
 } from '@awssolutions/cdf-notifications-client/dist/client/subscriptions.model';
-import { TargetResource } from '@awssolutions/cdf-notifications-client/dist/client/targets.model';
 import { DataTable } from '@cucumber/cucumber';
 import { AUTHORIZATION_TOKEN, buildModel } from '../common/common.steps';
+import { TargetResource } from '@awssolutions/cdf-notifications-client/dist/client/targets.model';
 
 export const EVENTSOURCE_ID = 'eventSourceId';
 export const EVENTSOURCE_DETAILS = 'eventSourceDetails';
@@ -51,6 +51,7 @@ export async function getEventSourceIdFromName(
     world: unknown,
     name: string
 ): Promise<string> {
+    // logger.debug(`getEventSourceIdFromName: name:${name}`);
     let eventSourceId = world[`EVENTSOURCEID___${name}`];
     if (eventSourceId === undefined) {
         const existingEventSource = await eventsourcesService.listEventSources(
@@ -59,6 +60,7 @@ export async function getEventSourceIdFromName(
         eventSourceId = existingEventSource?.results?.filter((r) => r.name === name)?.[0]?.id;
         world[`EVENTSOURCEID___${name}`] = eventSourceId;
     }
+    // logger.debug(`getEventSourceIdFromName: eventSourceId:${eventSourceId}`);
     return eventSourceId;
 }
 
@@ -69,6 +71,7 @@ export async function getEventIdFromName(
     eventSourceName: string,
     eventName: string
 ): Promise<string> {
+    // logger.debug(`getEventIdFromName: eventSourceName:${eventSourceName}, eventName:${eventName}`);
     let eventId = world[`EVENTID___${eventName}`];
     if (eventId === undefined) {
         const eventSourceId = await getEventSourceIdFromName(
@@ -87,6 +90,7 @@ export async function getEventIdFromName(
             world[`EVENTID___${eventName}`] = eventId;
         }
     }
+    // logger.debug(`getEventIdFromName: eventId:${eventId}`);
     return eventId;
 }
 
@@ -100,6 +104,7 @@ export async function getSubscriptionIdFromPrincipal(
     eventName: string,
     principalValue: string
 ): Promise<string> {
+    // logger.debug(`getSubscriptionIdFromPrincipal: userId:${userId}, eventSourceName:${eventSourceName}, eventName:${eventName}, principalValue:${principalValue}`);
     let subscriptionId;
     const eventId = await getEventIdFromName(
         eventsourcesService,
@@ -108,14 +113,17 @@ export async function getSubscriptionIdFromPrincipal(
         eventSourceName,
         eventName
     );
+    // logger.debug(`\t eventId:${eventId}`);
     if (eventId) {
         const key = `SUBSCRIPTIONID___${userId}___${eventName}___${principalValue}`;
         subscriptionId = world[key];
+        // logger.debug(`\t existing subscriptionId:${subscriptionId}`);
         if (subscriptionId === undefined) {
             const existing = await service.listSubscriptionsForUser(
                 userId,
                 getAdditionalHeaders(world[AUTHORIZATION_TOKEN])
             );
+            // logger.debug(`\t existing:${JSON.stringify(existing)}`);
             const results: SubscriptionV2Resource[] =
                 existing?.results as SubscriptionV2Resource[];
             subscriptionId = results?.filter(
@@ -125,6 +133,7 @@ export async function getSubscriptionIdFromPrincipal(
                     r.principalValue === principalValue
             )?.[0]?.id;
             world[key] = subscriptionId;
+            // logger.debug(`\t subscriptionId:${subscriptionId}`);
         }
     } else {
         throw new Error('eventId is undefined in getSubscriptionIdFromPrincipal');
@@ -166,6 +175,7 @@ export async function updateEvent(
 ): Promise<void> {
     const model: EventResource = buildModel(data);
     model.eventId = eventId;
+    // logger.debug(`model: ${JSON.stringify(model)}`);
     await eventsService.updateEvent(model, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
 }
 

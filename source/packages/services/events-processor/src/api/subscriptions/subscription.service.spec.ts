@@ -10,10 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+
 import AWS from 'aws-sdk';
 import { ListSubscriptionsResponse } from 'aws-sdk/clients/sns';
 import { createMockInstance } from 'jest-create-mock-instance';
-import 'reflect-metadata';
 import { EventDao } from '../events/event.dao';
 import { SNSTarget } from '../targets/processors/sns.target';
 import { TargetService } from '../targets/target.service';

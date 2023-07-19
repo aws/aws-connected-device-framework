@@ -10,9 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+
 import * as fs from 'fs';
 import * as path from 'path';
-import 'reflect-metadata';
 
 import createMockInstance from 'jest-create-mock-instance';
 import { DirectionToRelatedEntityArrayMap, EntityTypeMap } from '../data/model';

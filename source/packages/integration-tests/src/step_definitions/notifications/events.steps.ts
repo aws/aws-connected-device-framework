@@ -10,35 +10,34 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-
-import {
-    EventsService,
-    EventsourcesService,
-    NOTIFICATIONS_CLIENT_TYPES,
-} from '@awssolutions/cdf-notifications-client/dist';
-import { EventResource } from '@awssolutions/cdf-notifications-client/dist/client/events.model';
-import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { expect, use } from 'chai';
-import { container } from '../../di/inversify.config';
+import chaiUuid = require('chai-uuid');
+use(chaiUuid);
+
+import { setDefaultTimeout, Given, When, DataTable, Then } from '@cucumber/cucumber';
 import {
     AUTHORIZATION_TOKEN,
     RESPONSE_STATUS,
     validateExpectedAttributes,
 } from '../common/common.steps';
+import { container } from '../../di/inversify.config';
 import {
+    EventsourcesService,
+    EventsService,
+    NOTIFICATIONS_CLIENT_TYPES,
+} from '@awssolutions/cdf-notifications-client/dist';
+import { EventResource } from '@awssolutions/cdf-notifications-client/dist/client/events.model';
+import {
+    createEvent,
     EVENTSOURCE_NAME,
     EVENT_DETAILS,
-    EVENT_NAME,
     EVENT_ID,
-    createEvent,
+    EVENT_NAME,
     getAdditionalHeaders,
     getEventIdFromName,
     getEventSourceIdFromName,
     updateEvent,
 } from './notifications.utils';
-import chaiUuid = require('chai-uuid');
-
-use(chaiUuid);
 
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
@@ -57,6 +56,7 @@ const eventsourcesService: EventsourcesService = container.get(
 );
 
 Given('I am using event {string}', async function (name: string) {
+    // logger.debug(`I am using event '${name}'`);
     this[EVENT_NAME] = name;
 });
 
@@ -71,6 +71,7 @@ Given('event {string} does not exist', async function (eventName: string) {
         eventSourceName,
         eventName
     );
+    // logger.debug(`\t eventId:${eventId}`);
     if (eventId === undefined) {
         return;
     }
@@ -83,6 +84,7 @@ Given('event {string} does not exist', async function (eventName: string) {
 });
 
 Given('event {string} exists', async function (eventName: string) {
+    // logger.debug(`event '${eventName}' exists`);
     const eventId = await getEventIdFromName(
         eventsourcesService,
         eventsService,
@@ -90,10 +92,12 @@ Given('event {string} exists', async function (eventName: string) {
         this[EVENTSOURCE_NAME],
         eventName
     );
+    // logger.debug(`\t eventId:${eventId}`);
     const event = await eventsService.getEvent(
         eventId,
         getAdditionalHeaders(this[AUTHORIZATION_TOKEN])
     );
+    // logger.debug(`\t event:${JSON.stringify(event)}`);
     expect(event?.eventId).to.eq(eventId);
 });
 
@@ -108,6 +112,7 @@ When('I create an event with attributes', async function (data: DataTable) {
         );
         const eventId = await createEvent(eventsService, this, eventSourceId, data);
         this[EVENT_ID] = eventId;
+        // logger.debug(`\t eventId: ${eventId}`);
     } catch (err) {
         this[RESPONSE_STATUS] = err.status;
     }

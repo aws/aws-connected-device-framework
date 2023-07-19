@@ -10,6 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+
 import {
     CloudFormationCustomResourceCreateEvent,
     CloudFormationCustomResourceDeleteEvent,
@@ -17,7 +19,6 @@ import {
     Context,
 } from 'aws-lambda';
 import { send } from 'cfn-response-promise';
-import 'reflect-metadata';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
 

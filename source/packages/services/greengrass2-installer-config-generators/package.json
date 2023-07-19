@@ -1,13 +1,13 @@
 {
   "name": "@awssolutions/cdf-greengrass2-installer-config-generators",
-  "version": "0.0.2",
+  "version": "0.0.0",
   "description": "CDF Greengrass V2 Provisioning - Sample core device installer config generators",
   "author": "Dean Hart",
   "files": [
     "bundle.zip"
   ],
   "scripts": {
-    "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
+    "build": "tsc && npx shx cp -R 'src/config' 'dist/'",
     "bundle": "npm run bundle:build && npm run bundle:deploy",
     "bundle:build": "lambda-zip --entry-point src/lambda_*.ts --copy dist:dist --copy config:src/config",
     "bundle:deploy": "node ../../../infrastructure/bundle-package.js",
@@ -37,10 +37,10 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@awssolutions/cdf-config-inject": "^0.0.0",
-    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^2.2.0",
+    "@awssolutions/cdf-errors": "^2.2.0",
     "@awssolutions/cdf-lambda-zip": "^0.0.0",
-    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-logger": "^2.2.0",
     "@awssolutions/simple-cdf-logger": "^2.1.3",
     "@rushstack/eslint-config": "2.3.4",
     "@types/aws-lambda": "8.10.84",

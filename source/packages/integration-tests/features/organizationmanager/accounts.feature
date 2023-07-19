@@ -76,7 +76,7 @@ Feature: Organization Manager Organizational Unit and Accounts Creation
             | ssoEmail             | test@test.com |
             | ssoFirstName         | John          |
             | ssoLastName          | Doe           |
-            | regions              | []          |
+            | regions              | []            |
         Then last account creation fails with a 400
 
     Scenario: Deleting an Organizational Unit that has accounts

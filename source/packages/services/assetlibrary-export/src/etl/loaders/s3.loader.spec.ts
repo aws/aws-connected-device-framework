@@ -10,8 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import AWS, { AWSError } from 'aws-sdk';
 import 'reflect-metadata';
+
+import AWS, { AWSError } from 'aws-sdk';
 
 import { S3Loader } from './s3.loader';
 

@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import { EventConditions, EventConditionsUtils } from './event.models';
 
 describe('EventModel', () => {

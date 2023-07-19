@@ -10,21 +10,25 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { Given, setDefaultTimeout, When, DataTable, Then } from '@cucumber/cucumber';
 import {
-    ASSETLIBRARY_CLIENT_TYPES,
-    DeviceResourceList,
+    GroupsService,
     Group20Resource,
     GroupResourceList,
-    GroupsService,
+    DeviceResourceList,
+    ASSETLIBRARY_CLIENT_TYPES,
 } from '@awssolutions/cdf-assetlibrary-client/dist';
-import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
-import { expect, use } from 'chai';
-import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
-import { container } from '../../di/inversify.config';
-import { AUTHORIZATION_TOKEN, RESPONSE_STATUS, validateExpectedAttributes } from '../common/common.steps';
 
 import chai_string = require('chai-string');
+import { expect, use } from 'chai';
+import {
+    RESPONSE_STATUS,
+    AUTHORIZATION_TOKEN,
+    validateExpectedAttributes,
+} from '../common/common.steps';
+import { container } from '../../di/inversify.config';
+import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
 use(chai_string);
 
 /*
