@@ -10,6 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+/**
+ * AWS Connected Device Framework: Dashboard Facade
+ * Asset Library implementation of DevicesService *
+ */
+
+/* tslint:disable:no-unused-variable member-ordering */
 
 import {
     LAMBDAINVOKE_TYPES,
@@ -18,7 +24,11 @@ import {
 } from '@awssolutions/cdf-lambda-invoke';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { CertificateBatchRequest, CertificateBatchTask, RequestHeaders } from './certificatestask.models';
+import {
+    CertificateBatchRequest,
+    CertificateBatchTask,
+    RequestHeaders,
+} from './certificatestask.models';
 import { CertificatesTaskService, CertificatesTaskServiceBase } from './certificatestask.service';
 
 @injectable()

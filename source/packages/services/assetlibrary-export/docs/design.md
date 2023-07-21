@@ -6,7 +6,6 @@ The below diagram represents the high-level overview from the infrastructure per
 
 ![hla](images/assetlibrary-export-design-hla.jpg)
 
-
 ## Step function State Machine Architecture
 
 The following state machine diagram shows the different state transitions involved
@@ -18,8 +17,3 @@ The following state machine diagram shows the different state transitions involv
 The below sequence diagram can be referenced to understand the module level interaction for the export workflow
 
 ![sequence](images/assetlibrary-export-sequence.png)
-
-
-
-
-

@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const TYPES = {
-
     Controller: Symbol.for('Controller'),
 
     CertificatesService: Symbol.for('CertificatesService'),
@@ -33,5 +32,5 @@ export const TYPES = {
     SSM: Symbol.for('SSM'),
     SSMFactory: Symbol.for('Factory<SSM>'),
     ACMPCA: Symbol.for('ACMPCA'),
-    ACMPCAFactory: Symbol.for('Factory<ACMPCA>')
+    ACMPCAFactory: Symbol.for('Factory<ACMPCA>'),
 };

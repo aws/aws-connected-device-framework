@@ -49,11 +49,11 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -86,11 +86,11 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -128,11 +128,11 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -169,11 +169,11 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -206,11 +206,11 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 

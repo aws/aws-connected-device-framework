@@ -1,4 +1,4 @@
-import { Artifact, CdfProvisioningParameters } from "./cores.model";
+import { Artifact, CdfProvisioningParameters } from './cores.model';
 
 export interface NewDeviceTask {
     coreName: string;
@@ -7,9 +7,8 @@ export interface NewDeviceTask {
     options?: DeleteDeviceTaskOptions;
 }
 
-
 export interface DeleteDeviceTaskOptions {
-	deprovisionClientDevices: boolean;
+    deprovisionClientDevices: boolean;
 }
 
 export interface DeviceTask {
@@ -40,4 +39,4 @@ export interface Device {
 
 export type DeviceTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';
 
-export type DeviceTaskType = 'Create'  | 'Delete'
+export type DeviceTaskType = 'Create' | 'Delete';

@@ -16,7 +16,7 @@ import {
     LambdaApiGatewayEventBuilder,
     LambdaInvokerService,
 } from '@awssolutions/cdf-lambda-invoke';
-import { inject, injectable } from "inversify";
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { BulkComponentsService, BulkComponentsServiceBase } from './bulkComponents.service';
 import { RequestHeaders } from './common.model';

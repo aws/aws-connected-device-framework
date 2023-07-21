@@ -1,9 +1,114 @@
 {
-  "name": "@cdf/integration-tests",
+  "name": "@awssolutions/cdf-integration-tests",
   "entries": [
     {
+      "version": "0.0.0",
+      "tag": "@awssolutions/cdf-integration-tests_v0.0.0",
+      "date": "Thu, 09 Mar 2023 22:35:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.2.0",
+      "tag": "@awssolutions/cdf-integration-tests_v0.2.0",
+      "date": "Wed, 08 Mar 2023 01:03:23 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-assetlibrary-client version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-commandandcontrol-client version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-notifications-client version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-provisioning-client version bump from ^0.1.0 to ^0.2.0."
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.0",
+      "tag": "@awssolutions/cdf-integration-tests_v0.1.0",
+      "date": "Tue, 07 Mar 2023 23:22:30 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-assetlibrary-client version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-commandandcontrol-client version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-notifications-client version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-provisioning-client version bump from ^0.0.0 to ^0.1.0."
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.0",
+      "tag": "@awssolutions/cdf-integration-tests_v1.1.0",
+      "date": "Thu, 16 Feb 2023 18:41:02 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-assetlibrary-client version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-commandandcontrol-client version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-notifications-client version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-provisioning-client version bump from ^1.0.0 to ^1.1.0."
+          }
+        ]
+      }
+    },
+    {
       "version": "3.5.1",
-      "tag": "@cdf/integration-tests_v3.5.1",
+      "tag": "@awssolutions/cdf-integration-tests_v3.5.1",
       "date": "Fri, 29 Jul 2022 17:47:13 GMT",
       "comments": {
         "patch": [
@@ -15,7 +120,7 @@
     },
     {
       "version": "3.5.0",
-      "tag": "@cdf/integration-tests_v3.5.0",
+      "tag": "@awssolutions/cdf-integration-tests_v3.5.0",
       "date": "Fri, 29 Jul 2022 02:59:14 GMT",
       "comments": {
         "minor": [
@@ -25,14 +130,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/organizationmanager-client\" from `^0.1.0` to `^0.2.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-organizationmanager-client\" from `^0.1.0` to `^0.2.0`"
           }
         ]
       }
     },
     {
       "version": "3.4.0",
-      "tag": "@cdf/integration-tests_v3.4.0",
+      "tag": "@awssolutions/cdf-integration-tests_v3.4.0",
       "date": "Mon, 11 Jul 2022 22:20:13 GMT",
       "comments": {
         "minor": [
@@ -42,14 +147,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.5` to `^5.1.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^5.0.5` to `^5.1.0`"
           }
         ]
       }
     },
     {
       "version": "3.3.0",
-      "tag": "@cdf/integration-tests_v3.3.0",
+      "tag": "@awssolutions/cdf-integration-tests_v3.3.0",
       "date": "Thu, 30 Jun 2022 00:07:08 GMT",
       "comments": {
         "minor": [
@@ -59,26 +164,26 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^5.1.0` to `^5.2.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-provisioning-client\" from `^5.1.0` to `^5.2.0`"
           }
         ]
       }
     },
     {
       "version": "3.2.3",
-      "tag": "@cdf/integration-tests_v3.2.3",
+      "tag": "@awssolutions/cdf-integration-tests_v3.2.3",
       "date": "Wed, 29 Jun 2022 00:56:16 GMT",
       "comments": {
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/commandandcontrol-client\" from `^0.1.2` to `^1.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-commandandcontrol-client\" from `^0.1.2` to `^1.0.0`"
           }
         ]
       }
     },
     {
       "version": "3.2.2",
-      "tag": "@cdf/integration-tests_v3.2.2",
+      "tag": "@awssolutions/cdf-integration-tests_v3.2.2",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",
       "comments": {
         "patch": [
@@ -88,32 +193,32 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.4` to `^5.0.5`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^5.0.4` to `^5.0.5`"
           },
           {
-            "comment": "Updating dependency \"@cdf/commandandcontrol-client\" from `^0.1.1` to `^0.1.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-commandandcontrol-client\" from `^0.1.1` to `^0.1.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/commands-client\" from `^5.0.4` to `^5.0.5`"
+            "comment": "Updating dependency \"@awssolutions/cdf-commands-client\" from `^5.0.4` to `^5.0.5`"
           },
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^4.0.1` to `^4.0.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-config-inject\" from `^4.0.1` to `^4.0.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/device-patcher-client\" from `^2.0.0` to `^2.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-device-patcher-client\" from `^2.0.0` to `^2.0.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/greengrass2-provisioning-client\" from `^1.0.5` to `^1.0.6`"
+            "comment": "Updating dependency \"@awssolutions/cdf-greengrass2-provisioning-client\" from `^1.0.5` to `^1.0.6`"
           },
           {
-            "comment": "Updating dependency \"@cdf/notifications-client\" from `^4.0.4` to `^4.0.5`"
+            "comment": "Updating dependency \"@awssolutions/cdf-notifications-client\" from `^4.0.4` to `^4.0.5`"
           }
         ]
       }
     },
     {
       "version": "3.2.1",
-      "tag": "@cdf/integration-tests_v3.2.1",
+      "tag": "@awssolutions/cdf-integration-tests_v3.2.1",
       "date": "Fri, 10 Jun 2022 19:47:35 GMT",
       "comments": {
         "patch": [
@@ -125,7 +230,7 @@
     },
     {
       "version": "3.2.0",
-      "tag": "@cdf/integration-tests_v3.2.0",
+      "tag": "@awssolutions/cdf-integration-tests_v3.2.0",
       "date": "Thu, 02 Jun 2022 00:45:32 GMT",
       "comments": {
         "minor": [
@@ -138,14 +243,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^5.0.3` to `^5.1.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-provisioning-client\" from `^5.0.3` to `^5.1.0`"
           }
         ]
       }
     },
     {
       "version": "3.1.5",
-      "tag": "@cdf/integration-tests_v3.1.5",
+      "tag": "@awssolutions/cdf-integration-tests_v3.1.5",
       "date": "Thu, 12 May 2022 21:12:39 GMT",
       "comments": {
         "patch": [
@@ -155,14 +260,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/device-patcher-client\" from `^1.1.5` to `^2.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-device-patcher-client\" from `^1.1.5` to `^2.0.0`"
           }
         ]
       }
     },
     {
       "version": "3.1.4",
-      "tag": "@cdf/integration-tests_v3.1.4",
+      "tag": "@awssolutions/cdf-integration-tests_v3.1.4",
       "date": "Thu, 07 Apr 2022 05:00:50 GMT",
       "comments": {
         "patch": [
@@ -172,47 +277,47 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.3` to `^5.0.4`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^5.0.3` to `^5.0.4`"
           },
           {
-            "comment": "Updating dependency \"@cdf/assetlibraryhistory-client\" from `^5.0.3` to `^5.0.4`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibraryhistory-client\" from `^5.0.3` to `^5.0.4`"
           },
           {
-            "comment": "Updating dependency \"@cdf/commandandcontrol-client\" from `^0.1.0` to `^0.1.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-commandandcontrol-client\" from `^0.1.0` to `^0.1.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/commands-client\" from `^5.0.3` to `^5.0.4`"
+            "comment": "Updating dependency \"@awssolutions/cdf-commands-client\" from `^5.0.3` to `^5.0.4`"
           },
           {
-            "comment": "Updating dependency \"@cdf/device-patcher-client\" from `^1.1.4` to `^1.1.5`"
+            "comment": "Updating dependency \"@awssolutions/cdf-device-patcher-client\" from `^1.1.4` to `^1.1.5`"
           },
           {
-            "comment": "Updating dependency \"@cdf/greengrass2-provisioning-client\" from `^1.0.4` to `^1.0.5`"
+            "comment": "Updating dependency \"@awssolutions/cdf-greengrass2-provisioning-client\" from `^1.0.4` to `^1.0.5`"
           },
           {
-            "comment": "Updating dependency \"@cdf/notifications-client\" from `^4.0.3` to `^4.0.4`"
+            "comment": "Updating dependency \"@awssolutions/cdf-notifications-client\" from `^4.0.3` to `^4.0.4`"
           },
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^5.0.2` to `^5.0.3`"
+            "comment": "Updating dependency \"@awssolutions/cdf-provisioning-client\" from `^5.0.2` to `^5.0.3`"
           }
         ]
       }
     },
     {
       "version": "3.1.3",
-      "tag": "@cdf/integration-tests_v3.1.3",
+      "tag": "@awssolutions/cdf-integration-tests_v3.1.3",
       "date": "Thu, 31 Mar 2022 04:20:08 GMT",
       "comments": {
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/commandandcontrol-client\" from `^0.0.1` to `^0.1.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-commandandcontrol-client\" from `^0.0.1` to `^0.1.0`"
           }
         ]
       }
     },
     {
       "version": "3.1.2",
-      "tag": "@cdf/integration-tests_v3.1.2",
+      "tag": "@awssolutions/cdf-integration-tests_v3.1.2",
       "date": "Wed, 30 Mar 2022 00:46:17 GMT",
       "comments": {
         "patch": [
@@ -224,7 +329,7 @@
     },
     {
       "version": "3.1.1",
-      "tag": "@cdf/integration-tests_v3.1.1",
+      "tag": "@awssolutions/cdf-integration-tests_v3.1.1",
       "date": "Mon, 28 Mar 2022 00:28:46 GMT",
       "comments": {
         "patch": [
@@ -234,26 +339,26 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibraryhistory-client\" from `^5.0.2` to `^5.0.3`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibraryhistory-client\" from `^5.0.2` to `^5.0.3`"
           },
           {
-            "comment": "Updating dependency \"@cdf/commands-client\" from `^5.0.2` to `^5.0.3`"
+            "comment": "Updating dependency \"@awssolutions/cdf-commands-client\" from `^5.0.2` to `^5.0.3`"
           },
           {
-            "comment": "Updating dependency \"@cdf/device-patcher-client\" from `^1.1.3` to `^1.1.4`"
+            "comment": "Updating dependency \"@awssolutions/cdf-device-patcher-client\" from `^1.1.3` to `^1.1.4`"
           },
           {
-            "comment": "Updating dependency \"@cdf/greengrass2-provisioning-client\" from `^1.0.3` to `^1.0.4`"
+            "comment": "Updating dependency \"@awssolutions/cdf-greengrass2-provisioning-client\" from `^1.0.3` to `^1.0.4`"
           },
           {
-            "comment": "Updating dependency \"@cdf/notifications-client\" from `^4.0.2` to `^4.0.3`"
+            "comment": "Updating dependency \"@awssolutions/cdf-notifications-client\" from `^4.0.2` to `^4.0.3`"
           }
         ]
       }
     },
     {
       "version": "3.1.0",
-      "tag": "@cdf/integration-tests_v3.1.0",
+      "tag": "@awssolutions/cdf-integration-tests_v3.1.0",
       "date": "Fri, 25 Mar 2022 03:55:57 GMT",
       "comments": {
         "minor": [
@@ -265,7 +370,7 @@
     },
     {
       "version": "3.0.3",
-      "tag": "@cdf/integration-tests_v3.0.3",
+      "tag": "@awssolutions/cdf-integration-tests_v3.0.3",
       "date": "Mon, 21 Mar 2022 21:58:32 GMT",
       "comments": {
         "patch": [
@@ -275,35 +380,35 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.1` to `^5.0.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^5.0.1` to `^5.0.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/assetlibraryhistory-client\" from `^5.0.0` to `^5.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibraryhistory-client\" from `^5.0.0` to `^5.0.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/commands-client\" from `^5.0.0` to `^5.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-commands-client\" from `^5.0.0` to `^5.0.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/device-patcher-client\" from `^1.1.1` to `^1.1.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-device-patcher-client\" from `^1.1.1` to `^1.1.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/greengrass2-provisioning-client\" from `^1.0.1` to `^1.0.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-greengrass2-provisioning-client\" from `^1.0.1` to `^1.0.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^3.0.0` to `^3.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-lambda-invoke\" from `^3.0.0` to `^3.0.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/notifications-client\" from `^4.0.0` to `^4.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-notifications-client\" from `^4.0.0` to `^4.0.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^5.0.0` to `^5.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-provisioning-client\" from `^5.0.0` to `^5.0.1`"
           }
         ]
       }
     },
     {
       "version": "3.0.2",
-      "tag": "@cdf/integration-tests_v3.0.2",
+      "tag": "@awssolutions/cdf-integration-tests_v3.0.2",
       "date": "Thu, 10 Mar 2022 00:08:34 GMT",
       "comments": {
         "patch": [
@@ -313,14 +418,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.0` to `^5.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^5.0.0` to `^5.0.1`"
           }
         ]
       }
     },
     {
       "version": "3.0.1",
-      "tag": "@cdf/integration-tests_v3.0.1",
+      "tag": "@awssolutions/cdf-integration-tests_v3.0.1",
       "date": "Thu, 17 Feb 2022 12:56:53 GMT",
       "comments": {
         "patch": [
@@ -332,7 +437,7 @@
     },
     {
       "version": "3.0.0",
-      "tag": "@cdf/integration-tests_v3.0.0",
+      "tag": "@awssolutions/cdf-integration-tests_v3.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",
       "comments": {
         "major": [
@@ -342,44 +447,44 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.2` to `^5.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^4.1.2` to `^5.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/assetlibraryhistory-client\" from `^4.0.1` to `^5.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibraryhistory-client\" from `^4.0.1` to `^5.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/commands-client\" from `^4.1.1` to `^5.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-commands-client\" from `^4.1.1` to `^5.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-errors\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/device-patcher-client\" from `^1.1.0` to `^1.1.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-device-patcher-client\" from `^1.1.0` to `^1.1.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-config-inject\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/greengrass2-provisioning-client\" from `^1.0.0` to `^1.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-greengrass2-provisioning-client\" from `^1.0.0` to `^1.0.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^3.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-lambda-invoke\" from `^2.0.1` to `^3.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-logger\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/notifications-client\" from `^3.0.1` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-notifications-client\" from `^3.0.1` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^4.0.2` to `^5.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-provisioning-client\" from `^4.0.2` to `^5.0.0`"
           }
         ]
       }
     },
     {
       "version": "2.9.5",
-      "tag": "@cdf/integration-tests_v2.9.5",
+      "tag": "@awssolutions/cdf-integration-tests_v2.9.5",
       "date": "Wed, 05 Jan 2022 18:34:59 GMT",
       "comments": {
         "patch": [
@@ -391,7 +496,7 @@
     },
     {
       "version": "2.9.4",
-      "tag": "@cdf/integration-tests_v2.9.4",
+      "tag": "@awssolutions/cdf-integration-tests_v2.9.4",
       "date": "Wed, 29 Dec 2021 20:21:35 GMT",
       "comments": {
         "patch": [
@@ -403,7 +508,7 @@
     },
     {
       "version": "2.9.3",
-      "tag": "@cdf/integration-tests_v2.9.3",
+      "tag": "@awssolutions/cdf-integration-tests_v2.9.3",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",
       "comments": {
         "patch": [
@@ -413,35 +518,35 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.2.0` to `^4.2.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^4.2.0` to `^4.2.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/assetlibraryhistory-client\" from `^4.0.1` to `^4.0.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibraryhistory-client\" from `^4.0.1` to `^4.0.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/commands-client\" from `^4.1.1` to `^4.1.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-commands-client\" from `^4.1.1` to `^4.1.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^2.0.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-lambda-invoke\" from `^2.0.1` to `^2.0.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/notifications-client\" from `^3.0.1` to `^3.0.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-notifications-client\" from `^3.0.1` to `^3.0.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^4.0.2` to `^4.0.3`"
+            "comment": "Updating dependency \"@awssolutions/cdf-provisioning-client\" from `^4.0.2` to `^4.0.3`"
           },
           {
-            "comment": "Updating dependency \"@cdf/greengrass-deployment-client\" from `^1.1.0` to `^1.1.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-greengrass-deployment-client\" from `^1.1.0` to `^1.1.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/greengrass-provisioning-client\" from `^2.1.0` to `^2.1.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-greengrass-provisioning-client\" from `^2.1.0` to `^2.1.1`"
           }
         ]
       }
     },
     {
       "version": "2.9.2",
-      "tag": "@cdf/integration-tests_v2.9.2",
+      "tag": "@awssolutions/cdf-integration-tests_v2.9.2",
       "date": "Wed, 11 Aug 2021 01:26:49 GMT",
       "comments": {
         "patch": [
@@ -451,14 +556,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.0` to `^4.1.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^4.1.0` to `^4.1.1`"
           }
         ]
       }
     },
     {
       "version": "2.9.1",
-      "tag": "@cdf/integration-tests_v2.9.1",
+      "tag": "@awssolutions/cdf-integration-tests_v2.9.1",
       "date": "Fri, 23 Jul 2021 15:55:06 GMT",
       "comments": {
         "patch": [
@@ -470,7 +575,7 @@
     },
     {
       "version": "2.9.0",
-      "tag": "@cdf/integration-tests_v2.9.0",
+      "tag": "@awssolutions/cdf-integration-tests_v2.9.0",
       "date": "Wed, 21 Jul 2021 16:46:57 GMT",
       "comments": {}
     }

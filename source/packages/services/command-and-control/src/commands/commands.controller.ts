@@ -25,11 +25,17 @@ import {
     requestParam,
     response,
 } from 'inversify-express-utils';
+
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors';
-import { logger } from '../utils/logger.util';
 import { CommandsAssembler } from './commands.assembler';
-import { CommandResource, CommandResourceList, EditableCommandResource, Tags } from './commands.models';
+import {
+    CommandResource,
+    CommandResourceList,
+    EditableCommandResource,
+    Tags,
+} from './commands.models';
 import { CommandsService } from './commands.service';
 
 @controller('/commands')

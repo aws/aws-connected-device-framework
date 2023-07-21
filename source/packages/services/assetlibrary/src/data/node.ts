@@ -12,13 +12,13 @@
  *********************************************************************************************************************/
 import { TypeCategory } from '../types/constants';
 export type NodeAttributeValue = string | string[] | number | number[] | boolean | boolean[];
-export type StringNodeMap = { [key: string] : Node[]} ;
+export type StringNodeMap = { [key: string]: Node[] };
 export class Node {
-    id?:string;
+    id?: string;
     types: string[];
-    category:TypeCategory;
+    category: TypeCategory;
 
-    attributes?: { [key: string] : NodeAttributeValue} = {};
+    attributes?: { [key: string]: NodeAttributeValue } = {};
 
     in: StringNodeMap = {};
     out: StringNodeMap = {};
@@ -30,14 +30,14 @@ export class Node {
         this.types = [];
     }
 
-    public addLink(direction:string, name:string, other:Node) : void {
-        if (direction==='in') {
-            if (this['in'][name]===undefined) {
+    public addLink(direction: string, name: string, other: Node): void {
+        if (direction === 'in') {
+            if (this['in'][name] === undefined) {
                 this['in'][name] = [];
             }
             this['in'][name].push(other);
-        } else if (direction==='out') {
-            if (this['out'][name]===undefined) {
+        } else if (direction === 'out') {
+            if (this['out'][name] === undefined) {
                 this['out'][name] = [];
             }
             this['out'][name].push(other);

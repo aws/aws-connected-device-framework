@@ -10,6 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { DevicesAssembler } from '../devices/devices.assembler';
@@ -19,7 +20,6 @@ import { GroupsAssembler } from '../groups/groups.assembler';
 import { GroupItem } from '../groups/groups.models';
 import { TypeCategory } from '../types/constants';
 import { NotSupportedError } from '../utils/errors';
-import { logger } from '../utils/logger';
 import { SearchDaoLite } from './search.lite.dao';
 import { FacetResults, SearchRequestModel } from './search.models';
 

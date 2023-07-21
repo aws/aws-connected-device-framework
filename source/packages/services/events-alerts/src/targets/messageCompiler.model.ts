@@ -12,14 +12,14 @@
  *********************************************************************************************************************/
 export class MessageTemplates {
     eventId?: string;
-    supportedTargets: SupportedTargets= {};
-    templates: Templates= {};
+    supportedTargets: SupportedTargets = {};
+    templates: Templates = {};
 }
 
-export type AttributeMapping = { [key: string] : string};
-export type SupportedTargets = {[key:string]:string};
-export type Templates = {[key:string]:string};
+export type AttributeMapping = { [key: string]: string };
+export type SupportedTargets = { [key: string]: string };
+export type Templates = { [key: string]: string };
 
 export interface EventConfig {
-    eventId:string
+    eventId: string;
 }

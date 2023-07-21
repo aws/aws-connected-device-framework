@@ -46,11 +46,11 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -76,11 +76,11 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -106,11 +106,11 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -128,11 +128,11 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
             .put(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -149,11 +149,11 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -176,11 +176,11 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 }

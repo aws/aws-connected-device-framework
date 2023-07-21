@@ -1,9 +1,60 @@
 {
-  "name": "@cdf/greengrass2-provisioning-client",
+  "name": "@awssolutions/cdf-greengrass2-provisioning-client",
   "entries": [
     {
+      "version": "0.0.0",
+      "tag": "@awssolutions/cdf-greengrass2-provisioning-client_v0.0.0",
+      "date": "Thu, 09 Mar 2023 22:35:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.2.0",
+      "tag": "@awssolutions/cdf-greengrass2-provisioning-client_v0.2.0",
+      "date": "Wed, 08 Mar 2023 01:03:23 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-assetlibrary-client version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^0.1.0 to ^0.2.0."
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.0",
+      "tag": "@awssolutions/cdf-greengrass2-provisioning-client_v0.1.0",
+      "date": "Tue, 07 Mar 2023 23:22:30 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-assetlibrary-client version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^0.0.0 to ^0.1.0."
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.0",
+      "tag": "@awssolutions/cdf-greengrass2-provisioning-client_v1.1.0",
+      "date": "Thu, 16 Feb 2023 18:41:02 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-assetlibrary-client version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^1.0.0 to ^1.1.0."
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.6",
-      "tag": "@cdf/greengrass2-provisioning-client_v1.0.6",
+      "tag": "@awssolutions/cdf-greengrass2-provisioning-client_v1.0.6",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",
       "comments": {
         "patch": [
@@ -18,14 +69,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.4` to `^5.0.5`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^5.0.4` to `^5.0.5`"
           }
         ]
       }
     },
     {
       "version": "1.0.5",
-      "tag": "@cdf/greengrass2-provisioning-client_v1.0.5",
+      "tag": "@awssolutions/cdf-greengrass2-provisioning-client_v1.0.5",
       "date": "Thu, 07 Apr 2022 05:00:50 GMT",
       "comments": {
         "patch": [
@@ -35,14 +86,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.3` to `^5.0.4`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^5.0.3` to `^5.0.4`"
           }
         ]
       }
     },
     {
       "version": "1.0.4",
-      "tag": "@cdf/greengrass2-provisioning-client_v1.0.4",
+      "tag": "@awssolutions/cdf-greengrass2-provisioning-client_v1.0.4",
       "date": "Mon, 28 Mar 2022 00:28:46 GMT",
       "comments": {
         "patch": [
@@ -54,7 +105,7 @@
     },
     {
       "version": "1.0.3",
-      "tag": "@cdf/greengrass2-provisioning-client_v1.0.3",
+      "tag": "@awssolutions/cdf-greengrass2-provisioning-client_v1.0.3",
       "date": "Tue, 22 Mar 2022 22:51:44 GMT",
       "comments": {
         "patch": [
@@ -64,17 +115,17 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.2` to `^5.0.3`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^5.0.2` to `^5.0.3`"
           },
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^3.0.1` to `^3.0.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-lambda-invoke\" from `^3.0.1` to `^3.0.2`"
           }
         ]
       }
     },
     {
       "version": "1.0.2",
-      "tag": "@cdf/greengrass2-provisioning-client_v1.0.2",
+      "tag": "@awssolutions/cdf-greengrass2-provisioning-client_v1.0.2",
       "date": "Mon, 21 Mar 2022 21:58:32 GMT",
       "comments": {
         "patch": [
@@ -84,25 +135,25 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.1` to `^5.0.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^5.0.1` to `^5.0.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^3.0.0` to `^3.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-lambda-invoke\" from `^3.0.0` to `^3.0.1`"
           }
         ]
       }
     },
     {
       "version": "1.0.1",
-      "tag": "@cdf/greengrass2-provisioning-client_v1.0.1",
+      "tag": "@awssolutions/cdf-greengrass2-provisioning-client_v1.0.1",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",
       "comments": {
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.2` to `^5.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-assetlibrary-client\" from `^4.1.2` to `^5.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^3.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-lambda-invoke\" from `^2.0.1` to `^3.0.0`"
           }
         ]
       }

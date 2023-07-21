@@ -80,4 +80,3 @@ export class TargetsApigwService extends TargetsServiceBase implements TargetsSe
             });
     }
 }
-

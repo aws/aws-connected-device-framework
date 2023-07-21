@@ -70,7 +70,7 @@ export interface CommonName {
 export enum CommonNameGenerator {
     Sequential = 'sequential',
     List = 'list',
-    Static = 'static'
+    Static = 'static',
 }
 
 export class CertInfoValidationResult {

@@ -10,45 +10,43 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { injectable } from 'inversify';
-import {logger} from '../../utils/logger.util';
-import { EventSourceItem, EventSourceDetailResource } from './eventsource.models';
+import { EventSourceDetailResource, EventSourceItem } from './eventsource.models';
 
 @injectable()
 export class EventSourceAssembler {
-
-    public toItem(resource:EventSourceDetailResource): EventSourceItem {
+    public toItem(resource: EventSourceDetailResource): EventSourceItem {
         logger.debug(`eventsource.assembler toItem: in: resource:${JSON.stringify(resource)}`);
 
-        const item:EventSourceItem = {
+        const item: EventSourceItem = {
             id: resource.id,
             name: resource.name,
             sourceType: resource.sourceType,
             principal: resource.principal,
             enabled: resource.enabled,
             dynamoDb: resource.dynamoDb,
-            iotCore: resource.iotCore
+            iotCore: resource.iotCore,
         };
 
         logger.debug(`eventsource.assembler toItem: exit: ${JSON.stringify(item)}`);
         return item;
     }
 
-    public toResource(item:EventSourceItem): EventSourceDetailResource {
+    public toResource(item: EventSourceItem): EventSourceDetailResource {
         logger.debug(`eventsource.assembler toResource: in: resource:${JSON.stringify(item)}`);
 
-        const resource:EventSourceDetailResource = {
+        const resource: EventSourceDetailResource = {
             id: item.id,
             name: item.name,
             principal: item.principal,
             sourceType: item.sourceType,
             enabled: item.enabled,
             dynamoDb: item.dynamoDb,
-            iotCore: item.iotCore
+            iotCore: item.iotCore,
         };
 
         logger.debug(`eventsource.assembler toResource: exit: node: ${JSON.stringify(resource)}`);
         return resource;
-
     }
 }

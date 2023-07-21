@@ -10,52 +10,60 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { ProvisioningStepProcessor } from './provisioningStepProcessor';
-import { ProvisioningStepData } from './provisioningStep.model';
-import { logger } from '../../utils/logger';
-import { TYPES } from '../../di/types';
-import AWS = require('aws-sdk');
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { CreateDeviceCertificateParameters } from '../things.models';
-import { CertUtils } from '../../utils/cert';
 import * as pem from 'pem';
+import { TYPES } from '../../di/types';
+import { CertUtils } from '../../utils/cert';
+import { CreateDeviceCertificateParameters } from '../things.models';
+import { ProvisioningStepData } from './provisioningStep.model';
+import { ProvisioningStepProcessor } from './provisioningStepProcessor';
+import AWS = require('aws-sdk');
 
 @injectable()
 export class CreateDeviceCertificateStepProcessor implements ProvisioningStepProcessor {
+    private _iot: AWS.Iot;
+    private _ssm: AWS.SSM;
 
-  private _iot: AWS.Iot;
-  private _ssm: AWS.SSM;
-
-  public constructor(
-    @inject(TYPES.CertUtils) private certUtils: CertUtils,  
-    @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
-    @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
-    @inject('deviceCertificateExpiryDays') private defaultExpiryDays: number) {
-
-      this._iot = iotFactory();
-      this._ssm = ssmFactory();
-  }
+    public constructor(
+        @inject(TYPES.CertUtils) private certUtils: CertUtils,
+        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
+        @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
+        @inject('deviceCertificateExpiryDays') private defaultExpiryDays: number
+    ) {
+        this._iot = iotFactory();
+        this._ssm = ssmFactory();
+    }
 
     public async process(stepData: ProvisioningStepData): Promise<void> {
-        logger.debug(`CreateDeviceCertificateStepProcessor: process: in: stepData: ${JSON.stringify(stepData)}`);
+        logger.debug(
+            `CreateDeviceCertificateStepProcessor: process: in: stepData: ${JSON.stringify(
+                stepData
+            )}`
+        );
 
         const params = stepData?.cdfProvisioningParameters as CreateDeviceCertificateParameters;
         ow(params?.certInfo, 'certInfo', ow.object.nonEmpty);
         ow(params?.caId, 'caId', ow.string.nonEmpty);
 
-        const futures:Promise<string>[] = [
+        const futures: Promise<string>[] = [
             this.getCaPem(params?.caId),
             this.getCaPrivateKey(params?.caId),
-            this.certUtils.createPrivateKey()
+            this.certUtils.createPrivateKey(),
         ];
 
-        const [caPem,caKey,privateKey] = await Promise.all(futures);
+        const [caPem, caKey, privateKey] = await Promise.all(futures);
 
         const csr = await this.certUtils.createCSR(privateKey, params.certInfo);
-        const certificate = await this.createCertificate(csr, params.certInfo.daysExpiry ?? this.defaultExpiryDays,  caKey, caPem);
+        const certificate = await this.createCertificate(
+            csr,
+            params.certInfo.daysExpiry ?? this.defaultExpiryDays,
+            caKey,
+            caPem
+        );
 
-        if (stepData.parameters===undefined) {
+        if (stepData.parameters === undefined) {
             stepData.parameters = {};
         }
         stepData.parameters.CaCertificatePem = caPem;
@@ -65,21 +73,23 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
         logger.debug('CreateDeviceCertificateStepProcessor: process: exit:');
     }
 
-    private async getCaPem (caCertId:string) : Promise<string> {
+    private async getCaPem(caCertId: string): Promise<string> {
         logger.debug(`CreateDeviceCertificateStepProcessor: getCaPem: in: caCertId: ${caCertId}`);
         const params = {
-            certificateId: caCertId
+            certificateId: caCertId,
         };
         const caDescription = await this._iot.describeCACertificate(params).promise();
         logger.debug('CreateDeviceCertificateStepProcessor: getCaPem: exit: REDACTED');
         return caDescription.certificateDescription.certificatePem;
     }
 
-    private async getCaPrivateKey(caCertId:string) : Promise<string> {
-        logger.debug(`CreateDeviceCertificateStepProcessor: getCaPrivateKey: in: caCertId: ${caCertId}`);
+    private async getCaPrivateKey(caCertId: string): Promise<string> {
+        logger.debug(
+            `CreateDeviceCertificateStepProcessor: getCaPrivateKey: in: caCertId: ${caCertId}`
+        );
         const params = {
             Name: `cdf-ca-key-${caCertId}`,
-            WithDecryption: true
+            WithDecryption: true,
         };
 
         const ssmResponse = await this._ssm.getParameter(params).promise();
@@ -87,18 +97,34 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
         return ssmResponse.Parameter.Value;
     }
 
-    private createCertificate(csr:string, days:number, rootKey:string, rootPem:string) : Promise<string> {
-        logger.debug(`CreateDeviceCertificateStepProcessor: createCertificate: in: csr:${csr}, days:${days}, rootKey:${rootKey}, rootPem:${rootPem}`);
+    private createCertificate(
+        csr: string,
+        days: number,
+        rootKey: string,
+        rootPem: string
+    ): Promise<string> {
+        logger.debug(
+            `CreateDeviceCertificateStepProcessor: createCertificate: in: csr:${csr}, days:${days}, rootKey:${rootKey}, rootPem:${rootPem}`
+        );
         /* eslint-disable @typescript-eslint/no-explicit-any */
-        return new Promise((resolve:any,reject:any) =>  {
-            pem.createCertificate({csr, days, serviceKey:rootKey, serviceCertificate:rootPem}, (err:any, data:any) => {
-                if(err) {
-                    logger.debug(`CreateDeviceCertificateStepProcessor: createCertificate: err:${JSON.stringify(err)}`);
-                    return reject(err);
+        return new Promise((resolve: any, reject: any) => {
+            pem.createCertificate(
+                { csr, days, serviceKey: rootKey, serviceCertificate: rootPem },
+                (err: any, data: any) => {
+                    if (err) {
+                        logger.debug(
+                            `CreateDeviceCertificateStepProcessor: createCertificate: err:${JSON.stringify(
+                                err
+                            )}`
+                        );
+                        return reject(err);
+                    }
+                    logger.debug(
+                        `CreateDeviceCertificateStepProcessor: createCertificate: exit:${data.certificate}`
+                    );
+                    return resolve(data.certificate);
                 }
-                logger.debug(`CreateDeviceCertificateStepProcessor: createCertificate: exit:${data.certificate}`);
-                return resolve(data.certificate);
-            });
+            );
         });
     }
 }

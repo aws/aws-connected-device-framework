@@ -124,7 +124,13 @@
     },
     {
       "packageName": "@awssolutions/cdf-client-request-signer",
-      "projectFolder": "packages/libraries/core/client-request-signer",
+      "projectFolder": "packages/libraries/core/cdf-client-request-signer",
+      "reviewCategory": "library",
+      "versionPolicyName": "external"
+    },
+    {
+      "packageName": "@awssolutions/simple-cdf-logger",
+      "projectFolder": "packages/libraries/core/simple-cdf-logger",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },

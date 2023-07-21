@@ -13,12 +13,12 @@
 import * as qs from 'querystring';
 
 export class QSHelper {
-    public static getQueryString(queryObject:unknown): string {
-        let qsObj: {[key:string]:string} = {};
-        for(const key of Object.keys(queryObject)) {
-            if(queryObject[key]) {
-                if(typeof(queryObject[key]) === 'string') {
-                    if(queryObject[key].length > 0) {
+    public static getQueryString(queryObject: unknown): string {
+        let qsObj: { [key: string]: string } = {};
+        for (const key of Object.keys(queryObject)) {
+            if (queryObject[key]) {
+                if (typeof queryObject[key] === 'string') {
+                    if (queryObject[key].length > 0) {
                         qsObj = {};
                         qsObj[key] = queryObject[key];
                     }
@@ -28,7 +28,7 @@ export class QSHelper {
                 }
             }
         }
-        if(Object.keys(qsObj).length>0) {
+        if (Object.keys(qsObj).length > 0) {
             return qs.stringify(qsObj);
         }
         return null;

@@ -10,14 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
+import { sign } from 'jsonwebtoken';
+
 import {
     LAMBDAINVOKE_TYPES,
     LambdaApiGatewayEventBuilder,
     LambdaInvokerService,
 } from '@awssolutions/cdf-lambda-invoke';
-import { inject, injectable } from 'inversify';
-import { sign } from 'jsonwebtoken';
-import { logger } from '../utils/logger';
 import { CustomResource } from './customResource';
 import { CustomResourceEvent } from './customResource.model';
 

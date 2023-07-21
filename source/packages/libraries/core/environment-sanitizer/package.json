@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-environment-sanitizer",
-  "version": "0.0.0",
+  "version": "2.2.0",
   "description": "Tools to sanitize process.env, for secure logging",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -11,7 +11,7 @@
   "scripts": {
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
-    "build": "tsc",
+    "build": "npx tsc -b",
     "test": "rushx lint && jest --maxWorkers=$JEST_MAX_WORKERS"
   },
   "devDependencies": {

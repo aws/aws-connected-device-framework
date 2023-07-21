@@ -13,5 +13,5 @@
 import { ProvisioningStepData } from './provisioningStep.model';
 
 export interface ProvisioningStepProcessor {
-  process(stepInput:ProvisioningStepData):Promise<void>;
+    process(stepInput: ProvisioningStepData): Promise<void>;
 }

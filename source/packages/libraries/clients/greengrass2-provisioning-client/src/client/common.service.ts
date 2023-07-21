@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 
 import { injectable } from 'inversify';
+
 import { RequestHeaders } from './common.model';
 
 @injectable()

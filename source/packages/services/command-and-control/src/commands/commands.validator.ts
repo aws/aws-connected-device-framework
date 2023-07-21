@@ -14,12 +14,11 @@
 import { injectable } from 'inversify';
 import ow from 'ow';
 
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CommandItem, JobDeliveryMethod, TopicDeliveryMethod } from './commands.models';
 
 @injectable()
 export class CommandsValidator {
-
     public validate(c: CommandItem): void {
         logger.debug(`commands.validator: validate: in: c:${JSON.stringify(c)}`);
 
@@ -44,7 +43,7 @@ export class CommandsValidator {
                 const dm = c.deliveryMethod as JobDeliveryMethod;
                 const exponentialRate = dm.jobExecutionsRolloutConfig?.exponentialRate;
 
-                ow(dm.targetSelection, ow.string.oneOf(['CONTINUOUS', 'SNAPSHOT']))
+                ow(dm.targetSelection, ow.string.oneOf(['CONTINUOUS', 'SNAPSHOT']));
 
                 if (exponentialRate) {
                     ow(exponentialRate.baseRatePerMinute, ow.number.greaterThan(0));
@@ -62,7 +61,5 @@ export class CommandsValidator {
                 break;
             }
         }
-
     }
-
 }

@@ -10,57 +10,67 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { PolicyModel, AttachedPolicy} from './policies.models';
-import { PoliciesAssembler} from './policies.assembler';
-import { TYPES } from '../di/types';
-import { PoliciesDaoFull} from './policies.full.dao';
-import {logger} from '../utils/logger';
-import {EventEmitter, Type, Event} from '../events/eventEmitter.service';
-import { Operation, TypeCategory } from '../types/constants';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { PoliciesService } from './policies.service';
+import { TYPES } from '../di/types';
+import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
+import { Operation, TypeCategory } from '../types/constants';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
-import { SchemaValidationError } from '../utils/errors';
+import { NotFoundError, SchemaValidationError } from '../utils/errors';
+import { owCheckOptionalNumber } from '../utils/inputValidation.util';
+import { PoliciesAssembler } from './policies.assembler';
+import { PoliciesDaoFull } from './policies.full.dao';
+import { AttachedPolicy, PolicyModel } from './policies.models';
+import { PoliciesService } from './policies.service';
 
 @injectable()
 export class PoliciesServiceFull implements PoliciesService {
-
-    constructor( 
+    constructor(
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
         @inject(TYPES.PoliciesAssembler) private policiesAssembler: PoliciesAssembler,
         @inject(TYPES.PoliciesDao) private policiesDao: PoliciesDaoFull,
-        @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService) {}
+        @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService
+    ) {}
 
-    private setIdsToLowercase(model:PolicyModel) {
+    private setIdsToLowercase(model: PolicyModel) {
         model.policyId = model.policyId.toLowerCase();
         if (model.type) {
             model.type = model.type.toLowerCase();
         }
         if (model.appliesTo) {
-            model.appliesTo = model.appliesTo.map(v=> v.toLowerCase());
+            model.appliesTo = model.appliesTo.map((v) => v.toLowerCase());
         }
     }
 
-    public async get(policyId:string): Promise<PolicyModel> {
+    public async get(policyId: string): Promise<PolicyModel> {
         logger.debug(`policies.full.service get: in: policyId:${policyId}`);
 
-        ow(policyId,'policyId', ow.string.nonEmpty);
+        ow(policyId, 'policyId', ow.string.nonEmpty);
 
         // any ids need to be lowercase
-        policyId=policyId.toString();
+        policyId = policyId.toString();
 
-        const result  = await this.policiesDao.get(policyId);
+        const result = await this.policiesDao.get(policyId);
 
         const model = this.policiesAssembler.toModelFromPolicy(result);
         logger.debug(`policies.full.service get: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
 
-    public async create(policy: PolicyModel) : Promise<string> {
+    public async create(policy: PolicyModel): Promise<string> {
         logger.debug(`policies.full.service create: in: model: ${JSON.stringify(policy)}`);
 
-        ow(policy, ow.object.nonEmpty);
+        ow(
+            policy,
+            ow.object.exactShape({
+                policyId: ow.string.nonEmpty,
+                type: ow.string.nonEmpty,
+                description: ow.string,
+                appliesTo: ow.array.ofType(ow.string.nonEmpty),
+                document: ow.string.nonEmpty,
+            })
+        );
         ow(policy.policyId, ow.string.nonEmpty);
         ow(policy.type, ow.string.nonEmpty);
         ow(policy.document, ow.string.nonEmpty);
@@ -73,7 +83,11 @@ export class PoliciesServiceFull implements PoliciesService {
         this.setIdsToLowercase(policy);
 
         // schema validation
-        const validate = await this.validator.validateType(TypeCategory.Policy, policy, Operation.CREATE);
+        const validate = await this.validator.validateType(
+            TypeCategory.Policy,
+            policy,
+            Operation.CREATE
+        );
         if (!validate.isValid) {
             throw new SchemaValidationError(validate);
         }
@@ -86,25 +100,30 @@ export class PoliciesServiceFull implements PoliciesService {
             objectId: policy.policyId,
             type: Type.policy,
             event: Event.create,
-            payload: JSON.stringify(policy)
+            payload: JSON.stringify(policy),
         });
 
         logger.debug(`policies.full.service create: exit: id: ${id}`);
         return id;
-
     }
 
-    public async update(updated:PolicyModel) : Promise<string> {
+    public async update(updated: PolicyModel): Promise<string> {
         logger.debug(`policies.full.service update: in: updated:${JSON.stringify(updated)}`);
 
         ow(updated, ow.object.nonEmpty);
         ow(updated.policyId, ow.string.nonEmpty);
+        ow(updated.type, ow.string.nonEmpty);
+        ow(updated.appliesTo, ow.array.ofType(ow.string));
 
         // any ids need to be lowercase
         this.setIdsToLowercase(updated);
 
         // Save to datastore
         const existingPolicy = await this.policiesDao.get(updated.policyId);
+        if (existingPolicy === undefined) {
+            throw new NotFoundError(`Policy with id ${updated.policyId} doesn't exist`);
+        }
+
         const existingModel = this.policiesAssembler.toModelFromPolicy(existingPolicy);
 
         const id = await this.policiesDao.update(existingModel, updated);
@@ -114,82 +133,95 @@ export class PoliciesServiceFull implements PoliciesService {
             objectId: updated.policyId,
             type: Type.policy,
             event: Event.modify,
-            payload: JSON.stringify(updated)
+            payload: JSON.stringify(updated),
         });
 
         logger.debug(`policies.full.service update: exit: id: ${id}`);
         return id;
-
     }
 
-    public async listInheritedByDevice(deviceId:string, type:string): Promise<PolicyModel[]> {
-        logger.debug(`policies.full.service listInheritedByDevice: in: deviceId:${deviceId}, type:${type}`);
+    public async listInheritedByDevice(deviceId: string, type: string): Promise<PolicyModel[]> {
+        logger.debug(
+            `policies.full.service listInheritedByDevice: in: deviceId:${deviceId}, type:${type}`
+        );
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(type,'type', ow.string.nonEmpty);
+        ow(type, 'type', ow.string.nonEmpty);
 
         // any ids need to be lowercase
-        deviceId=deviceId.toLowerCase();
-        type=type.toLowerCase();
+        deviceId = deviceId.toLowerCase();
+        type = type.toLowerCase();
 
-        const attached  = await this.policiesDao.listDeviceAttachedPolicies(deviceId, type);
+        const attached = await this.policiesDao.listDeviceAttachedPolicies(deviceId, type);
         return this.filterAttached(attached);
-
     }
 
-    public async listInheritedByGroup(groupPaths:string[], type?:string): Promise<PolicyModel[]> {
-        logger.debug(`policies.full.service listInheritedByGroup: in: groupPaths:${groupPaths}, type:${type}`);
+    public async listInheritedByGroup(
+        groupPaths: string[],
+        type?: string
+    ): Promise<PolicyModel[]> {
+        logger.debug(
+            `policies.full.service listInheritedByGroup: in: groupPaths:${groupPaths}, type:${type}`
+        );
 
-        ow(groupPaths, 'groupPaths',ow.array.nonEmpty.minLength(1));
+        ow(groupPaths, 'groupPaths', ow.array.nonEmpty.minLength(1));
 
         // any ids need to be lowercase
-        groupPaths=groupPaths.map(v => v.toLowerCase());
-        if (type!==undefined) {
-            type=type.toLowerCase();
+        groupPaths = groupPaths.map((v) => v.toLowerCase());
+        if (type !== undefined) {
+            type = type.toLowerCase();
         }
 
-        const attached  = await this.policiesDao.listGroupAttachedPolicies(groupPaths, type);
+        const attached = await this.policiesDao.listGroupAttachedPolicies(groupPaths, type);
         return this.filterAttached(attached);
-
     }
 
-    public async listPolicies(type?:string, offset?:number, count?:number): Promise<PolicyModel[]> {
-        logger.debug(`policies.full.service listPolicies: in: type:${type}, offset:${offset}, count:${count}`);
+    public async listPolicies(
+        type?: string,
+        offset?: number,
+        count?: number
+    ): Promise<PolicyModel[]> {
+        logger.debug(
+            `policies.full.service listPolicies: in: type:${type}, offset:${offset}, count:${count}`
+        );
+
+        owCheckOptionalNumber(count, 1, 10000, 'count');
+        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
 
         // any ids need to be lowercase
-        if (type!==undefined) {
-            type=type.toLowerCase();
+        if (type !== undefined) {
+            type = type.toLowerCase();
         }
 
         const policies = await this.policiesDao.listPolicies(type, offset, count);
         return this.policiesAssembler.toModelFromPolicies(policies);
-
     }
 
-    private filterAttached(attached:AttachedPolicy[]): PolicyModel[] {
-        logger.debug(`policies.full.service filterAttached: in: attached:${JSON.stringify(attached)}`);
+    private filterAttached(attached: AttachedPolicy[]): PolicyModel[] {
+        logger.debug(
+            `policies.full.service filterAttached: in: attached:${JSON.stringify(attached)}`
+        );
 
         // filter out the results so that we only end up with devices that are associated
         // with groups belongs to ALL the policies appliesTo groups
-        const matches: AttachedPolicy[]=[];
-        for(const policy of attached) {
-
+        const matches: AttachedPolicy[] = [];
+        for (const policy of attached) {
             // sort both the paths to make it easier to compare with each other
-            const groups: string[]=[];
-            policy.groups.forEach(v=> groups.push(v.id));
+            const groups: string[] = [];
+            policy.groups.forEach((v) => groups.push(v.id));
             groups.sort();
 
-            const policyGroups: string[]=[];
-            policy.policyGroups.forEach(v=> policyGroups.push(v.id));
+            const policyGroups: string[] = [];
+            policy.policyGroups.forEach((v) => policyGroups.push(v.id));
             policyGroups.sort();
 
             // start from the end of the list of policygroups (so that we can easily remove non matching), seeing if we have a match
-            for(let pg = policyGroups.length -1; pg >= 0; pg--) {
-                let matchFound=false;
-                for(let dp = groups.length -1; dp >= 0; dp--) {
+            for (let pg = policyGroups.length - 1; pg >= 0; pg--) {
+                let matchFound = false;
+                for (let dp = groups.length - 1; dp >= 0; dp--) {
                     if (groups[dp].startsWith(policyGroups[pg])) {
                         // we have a match!
-                        matchFound=true;
+                        matchFound = true;
                         groups.splice(dp, 1);
                         break;
                     }
@@ -200,31 +232,33 @@ export class PoliciesServiceFull implements PoliciesService {
             }
 
             // if the policyGroups ends up containing no items, then we have a perfect match!
-            if (policyGroups.length===0) {
+            if (policyGroups.length === 0) {
                 matches.push(policy);
             }
         }
 
         logger.debug(`policies.full.service filterAttached: matches: ${JSON.stringify(matches)}`);
 
-        if (matches.length===0) {
+        if (matches.length === 0) {
             logger.debug(`policies.full.service filterAttached: exit: matches: undefined`);
             return undefined;
         }
 
         const models = this.policiesAssembler.toModelFromPolicies(matches);
 
-        logger.debug(`policies.full.service filterAttached: exit: models: ${JSON.stringify(models)}`);
+        logger.debug(
+            `policies.full.service filterAttached: exit: models: ${JSON.stringify(models)}`
+        );
         return models;
     }
 
-    public async delete(policyId: string) : Promise<void> {
+    public async delete(policyId: string): Promise<void> {
         logger.debug(`policies.full.service delete: in: policyId: ${policyId}`);
 
-        ow(policyId,'policyId', ow.string.nonEmpty);
+        ow(policyId, 'policyId', ow.string.nonEmpty);
 
         // any ids need to be lowercase
-        policyId=policyId.toLowerCase();
+        policyId = policyId.toLowerCase();
 
         const policy = await this.get(policyId);
 
@@ -236,11 +270,9 @@ export class PoliciesServiceFull implements PoliciesService {
             objectId: policyId,
             type: Type.policy,
             event: Event.delete,
-            payload: JSON.stringify(policy)
+            payload: JSON.stringify(policy),
         });
 
         logger.debug(`policies.full.service delete: exit:`);
-
     }
-
 }

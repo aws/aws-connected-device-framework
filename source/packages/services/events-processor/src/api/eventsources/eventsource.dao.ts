@@ -10,25 +10,28 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { logger } from '../../utils/logger.util';
-import { TYPES } from '../../di/types';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { EventSourceItem } from './eventsource.models';
-import { PkType, createDelimitedAttribute, expandDelimitedAttribute } from '../../utils/pkUtils.util';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../../di/types';
 import { DynamoDbUtils } from '../../utils/dynamoDb.util';
+import {
+    PkType,
+    createDelimitedAttribute,
+    expandDelimitedAttribute,
+} from '../../utils/pkUtils.util';
+import { EventSourceItem } from './eventsource.models';
 
 @injectable()
 export class EventSourceDao {
-
     private _cachedDc: AWS.DynamoDB.DocumentClient;
 
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable: string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1: string,
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
-        @inject(TYPES.CachableDocumentClientFactory) cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
-
+        @inject(TYPES.CachableDocumentClientFactory)
+        cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._cachedDc = cachableDocumentClientFactory();
     }
@@ -37,12 +40,11 @@ export class EventSourceDao {
      * Creates the EventSource DynamoDB items (pk='ES-$(eventSourceId}, sk='ES-$(eventSourceId}' and sk='type').
      * @param es
      */
-    public async create(es: EventSourceItem,): Promise<void> {
+    public async create(es: EventSourceItem): Promise<void> {
         logger.debug(`eventsource.dao create: in: es:${JSON.stringify(es)}`);
 
         const params: DocumentClient.BatchWriteItemInput = {
-            RequestItems: {
-            }
+            RequestItems: {},
         };
 
         const eventSourceDynamoDBItem = this.dynamoDbUtils.removeUndefinedParameter({
@@ -54,13 +56,13 @@ export class EventSourceDao {
             principal: es.principal,
             enabled: es.enabled,
             dynamoDb: es.dynamoDb,
-            iotCore: es.iotCore
-        })
+            iotCore: es.iotCore,
+        });
 
         const eventSourceCreate = {
             PutRequest: {
-                Item: eventSourceDynamoDBItem
-            }
+                Item: eventSourceDynamoDBItem,
+            },
         };
 
         params.RequestItems[this.eventConfigTable] = [eventSourceCreate];
@@ -81,12 +83,11 @@ export class EventSourceDao {
             IndexName: this.eventConfigGSI1,
             KeyConditionExpression: `#sk = :sk`,
             ExpressionAttributeNames: {
-                '#sk': 'sk'
+                '#sk': 'sk',
             },
             ExpressionAttributeValues: {
-                ':sk': createDelimitedAttribute(PkType.Type, PkType.EventSource)
-            }
-
+                ':sk': createDelimitedAttribute(PkType.Type, PkType.EventSource),
+            },
         };
 
         logger.debug(`eventsource.dao list: QueryInput: ${JSON.stringify(params)}`);
@@ -116,7 +117,7 @@ export class EventSourceDao {
             principal: attrs.principal,
             enabled: attrs.enabled,
             dynamoDb: attrs.dynamoDb,
-            iotCore: attrs.iotCore
+            iotCore: attrs.iotCore,
         };
         return r;
     }
@@ -129,13 +130,12 @@ export class EventSourceDao {
             KeyConditionExpression: `#hash=:hash AND #range=:range`,
             ExpressionAttributeNames: {
                 '#hash': 'pk',
-                '#range': 'sk'
+                '#range': 'sk',
             },
             ExpressionAttributeValues: {
                 ':hash': createDelimitedAttribute(PkType.EventSource, eventSourceId),
-                ':range': createDelimitedAttribute(PkType.Type, PkType.EventSource)
-            }
-
+                ':range': createDelimitedAttribute(PkType.Type, PkType.EventSource),
+            },
         };
 
         logger.debug(`eventsource.dao get: QueryInput: ${JSON.stringify(params)}`);
@@ -159,7 +159,7 @@ export class EventSourceDao {
 
         // start to build up delete requests
         const deleteParams: DocumentClient.BatchWriteItemInput = {
-            RequestItems: {}
+            RequestItems: {},
         };
         deleteParams.RequestItems[this.eventConfigTable] = [];
 
@@ -168,11 +168,11 @@ export class EventSourceDao {
             TableName: this.eventConfigTable,
             KeyConditionExpression: `#hash=:hash`,
             ExpressionAttributeNames: {
-                '#hash': 'pk'
+                '#hash': 'pk',
             },
             ExpressionAttributeValues: {
-                ':hash': createDelimitedAttribute(PkType.EventSource, eventSourceId)
-            }
+                ':hash': createDelimitedAttribute(PkType.EventSource, eventSourceId),
+            },
         };
 
         const results = await this._cachedDc.query(queryParams).promise();
@@ -184,9 +184,9 @@ export class EventSourceDao {
                     DeleteRequest: {
                         Key: {
                             pk: item.pk,
-                            sk: item.sk
-                        }
-                    }
+                            sk: item.sk,
+                        },
+                    },
                 });
             }
         }

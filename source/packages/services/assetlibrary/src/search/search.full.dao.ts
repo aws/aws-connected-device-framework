@@ -10,6 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { process, structure } from 'gremlin';
 import { inject, injectable } from 'inversify';
 import { NodeAssembler } from '../data/assembler';
@@ -17,7 +18,6 @@ import { BaseDaoFull, NeptuneConnection } from '../data/base.full.dao';
 import { Node } from '../data/node';
 import { TYPES } from '../di/types';
 import { ArgumentError } from '../utils/errors';
-import { logger } from '../utils/logger';
 import { TypeUtils } from '../utils/typeUtils';
 import {
     FacetResults,
@@ -80,7 +80,7 @@ export class SearchDaoFull extends BaseDaoFull {
             request.ntypes.forEach((t) => traverser.select('a').not(__.hasLabel(t)));
         }
 
-        if (request.eq! == undefined) {
+        if (request.eq !== undefined) {
             request.eq.forEach((f) => {
                 traverser.select('a');
                 this.buildSearchFilterVBase(f, traverser);

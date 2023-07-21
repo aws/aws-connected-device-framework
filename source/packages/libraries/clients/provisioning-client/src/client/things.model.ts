@@ -10,7 +10,6 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-
 export interface ProvisionThingRequest {
     provisioningTemplateId: string;
     parameters: { [key: string]: string };
@@ -75,25 +74,25 @@ export interface Thing {
 }
 
 export interface ThingCertificate {
-	certificateId: string;
-	arn: string;
-	certificateStatus: CertificateStatus;
-	certificatePem: string;
+    certificateId: string;
+    arn: string;
+    certificateStatus: CertificateStatus;
+    certificatePem: string;
 }
 
 export enum CertificateStatus {
-	ACTIVE = 'ACTIVE',
-	INACTIVE = 'INACTIVE',
-	REGISTER_INACTIVE = 'REGISTER_INACTIVE',
-	PENDING_TRANSFER = 'PENDING_TRANSFER',
-	PENDING_ACTIVATION = 'PENDING_ACTIVATION',
-	REVOKED = 'REVOKED'
+    ACTIVE = 'ACTIVE',
+    INACTIVE = 'INACTIVE',
+    REGISTER_INACTIVE = 'REGISTER_INACTIVE',
+    PENDING_TRANSFER = 'PENDING_TRANSFER',
+    PENDING_ACTIVATION = 'PENDING_ACTIVATION',
+    REVOKED = 'REVOKED',
 }
 
 export interface ThingPolicy {
-	policyName: string;
-	arn: string;
-	policyDocument: string;
+    policyName: string;
+    arn: string;
+    policyDocument: string;
 }
 
 export interface ThingGroup {
@@ -103,19 +102,19 @@ export interface ThingGroup {
 }
 
 export interface BulkProvisionThingsRequest {
-	provisioningTemplateId: string;
-	parameters: { [key: string]: string }[];
+    provisioningTemplateId: string;
+    parameters: { [key: string]: string }[];
 }
 export interface BulkProvisionThingsResponse {
-	taskId: string;
-	creationDate?: Date;
-	lastModifiedDate?: Date;
-	status?: string;
-	successCount?: number;
-	failureCount?: number;
-	percentageProgress?: number;
+    taskId: string;
+    creationDate?: Date;
+    lastModifiedDate?: Date;
+    status?: string;
+    successCount?: number;
+    failureCount?: number;
+    percentageProgress?: number;
 }
 
 export interface RequestHeaders {
-	[key: string]: string;
+    [key: string]: string;
 }

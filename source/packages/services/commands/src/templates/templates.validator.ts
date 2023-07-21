@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 
 import ow from 'ow';
 import { TYPES } from '../di/types';
@@ -19,20 +19,18 @@ import { TemplateModel } from './templates.models';
 
 @injectable()
 export class TemplatesValidator {
+    constructor(@inject(TYPES.RolloutsValidator) private rolloutsValidator: RolloutsValidator) {}
 
-    constructor(
-        @inject(TYPES.RolloutsValidator) private rolloutsValidator: RolloutsValidator) {
-    }
-
-    public validate(t:TemplateModel) : void {
-        
+    public validate(t: TemplateModel): void {
         ow(t, ow.object.nonEmpty);
         ow(t.templateId, ow.string.nonEmpty);
         ow(t.operation, ow.string.nonEmpty);
         ow(t.document, ow.string.nonEmpty);
-        
-        this.rolloutsValidator.validate(t.jobExecutionsRolloutConfig, t.abortConfig, t.timeoutConfig);
 
+        this.rolloutsValidator.validate(
+            t.jobExecutionsRolloutConfig,
+            t.abortConfig,
+            t.timeoutConfig
+        );
     }
-
 }

@@ -10,7 +10,6 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-
 export interface Parameter {
     key: string;
     value: string;
@@ -26,7 +25,7 @@ export interface ComponentItem {
     bypassCheck?: boolean;
 }
 
-export type ComponentResource = Omit<ComponentItem, "organizationalUnitId">
+export type ComponentResource = Omit<ComponentItem, 'organizationalUnitId'>;
 
 export type ComponentResourceList = ComponentResource[];
 

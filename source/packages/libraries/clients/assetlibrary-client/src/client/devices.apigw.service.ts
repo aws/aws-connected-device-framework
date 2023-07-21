@@ -24,7 +24,7 @@ import {
     BulkDevicesResult,
     Device10Resource,
     Device20Resource,
-    DeviceResourceList
+    DeviceResourceList,
 } from './devices.model';
 import { DevicesService, DevicesServiceBase } from './devices.service';
 
@@ -56,11 +56,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .put(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -86,11 +86,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .put(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -113,11 +113,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .put(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -143,11 +143,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .put(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -165,11 +165,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -192,11 +192,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .send(body)
             .set(headers)
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -217,11 +217,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -242,11 +242,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -267,11 +267,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -284,11 +284,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -312,11 +312,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -340,11 +340,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -380,11 +380,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -408,11 +408,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -435,11 +435,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -473,11 +473,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -507,11 +507,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -535,11 +535,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -563,11 +563,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -598,11 +598,11 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 }

@@ -33,7 +33,6 @@ export const TYPES = {
     AssetLibraryBulkGroupsCustomResource: Symbol.for('AssetLibraryBulkGroupsCustomResource'),
     AssetLibraryPolicyCustomResource: Symbol.for('AssetLibraryPolicyCustomResource'),
     AssetLibraryTemplateCustomResource: Symbol.for('AssetLibraryTemplateCustomResource'),
-    
 
     CommandsTemplateCustomResource: Symbol.for('CommandsTemplateCustomResource'),
     CommandsCommandCustomResource: Symbol.for('CommandsCommandCustomResource'),
@@ -55,10 +54,9 @@ export const TYPES = {
 
     S3PutObjectCustomResource: Symbol.for('S3PutObjectCustomResource'),
     IotDeviceDefenderCustomResource: Symbol.for('IotDeviceDefenderCustomResource'),
-    
+
     EventSourceCustomResource: Symbol.for('EventSourceCustomResource'),
     EventsCustomResource: Symbol.for('EventsCustomResource'),
 
-    StackEventsCustomResource: Symbol.for('StackEventsCustomResource')
-
+    StackEventsCustomResource: Symbol.for('StackEventsCustomResource'),
 };

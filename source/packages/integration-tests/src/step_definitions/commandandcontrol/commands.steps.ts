@@ -10,20 +10,21 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-
-import {
-    COMMANDANDCONTROL_CLIENT_TYPES,
-    CommandResource,
-    CommandResourceList,
-    CommandsService,
-} from '@awssolutions/cdf-commandandcontrol-client';
-import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
-import { expect, use } from 'chai';
 import 'reflect-metadata';
+
+import { use, expect } from 'chai';
+import { setDefaultTimeout, DataTable, Then, When, Given } from '@cucumber/cucumber';
+
 import { container } from '../../di/inversify.config';
 import { buildModel, validateExpectedAttributes } from '../common/common.steps';
 import { getAdditionalHeaders } from '../notifications/notifications.utils';
 import { world } from './commandandcontrol.world';
+import {
+    COMMANDANDCONTROL_CLIENT_TYPES,
+    CommandResource,
+    CommandsService,
+    CommandResourceList,
+} from '@awssolutions/cdf-commandandcontrol-client';
 
 import chai_string = require('chai-string');
 use(chai_string);
@@ -120,3 +121,9 @@ export async function listCommands(): Promise<CommandResource[]> {
     }
     return commands;
 }
+
+Then('I have all commands restored', async (data: DataTable) => {
+    const expectedCommandList = data.raw().flat();
+    const commands = await listCommands();
+    expect(commands.map((command) => command.operation)).to.have.same.members(expectedCommandList);
+});

@@ -10,33 +10,34 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { GroupItem, BulkGroupsResult, GroupMemberItemList, GroupItemList} from './groups.models';
-import {logger} from '../utils/logger';
-import {TypeCategory} from '../types/constants';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { GroupsService } from './groups.service';
+import { DeviceItemList } from '../devices/devices.models';
 import { TYPES } from '../di/types';
-import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
+import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
+import { TypeCategory } from '../types/constants';
+import { GroupNotFoundError, NotSupportedError } from '../utils/errors';
 import { GroupsAssembler } from './groups.assembler';
 import { GroupsDaoLite, ListMembersResponse } from './groups.lite.dao';
-import { DeviceItemList } from '../devices/devices.models';
-import { GroupNotFoundError, NotSupportedError } from '../utils/errors';
+import { BulkGroupsResult, GroupItem, GroupItemList, GroupMemberItemList } from './groups.models';
+import { GroupsService } from './groups.service';
 
 @injectable()
 export class GroupsServiceLite implements GroupsService {
-
-    constructor( @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoLite ,
+    constructor(
+        @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoLite,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
-        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
+        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter
+    ) {}
 
-    public async get(groupId: string, _includeGroups=false): Promise<GroupItem> {
+    public async get(groupId: string, _includeGroups = false): Promise<GroupItem> {
         logger.debug(`groups.lite.service get: in: groupId: ${groupId}`);
 
         ow(groupId, ow.string.nonEmpty);
 
-        const result  = await this.groupsDao.get(groupId);
-        if (result===undefined) {
+        const result = await this.groupsDao.get(groupId);
+        if (result === undefined) {
             throw new GroupNotFoundError(groupId);
         }
 
@@ -50,22 +51,29 @@ export class GroupsServiceLite implements GroupsService {
 
         ow(groupPaths, ow.array.nonEmpty);
 
-        const models: GroupItem[]=[];
-        for(const groupPath of groupPaths) {
+        const models: GroupItem[] = [];
+        for (const groupPath of groupPaths) {
             models.push(await this.get(groupPath));
         }
 
-        const r = {results: models};
+        const r = { results: models };
         logger.debug(`groups.lite.service: getBulk: exit: ${JSON.stringify(r)}`);
         return r;
     }
 
-    public async createBulk(_groups:GroupItem[], _applyProfile?:string) : Promise<BulkGroupsResult> {
+    public async createBulk(
+        _groups: GroupItem[],
+        _applyProfile?: string
+    ): Promise<BulkGroupsResult> {
         throw new NotSupportedError();
     }
 
-    public async create(model:GroupItem, applyProfile?:string) : Promise<string> {
-        logger.debug(`groups.lite.service create: in: model:${JSON.stringify(model)}, applyProfile:${applyProfile}`);
+    public async create(model: GroupItem, applyProfile?: string): Promise<string> {
+        logger.debug(
+            `groups.lite.service create: in: model:${JSON.stringify(
+                model
+            )}, applyProfile:${applyProfile}`
+        );
 
         ow(model, ow.object.nonEmpty);
         ow(model.name, ow.string.nonEmpty);
@@ -94,16 +102,19 @@ export class GroupsServiceLite implements GroupsService {
             objectId: model.groupPath,
             type: Type.group,
             event: Event.create,
-            payload: JSON.stringify(model)
+            payload: JSON.stringify(model),
         });
 
         logger.debug(`groups.lite.service create: exit: id: ${id}`);
         return id;
-
     }
 
-    public async update(model: GroupItem, applyProfile?:string) : Promise<void> {
-        logger.debug(`groups.lite.service update: in: model:${JSON.stringify(model)}, applyProfile:${applyProfile}`);
+    public async update(model: GroupItem, applyProfile?: string): Promise<void> {
+        logger.debug(
+            `groups.lite.service update: in: model:${JSON.stringify(
+                model
+            )}, applyProfile:${applyProfile}`
+        );
 
         ow(model, ow.object.nonEmpty);
         ow(model.groupPath, ow.string.nonEmpty);
@@ -116,11 +127,11 @@ export class GroupsServiceLite implements GroupsService {
 
         // as 'lite' only supports updating full resources, we need to fetch the original, then merge thge changes
         const existing = await this.get(model.groupPath);
-        if (existing===undefined) {
+        if (existing === undefined) {
             throw new GroupNotFoundError(model.groupPath);
         }
         const merged = Object.assign(new GroupItem(), existing, model);
-        merged.attributes = {...existing.attributes, ...model.attributes};
+        merged.attributes = { ...existing.attributes, ...model.attributes };
 
         // Save to datastore
         const node = this.groupsAssembler.toNode(merged);
@@ -131,58 +142,73 @@ export class GroupsServiceLite implements GroupsService {
             objectId: model.groupPath,
             type: Type.group,
             event: Event.modify,
-            payload: JSON.stringify(model)
+            payload: JSON.stringify(model),
         });
 
         logger.debug(`groups.lite.service update: exit:`);
     }
 
-    public async getMembers(groupPath:string, category:TypeCategory, type:string, state:string, offset?:number|string, maxResults?:number): Promise<GroupMemberItemList> {
-        logger.debug(`groups.lite.service getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, maxResults:${maxResults}`);
+    public async getMembers(
+        groupPath: string,
+        category: TypeCategory,
+        type: string,
+        state: string,
+        offset?: number | string,
+        maxResults?: number
+    ): Promise<GroupMemberItemList> {
+        logger.debug(
+            `groups.lite.service getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, maxResults:${maxResults}`
+        );
 
-        ow(groupPath,'groupPath', ow.string.nonEmpty);
-        ow(category,'category', ow.string.nonEmpty);
-        ow(type,'type', ow.undefined);
+        ow(groupPath, 'groupPath', ow.string.nonEmpty);
+        ow(category, 'category', ow.string.nonEmpty);
+        ow(type, 'type', ow.undefined);
         ow(state, ow.undefined);
 
-        let result:ListMembersResponse;
-        if (category===TypeCategory.Device) {
-            result  = await this.groupsDao.listDeviceMembers(groupPath, maxResults, <string> offset);
+        let result: ListMembersResponse;
+        if (category === TypeCategory.Device) {
+            result = await this.groupsDao.listDeviceMembers(groupPath, maxResults, <string>offset);
         } else {
-            result  = await this.groupsDao.listGroupMembers(groupPath, maxResults, <string> offset);
+            result = await this.groupsDao.listGroupMembers(groupPath, maxResults, <string>offset);
         }
 
-        const model = this.groupsAssembler.toGroupMembersList(result.nodes, result.nextToken, maxResults);
+        const model = this.groupsAssembler.toGroupMembersList(
+            result.nodes,
+            result.nextToken,
+            maxResults
+        );
 
         logger.debug(`groups.lite.service getMembers: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
 
-    public async getParentGroups(groupPath:string): Promise<GroupItem[]> {
+    public async getParentGroups(groupPath: string): Promise<GroupItem[]> {
         logger.debug(`groups.lite.service getParentGroups: in: groupPath:${groupPath}`);
 
-        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
         // in 'lite' mode we have to recurse manually
-        const groups:GroupItem[]=[];
+        const groups: GroupItem[] = [];
         let group = await this.get(groupPath);
         groups.push(group);
-        while (group.parentPath!==undefined) {
+        while (group.parentPath !== undefined) {
             group = await this.get(group.parentPath);
             groups.push(group);
         }
 
-        logger.debug(`groups.lite.service getParentGroups: exit: model: ${JSON.stringify(groups)}`);
+        logger.debug(
+            `groups.lite.service getParentGroups: exit: model: ${JSON.stringify(groups)}`
+        );
         return groups;
     }
 
-    public async delete(groupPath: string) : Promise<void> {
+    public async delete(groupPath: string): Promise<void> {
         logger.debug(`groups.lite.service delete: in: groupPath: ${groupPath}`);
 
-        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
         const model = await this.get(groupPath);
-        if (model===undefined) {
+        if (model === undefined) {
             throw new GroupNotFoundError(groupPath);
         }
 
@@ -195,37 +221,76 @@ export class GroupsServiceLite implements GroupsService {
             objectId: groupPath,
             type: Type.group,
             event: Event.delete,
-            payload: JSON.stringify(model)
+            payload: JSON.stringify(model),
         });
 
         logger.debug(`groups.lite.service delete: exit:`);
     }
 
-    public async attachToGroup(sourceGroupPath:string, relationship:string, targetGroupPath:string) : Promise<void> {
-        logger.debug(`groups.lite.service attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`);
+    public async attachToGroup(
+        sourceGroupPath: string,
+        relationship: string,
+        targetGroupPath: string
+    ): Promise<void> {
+        logger.debug(
+            `groups.lite.service attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`
+        );
         throw new NotSupportedError();
     }
 
-    public async detachFromGroup(sourceGroupPath:string, relationship:string, targetGroupPath:string) : Promise<void> {
-        logger.debug(`groups.lite.service detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`);
+    public async detachFromGroup(
+        sourceGroupPath: string,
+        relationship: string,
+        targetGroupPath: string
+    ): Promise<void> {
+        logger.debug(
+            `groups.lite.service detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`
+        );
         throw new NotSupportedError();
     }
 
-    public async listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupItemList> {
-        logger.debug(`groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
+    public async listRelatedGroups(
+        groupPath: string,
+        relationship: string,
+        direction: string,
+        template: string,
+        offset: number,
+        count: number
+    ): Promise<GroupItemList> {
+        logger.debug(
+            `groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`
+        );
         throw new NotSupportedError();
     }
 
-    public async listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<DeviceItemList> {
-        logger.debug(`groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
+    public async listRelatedDevices(
+        groupPath: string,
+        relationship: string,
+        direction: string,
+        template: string,
+        state: string,
+        offset: number,
+        count: number
+    ): Promise<DeviceItemList> {
+        logger.debug(
+            `groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`
+        );
         throw new NotSupportedError();
     }
 
-    public async attachToDevice(_groupPath:string, _relationship:string, _otherDeviceId:string) : Promise<void> {
+    public async attachToDevice(
+        _groupPath: string,
+        _relationship: string,
+        _otherDeviceId: string
+    ): Promise<void> {
         throw new NotSupportedError();
     }
 
-    public async detachFromDevice(_groupPath:string, _relationship:string, _otherDeviceId:string) : Promise<void> {
+    public async detachFromDevice(
+        _groupPath: string,
+        _relationship: string,
+        _otherDeviceId: string
+    ): Promise<void> {
         throw new NotSupportedError();
     }
 }

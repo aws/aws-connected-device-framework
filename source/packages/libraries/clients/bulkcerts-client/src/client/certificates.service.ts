@@ -12,13 +12,20 @@
  *********************************************************************************************************************/
 
 import { injectable } from 'inversify';
+
 import { PathHelper } from '../utils/path.helper';
 import { CertificateBatchTaskWithChunks, RequestHeaders } from './certificates.models';
 
 export interface CertificatesService {
-    getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string[]|Buffer>;
-    getCertificatesTask(taskId:string, additionalHeaders?: RequestHeaders): Promise<CertificateBatchTaskWithChunks>;
-
+    getCertificates(
+        taskId: string,
+        downloadType: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string[] | Buffer>;
+    getCertificatesTask(
+        taskId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<CertificateBatchTaskWithChunks>;
 }
 
 @injectable()

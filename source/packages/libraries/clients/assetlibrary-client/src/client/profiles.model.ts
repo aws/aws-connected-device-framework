@@ -34,9 +34,9 @@ export interface GroupProfile20Resource extends Group20Resource {
 }
 
 export interface ProfileResourceList {
-    results: (DeviceProfileResource|GroupProfileResource)[];
+    results: (DeviceProfileResource | GroupProfileResource)[];
     pagination?: {
-        offset:number;
-        count:number;
+        offset: number;
+        count: number;
     };
 }

@@ -10,21 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger';
 
 import { Batch } from '../../batch/batch.service';
-import { Extracted, Extractor } from '../extract.service';
 import { GroupsService } from '../../groups/groups.service';
 import { TypeCategory } from '../../types/constants';
-
+import { Extracted, Extractor } from '../extract.service';
 
 @injectable()
 export class GroupExtractor implements Extractor {
-
     @inject(TYPES.GroupsService) private groupsService: GroupsService;
 
     public async extract(batch: Batch): Promise<Extracted> {
@@ -39,13 +37,12 @@ export class GroupExtractor implements Extractor {
 
         const groupItemList = await this.groupsService.getBulk(batch.items);
 
-
         const extracted = {
             id: batch.id,
             category: TypeCategory.Group,
             type: batch.type,
             items: groupItemList.results,
-            timestamp: batch.timestamp
+            timestamp: batch.timestamp,
         };
 
         logger.debug(`GroupExtractor: extract: out`);

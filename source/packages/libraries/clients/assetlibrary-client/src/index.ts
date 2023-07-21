@@ -10,20 +10,21 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-export * from './client/common.model';
+export * from './client/response.model';
 export * from './client/devices.model';
 export * from './client/devices.service';
 export * from './client/groups.model';
 export * from './client/groups.service';
 export * from './client/pagination.model';
-export * from './client/policies.model';
-export * from './client/policies.service';
-export * from './client/profiles.model';
-export * from './client/profiles.service';
-export * from './client/response.model';
-export * from './client/search.model';
-export * from './client/search.service';
 export * from './client/templates.model';
 export * from './client/templates.service';
-export { assetLibraryContainerModule } from './di/inversify.config';
+export * from './client/policies.model';
+export * from './client/policies.service';
+export * from './client/search.model';
+export * from './client/search.service';
+export * from './client/profiles.model';
+export * from './client/profiles.service';
+export * from './client/common.model';
+
 export { ASSETLIBRARY_CLIENT_TYPES, ASSTLIBRARY_CLIENT_TYPES } from './di/types';
+export { assetLibraryContainerModule } from './di/inversify.config';

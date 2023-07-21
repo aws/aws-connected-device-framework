@@ -8,58 +8,60 @@ The following accepts `ThingName` as a parameter. A thing is created with the na
 
 ```json
 {
-    "Parameters": {
+  "Parameters": {
+    "ThingName": {
+      "Type": "String"
+    },
+    "CertificatePem": {
+      "Type": "String"
+    },
+    "CaCertificatePem": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "thing": {
+      "Type": "AWS::IoT::Thing",
+      "Properties": {
         "ThingName": {
-            "Type": "String"
+          "Ref": "ThingName"
+        }
+      },
+      "OverrideSettings": {
+        "ThingTypeName": "REPLACE"
+      }
+    },
+    "certificate": {
+      "Type": "AWS::IoT::Certificate",
+      "Properties": {
+        "CACertificatePem": {
+          "Ref": "CaCertificatePem"
         },
         "CertificatePem": {
-            "Type": "String"
+          "Ref": "CertificatePem"
         },
-        "CaCertificatePem": {
-            "Type": "String"
-        }
+        "Status": "ACTIVE"
+      },
+      "OverrideSettings": {
+        "Status": "REPLACE"
+      }
     },
-    "Resources": {
-        "thing": {
-            "Type": "AWS::IoT::Thing",
-            "Properties": {
-                "ThingName": {
-                    "Ref": "ThingName"
-                }
-            },
-            "OverrideSettings": {
-                "ThingTypeName": "REPLACE"
-            }
-        },
-        "certificate": {
-            "Type": "AWS::IoT::Certificate",
-            "Properties": {
-                "CACertificatePem": {
-                    "Ref": "CaCertificatePem"
-                },
-                "CertificatePem": {
-                    "Ref": "CertificatePem"
-                },
-                "Status": "ACTIVE"
-            },
-            "OverrideSettings": {
-                "Status": "REPLACE"
-            }
-        },
-        "policy": {
-            "Type": "AWS::IoT::Policy",
-            "Properties": {
-                "PolicyName": "myPolicy"
-            }
-        }
-    },
-    
-    "CDF": {
-        "createDeviceCertificate": true,
-        "attachAdditionalPolicies": [{
-            "name": "attachAdditionalPolicies"
-        }]
+    "policy": {
+      "Type": "AWS::IoT::Policy",
+      "Properties": {
+        "PolicyName": "myPolicy"
+      }
     }
+  },
+
+  "CDF": {
+    "createDeviceCertificate": true,
+    "attachAdditionalPolicies": [
+      {
+        "name": "attachAdditionalPolicies"
+      }
+    ]
+  }
 }
 ```
 
@@ -69,13 +71,13 @@ Refer to the [AWS IoT documentation](https://docs.aws.amazon.com/iot/latest/deve
 
 CDF extends AWS IoT Provisioning Templates by allowing the following extra configuration options to be applied to enhance the functionality of provisioning templates:
 
-### `$.CDF.createDeviceCertificate` 
+### `$.CDF.createDeviceCertificate`
 
-If set to `true`, a device certificate signed by a custom CA will be created on behalf of the device without the need of the device providing a CSR.  By default, is `false`.
+If set to `true`, a device certificate signed by a custom CA will be created on behalf of the device without the need of the device providing a CSR. By default, is `false`.
 
 Note that this feature is useful for prototyping workloads, but is not a security best practice for production workloads as this generates the private key and CSR on behalf of a device which means the private key needs to be loaded back onto the device. A security best pratice is for a device to generate its own CSR so that the private key never leaves the device.
 
-For the template to use the generated certificate it must have the `CertificatePem`  and `CaCertificatePem` template parameters defined. Note that the user of the template should not provide values for these parameters as they will be populated automatically:
+For the template to use the generated certificate it must have the `CertificatePem` and `CaCertificatePem` template parameters defined. Note that the user of the template should not provide values for these parameters as they will be populated automatically:
 
 ```json
 # Provisioning template extract
@@ -92,7 +94,7 @@ For the template to use the generated certificate it must have the `CertificateP
     "Resources": {
         ...
     },
-    
+
     "CDF": {
         "createDeviceCertificate": true
     }
@@ -122,10 +124,9 @@ The following attributes, provided as part of the `POST /things` request body, a
 }
 ```
 
+### `$.CDF.createDeviceAWSCertificate`
 
-### `$.CDF.createDeviceAWSCertificate` 
-
-If set to `true`, a device certificate signed by the Amazon Root CA will be created on behalf of the device without the need of the device providing a CSR.  By default, is `false`.
+If set to `true`, a device certificate signed by the Amazon Root CA will be created on behalf of the device without the need of the device providing a CSR. By default, is `false`.
 
 Note that this feature is useful for prototyping workloads, but is not a security best practice for production workloads as this generates the private key and CSR on behalf of a device which means the private key needs to be loaded back onto the device. A security best pratice is for a device to generate its own CSR so that the private key never leaves the device.
 
@@ -143,15 +144,14 @@ For the template to use the generated certificate it must have the `CertificateI
     "Resources": {
         ...
     },
-    
+
     "CDF": {
         "createDeviceAWSCertificate": true
     }
 }
 ```
 
-
-### `$.CDF.registerDeviceCertificateWithoutCA` 
+### `$.CDF.registerDeviceCertificateWithoutCA`
 
 If set to `true`, the certificate PEM provided is registered without a CA.
 
@@ -169,7 +169,7 @@ For the template to use the generated certificate it must have the `CertificateI
     "Resources": {
         ...
     },
-    
+
     "CDF": {
         "registerDeviceCertificateWithoutCA": true
     }
@@ -206,7 +206,7 @@ Specify names of existing policies, or name and definition of new policies to cr
         ...
     },
 
-    "CDF": {    
+    "CDF": {
         "attachAdditionalPolicies": {
             "policies": [{
                 "name": "?",                // Optional. String. Defaults to a hash of the policy document. If you are using an existing AWS IoT policy, for the PolicyName property, enter the name of the policy. Do not include the PolicyDocument property.
@@ -219,7 +219,6 @@ Specify names of existing policies, or name and definition of new policies to cr
 ```
 
 ### `$.CDF.useACMPCA`
-
 
 If `$.CDF.useACMPCA` is provided with a value of `REGISTER_WITH_CA` or `REGISTER_WITHOUT_CA`, ACM PCA is used to issue a device certificate which is then registered within AWS IoT. Refer to [ACM Private CA Integration](./acmpca-integration.md) for further details.
 
@@ -239,7 +238,7 @@ For the template to use the generated certificate it must have the `CertificateI
     "Resources": {
         ...
     },
-    
+
     "CDF": {
         "acmpca": {
             // mandatory if device certificates are to be issued from ACM PCA
@@ -254,23 +253,23 @@ The following attributes, provided as part of the `POST /things` request body, a
 # POST /things request body
 {
     ...
-    "cdfProvisioningParameters": {  
+    "cdfProvisioningParameters": {
 
-        // Mandatory. Either provide the ACM PCA CA ARN to issue the device certificate, 
+        // Mandatory. Either provide the ACM PCA CA ARN to issue the device certificate,
         //      or an alias that points to said AWS ACM PCA CA ARN:
-        "acmpcaCaArn": "?",           
+        "acmpcaCaArn": "?",
         "acmpcaCaAlias": "?",
 
         // optional. Only required if the template "CDF.acmpca.mode" was set to "REGISTER_WITH_CA".
-        //      If so, either provide the AWS IoT CA ARN of the ACM PCA CA registered with AWS IoT, 
+        //      If so, either provide the AWS IoT CA ARN of the ACM PCA CA registered with AWS IoT,
         //      or an alias that points to said AWS IoT CA ARN:
-        "awsiotCaArn": "?",           
+        "awsiotCaArn": "?",
         "awsiotCaAlias": "?",
 
-        // optional. If not provided, a CSR will be created on the devices behalf. Note that for production 
-        //      workloads it is a security best practice for the device to provide a CSR so that the private 
+        // optional. If not provided, a CSR will be created on the devices behalf. Note that for production
+        //      workloads it is a security best practice for the device to provide a CSR so that the private
         //      key is not exposed. For prototyping workloads, it is fine not to provide a CSR.
-        "csr": "?",                         
+        "csr": "?",
 
         // certificate information to apply:
         "certInfo": {                       // optional. But mandatory if no csr was provided.
@@ -287,8 +286,8 @@ The following attributes, provided as part of the `POST /things` request body, a
 }
 ```
 
-### `$.CDF.clientIdMustMatchThingName` 
+### `$.CDF.clientIdMustMatchThingName`
 
 > **Deprecated**. Instead use the builtin AWS IoT `iot:Connection.Thing.IsAttached: ["true"]` policy variable.
 
-If set to `true`, a policy will be created and associated with the certificate that enforces a device's MQTT clientId to match the AWS Thing Name.  By default, is `false`.
+If set to `true`, a policy will be created and associated with the certificate that enforces a device's MQTT clientId to match the AWS Thing Name. By default, is `false`.

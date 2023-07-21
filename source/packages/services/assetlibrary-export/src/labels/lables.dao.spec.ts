@@ -15,17 +15,19 @@ import 'reflect-metadata';
 import { IdObject } from './labels.dao';
 
 describe('LabelsDao', () => {
-
     it('should parse out id meta objects', () => {
-        const verticies = [{
-            'id': 'device___ts9_001',
-            'label': 'ts9_device::device'
-        },{
-            'id': 'device___clarity_001',
-            'label': 'device::clarity_device'
-        }];
+        const verticies = [
+            {
+                id: 'device___ts9_001',
+                label: 'ts9_device::device',
+            },
+            {
+                id: 'device___clarity_001',
+                label: 'device::clarity_device',
+            },
+        ];
 
-        const idObjects = verticies.map(v => {
+        const idObjects = verticies.map((v) => {
             return new IdObject(v);
         });
 
@@ -37,7 +39,5 @@ describe('LabelsDao', () => {
         expect(idObjects[1].id).toEqual('clarity_001');
         expect(idObjects[1].type).toEqual('clarity_device');
         expect(idObjects[1].category).toEqual('device');
-
     });
-
 });

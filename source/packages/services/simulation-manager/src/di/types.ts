@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const TYPES = {
-
     Controller: Symbol.for('Controller'),
 
     HttpHeaderUtils: Symbol.for('HttpHeaderUtils'),
@@ -39,5 +38,4 @@ export const TYPES = {
 
     S3: Symbol.for('S3'),
     S3Factory: Symbol.for('Factory<S3>'),
-
 };

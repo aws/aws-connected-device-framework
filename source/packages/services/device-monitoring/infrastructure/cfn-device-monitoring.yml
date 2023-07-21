@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,19 +11,18 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
-Description: "IoT Device Monitoring"
+Description: 'IoT Device Monitoring'
 
 Parameters:
-  
   ApplicationConfigurationOverride:
     Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
-    Type: String  
-  
+    Type: String
+
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
 
@@ -35,13 +35,12 @@ Resources:
   IoTLifecycleConnectRule:
     Type: AWS::IoT::TopicRule
     Properties:
-      TopicRulePayload: 
+      TopicRulePayload:
         Actions:
-          -
-            Lambda:
+          - Lambda:
               FunctionArn: !GetAtt IoTLifecycleEventLambda.Arn
-        Description: "Send IoT Lifecycle Event data to Lambda for connection status"
-        AwsIotSqlVersion: "2016-03-23"
+        Description: 'Send IoT Lifecycle Event data to Lambda for connection status'
+        AwsIotSqlVersion: '2016-03-23'
         RuleDisabled: false
         Sql: >-
           SELECT * FROM '$aws/events/presence/connected/+'
@@ -61,15 +60,14 @@ Resources:
     Properties:
       TopicRulePayload:
         Actions:
-          -
-            Lambda:
+          - Lambda:
               FunctionArn: !GetAtt IoTLifecycleEventLambda.Arn
-        Description: "Send IoT Lifecycle Event data to Lambda for disconnect status"
-        AwsIotSqlVersion: "2016-03-23"
+        Description: 'Send IoT Lifecycle Event data to Lambda for disconnect status'
+        AwsIotSqlVersion: '2016-03-23'
         RuleDisabled: false
         Sql: >-
           SELECT * FROM '$aws/events/presence/disconnected/+'
-  
+
   IoTLifecycleInvocationPermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -89,14 +87,14 @@ Resources:
           Principal:
             Service: lambda.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/cdf/devicemonitoring/"
+      Path: '/cdf/devicemonitoring/'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
       Policies:
         - PolicyName: app_policies
           PolicyDocument:
-            Version: "2012-10-17"
+            Version: '2012-10-17'
             Statement:
               - Sid: lambda
                 Effect: Allow
@@ -105,7 +103,7 @@ Resources:
                   - lambda:Invoke
                 Resource:
                   - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AssetLibraryFunctionName}'
-  
+
   IoTLifecycleEventLambda:
     Type: AWS::Serverless::Function
     Properties:

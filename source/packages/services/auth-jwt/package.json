@@ -14,14 +14,13 @@
     "test": "rushx lint && NODE_ENV= jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/index.js",
     "bundle": "../../../infrastructure/bundle-package.bash auth-jwt"
-
   },
   "dependencies": {
-    "@awssolutions/cdf-errors": "^0.0.0",
-    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-errors": "^2.2.0",
+    "@awssolutions/cdf-config-inject": "^2.2.0",
     "axios": "0.21.2",
     "js-yaml": "4.1.0",
-    "jsonwebtoken": "8.5.1",
+    "jsonwebtoken": "9.0.0",
     "jwk-to-pem": "2.0.4",
     "logform": "2.4.2",
     "ow": "0.23.0",
@@ -34,16 +33,13 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.65",
-    "@types/jsonwebtoken": "8.5.0",
+    "@types/jsonwebtoken": "9.0.1",
     "@types/jwk-to-pem": "2.0.0",
-
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
-
     "nodemon": "2.0.20",
     "nyc": "15.1.0",
     "shx": "0.3.3",
-
     "@types/jest": "26.0.23",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",

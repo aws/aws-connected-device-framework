@@ -11,6 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export class Authorizations {
-    exists:string[]= [];
-    authorized:{[entityId:string]:string[]}= {};
+    exists: string[] = [];
+    authorized: { [entityId: string]: string[] } = {};
 }

@@ -11,9 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import { createMockInstance } from 'jest-create-mock-instance';
-import { ThingsLambdaService } from './things.lambda.service';
+
 import { LambdaApiGatewayEvent, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
+import { ThingsLambdaService } from './things.lambda.service';
 import {
     BulkProvisionThingsRequest,
     BulkProvisionThingsResponse,

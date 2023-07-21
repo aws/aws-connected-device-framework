@@ -16,6 +16,6 @@ export interface CommonEvent {
     principalValue: string;
     sourceChangeType?: string;
     attributes?: {
-        [key: string] : string|boolean|number|string[]|number[]
+        [key: string]: string | boolean | number | string[] | number[];
     };
 }

@@ -12,42 +12,52 @@
  *********************************************************************************************************************/
 import * as AWS from 'aws-sdk';
 
-import { inject, injectable } from 'inversify';
 import createHttpError from 'http-errors';
+import { inject, injectable } from 'inversify';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { LAMBDAINVOKE_TYPES } from './di/types';
-import { logger } from './utils/logger';
 
-import {LambdaApiGatewayEventBuilder, LambdaApiGatewayEventResponse} from './lambdainvoker.model';
+import {
+    LambdaApiGatewayEventBuilder,
+    LambdaApiGatewayEventResponse,
+} from './lambdainvoker.model';
 
 @injectable()
 export class LambdaInvokerService {
-
     private lambda: AWS.Lambda;
 
-    public constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaFactory) lambdaFactory: () => AWS.Lambda,
-    ) {
+    public constructor(@inject(LAMBDAINVOKE_TYPES.LambdaFactory) lambdaFactory: () => AWS.Lambda) {
         this.lambda = lambdaFactory();
     }
 
     public async invoke(functionName: string, apiEvent: LambdaApiGatewayEventBuilder) {
-        logger.debug(`LambdaInvokerService: invoke: functionName:${functionName}, apiEvent:${JSON.stringify(apiEvent)}`);
+        logger.debug(
+            `LambdaInvokerService: invoke: functionName:${functionName}, apiEvent:${JSON.stringify(
+                apiEvent
+            )}`
+        );
 
         const invokeRequest: AWS.Lambda.InvocationRequest = {
             FunctionName: functionName,
             InvocationType: 'RequestResponse',
-            Payload: JSON.stringify(apiEvent)
+            Payload: JSON.stringify(apiEvent),
         };
 
-        const invokeResponse: AWS.Lambda.InvocationResponse = await this.lambda.invoke(invokeRequest).promise();
-        logger.silly(`LambdaInvokerService: invoke: invokeResponse: ${JSON.stringify(invokeResponse)}`);
+        const invokeResponse: AWS.Lambda.InvocationResponse = await this.lambda
+            .invoke(invokeRequest)
+            .promise();
+        logger.silly(
+            `LambdaInvokerService: invoke: invokeResponse: ${JSON.stringify(invokeResponse)}`
+        );
 
-        if (invokeResponse.StatusCode >= 200 && invokeResponse.StatusCode < 300 ) {
+        if (invokeResponse.StatusCode >= 200 && invokeResponse.StatusCode < 300) {
             const responsePayload = new LambdaApiGatewayEventResponse(invokeResponse.Payload);
-            logger.silly(`LambdaInvokerService: invoke: payload: ${JSON.stringify(responsePayload)}`);
+            logger.silly(
+                `LambdaInvokerService: invoke: payload: ${JSON.stringify(responsePayload)}`
+            );
 
-            if ((invokeResponse.FunctionError?.length??0)>0) {
+            if ((invokeResponse.FunctionError?.length ?? 0) > 0) {
                 const error = createHttpError(500);
                 error.response = responsePayload;
                 throw error;
@@ -66,6 +76,5 @@ export class LambdaInvokerService {
             error.status = invokeResponse.StatusCode;
             throw error;
         }
-
     }
 }

@@ -42,5 +42,5 @@ export const TYPES = {
     InvalidTransitionAction: Symbol.for('InvalidTransitionAction'),
     StartJobAction: Symbol.for('StartJobAction'),
     SaveAction: Symbol.for('SaveAction'),
-    CreateAction: Symbol.for('CreateAction')
+    CreateAction: Symbol.for('CreateAction'),
 };

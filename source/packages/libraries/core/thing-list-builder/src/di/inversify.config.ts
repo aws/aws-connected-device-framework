@@ -16,33 +16,34 @@ import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import { AwsIotThingListBuilder } from '../awsIotThingListBuilder';
 import { THING_LIST_BUILDER_TYPES } from './types';
 
-export const thingListBuilderContainerModule = new ContainerModule (
+export const thingListBuilderContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
-
         if (!isBound('aws.region')) {
             bind<string>('aws.region').toConstantValue(process.env.AWS_REGION);
         }
 
-        bind<AwsIotThingListBuilder>(THING_LIST_BUILDER_TYPES.AwsIotThingListBuilder).to(AwsIotThingListBuilder);
+        bind<AwsIotThingListBuilder>(THING_LIST_BUILDER_TYPES.AwsIotThingListBuilder).to(
+            AwsIotThingListBuilder
+        );
 
         if (!isBound(THING_LIST_BUILDER_TYPES.IotFactory)) {
             decorate(injectable(), IoTClient);
-            bind<interfaces.Factory<IoTClient>>(THING_LIST_BUILDER_TYPES.IotFactory)
-                .toFactory<IoTClient>((ctx: interfaces.Context) => {
-                    return () => {
-
-                        if (!isBound(THING_LIST_BUILDER_TYPES.Iot)) {
-                            const iot = new IoTClient({region: process.env.AWS_REGION});
-                            bind<IoTClient>(THING_LIST_BUILDER_TYPES.Iot).toConstantValue(iot);
-                        }
-                        return ctx.container.get<IoTClient>(THING_LIST_BUILDER_TYPES.Iot);
-                    };
-                });
+            bind<interfaces.Factory<IoTClient>>(
+                THING_LIST_BUILDER_TYPES.IotFactory
+            ).toFactory<IoTClient>((ctx: interfaces.Context) => {
+                return () => {
+                    if (!isBound(THING_LIST_BUILDER_TYPES.Iot)) {
+                        const iot = new IoTClient({ region: process.env.AWS_REGION });
+                        bind<IoTClient>(THING_LIST_BUILDER_TYPES.Iot).toConstantValue(iot);
+                    }
+                    return ctx.container.get<IoTClient>(THING_LIST_BUILDER_TYPES.Iot);
+                };
+            });
         }
     }
 );

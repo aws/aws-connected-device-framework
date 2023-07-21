@@ -10,6 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+/**
+ * AWS Connected Device Framework: Dashboard Facade
+ * Asset Library implementation of DevicesService *
+ */
+
+/* tslint:disable:no-unused-variable member-ordering */
 
 import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
 import createError from 'http-errors';
@@ -20,16 +26,22 @@ import { CertificateBatchTaskWithChunks, RequestHeaders } from './certificates.m
 import { CertificatesService, CertificatesServiceBase } from './certificates.service';
 
 @injectable()
-export class CertificatesApigwService extends CertificatesServiceBase implements CertificatesService {
-
-    private readonly baseUrl:string;
+export class CertificatesApigwService
+    extends CertificatesServiceBase
+    implements CertificatesService
+{
+    private readonly baseUrl: string;
 
     public constructor() {
         super();
         this.baseUrl = process.env.BULKCERTS_BASEURL;
     }
 
-    async getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string[]|Buffer> {
+    async getCertificates(
+        taskId: string,
+        downloadType: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string[] | Buffer> {
         ow(taskId, ow.string.nonEmpty);
 
         return await request
@@ -48,7 +60,10 @@ export class CertificatesApigwService extends CertificatesServiceBase implements
             });
     }
 
-    async getCertificatesTask(taskId:string, additionalHeaders?: RequestHeaders): Promise<CertificateBatchTaskWithChunks> {
+    async getCertificatesTask(
+        taskId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<CertificateBatchTaskWithChunks> {
         ow(taskId, ow.string.nonEmpty);
 
         return await request

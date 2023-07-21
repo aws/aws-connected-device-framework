@@ -25,7 +25,7 @@ export class PatchResource {
     patchType?: PatchType;
     statusMessage?: string;
     associationId?: string;
-    extraVars?: { [key: string]: string}
+    extraVars?: { [key: string]: string };
 }
 
 export class PatchItem {
@@ -40,7 +40,7 @@ export class PatchItem {
     patchType?: PatchType;
     statusMessage?: string;
     associationId?: string;
-    extraVars?: { [key: string]: string}
+    extraVars?: { [key: string]: string };
 }
 
 export interface PatchSource {
@@ -49,23 +49,23 @@ export interface PatchSource {
 }
 
 export enum PatchType {
-    AGENTLESS='agentless',
-    AGENTBASED='agentbased',
+    AGENTLESS = 'agentless',
+    AGENTBASED = 'agentbased',
 }
 
 export enum PatchStatus {
-    RETRY='retry',
-    CREATED='created',
-    PENDING='pending',
-    SUCCEESS='success',
-    FAILED='failed'
+    RETRY = 'retry',
+    CREATED = 'created',
+    PENDING = 'pending',
+    SUCCEESS = 'success',
+    FAILED = 'failed',
 }
 
 export interface PatchListResource {
     patches: PatchItem[];
     pagination?: {
-        lastEvaluated?: PatchListPaginationKey,
-        count?:number,
+        lastEvaluated?: PatchListPaginationKey;
+        count?: number;
     };
 }
 

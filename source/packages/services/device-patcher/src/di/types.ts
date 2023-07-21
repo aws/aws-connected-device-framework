@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const TYPES = {
-
     ActivationAssembler: Symbol.for('ActivationAssembler'),
     ActivationService: Symbol.for('ActivationService'),
     ActivationDao: Symbol.for('ActivationDao'),
@@ -57,6 +56,5 @@ export const TYPES = {
     SSMFactory: Symbol.for('Factory<SSM>'),
 
     SQS: Symbol.for('SQS'),
-    SQSFactory: Symbol.for('Factory<SQS>')
-
+    SQSFactory: Symbol.for('Factory<SQS>'),
 };

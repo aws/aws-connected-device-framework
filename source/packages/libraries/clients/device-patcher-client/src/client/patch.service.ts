@@ -11,9 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
+
 import { PathHelper } from '../utils/path.helper';
 import { RequestHeaders } from './common.model';
 import { ClientServiceBase } from './common.service';
+
 import {
     ListPatchResponse,
     PatchResponse,
@@ -50,7 +52,6 @@ export interface PatchService {
 
 @injectable()
 export class PatchServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }
@@ -67,12 +68,11 @@ export class PatchServiceBase extends ClientServiceBase {
         return PathHelper.encodeUrl('patchTasks', taskId, 'patches');
     }
 
-    protected patchesRelativeUrl(patchId: string) : string {
-        return PathHelper.encodeUrl( 'patches', patchId);
+    protected patchesRelativeUrl(patchId: string): string {
+        return PathHelper.encodeUrl('patches', patchId);
     }
 
-    protected patchByDeviceRelativeUrl(deviceId: string) : string {
+    protected patchByDeviceRelativeUrl(deviceId: string): string {
         return PathHelper.encodeUrl('devices', deviceId, 'patches');
     }
-
 }

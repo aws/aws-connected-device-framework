@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+/* tslint:disable:no-unused-variable member-ordering */
 import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
 import createError from 'http-errors';
 import { injectable } from 'inversify';

@@ -10,28 +10,31 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../../di/types';
-import {logger} from '../../../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { SNSTarget, SNSTargetCreation } from './sns.target';
+import { TYPES } from '../../../di/types';
 import { PushTargetItem } from '../targets.models';
+import { SNSTarget, SNSTargetCreation } from './sns.target';
 
 @injectable()
 export class PushTarget extends SNSTarget implements SNSTargetCreation {
-    private readonly PROTOCOL='application';
+    private readonly PROTOCOL = 'application';
     private sns: AWS.SNS;
 
     constructor(
-        @inject('aws.region') region:string,
-        @inject('aws.accountId') accountId:string,
-        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS) {
+        @inject('aws.region') region: string,
+        @inject('aws.accountId') accountId: string,
+        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS
+    ) {
         super(region, accountId, snsFactory);
         this.sns = snsFactory();
     }
 
-    public async create(config:PushTargetItem, topicArn:string) : Promise<string> {
-        logger.debug(`push.target create: in: config:${JSON.stringify(config)}, topicArn:${topicArn}`);
+    public async create(config: PushTargetItem, topicArn: string): Promise<string> {
+        logger.debug(
+            `push.target create: in: config:${JSON.stringify(config)}, topicArn:${topicArn}`
+        );
 
         // validate input
         ow(topicArn, ow.string.nonEmpty);
@@ -43,10 +46,12 @@ export class PushTarget extends SNSTarget implements SNSTargetCreation {
 
         // get platform endpoint arn
         // the docs (https://docs.aws.amazon.com/cli/latest/reference/sns/create-platform-endpoint.html) state that this call is idempotent:
-        const res = await this.sns.createPlatformEndpoint({
-            PlatformApplicationArn: config.platformApplicationArn,
-            Token: config.token
-        }).promise();
+        const res = await this.sns
+            .createPlatformEndpoint({
+                PlatformApplicationArn: config.platformApplicationArn,
+                Token: config.token,
+            })
+            .promise();
 
         // create the subscription
         const subscriptionArn = await super.subscribe(this.PROTOCOL, topicArn, res.EndpointArn);
@@ -57,5 +62,4 @@ export class PushTarget extends SNSTarget implements SNSTargetCreation {
         logger.debug(`push.target create: exit:${config.platformEndpointArn}`);
         return config.platformEndpointArn;
     }
-
 }

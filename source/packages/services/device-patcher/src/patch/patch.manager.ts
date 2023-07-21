@@ -11,53 +11,51 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import ow from 'ow';
 import { inject, injectable } from 'inversify';
+import ow from 'ow';
 
-import {TYPES} from '../di/types';
+import { TYPES } from '../di/types';
 
 import { PatchItem, PatchType } from './patch.model';
 
 import { AgentbasedPatchService } from './agentbased-patch.service';
 
-
 @injectable()
 export class PatchManager {
-
     private readonly patchStrategies = {};
 
     constructor(
-        @inject(TYPES.AgentbasedPatchService) protected agentbasedPatchService: AgentbasedPatchService
+        @inject(TYPES.AgentbasedPatchService)
+        protected agentbasedPatchService: AgentbasedPatchService
     ) {
         this.patchStrategies[PatchType.AGENTBASED] = agentbasedPatchService;
     }
 
-    public async create(patchType:string, patch: PatchItem): Promise<void> {
+    public async create(patchType: string, patch: PatchItem): Promise<void> {
         ow(patch, 'Patch Information', ow.object.nonEmpty);
         ow(patchType, 'Patch Template Type', ow.string.nonEmpty);
 
         await this.patchStrategies[patchType].create(patch);
     }
 
-    public async deploy(patchType:string, patch: PatchItem): Promise<void> {
+    public async deploy(patchType: string, patch: PatchItem): Promise<void> {
         ow(patch, 'Patch Information', ow.object.nonEmpty);
         ow(patchType, 'Patch Template Type', ow.string.nonEmpty);
 
         await this.patchStrategies[patchType].deploy(patch);
     }
 
-    public async delete(patchType:string, patch: PatchItem): Promise<void> {
+    public async delete(patchType: string, patch: PatchItem): Promise<void> {
         ow(patch, 'Patch Information', ow.object.nonEmpty);
         ow(patchType, 'Patch Template Type', ow.string.nonEmpty);
 
         await this.patchStrategies[patchType].delete(patch);
     }
 
-    public async update(patchType:string, patch: PatchItem): Promise<void>{
+    public async update(patchType: string, patch: PatchItem): Promise<void> {
         ow(patch, 'Patch Information', ow.object.nonEmpty);
         ow(patchType, 'Patch Template Type', ow.string.nonEmpty);
 
         await this.patchStrategies[patchType].update(patch);
     }
-
 }

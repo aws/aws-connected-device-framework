@@ -27,11 +27,11 @@ rush publish -a
 echo Committing updated files
 set +e
 git add -A
-git update-index --refresh 
+git update-index --refresh
 git diff-index --quiet HEAD -- ; differences=$?
 set -e
 if [ $differences -eq 1 ]; then
-    git commit -am 'ci(@cdf) buildproject_prebuild [skip ci]'
+    git commit -am 'ci(@awssolutions) buildproject_prebuild [skip ci]'
     git push origin HEAD:$BRANCH
 fi
 

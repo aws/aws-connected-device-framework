@@ -1,115 +1,47 @@
 {
-  "name": "@cdf/bulkcerts-client",
+  "name": "@awssolutions/cdf-bulkcerts-client",
   "entries": [
     {
-      "version": "2.0.5",
-      "tag": "@cdf/bulkcerts-client_v2.0.5",
-      "date": "Tue, 21 Jun 2022 00:47:55 GMT",
-      "comments": {
-        "patch": [
-          {
-            "comment": "update to node 16.x"
-          }
-        ]
-      }
+      "version": "0.0.0",
+      "tag": "@awssolutions/cdf-bulkcerts-client_v0.0.0",
+      "date": "Thu, 09 Mar 2023 22:35:00 GMT",
+      "comments": {}
     },
     {
-      "version": "2.0.4",
-      "tag": "@cdf/bulkcerts-client_v2.0.4",
-      "date": "Thu, 07 Apr 2022 05:00:50 GMT",
+      "version": "0.2.0",
+      "tag": "@awssolutions/cdf-bulkcerts-client_v0.2.0",
+      "date": "Wed, 08 Mar 2023 01:03:23 GMT",
       "comments": {
-        "patch": [
-          {
-            "comment": "fix parsing of BULKCERTS_HEADERS config setting"
-          }
-        ]
-      }
-    },
-    {
-      "version": "2.0.3",
-      "tag": "@cdf/bulkcerts-client_v2.0.3",
-      "date": "Mon, 28 Mar 2022 00:28:46 GMT",
-      "comments": {
-        "patch": [
-          {
-            "comment": "revert to latest aws-sdk"
-          }
-        ]
-      }
-    },
-    {
-      "version": "2.0.2",
-      "tag": "@cdf/bulkcerts-client_v2.0.2",
-      "date": "Tue, 22 Mar 2022 22:51:44 GMT",
-      "comments": {
-        "patch": [
-          {
-            "comment": "print module name when outputting loaded config on startup"
-          }
-        ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^3.0.1` to `^3.0.2`"
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^0.1.0 to ^0.2.0."
           }
         ]
       }
     },
     {
-      "version": "2.0.1",
-      "tag": "@cdf/bulkcerts-client_v2.0.1",
-      "date": "Mon, 21 Mar 2022 21:58:32 GMT",
+      "version": "0.1.0",
+      "tag": "@awssolutions/cdf-bulkcerts-client_v0.1.0",
+      "date": "Tue, 07 Mar 2023 23:22:30 GMT",
       "comments": {
-        "patch": [
-          {
-            "comment": "Upgrade dependencies marked as deprecated"
-          }
-        ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^3.0.0` to `^3.0.1`"
-          }
-        ]
-      }
-    },
-    {
-      "version": "2.0.0",
-      "tag": "@cdf/bulkcerts-client_v2.0.0",
-      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
-      "comments": {
-        "major": [
-          {
-            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
-          }
-        ],
-        "dependency": [
-          {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^3.0.0`"
-          }
-        ]
-      }
-    },
-    {
-      "version": "1.1.1",
-      "tag": "@cdf/bulkcerts-client_v1.1.1",
-      "date": "Tue, 28 Dec 2021 18:37:09 GMT",
-      "comments": {
-        "patch": [
-          {
-            "comment": "Addressed github security dependabot alerts"
-          }
-        ],
-        "dependency": [
-          {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^2.0.2`"
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^0.0.0 to ^0.1.0."
           }
         ]
       }
     },
     {
       "version": "1.1.0",
-      "tag": "@cdf/bulkcerts-client_v1.1.0",
-      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
-      "comments": {}
+      "tag": "@awssolutions/cdf-bulkcerts-client_v1.1.0",
+      "date": "Thu, 16 Feb 2023 18:41:01 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^1.0.0 to ^1.1.0."
+          }
+        ]
+      }
     }
   ]
 }

@@ -15,27 +15,39 @@ import ow from 'ow';
 import pLimit from 'p-limit';
 
 import {
-    ComponentDeploymentSpecification, CreateDeploymentCommand, GetCoreDeviceCommand,
-    GreengrassV2Client
+    ComponentDeploymentSpecification,
+    CreateDeploymentCommand,
+    GetCoreDeviceCommand,
+    GreengrassV2Client,
 } from '@aws-sdk/client-greengrassv2';
 import {
-    AddThingToThingGroupCommand, CreateThingGroupCommand, DescribeThingGroupCommand, IoTClient, ListThingGroupsForThingCommand, RemoveThingFromThingGroupCommand, TagResourceCommand
+    AddThingToThingGroupCommand,
+    CreateThingGroupCommand,
+    DescribeThingGroupCommand,
+    IoTClient,
+    ListThingGroupsForThingCommand,
+    RemoveThingFromThingGroupCommand,
+    TagResourceCommand,
 } from '@aws-sdk/client-iot';
 
+import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CoresService } from '../cores/cores.service';
 import { DeploymentTasksDao } from '../deploymentTasks/deploymentTasks.dao';
 import { TYPES } from '../di/types';
 import { TemplateItem } from '../templates/templates.models';
 import { TemplatesService } from '../templates/templates.service';
-import { logger } from '../utils/logger.util';
-import { Deployment, DeploymentTaskCreatedEvent, DeploymentTaskCreatedPayload, NewDeployment } from './deployments.models';
-import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
+import {
+    Deployment,
+    DeploymentTaskCreatedEvent,
+    DeploymentTaskCreatedPayload,
+    NewDeployment,
+} from './deployments.models';
 
-export const DEPLOYMENT_TASK_ID_TAG_KEY = 'cdf-greengrass2-provisioning-deployment-task-id'
+export const DEPLOYMENT_TASK_ID_TAG_KEY = 'cdf-greengrass2-provisioning-deployment-task-id';
 
 @injectable()
 export class DeploymentsService {
-
     private readonly DEPLOYMENT_THING_GROUP_PREFIX = 'cdf_ggv2_deploymentForTemplate_';
 
     private ggv2: GreengrassV2Client;
@@ -47,13 +59,22 @@ export class DeploymentsService {
         @inject(TYPES.CoresService) private coresService: CoresService,
         @inject(TYPES.IotFactory) iotFactory: () => IoTClient,
         @inject(TYPES.Greengrassv2Factory) ggv2Factory: () => GreengrassV2Client,
-        @inject(EVENT_PUBLISHER_TYPES.CDFEventPublisher) private cdfEventPublisher: CDFEventPublisher,) {
+        @inject(EVENT_PUBLISHER_TYPES.CDFEventPublisher)
+        private cdfEventPublisher: CDFEventPublisher
+    ) {
         this.iot = iotFactory();
         this.ggv2 = ggv2Factory();
     }
 
-    public async createDeployments(taskId: string, deployments: NewDeployment[]): Promise<Deployment[]> {
-        logger.debug(`deployments.service createDeployments: in: taskId:${taskId}, deployments: ${JSON.stringify(deployments)}`);
+    public async createDeployments(
+        taskId: string,
+        deployments: NewDeployment[]
+    ): Promise<Deployment[]> {
+        logger.debug(
+            `deployments.service createDeployments: in: taskId:${taskId}, deployments: ${JSON.stringify(
+                deployments
+            )}`
+        );
 
         // fail fast if invalid request
         ow(deployments, ow.array.minLength(1));
@@ -67,14 +88,16 @@ export class DeploymentsService {
                     try {
                         processed = await this.createDeployment(taskId, d);
                     } catch (e) {
-                        logger.error(`deployments.service createDeployments: error: ${e.name}: ${e.message}`);
+                        logger.error(
+                            `deployments.service createDeployments: error: ${e.name}: ${e.message}`
+                        );
                         processed = {
                             ...d,
                             taskStatus: 'Failure',
                             statusMessage: e.message,
                             createdAt: new Date(),
-                            updatedAt: new Date()
-                        }
+                            updatedAt: new Date(),
+                        };
                     }
                     return processed;
                 })
@@ -87,7 +110,11 @@ export class DeploymentsService {
     }
 
     public async createDeployment(taskId: string, request: NewDeployment): Promise<Deployment> {
-        logger.debug(`deployments.service createDeployment: in: taskId:${taskId}, request:${JSON.stringify(request)}`);
+        logger.debug(
+            `deployments.service createDeployment: in: taskId:${taskId}, request:${JSON.stringify(
+                request
+            )}`
+        );
 
         // fail fast if invalid request
         ow(taskId, ow.string.nonEmpty);
@@ -104,25 +131,35 @@ export class DeploymentsService {
             ...request,
             taskStatus: 'InProgress',
             createdAt: new Date(),
-            updatedAt: new Date()
-        }
+            updatedAt: new Date(),
+        };
 
         // and save the desired template info
         const futures: Promise<void>[] = [
             this.deploymentTasksDao.saveTaskDetail(taskId, deployment),
-            this.coresService.associateTemplate(deployment.coreName, task.template.name, task.template.version as number, 'desired')
+            this.coresService.associateTemplate(
+                deployment.coreName,
+                task.template.name,
+                task.template.version as number,
+                'desired'
+            ),
         ];
         await Promise.all(futures);
 
         // determine if core is already registered with ggv2
         try {
-            await this.ggv2.send(new GetCoreDeviceCommand({ coreDeviceThingName: deployment.coreName }));
+            await this.ggv2.send(
+                new GetCoreDeviceCommand({ coreDeviceThingName: deployment.coreName })
+            );
         } catch (e) {
             logger.error(`deployments.service createDeployment: error: ${JSON.stringify(e)}`);
             if (e.name === 'ResourceNotFoundException') {
                 this.markAsFailed(deployment, 'Core device not registered with Greengrass V2');
             } else {
-                this.markAsFailed(deployment, `Unable to determine if core device is registered with Greengrass V2: ${e.name}`);
+                this.markAsFailed(
+                    deployment,
+                    `Unable to determine if core device is registered with Greengrass V2: ${e.name}`
+                );
             }
         }
 
@@ -143,21 +180,39 @@ export class DeploymentsService {
                 const thingGroupName = this.getTemplateVersionThingGroupTarget(template);
                 let thingGroupArn: string;
                 try {
-                    const r = await this.iot.send(new CreateThingGroupCommand({
-                        thingGroupName,
-                        tags: [{
-                            Key: DEPLOYMENT_TASK_ID_TAG_KEY,
-                            Value: taskId
-                        }]
-                    }));
-                    logger.silly(`deployments.service createDeployment: CreateThingGroupCommandOutput: ${JSON.stringify(r)}`);
+                    const r = await this.iot.send(
+                        new CreateThingGroupCommand({
+                            thingGroupName,
+                            tags: [
+                                {
+                                    Key: DEPLOYMENT_TASK_ID_TAG_KEY,
+                                    Value: taskId,
+                                },
+                            ],
+                        })
+                    );
+                    logger.silly(
+                        `deployments.service createDeployment: CreateThingGroupCommandOutput: ${JSON.stringify(
+                            r
+                        )}`
+                    );
                     thingGroupArn = r.thingGroupArn;
                 } catch (e) {
-                    logger.error(`deployments.service createDeployment: error: ${JSON.stringify(e)}`);
+                    logger.error(
+                        `deployments.service createDeployment: error: ${JSON.stringify(e)}`
+                    );
                     if (e.name === 'ResourceAlreadyExistsException') {
-                        logger.warn(`deployments.service createDeployment: thingGroup: ${thingGroupName} already exists`);
-                        const r = await this.iot.send(new DescribeThingGroupCommand({ thingGroupName }));
-                        logger.silly(`deployments.service createDeployment: DescribeThingGroupCommandOutput: ${JSON.stringify(r)}`);
+                        logger.warn(
+                            `deployments.service createDeployment: thingGroup: ${thingGroupName} already exists`
+                        );
+                        const r = await this.iot.send(
+                            new DescribeThingGroupCommand({ thingGroupName })
+                        );
+                        logger.silly(
+                            `deployments.service createDeployment: DescribeThingGroupCommandOutput: ${JSON.stringify(
+                                r
+                            )}`
+                        );
                         thingGroupArn = r.thingGroupArn;
                     } else {
                         this.markAsFailed(deployment, `Unable to create thing group: ${e.name}`);
@@ -167,41 +222,61 @@ export class DeploymentsService {
                 // now we can create the deployment
                 if (this.isStillInProgress(deployment)) {
                     try {
-                        const componentsMap: { [key: string]: ComponentDeploymentSpecification } = {};
-                        template.components?.forEach(c => componentsMap[c.key] = {
-                            componentVersion: c.version,
-                            configurationUpdate: c.configurationUpdate,
-                            runWith: c.runWith
-                        });
-                        const r = await this.ggv2.send(new CreateDeploymentCommand({
-                            targetArn: thingGroupArn,
-                            deploymentName: `CDF GreengrassV2 Provisoning - Template: ${template.name}, Version: ${template.version}`,
-                            components: componentsMap,
-                            iotJobConfiguration: template.jobConfig,
-                            deploymentPolicies: template.deploymentPolicies,
-                            tags: {
-                                DEPLOYMENT_TASK_ID_TAGGING_KEY: taskId
-                            }
-                        }));
-                        logger.silly(`deployments.service createDeployment: CreateDeploymentCommandOutput: ${JSON.stringify(r)}`);
+                        const componentsMap: { [key: string]: ComponentDeploymentSpecification } =
+                            {};
+                        template.components?.forEach(
+                            (c) =>
+                                (componentsMap[c.key] = {
+                                    componentVersion: c.version,
+                                    configurationUpdate: c.configurationUpdate,
+                                    runWith: c.runWith,
+                                })
+                        );
+                        const r = await this.ggv2.send(
+                            new CreateDeploymentCommand({
+                                targetArn: thingGroupArn,
+                                deploymentName: `CDF GreengrassV2 Provisoning - Template: ${template.name}, Version: ${template.version}`,
+                                components: componentsMap,
+                                iotJobConfiguration: template.jobConfig,
+                                deploymentPolicies: template.deploymentPolicies,
+                                tags: {
+                                    DEPLOYMENT_TASK_ID_TAGGING_KEY: taskId,
+                                },
+                            })
+                        );
+                        logger.silly(
+                            `deployments.service createDeployment: CreateDeploymentCommandOutput: ${JSON.stringify(
+                                r
+                            )}`
+                        );
 
                         template.deployment = {
                             id: r.deploymentId,
                             thingGroupName,
-                            jobId: r.iotJobId
-                        }
+                            jobId: r.iotJobId,
+                        };
 
-                        const tagResourceOutput = await this.iot.send(new TagResourceCommand({
-                            resourceArn: r.iotJobArn,
-                            tags: [{
-                                Key: DEPLOYMENT_TASK_ID_TAG_KEY, Value: taskId
-                            }]
-                        }))
+                        const tagResourceOutput = await this.iot.send(
+                            new TagResourceCommand({
+                                resourceArn: r.iotJobArn,
+                                tags: [
+                                    {
+                                        Key: DEPLOYMENT_TASK_ID_TAG_KEY,
+                                        Value: taskId,
+                                    },
+                                ],
+                            })
+                        );
 
-                        logger.silly(`deployments.service createDeployment: TagResourceCommandOutput: ${JSON.stringify(tagResourceOutput)}`);
-
+                        logger.silly(
+                            `deployments.service createDeployment: TagResourceCommandOutput: ${JSON.stringify(
+                                tagResourceOutput
+                            )}`
+                        );
                     } catch (e) {
-                        logger.error(`deployments.service createDeployment: error: ${JSON.stringify(e)}`);
+                        logger.error(
+                            `deployments.service createDeployment: error: ${JSON.stringify(e)}`
+                        );
                         this.markAsFailed(deployment, `Failed to create deployment: ${e.name}`);
                     }
                 }
@@ -209,10 +284,15 @@ export class DeploymentsService {
                 // and save the state
                 if (this.isStillInProgress(deployment)) {
                     try {
-                        await this.templatesService.associateDeployment(template)
+                        await this.templatesService.associateDeployment(template);
                     } catch (e) {
-                        logger.error(`deployments.service createDeployment: error: ${JSON.stringify(e)}`);
-                        this.markAsFailed(deployment, `Failed to associate deployment with template: ${e.name}`);
+                        logger.error(
+                            `deployments.service createDeployment: error: ${JSON.stringify(e)}`
+                        );
+                        this.markAsFailed(
+                            deployment,
+                            `Failed to associate deployment with template: ${e.name}`
+                        );
                     }
                 }
             }
@@ -221,34 +301,57 @@ export class DeploymentsService {
         if (this.isStillInProgress(deployment)) {
             // remove from all existing deployment thing groups
             try {
-                const listThingGroupsForThingOutput = await this.iot.send(new ListThingGroupsForThingCommand({
-                    thingName: deployment.coreName
-                }));
-                logger.silly(`deployments.service createDeployment: ListThingGroupsForThingOutput: ${JSON.stringify(listThingGroupsForThingOutput)}`);
-                const existingDeploymentThingGroups = listThingGroupsForThingOutput?.thingGroups?.filter(tg=> tg.groupName.startsWith(this.DEPLOYMENT_THING_GROUP_PREFIX));
-                logger.silly(`deployments.service createDeployment: deployment groups to remove from: ${JSON.stringify(existingDeploymentThingGroups)}`);
-                if ((existingDeploymentThingGroups?.length??0) > 0) {
+                const listThingGroupsForThingOutput = await this.iot.send(
+                    new ListThingGroupsForThingCommand({
+                        thingName: deployment.coreName,
+                    })
+                );
+                logger.silly(
+                    `deployments.service createDeployment: ListThingGroupsForThingOutput: ${JSON.stringify(
+                        listThingGroupsForThingOutput
+                    )}`
+                );
+                const existingDeploymentThingGroups =
+                    listThingGroupsForThingOutput?.thingGroups?.filter((tg) =>
+                        tg.groupName.startsWith(this.DEPLOYMENT_THING_GROUP_PREFIX)
+                    );
+                logger.silly(
+                    `deployments.service createDeployment: deployment groups to remove from: ${JSON.stringify(
+                        existingDeploymentThingGroups
+                    )}`
+                );
+                if ((existingDeploymentThingGroups?.length ?? 0) > 0) {
                     for (const tg of existingDeploymentThingGroups) {
-                        await this.iot.send(new RemoveThingFromThingGroupCommand({
-                            thingName: deployment.coreName,
-                            thingGroupArn: tg.groupArn
-                        }));
+                        await this.iot.send(
+                            new RemoveThingFromThingGroupCommand({
+                                thingName: deployment.coreName,
+                                thingGroupArn: tg.groupArn,
+                            })
+                        );
                     }
                 }
             } catch (e) {
                 logger.error(e);
-                this.markAsFailed(deployment, `Failed removing from existing deployment thing groups: ${e.name}`);
+                this.markAsFailed(
+                    deployment,
+                    `Failed removing from existing deployment thing groups: ${e.name}`
+                );
             }
 
             // add thing to new deployment thing group
             try {
-                await this.iot.send(new AddThingToThingGroupCommand({
-                    thingName: deployment.coreName,
-                    thingGroupName: template.deployment.thingGroupName
-                }));
+                await this.iot.send(
+                    new AddThingToThingGroupCommand({
+                        thingName: deployment.coreName,
+                        thingGroupName: template.deployment.thingGroupName,
+                    })
+                );
             } catch (e) {
                 logger.error(`deployments.service createDeployment: error: ${JSON.stringify(e)}`);
-                this.markAsFailed(deployment, `Failed to add core device to deployment thing group target: ${e.name}`);
+                this.markAsFailed(
+                    deployment,
+                    `Failed to add core device to deployment thing group target: ${e.name}`
+                );
             }
         }
 
@@ -262,10 +365,9 @@ export class DeploymentsService {
                     taskId: taskId,
                     coreName: deployment.coreName,
                     status: 'success',
-                }
-            })
+                },
+            });
         }
-
 
         if (deployment.taskStatus === 'Failure') {
             await this.cdfEventPublisher.emitEvent<DeploymentTaskCreatedPayload>({
@@ -274,18 +376,15 @@ export class DeploymentsService {
                     taskId: taskId,
                     coreName: deployment.coreName,
                     status: 'failed',
-                    message: deployment.statusMessage
-                }
-            })
+                    message: deployment.statusMessage,
+                },
+            });
         }
 
         await this.deploymentTasksDao.saveTaskDetail(taskId, deployment);
 
-
-
         logger.debug(`deployments.service createDeployment: exit: ${JSON.stringify(deployment)}`);
         return deployment;
-
     }
 
     private markAsFailed(deployment: Deployment, statusMessage: string): void {
@@ -310,6 +409,4 @@ export class DeploymentsService {
         logger.debug(`templates.service getDeploymentIdByJobId: exit: ${deploymentId}`);
         return deploymentId;
     }
-
 }
-

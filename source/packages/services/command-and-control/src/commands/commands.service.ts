@@ -11,16 +11,17 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { SendMessageResult } from 'aws-sdk/clients/sqs';
 import merge from 'deepmerge';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import pLimit from 'p-limit';
 import ShortUniqueId from 'short-unique-id';
+
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { SendMessageResult } from 'aws-sdk/clients/sqs';
 import { TYPES } from '../di/types';
 import { MessageItem, MessageListPaginationKey } from '../messages/messages.models';
 import { MessagesService } from '../messages/messages.service';
-import { logger } from '../utils/logger.util';
 import { CommandsDao } from './commands.dao';
 import {
     CommandItem,
@@ -76,6 +77,7 @@ export class CommandsService {
 
         if (count) {
             count = Number(count);
+            ow(count, ow.number.greaterThanOrEqual(1));
         }
 
         // if a filter (tags) have been provided then we need to get the list of commands that match the tags. if not we can simply list all

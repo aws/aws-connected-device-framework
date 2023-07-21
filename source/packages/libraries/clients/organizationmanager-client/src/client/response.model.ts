@@ -10,12 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-
 export interface Response<T> {
     statusCode: number;
     result: T | null;
 }
 
 export class ErrorModel {
-	error: string;
+    error: string;
 }

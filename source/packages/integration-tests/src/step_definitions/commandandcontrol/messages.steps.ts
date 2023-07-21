@@ -38,40 +38,64 @@ use(chai_string);
 
 setDefaultTimeout(20 * 1000);
 
-const messagesService: MessagesService = container.get(COMMANDANDCONTROL_CLIENT_TYPES.MessagesService);
+const messagesService: MessagesService = container.get(
+    COMMANDANDCONTROL_CLIENT_TYPES.MessagesService
+);
 
-When('I send command-and-control message to last command with attributes:', async function (data: DataTable) {
-  const message: MessageResource = buildModel(data);
-  message.commandId = world.lastCommand.id;
-  world.lastMessageId = await messagesService.createMessage(message, getAdditionalHeaders(world.authToken));
-});
+When(
+    'I send command-and-control message to last command with attributes:',
+    async function (data: DataTable) {
+        const message: MessageResource = buildModel(data);
+        message.commandId = world.lastCommand.id;
+        world.lastMessageId = await messagesService.createMessage(
+            message,
+            getAdditionalHeaders(world.authToken)
+        );
+    }
+);
 
-When('I wait until last command-and-control message has {string} status', async function (status:string) {
-  let message;
-  try {
-    message = await messagesService.getMessage(world.lastMessageId, getAdditionalHeaders(world.authToken))
-  } catch (err) {
-      // ignore
-  }
-  const waitArray = new Int32Array(new SharedArrayBuffer(1024));
-  while (message?.status !== status) {
-      Atomics.wait(waitArray, 0, 0, 2000);
-      try {
-        message = await messagesService.getMessage(world.lastMessageId, getAdditionalHeaders(world.authToken))
-      } catch (err) {
-          // ignore
-      }
-  }
-  expect(message?.status).to.eq(status)
-});
-
+When(
+    'I wait until last command-and-control message has {string} status',
+    async function (status: string) {
+        let message;
+        try {
+            message = await messagesService.getMessage(
+                world.lastMessageId,
+                getAdditionalHeaders(world.authToken)
+            );
+        } catch (err) {
+            // ignore
+        }
+        const waitArray = new Int32Array(new SharedArrayBuffer(1024));
+        while (message?.status !== status) {
+            Atomics.wait(waitArray, 0, 0, 2000);
+            try {
+                message = await messagesService.getMessage(
+                    world.lastMessageId,
+                    getAdditionalHeaders(world.authToken)
+                );
+            } catch (err) {
+                // ignore
+            }
+        }
+        expect(message?.status).to.eq(status);
+    }
+);
 
 Then('last command-and-control message exists with attributes:', async function (data: DataTable) {
-  const message = await messagesService.getMessage(world.lastMessageId, getAdditionalHeaders(world.authToken));
-  validateExpectedAttributes(message, data, world);
+    const message = await messagesService.getMessage(
+        world.lastMessageId,
+        getAdditionalHeaders(world.authToken)
+    );
+    validateExpectedAttributes(message, data, world);
 });
 
 Then('last command-and-control message has recipients:', async function (data: DataTable) {
-  const recipients = await messagesService.listRecipients(world.lastMessageId, undefined, undefined, getAdditionalHeaders(world.authToken));
-  validateExpectedAttributes(recipients, data, world);
+    const recipients = await messagesService.listRecipients(
+        world.lastMessageId,
+        undefined,
+        undefined,
+        getAdditionalHeaders(world.authToken)
+    );
+    validateExpectedAttributes(recipients, data, world);
 });

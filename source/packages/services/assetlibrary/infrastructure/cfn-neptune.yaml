@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -14,7 +15,7 @@ Description: Base Template to create Neptune Stack inside a VPC
 
 Parameters:
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
 
@@ -33,14 +34,14 @@ Parameters:
       https://aws.amazon.com/neptune/pricing/
     Type: String
     AllowedPattern: "^db\\.[tr]\\d+[a-z0-9]*\\.[a-z0-9]*$"
-    ConstraintDescription: Must be a valid Neptune instance type. 
+    ConstraintDescription: Must be a valid Neptune instance type.
   CreateDBReplicaInstance:
     Description: Create a read replica for MultiAZ?
     Type: String
     Default: 'false'
     AllowedValues:
-    - 'true'
-    - 'false'
+      - 'true'
+      - 'false'
   NeptuneQueryTimeout:
     Type: Number
     Default: 20000
@@ -78,21 +79,17 @@ Parameters:
     Type: String
     MinLength: 1
 
-
 Conditions:
-  CreateDBReplicaInstance: !Equals [ !Ref CreateDBReplicaInstance, 'true' ]
-  SnapshotIdentifierProvided: !Not [ !Equals [ !Ref SnapshotIdentifier, '' ]]
+  CreateDBReplicaInstance: !Equals [!Ref CreateDBReplicaInstance, 'true']
+  SnapshotIdentifierProvided: !Not [!Equals [!Ref SnapshotIdentifier, '']]
 
 Resources:
-
   NeptuneEngineVersionCheck:
     Type: Custom::NeptuneEngineVersionCheck
     Version: 1.2
     Properties:
-      ServiceToken:
-        !Ref CustomResourceVPCLambdaArn
-      DBClusterEndpoint:
-        !GetAtt NeptuneDBCluster.Endpoint
+      ServiceToken: !Ref CustomResourceVPCLambdaArn
+      DBClusterEndpoint: !GetAtt NeptuneDBCluster.Endpoint
     DependsOn:
       - NeptuneDBInstance
 
@@ -189,12 +186,12 @@ Resources:
           - Effect: Allow
             Action:
               - 'neptune-db:connect'
-            Resource: !Join 
+            Resource: !Join
               - ':'
               - - 'arn:aws:neptune-db'
                 - !Ref 'AWS::Region'
                 - !Ref 'AWS::AccountId'
-                - !GetAtt 
+                - !GetAtt
                   - NeptuneDBCluster
                   - ClusterResourceId
                 - '*'
@@ -320,89 +317,89 @@ Outputs:
     Value: !Ref NeptuneDBSubnetGroup
   DBClusterResourceId:
     Description: Neptune Cluster Resource Identifier
-    Value: !GetAtt 
+    Value: !GetAtt
       - NeptuneDBCluster
       - ClusterResourceId
   DBClusterEndpoint:
     Description: Master Endpoint for Neptune Cluster
-    Value: !GetAtt 
+    Value: !GetAtt
       - NeptuneDBCluster
       - Endpoint
-    Export: 
-      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-DBClusterEndpoint"
+    Export:
+      Name: !Sub 'cdf-assetlibrary-neptune-${Environment}-DBClusterEndpoint'
   DBInstanceEndpoint:
     Description: Master Instance Endpoint
-    Value: !GetAtt 
+    Value: !GetAtt
       - NeptuneDBInstance
       - Endpoint
   DBReplicaInstanceEndpoint:
     Description: ReadReplica Instance Endpoint
     Condition: CreateDBReplicaInstance
-    Value: !GetAtt 
+    Value: !GetAtt
       - NeptuneDBReplicaInstance
       - Endpoint
   SparqlEndpoint:
     Description: Sparql Endpoint for Neptune
-    Value: !Join 
+    Value: !Join
       - ''
       - - 'http://'
-        - !GetAtt 
+        - !GetAtt
           - NeptuneDBCluster
           - Endpoint
         - ':'
-        - !GetAtt 
+        - !GetAtt
           - NeptuneDBCluster
           - Port
         - /sparql
-    Export: 
-      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-SparqlEndpoint"
+    Export:
+      Name: !Sub 'cdf-assetlibrary-neptune-${Environment}-SparqlEndpoint'
   GremlinEndpoint:
     Description: Gremlin Endpoint for Neptune
-    Value: !Join 
+    Value: !Join
       - ''
       - - 'wss://'
-        - !GetAtt 
+        - !GetAtt
           - NeptuneDBCluster
           - Endpoint
         - ':'
-        - !GetAtt 
+        - !GetAtt
           - NeptuneDBCluster
           - Port
         - /gremlin
-    Export: 
-      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-GremlinEndpoint"
+    Export:
+      Name: !Sub 'cdf-assetlibrary-neptune-${Environment}-GremlinEndpoint'
   LoaderEndpoint:
     Description: Loader Endpoint for Neptune
-    Value: !Join 
+    Value: !Join
       - ''
       - - 'http://'
-        - !GetAtt 
+        - !GetAtt
           - NeptuneDBCluster
           - Endpoint
         - ':'
-        - !GetAtt 
+        - !GetAtt
           - NeptuneDBCluster
           - Port
         - /loader
-    Export: 
-      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-LoaderEndpoint"
+    Export:
+      Name: !Sub 'cdf-assetlibrary-neptune-${Environment}-LoaderEndpoint'
   DBClusterReadEndpoint:
     Description: DB cluster Read Endpoint
-    Value: !GetAtt 
+    Value: !GetAtt
       - NeptuneDBCluster
       - ReadEndpoint
-    Export: 
-      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-DBClusterReadEndpoint"
+    Export:
+      Name: !Sub 'cdf-assetlibrary-neptune-${Environment}-DBClusterReadEndpoint'
   DBClusterPort:
     Description: Port for the Neptune Cluster
-    Value: !GetAtt 
+    Value: !GetAtt
       - NeptuneDBCluster
       - Port
-    Export: 
-      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-DBClusterPort"
+    Export:
+      Name: !Sub 'cdf-assetlibrary-neptune-${Environment}-DBClusterPort'
   NeptuneLoadFromS3IAMRoleArn:
     Description: IAM Role for loading data in Neptune
-    Value: !GetAtt 
+    Value: !GetAtt
       - NeptuneLoadFromS3Role
       - Arn
   NeptuneIamAuthRole:
@@ -411,5 +408,5 @@ Outputs:
   NeptuneSecurityGroupID:
     Description: Neptune security group
     Value: !Ref NeptuneSG
-    Export: 
-      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-NeptuneSecurityGroupID"
+    Export:
+      Name: !Sub 'cdf-assetlibrary-neptune-${Environment}-NeptuneSecurityGroupID'

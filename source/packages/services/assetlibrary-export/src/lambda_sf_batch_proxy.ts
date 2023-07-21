@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { logger } from './utils/logger';
+import { getRequestIdFromContext, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
 
-import { TYPES } from './di/types';
 import { container } from './di/inversify.config';
+import { TYPES } from './di/types';
 
 import { BatchService } from './batch/batch.service';
 
@@ -22,11 +22,14 @@ const batchService: BatchService = container.get<BatchService>(TYPES.BatchServic
 exports.export_handler = async (event: any, _context: any) => {
     logger.debug(`export_handler: in: event: ${JSON.stringify(event)}`);
 
+    // apply the awsRequestId to the logger so all logs reflect the requestId
+    setRequestId(getRequestIdFromContext(_context));
+
     const batches = await batchService.batch();
 
     logger.debug(`export_handler exit: result: ${JSON.stringify(batches)}`);
 
-    const batchIds = batches.map((batch) => batch.id)
+    const batchIds = batches.map((batch) => batch.id);
 
     return batchIds;
 };

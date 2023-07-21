@@ -11,20 +11,21 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
+import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
+import { AccountsApigwService } from '../client/accounts.apigw.service';
+import { AccountsLambdaService } from '../client/accounts.lambda.service';
+import { AccountsService } from '../client/accounts.service';
+import { BulkComponentsApigwService } from '../client/bulkComponents.apigw.service';
+import { BulkComponentsLambdaService } from '../client/bulkComponents.lambda.service';
+import { BulkComponentsService } from '../client/bulkComponents.service';
+import { OrganizationalUnitsApigwService } from '../client/organizationalUnits.apigw.service';
+import { OrganizationalUnitsLambdaService } from '../client/organizationalUnits.lambda.service';
+import { OrganizationalUnitsService } from '../client/organizationalUnits.service';
 import '../config/env';
 import { ORGMANLIBRARY_CLIENT_TYPES } from './types';
-import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 import AWS = require('aws-sdk');
-import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
-import { AccountsService } from '../client/accounts.service';
-import { AccountsLambdaService } from '../client/accounts.lambda.service';
-import { AccountsApigwService } from '../client/accounts.apigw.service';
-import { OrganizationalUnitsApigwService } from '../client/organizationalUnits.apigw.service';
-import { OrganizationalUnitsService } from '../client/organizationalUnits.service';
-import { BulkComponentsApigwService } from '../client/bulkComponents.apigw.service';
-import { BulkComponentsService } from '../client/bulkComponents.service';
-import { OrganizationalUnitsLambdaService } from '../client/organizationalUnits.lambda.service';
-import { BulkComponentsLambdaService } from '../client/bulkComponents.lambda.service';
 
 export const organizationManagerContainerModule = new ContainerModule(
     (
@@ -33,34 +34,44 @@ export const organizationManagerContainerModule = new ContainerModule(
         isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
-
         if (process.env.ORGANIZATIONMANAGER_MODE === 'lambda') {
-            bind<AccountsService>(ORGMANLIBRARY_CLIENT_TYPES.AccountsService).to(AccountsLambdaService);
-            bind<OrganizationalUnitsService>(ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService).to(OrganizationalUnitsLambdaService);
-            bind<BulkComponentsService>(ORGMANLIBRARY_CLIENT_TYPES.BulkComponentsService).to(BulkComponentsLambdaService);
-
+            bind<AccountsService>(ORGMANLIBRARY_CLIENT_TYPES.AccountsService).to(
+                AccountsLambdaService
+            );
+            bind<OrganizationalUnitsService>(
+                ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService
+            ).to(OrganizationalUnitsLambdaService);
+            bind<BulkComponentsService>(ORGMANLIBRARY_CLIENT_TYPES.BulkComponentsService).to(
+                BulkComponentsLambdaService
+            );
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
-                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
+                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
+                    LambdaInvokerService
+                );
                 decorate(injectable(), AWS.Lambda);
-                bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
-                    .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
-                        return () => {
-
-                            if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                                const lambda = new AWS.Lambda({ region: process.env.AWS_REGION });
-                                bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
-                            }
-                            return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
-                        };
-                    });
+                bind<interfaces.Factory<AWS.Lambda>>(
+                    LAMBDAINVOKE_TYPES.LambdaFactory
+                ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
+                    return () => {
+                        if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
+                            const lambda = new AWS.Lambda({ region: process.env.AWS_REGION });
+                            bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
+                        }
+                        return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
+                    };
+                });
             }
-
         } else {
-            bind<AccountsService>(ORGMANLIBRARY_CLIENT_TYPES.AccountsService).to(AccountsApigwService);
-            bind<OrganizationalUnitsService>(ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService).to(OrganizationalUnitsApigwService);
-            bind<BulkComponentsService>(ORGMANLIBRARY_CLIENT_TYPES.BulkComponentsService).to(BulkComponentsApigwService);
+            bind<AccountsService>(ORGMANLIBRARY_CLIENT_TYPES.AccountsService).to(
+                AccountsApigwService
+            );
+            bind<OrganizationalUnitsService>(
+                ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService
+            ).to(OrganizationalUnitsApigwService);
+            bind<BulkComponentsService>(ORGMANLIBRARY_CLIENT_TYPES.BulkComponentsService).to(
+                BulkComponentsApigwService
+            );
         }
     }
 );
-

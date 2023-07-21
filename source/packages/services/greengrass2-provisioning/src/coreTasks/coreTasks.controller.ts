@@ -13,41 +13,55 @@
 import { Response } from 'express';
 import { inject } from 'inversify';
 import {
-    controller, httpGet, httpPost, interfaces, queryParam, requestBody, requestParam, response
+    controller,
+    httpGet,
+    httpPost,
+    interfaces,
+    queryParam,
+    requestBody,
+    requestParam,
+    response,
 } from 'inversify-express-utils';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors.util';
-import { logger } from '../utils/logger.util';
 import { CoreTasksAssembler } from './coreTasks.assembler';
 import { NewCoreTaskResource } from './coreTasks.models';
 import { CoreTasksService } from './coreTasks.service';
 
 @controller('/coreTasks')
 export class CoreTasksController implements interfaces.Controller {
-
     constructor(
         @inject(TYPES.CoreTasksService) private coreTasksService: CoreTasksService,
-        @inject(TYPES.CoreTasksAssembler) private coreTasksAssembler: CoreTasksAssembler) { }
+        @inject(TYPES.CoreTasksAssembler) private coreTasksAssembler: CoreTasksAssembler
+    ) {}
 
     @httpPost('')
-    public async createCoreTask(@requestBody() resource: NewCoreTaskResource, @response() res: Response): Promise<void> {
-        logger.debug(`coreTasks.controller createCoreTask: in: resource: ${JSON.stringify(resource)}`);
+    public async createCoreTask(
+        @requestBody() resource: NewCoreTaskResource,
+        @response() res: Response
+    ): Promise<void> {
+        logger.debug(
+            `coreTasks.controller createCoreTask: in: resource: ${JSON.stringify(resource)}`
+        );
         try {
             const item = this.coreTasksAssembler.toItem(resource);
             const taskId = await this.coreTasksService.create(item);
-            logger.debug(`coreTasks.controller createCoreTask: exit: taskId:${JSON.stringify(taskId)}`);
-            res.location(`/coreTasks/${taskId}`)
-                .header('x-taskid', taskId)
-                .status(202)
-                .send();
+            logger.debug(
+                `coreTasks.controller createCoreTask: exit: taskId:${JSON.stringify(taskId)}`
+            );
+            res.location(`/coreTasks/${taskId}`).header('x-taskid', taskId).status(202).send();
         } catch (e) {
             handleError(e, res);
         }
     }
 
     @httpGet('/:taskId')
-    public async getCoreTask(@requestParam('taskId') taskId: string, @response() res: Response): Promise<void> {
+    public async getCoreTask(
+        @requestParam('taskId') taskId: string,
+        @response() res: Response
+    ): Promise<void> {
         logger.info(`coreTasks.controller getCoreTask: in: taskId:${taskId}`);
 
         try {
@@ -57,7 +71,9 @@ export class CoreTasksController implements interfaces.Controller {
                 res.status(404).send();
             } else {
                 const resource = this.coreTasksAssembler.toResource(item);
-                logger.debug(`coreTasks.controller getCoreTask: exit: ${JSON.stringify(resource)}`);
+                logger.debug(
+                    `coreTasks.controller getCoreTask: exit: ${JSON.stringify(resource)}`
+                );
                 res.status(200).send(resource);
             }
         } catch (e) {
@@ -66,14 +82,19 @@ export class CoreTasksController implements interfaces.Controller {
     }
 
     @httpGet('')
-    public async listCoreTasks(@queryParam('count') count: number, @queryParam('exclusiveStartTaskId') exclusiveStartTaskId: string,
-        @response() res: Response): Promise<void> {
-
-        logger.debug(`coreTasks.controller listCoreTasks: in: count:${count}, exclusiveStartTaskId:${exclusiveStartTaskId}`);
+    public async listCoreTasks(
+        @queryParam('count') count: number,
+        @queryParam('exclusiveStartTaskId') exclusiveStartTaskId: string,
+        @response() res: Response
+    ): Promise<void> {
+        logger.debug(
+            `coreTasks.controller listCoreTasks: in: count:${count}, exclusiveStartTaskId:${exclusiveStartTaskId}`
+        );
 
         try {
-
-            const [items, paginationKey] = await this.coreTasksService.list(count, { taskId: exclusiveStartTaskId });
+            const [items, paginationKey] = await this.coreTasksService.list(count, {
+                taskId: exclusiveStartTaskId,
+            });
             const resources = this.coreTasksAssembler.toListResource(items, count, paginationKey);
             logger.debug(`coreTasks.controller listCoreTasks: exit: ${JSON.stringify(resources)}`);
             res.status(200).send(resources);
@@ -81,5 +102,4 @@ export class CoreTasksController implements interfaces.Controller {
             handleError(e, res);
         }
     }
-
 }

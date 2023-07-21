@@ -10,85 +10,129 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { inject, injectable } from 'inversify';
-import {logger} from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import Ajv from 'ajv';
-import { Operation, TypeCategory } from './constants';
-import { TemplateDefinitionJson, TypeDefinitionModel, TypeModel } from './types.models';
-import { DirectionToRelatedEntityArrayMap, DirectionToStringArrayMap, EntityTypeMap, RelatedEntityArrayMap } from '../data/model';
-import { TYPES } from '../di/types';
-import { DevicesDaoFull } from '../devices/devices.full.dao';
-import { GroupsDaoFull } from '../groups/groups.full.dao';
 import fs from 'fs';
+import { inject, injectable } from 'inversify';
+import * as NodeCache from 'node-cache';
+import ow from 'ow';
 import path from 'path';
 import util from 'util';
-import ow from 'ow';
-import * as NodeCache from 'node-cache';
+import {
+    DirectionToRelatedEntityArrayMap,
+    DirectionToStringArrayMap,
+    EntityTypeMap,
+    RelatedEntityArrayMap,
+} from '../data/model';
+import { DevicesDaoFull } from '../devices/devices.full.dao';
+import { TYPES } from '../di/types';
+import { GroupsDaoFull } from '../groups/groups.full.dao';
+import { SchemaValidationError, TemplateNotFoundError } from '../utils/errors';
+import { Operation, TypeCategory } from './constants';
 import { TypesDaoFull } from './types.full.dao';
-import { TemplateNotFoundError } from '../utils/errors';
+import { TemplateDefinitionJson, TypeDefinitionModel, TypeModel } from './types.models';
 
 @injectable()
 export class SchemaValidatorService {
-
     private _readFileAsync = util.promisify(fs.readFile);
 
-    private _validator = new Ajv({allErrors: true});
+    private _validator = new Ajv({ allErrors: true });
 
-    private _typesCache = new NodeCache.default({ stdTTL: Number(process.env.CACHE_TYPES_TTL)});
+    private _typesCache = new NodeCache.default({ stdTTL: Number(process.env.CACHE_TYPES_TTL) });
 
     constructor(
         @inject(TYPES.TypesDao) private typesDao: TypesDaoFull,
         @inject(TYPES.DevicesDao) private devicesDao: DevicesDaoFull,
-        @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoFull) { }
+        @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoFull
+    ) {}
 
-    public async validate(schemaId:string, jsonSchema: TemplateDefinitionJson, document: unknown, op:Operation  ): Promise<SchemaValidationResult> {
-        logger.debug(`schemaValidator.full.service validate: in: schemaId:${schemaId}, jsonSchema:${JSON.stringify(jsonSchema)}, document:${JSON.stringify(document)}, op:${op}`);
+    public async validate(
+        schemaId: string,
+        jsonSchema: TemplateDefinitionJson,
+        document: unknown,
+        op: Operation
+    ): Promise<SchemaValidationResult> {
+        logger.debug(
+            `schemaValidator.full.service validate: in: schemaId:${schemaId}, jsonSchema:${JSON.stringify(
+                jsonSchema
+            )}, document:${JSON.stringify(document)}, op:${op}`
+        );
 
         // remove any undefined properties from the input document
         const docAsJson = JSON.parse(JSON.stringify(document));
-        Object.keys(docAsJson).forEach(k => {
+        Object.keys(docAsJson).forEach((k) => {
             if (docAsJson[k] === undefined) {
-              delete docAsJson[k];
+                delete docAsJson[k];
             }
         });
         document = docAsJson;
 
         // if its an update, validation may be different therefore always compile rather than reuse existing
         this._validator.removeSchema(schemaId);
-        const validate = this._validator.compile(jsonSchema);
+        let validate: Ajv.ValidateFunction;
+        try {
+            validate = this._validator.compile(jsonSchema);
+        } catch (err) {
+            throw new SchemaValidationError(err.message);
+        }
 
         const result = new SchemaValidationResult();
-        const valid= await validate(document);
+        const valid = await validate(document);
         if (valid) {
             result.isValid = true;
         } else {
             // make the error messages as friendly as possibly, extracting what's useful from the errors
-            logger.debug(`schemaValidator.full.service validate: validate.errors: ${JSON.stringify(validate.errors)}`);
+            logger.debug(
+                `schemaValidator.full.service validate: validate.errors: ${JSON.stringify(
+                    validate.errors
+                )}`
+            );
             result.isValid = false;
-            validate.errors.forEach( (err) => {
-                if (err.keyword==='required' && err.dataPath==='') {
-                    result.errors[ (err.params as  Ajv.DependenciesParams).missingProperty] = err.message;
-                } if (err.keyword==='additionalProperties') {
+            const maxErrors = 20;
+            // truncate to include only 20 errors, to prevent data amplification by sending a large, invalid payload.
+            for (let i = 0; i < validate.errors.length && i < maxErrors; ++i) {
+                const err = validate.errors[i];
+                if (err.keyword === 'required' && err.dataPath === '') {
+                    result.errors[(err.params as Ajv.DependenciesParams).missingProperty] =
+                        err.message;
+                }
+                if (err.keyword === 'additionalProperties') {
                     result.errors[`${err.dataPath} ${JSON.stringify(err.params)}`] = err.message;
                 } else {
-                    result.errors[ err.dataPath] = err.message;
+                    result.errors[err.dataPath] = err.message;
                 }
-            });
+            }
+            if (validate.errors.length > maxErrors) {
+                result.errors[
+                    'too many errors'
+                ] = `results truncated due to greater than maximum ${maxErrors} errors. Check logs for full error list.`;
+            }
         }
 
-        logger.debug(`schemaValidator.full.service validate: exit: result: ${JSON.stringify(result)}`);
+        logger.debug(
+            `schemaValidator.full.service validate: exit: result: ${JSON.stringify(result)}`
+        );
 
         return result;
     }
 
-    public async validateRelationshipsByType(templateId: string, rels: DirectionToStringArrayMap): Promise<boolean> {
-        logger.debug(`schemaValidator.full.service validateRelationships: in: templateId:${templateId}, rels:${JSON.stringify(rels)}`);
+    public async validateRelationshipsByType(
+        templateId: string,
+        rels: DirectionToStringArrayMap
+    ): Promise<boolean> {
+        logger.debug(
+            `schemaValidator.full.service validateRelationships: in: templateId:${templateId}, rels:${JSON.stringify(
+                rels
+            )}`
+        );
 
         ow(templateId, 'templateId', ow.string.nonEmpty);
 
         if (rels?.in === undefined && rels?.out === undefined) {
             // nothing to validate
-            logger.debug(`schemaValidator.full.service validateRelationshipsByType: exit: true (nothing)`);
+            logger.debug(
+                `schemaValidator.full.service validateRelationshipsByType: exit: true (nothing)`
+            );
             return true;
         }
 
@@ -102,8 +146,16 @@ export class SchemaValidatorService {
         return isValid;
     }
 
-    public async validateType(category: TypeCategory, instance: unknown, op: Operation): Promise<SchemaValidationResult> {
-        logger.debug(`schemaValidator.full.service validateType: in: category: ${category}, document: ${JSON.stringify(instance)}`);
+    public async validateType(
+        category: TypeCategory,
+        instance: unknown,
+        op: Operation
+    ): Promise<SchemaValidationResult> {
+        logger.debug(
+            `schemaValidator.full.service validateType: in: category: ${category}, document: ${JSON.stringify(
+                instance
+            )}`
+        );
 
         ow(category, 'category', ow.string.nonEmpty);
         ow(instance, ow.object.nonEmpty);
@@ -114,13 +166,23 @@ export class SchemaValidatorService {
             this._typesCache.set(category, schema);
         }
 
-        logger.debug(`schemaValidator.full.service validateType: schema:${JSON.stringify(schema)}`);
+        logger.debug(
+            `schemaValidator.full.service validateType: schema:${JSON.stringify(schema)}`
+        );
 
         return await this.validate(schema['$id'], schema, instance, op);
     }
 
-    public async validateSubType(template: TypeModel, instance: unknown, op: Operation): Promise<SchemaValidationResult> {
-        logger.debug(`schemaValidator.full.service validateSubType: in: template: ${JSON.stringify(template)}, instance: ${JSON.stringify(instance)}, op:${op}`);
+    public async validateSubType(
+        template: TypeModel,
+        instance: unknown,
+        op: Operation
+    ): Promise<SchemaValidationResult> {
+        logger.debug(
+            `schemaValidator.full.service validateSubType: in: template: ${JSON.stringify(
+                template
+            )}, instance: ${JSON.stringify(instance)}, op:${op}`
+        );
 
         ow(template, 'template', ow.object.nonEmpty);
         ow(instance, ow.object.nonEmpty);
@@ -146,11 +208,15 @@ export class SchemaValidatorService {
         // on the schema validation (if not provided) as updates occur via a patch
         if (op === Operation.UPDATE) {
             const definedAsCategoryRequired = subTypeSchema.required as string[];
-            logger.silly(`schemaValidator.full.service definedAsCategoryRequired:${JSON.stringify(definedAsCategoryRequired)}`);
+            logger.silly(
+                `schemaValidator.full.service definedAsCategoryRequired:${JSON.stringify(
+                    definedAsCategoryRequired
+                )}`
+            );
             logger.silly(`schemaValidator.full.service instance:${JSON.stringify(instance)}`);
-            if ((definedAsCategoryRequired?.length??0)>0) {
+            if ((definedAsCategoryRequired?.length ?? 0) > 0) {
                 const categoryRequired: string[] = [];
-                definedAsCategoryRequired.forEach(r => {
+                definedAsCategoryRequired.forEach((r) => {
                     logger.silly(`schemaValidator.full.service checking:${JSON.stringify(r)}`);
                     if (instance.hasOwnProperty.call(r)) {
                         logger.silly(`schemaValidator.full.service has!`);
@@ -160,12 +226,17 @@ export class SchemaValidatorService {
                 subTypeSchema.required = categoryRequired;
             }
 
-            const definedAsSubTypeRequired = subTypeSchema.definitions.subType.required as string[];
-            logger.silly(`schemaValidator.full.service definedAsSubTypeRequired:${JSON.stringify(definedAsSubTypeRequired)}`);
+            const definedAsSubTypeRequired = subTypeSchema.definitions.subType
+                .required as string[];
+            logger.silly(
+                `schemaValidator.full.service definedAsSubTypeRequired:${JSON.stringify(
+                    definedAsSubTypeRequired
+                )}`
+            );
             logger.silly(`schemaValidator.full.service instance:${JSON.stringify(instance)}`);
-            if ((definedAsSubTypeRequired?.length??0)>0) {
+            if ((definedAsSubTypeRequired?.length ?? 0) > 0) {
                 const subTypeRequired: string[] = [];
-                definedAsSubTypeRequired.forEach(r => {
+                definedAsSubTypeRequired.forEach((r) => {
                     logger.silly(`schemaValidator.full.service checking:${JSON.stringify(r)}`);
                     if (instance.hasOwnProperty.call(r)) {
                         logger.silly(`schemaValidator.full.service has!`);
@@ -176,28 +247,42 @@ export class SchemaValidatorService {
             }
         }
 
-        logger.silly(`schemaValidator.full.service validateSubType: schema:${JSON.stringify(subTypeSchema)}`);
-        
+        logger.silly(
+            `schemaValidator.full.service validateSubType: schema:${JSON.stringify(subTypeSchema)}`
+        );
+
         const result = await this.validate(subTypeSchema['$id'], subTypeSchema, instance, op);
-        logger.debug(`schemaValidator.full.service validateSubType: exit:${JSON.stringify(result)}`);
+        logger.debug(
+            `schemaValidator.full.service validateSubType: exit:${JSON.stringify(result)}`
+        );
         return result;
     }
 
-    public async validateRelationshipsByIds(template: TypeModel, groups: DirectionToRelatedEntityArrayMap, devices: DirectionToRelatedEntityArrayMap): Promise<ValidateRelationshipsByIdsResult> {
-        logger.debug(`schemaValidator.full.service validateRelationshipsByIds: in: template:${JSON.stringify(template)}, groups:${JSON.stringify(groups)}, devices:${JSON.stringify(devices)}`);
+    public async validateRelationshipsByIds(
+        template: TypeModel,
+        groups: DirectionToRelatedEntityArrayMap,
+        devices: DirectionToRelatedEntityArrayMap
+    ): Promise<ValidateRelationshipsByIdsResult> {
+        logger.debug(
+            `schemaValidator.full.service validateRelationshipsByIds: in: template:${JSON.stringify(
+                template
+            )}, groups:${JSON.stringify(groups)}, devices:${JSON.stringify(devices)}`
+        );
 
         ow(template, ow.object.nonEmpty);
 
         // extrapolate the entity ids from the rels parameter to make our lives easier...
-        const extrapolateIds = (rels: RelatedEntityArrayMap, ids:string[]) => {
-            if ((Object.keys(rels||{}).length??0)>0) {
-                Object.values(rels).forEach(entities=> entities.forEach(entity=> ids.push(entity.id.toLowerCase())));
+        const extrapolateIds = (rels: RelatedEntityArrayMap, ids: string[]) => {
+            if ((Object.keys(rels || {}).length ?? 0) > 0) {
+                Object.values(rels).forEach((entities) =>
+                    entities.forEach((entity) => ids.push(entity.id.toLowerCase()))
+                );
             }
         };
-        const groupPaths:string[]= [];
+        const groupPaths: string[] = [];
         extrapolateIds(groups?.in, groupPaths);
         extrapolateIds(groups?.out, groupPaths);
-        const deviceIds:string[]= [];
+        const deviceIds: string[] = [];
         extrapolateIds(devices?.in, deviceIds);
         extrapolateIds(devices?.out, deviceIds);
 
@@ -206,30 +291,41 @@ export class SchemaValidatorService {
         // retrieve the labels of entities to link, along with allowed relations
         const groupLabelsFuture = this.groupsDao.getLabels(groupPaths);
         const deviceLabelsFuture = this.devicesDao.getLabels(deviceIds);
-        const [groupLabels, deviceLabels] = await Promise.all([groupLabelsFuture, deviceLabelsFuture]);
+        const [groupLabels, deviceLabels] = await Promise.all([
+            groupLabelsFuture,
+            deviceLabelsFuture,
+        ]);
 
         // ensure the provided entity ids are valid
-        const validatedGroupPaths = Object.keys(groupLabels||{});
-        const invalidGroupPaths = groupPaths.filter(path=> !validatedGroupPaths.includes(path));
-        if ( invalidGroupPaths.length > 0) {
+        const validatedGroupPaths = Object.keys(groupLabels || {});
+        const invalidGroupPaths = groupPaths.filter((path) => !validatedGroupPaths.includes(path));
+        if (invalidGroupPaths.length > 0) {
             isValid = false;
         }
 
-        const validatedDeviceIds = Object.keys(deviceLabels||{});
-        const invalidDeviceIds = deviceIds.filter(id=> !validatedDeviceIds.includes(id));
-        if ( invalidDeviceIds.length > 0) {
+        const validatedDeviceIds = Object.keys(deviceLabels || {});
+        const invalidDeviceIds = deviceIds.filter((id) => !validatedDeviceIds.includes(id));
+        if (invalidDeviceIds.length > 0) {
             isValid = false;
         }
 
         // verify that the attempted relationships are valid
-        const invalidRelations: { [relation: string] : string[] } = {};
-        const validateIncomingRelations = (rels:RelatedEntityArrayMap, labels:EntityTypeMap) : void => {
-            if (Object.keys(rels||{}).length===0) return;
-            for (const [relation,entities] of Object.entries(rels)) {
+        const invalidRelations: { [relation: string]: string[] } = {};
+        const validateIncomingRelations = (
+            rels: RelatedEntityArrayMap,
+            labels: EntityTypeMap
+        ): void => {
+            if (Object.keys(rels || {}).length === 0) return;
+            for (const [relation, entities] of Object.entries(rels)) {
                 for (const entity of entities) {
-                    const label = labels[entity.id.toLowerCase()]?.filter(label=> label!=='group' && label!=='device')?.[0];
-                    if (label===undefined || !template.schema.relations.incomingIncludes(relation, label)) {
-                        if (invalidRelations[relation]===undefined) {
+                    const label = labels[entity.id.toLowerCase()]?.filter(
+                        (label) => label !== 'group' && label !== 'device'
+                    )?.[0];
+                    if (
+                        label === undefined ||
+                        !template.schema.relations.incomingIncludes(relation, label)
+                    ) {
+                        if (invalidRelations[relation] === undefined) {
                             invalidRelations[relation] = [];
                         }
                         invalidRelations[relation].push(label);
@@ -237,45 +333,76 @@ export class SchemaValidatorService {
                     }
                 }
             }
-        }
-        const validateOutgoingRelations = (rels:RelatedEntityArrayMap, labels:EntityTypeMap) : void => {
-            if (Object.keys(rels||{}).length===0) return;
-            for (const [relation,entities] of Object.entries(rels)) {
-                logger.debug(`schemaValidator.full.service validateRelationshipsByIds: ***: relation: ${relation}, entities: ${JSON.stringify(entities)}`);
+        };
+        const validateOutgoingRelations = (
+            rels: RelatedEntityArrayMap,
+            labels: EntityTypeMap
+        ): void => {
+            if (Object.keys(rels || {}).length === 0) return;
+            for (const [relation, entities] of Object.entries(rels)) {
+                logger.debug(
+                    `schemaValidator.full.service validateRelationshipsByIds: ***: relation: ${relation}, entities: ${JSON.stringify(
+                        entities
+                    )}`
+                );
                 for (const entity of entities) {
-                    logger.debug(`schemaValidator.full.service validateRelationshipsByIds: ***: entity: ${JSON.stringify(entity)}`);
-                    const label = labels[entity.id.toLowerCase()]?.filter(label=> label!=='group' && label!=='device')?.[0];
-                    logger.debug(`schemaValidator.full.service validateRelationshipsByIds: ***: label: ${JSON.stringify(label)}`);
-                    if (label===undefined || !template.schema.relations.outgoingIncludes(relation, label)) {
-                        if (invalidRelations[relation]===undefined) {
+                    logger.debug(
+                        `schemaValidator.full.service validateRelationshipsByIds: ***: entity: ${JSON.stringify(
+                            entity
+                        )}`
+                    );
+                    const label = labels[entity.id.toLowerCase()]?.filter(
+                        (label) => label !== 'group' && label !== 'device'
+                    )?.[0];
+                    logger.debug(
+                        `schemaValidator.full.service validateRelationshipsByIds: ***: label: ${JSON.stringify(
+                            label
+                        )}`
+                    );
+                    if (
+                        label === undefined ||
+                        !template.schema.relations.outgoingIncludes(relation, label)
+                    ) {
+                        if (invalidRelations[relation] === undefined) {
                             invalidRelations[relation] = [];
                         }
                         invalidRelations[relation].push(label);
                         isValid = false;
-                        logger.debug(`schemaValidator.full.service validateRelationshipsByIds: ***: updated invalidRelations: ${JSON.stringify(invalidRelations)}`);
+                        logger.debug(
+                            `schemaValidator.full.service validateRelationshipsByIds: ***: updated invalidRelations: ${JSON.stringify(
+                                invalidRelations
+                            )}`
+                        );
                     }
                 }
             }
-        }
+        };
 
         validateIncomingRelations(groups?.in, groupLabels);
         validateOutgoingRelations(groups?.out, groupLabels);
         validateIncomingRelations(devices?.in, deviceLabels);
         validateOutgoingRelations(devices?.out, deviceLabels);
-        
+
         const response = {
             groupLabels,
             deviceLabels,
             invalidGroupPaths,
             invalidDeviceIds,
             invalidRelations,
-            isValid
+            isValid,
         };
-        logger.debug(`schemaValidator.full.service validateRelationshipsByIds: exit: ${JSON.stringify(response)}`);
+        logger.debug(
+            `schemaValidator.full.service validateRelationshipsByIds: exit: ${JSON.stringify(
+                response
+            )}`
+        );
         return response;
     }
 
-    public async validateSchema(definition: TypeDefinitionModel, op: Operation): Promise<SchemaValidationResult> {
+    public async validateSchema(
+        definition: TypeDefinitionModel,
+        op: Operation
+    ): Promise<SchemaValidationResult> {
         // validate the provided schema
         const cacheKey = 'specializedTypeDefinition';
         let schema = this._typesCache.get(cacheKey) as TemplateDefinitionJson;
@@ -287,8 +414,15 @@ export class SchemaValidatorService {
         return await this.validate(schema['$id'], schema, definition, op);
     }
 
-    private async initializeSubTypeSchema(template: TypeModel, schema: TemplateDefinitionJson): Promise<void> {
-        logger.debug(`schemaValidator.full.service initializeSubTypeSchema: in: template:${JSON.stringify(template)}, schema:${JSON.stringify(schema)}`);
+    private async initializeSubTypeSchema(
+        template: TypeModel,
+        schema: TemplateDefinitionJson
+    ): Promise<void> {
+        logger.debug(
+            `schemaValidator.full.service initializeSubTypeSchema: in: template:${JSON.stringify(
+                template
+            )}, schema:${JSON.stringify(schema)}`
+        );
 
         ow(template, ow.object.nonEmpty);
 
@@ -297,7 +431,7 @@ export class SchemaValidatorService {
         schema.definitions.subType.required = typeDef.required;
 
         // does the sub-type support components?
-        if ((template.schema.definition.componentTypes?.length??0) > 0) {
+        if ((template.schema.definition.componentTypes?.length ?? 0) > 0) {
             // if so, augment the main type schema with the component schemas
             let componentSchema = this._typesCache.get('component') as TemplateDefinitionJson;
             if (componentSchema === undefined) {
@@ -309,17 +443,20 @@ export class SchemaValidatorService {
                 if (componentSchemas[componentModel.templateId] !== undefined) {
                     continue;
                 }
-                ow(componentModel, `component model ${componentModel.templateId}`, ow.object.nonEmpty);
+                ow(
+                    componentModel,
+                    `component model ${componentModel.templateId}`,
+                    ow.object.nonEmpty
+                );
 
                 const componentDef = componentModel.schema.definition;
                 componentSchema.definitions.subType.properties = componentDef.properties;
                 componentSchema.definitions.subType.required = componentDef.required;
                 componentSchemas[componentModel.templateId] = componentSchema;
             }
-            Object.keys(componentSchemas).forEach(key => {
+            Object.keys(componentSchemas).forEach((key) => {
                 schema.definitions.componentTypes.items.anyOf.push(componentSchemas[key]);
             });
-
         } else {
             delete schema.properties.components;
             delete schema.definitions.componentTypes;
@@ -327,7 +464,11 @@ export class SchemaValidatorService {
 
         schema['$id'] = `http://aws.com/cdf/schemas/${template.templateId}.json`;
 
-        logger.debug(`schemaValidator.full.service initializeSubTypeSchema: exit: schema:${JSON.stringify(schema)}`);
+        logger.debug(
+            `schemaValidator.full.service initializeSubTypeSchema: exit: schema:${JSON.stringify(
+                schema
+            )}`
+        );
     }
 
     private async loadSchema(templateId: string): Promise<string> {
@@ -337,7 +478,10 @@ export class SchemaValidatorService {
 
         let json: string;
         try {
-            json = await this._readFileAsync(path.join(__dirname, `definitions/${templateId}.schema.json`), { encoding: 'utf8' });
+            json = await this._readFileAsync(
+                path.join(__dirname, `definitions/${templateId}.schema.json`),
+                { encoding: 'utf8' }
+            );
         } catch (err) {
             throw new TemplateNotFoundError(templateId);
         }
@@ -346,22 +490,22 @@ export class SchemaValidatorService {
         return json;
     }
 
-    public async deleteFromCache(templateId:string) : Promise<void> {
+    public async deleteFromCache(templateId: string): Promise<void> {
         await this._typesCache.del(templateId);
     }
 }
 
 export class SchemaValidationResult {
     isValid: boolean;
-	errors?: { [dataPath: string] : string} = {};
+    errors?: { [dataPath: string]: string } = {};
 }
 
 export interface ValidateRelationshipsByIdsResult {
-    groupLabels : EntityTypeMap;
-    deviceLabels : EntityTypeMap;
+    groupLabels: EntityTypeMap;
+    deviceLabels: EntityTypeMap;
 
-    invalidGroupPaths : string[];
-    invalidDeviceIds : string[];
-    invalidRelations: { [relation: string] : string[] };
-    isValid : boolean;
+    invalidGroupPaths: string[];
+    invalidDeviceIds: string[];
+    invalidRelations: { [relation: string]: string[] };
+    isValid: boolean;
 }

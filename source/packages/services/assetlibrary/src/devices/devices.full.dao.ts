@@ -10,6 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { process, structure } from 'gremlin';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
@@ -29,11 +30,12 @@ import {
 } from '../data/model';
 import { Node } from '../data/node';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
 import { DevicesAssembler } from './devices.assembler';
 import { DeviceItem } from './devices.models';
 
 const __ = process.statics;
+
+const MAX_DEVICE_RELATIONS = 500;
 
 /*  associate device with the related devices and/or groups  */
 const associateRels = (
@@ -174,7 +176,8 @@ export class DevicesDaoFull extends BaseDaoFull {
             .as('vProps')
             .constant('in')
             .as('dir')
-            .select('entityId', 'dir', 'e', 'vProps');
+            .select('entityId', 'dir', 'e', 'vProps')
+            .range(0, MAX_DEVICE_RELATIONS);
 
         relatedOut
             .as('e')
@@ -185,7 +188,8 @@ export class DevicesDaoFull extends BaseDaoFull {
             .as('vProps')
             .constant('out')
             .as('dir')
-            .select('entityId', 'dir', 'e', 'vProps');
+            .select('entityId', 'dir', 'e', 'vProps')
+            .range(0, MAX_DEVICE_RELATIONS);
 
         // build the traverser for returning the devices, optionally filtering the returned attributes
         const deviceProps =
@@ -386,7 +390,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             }
 
             // Check if related groups or devices part of update request
-            if (groups.in || groups.out || devices.in || devices.out) {
+            if (groups !== undefined && (groups.in || groups.out || devices.in || devices.out)) {
                 // Update request contains relationships to enforce. This requires current
                 // relationships be dropped where specified and new relations created.
                 logger.info(

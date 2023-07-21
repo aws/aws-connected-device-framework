@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 
 import 'reflect-metadata';
+
 import '@awssolutions/cdf-config-inject';
 
 import { EventEmitter } from 'events';
@@ -27,7 +28,6 @@ import { DEVICE_SIMULATOR_TYPES } from './types';
 
 import awsIot = require('aws-iot-device-sdk');
 
-
 class D {}
 class S {}
 class T {}
@@ -37,61 +37,72 @@ class U {}
  * A container module that configures inversify with all the objects to be created at runtime
  * that exists within the device simulator base library.
  */
-export const deviceSimulatorContainerModule = new ContainerModule (
+export const deviceSimulatorContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         _isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
-
-        bind<DeviceContext<D,S,T,U>>(DEVICE_SIMULATOR_TYPES.DeviceStateMachine).to(DeviceContext).inSingletonScope();
+        bind<DeviceContext<D, S, T, U>>(DEVICE_SIMULATOR_TYPES.DeviceStateMachine)
+            .to(DeviceContext)
+            .inSingletonScope();
         bind<CalcEngine<D>>(DEVICE_SIMULATOR_TYPES.CalcEngine).to(CalcEngine).inSingletonScope();
-        bind<AwsIotThing<S,T,U>>(DEVICE_SIMULATOR_TYPES.AwsIotClient).to(AwsIotThing).inSingletonScope();
+        bind<AwsIotThing<S, T, U>>(DEVICE_SIMULATOR_TYPES.AwsIotClient)
+            .to(AwsIotThing)
+            .inSingletonScope();
 
         decorate(injectable(), EventEmitter);
-        bind<EventEmitter>(DEVICE_SIMULATOR_TYPES.DeviceEmitter).toDynamicValue(() => {
-          return new EventEmitter();
-        }).inSingletonScope();
+        bind<EventEmitter>(DEVICE_SIMULATOR_TYPES.DeviceEmitter)
+            .toDynamicValue(() => {
+                return new EventEmitter();
+            })
+            .inSingletonScope();
 
-        bind<EventEmitter>(DEVICE_SIMULATOR_TYPES.AwsIotEmitter).toDynamicValue(() => {
-            return new EventEmitter();
-        }).inSingletonScope();
+        bind<EventEmitter>(DEVICE_SIMULATOR_TYPES.AwsIotEmitter)
+            .toDynamicValue(() => {
+                return new EventEmitter();
+            })
+            .inSingletonScope();
 
-        bind<LocalStateManager>(DEVICE_SIMULATOR_TYPES.LocalStateManager).to(LocalStateManager).inSingletonScope();
-        bind<TelemetryTransformer>(DEVICE_SIMULATOR_TYPES.TelemetryTransformer).to(TelemetryTransformer).inSingletonScope();
+        bind<LocalStateManager>(DEVICE_SIMULATOR_TYPES.LocalStateManager)
+            .to(LocalStateManager)
+            .inSingletonScope();
+        bind<TelemetryTransformer>(DEVICE_SIMULATOR_TYPES.TelemetryTransformer)
+            .to(TelemetryTransformer)
+            .inSingletonScope();
 
         // create the mqtt client
         decorate(injectable(), awsIot.thingShadow);
-        bind<awsIot.thingShadow>(DEVICE_SIMULATOR_TYPES.AwsIotMqttClient).toDynamicValue(()=> {
-          const keyPath = process.env.AWS_IOT_KEYPATH;
-          const certPath = process.env.AWS_IOT_CERTPATH;
-          const caPath = process.env.AWS_IOT_CAPATH;
-          const thingName = process.env.AWS_IOT_THINGNAME;
-          const host = process.env.AWS_IOT_ENDPOINTADDRESS;
-          const region = process.env.AWS_REGION;
-  
-          ow(keyPath, ow.string.nonEmpty);
-          ow(certPath, ow.string.nonEmpty);
-          ow(caPath, ow.string.nonEmpty);
-          ow(thingName, ow.string.nonEmpty);
-          ow(host, ow.string.nonEmpty);
-          ow(region, ow.string.nonEmpty);
-      
-          const mqttClient = new awsIot.thingShadow({
-            keyPath,
-            certPath,
-            caPath,
-            clientId: thingName,
-            host,
-            region,
-            autoResubscribe: true,
-            offlineQueueing: true
-          });
+        bind<awsIot.thingShadow>(DEVICE_SIMULATOR_TYPES.AwsIotMqttClient)
+            .toDynamicValue(() => {
+                const keyPath = process.env.AWS_IOT_KEYPATH;
+                const certPath = process.env.AWS_IOT_CERTPATH;
+                const caPath = process.env.AWS_IOT_CAPATH;
+                const thingName = process.env.AWS_IOT_THINGNAME;
+                const host = process.env.AWS_IOT_ENDPOINTADDRESS;
+                const region = process.env.AWS_REGION;
 
-          return mqttClient;
+                ow(keyPath, ow.string.nonEmpty);
+                ow(certPath, ow.string.nonEmpty);
+                ow(caPath, ow.string.nonEmpty);
+                ow(thingName, ow.string.nonEmpty);
+                ow(host, ow.string.nonEmpty);
+                ow(region, ow.string.nonEmpty);
 
-        }).inSingletonScope();
+                const mqttClient = new awsIot.thingShadow({
+                    keyPath,
+                    certPath,
+                    caPath,
+                    clientId: thingName,
+                    host,
+                    region,
+                    autoResubscribe: true,
+                    offlineQueueing: true,
+                });
 
+                return mqttClient;
+            })
+            .inSingletonScope();
     }
 );

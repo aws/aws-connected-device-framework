@@ -10,6 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { Response } from 'express';
+import { inject } from 'inversify';
 import {
     controller,
     httpDelete,
@@ -18,32 +21,34 @@ import {
     interfaces,
     requestBody,
     requestParam,
-    response
-} from "inversify-express-utils";
-import { Response } from "express";
-import { logger } from "../utils/logger";
-import { handleError } from "../utils/errors";
-import { inject } from "inversify";
-import { TYPES } from "../di/types";
-import { OrganizationalUnitsService } from "./organizationalUnits.service";
-import { ComponentsService } from "../components/components.service";
-import { OrganizationalUnitResource } from "./organizationalUnits.model";
-
+    response,
+} from 'inversify-express-utils';
+import { ComponentsService } from '../components/components.service';
+import { TYPES } from '../di/types';
+import { handleError } from '../utils/errors';
+import { OrganizationalUnitResource } from './organizationalUnits.model';
+import { OrganizationalUnitsService } from './organizationalUnits.service';
 
 @controller('')
 export class OrganizationalUnitsController implements interfaces.Controller {
-
     constructor(
-        @inject(TYPES.OrganizationalUnitsService) private organizationsService: OrganizationalUnitsService,
-        @inject(TYPES.ComponentsService) private componentsService: ComponentsService,
-    ) {
-    }
+        @inject(TYPES.OrganizationalUnitsService)
+        private organizationsService: OrganizationalUnitsService,
+        @inject(TYPES.ComponentsService) private componentsService: ComponentsService
+    ) {}
 
     @httpPost('/organizationalUnits')
-    public async createOrganizationalUnit(@requestBody() model: OrganizationalUnitResource, @response() res: Response): Promise<void> {
-        logger.info(`organizations.controller createOrganizationalUnit: in: ouName: ${model.name}`);
+    public async createOrganizationalUnit(
+        @requestBody() model: OrganizationalUnitResource,
+        @response() res: Response
+    ): Promise<void> {
+        logger.info(
+            `organizations.controller createOrganizationalUnit: in: ouName: ${model.name}`
+        );
         try {
-            const organizationalUnitId = await this.organizationsService.createOrganizationalUnit(model)
+            const organizationalUnitId = await this.organizationsService.createOrganizationalUnit(
+                model
+            );
             res.location(`/organizationalUnits/${organizationalUnitId}`)
                 .header('x-organizationalUnitId', organizationalUnitId)
                 .status(201)
@@ -57,7 +62,7 @@ export class OrganizationalUnitsController implements interfaces.Controller {
     public async listOrganizationalUnits(@response() res: Response): Promise<void> {
         logger.info(`organizations.controller listOrganizationalUnits:`);
         try {
-            const organizationalUnits = await this.organizationsService.listOrganizationalUnits()
+            const organizationalUnits = await this.organizationsService.listOrganizationalUnits();
             res.status(200).json(organizationalUnits);
         } catch (e) {
             handleError(e, res);
@@ -65,14 +70,19 @@ export class OrganizationalUnitsController implements interfaces.Controller {
     }
 
     @httpDelete('/organizationalUnits/:id')
-    public async deleteOrganizationalUnit(@requestParam('id') id: string, @response() res: Response): Promise<void> {
+    public async deleteOrganizationalUnit(
+        @requestParam('id') id: string,
+        @response() res: Response
+    ): Promise<void> {
         logger.info(`organizations.controller deleteOrganizationalUnit: in: accountId: ${id}`);
         try {
-            logger.info(`organizations.controller deleteOrganizationalUnit: delete components from organizational unit ${id}`);
-            await this.componentsService.deleteBulk(id)
-            await this.organizationsService.deleteOrganizationalUnit(id)
+            logger.info(
+                `organizations.controller deleteOrganizationalUnit: delete components from organizational unit ${id}`
+            );
+            await this.componentsService.deleteBulk(id);
+            await this.organizationsService.deleteOrganizationalUnit(id);
             logger.debug(`organizations.controller deleteOrganizationalUnit: exit:`);
-            res.status(204).send()
+            res.status(204).send();
         } catch (e) {
             handleError(e, res);
         }
@@ -80,10 +90,13 @@ export class OrganizationalUnitsController implements interfaces.Controller {
     }
 
     @httpGet('/organizationalUnits/:id')
-    public async getOrganizationalUnit(@requestParam('id') id: string, @response() res: Response): Promise<OrganizationalUnitResource> {
+    public async getOrganizationalUnit(
+        @requestParam('id') id: string,
+        @response() res: Response
+    ): Promise<OrganizationalUnitResource> {
         logger.info(`organizations.controller getOrganizationalUnit: in: accountId: ${id}`);
         try {
-            const model = await this.organizationsService.getOrganizationalUnit(id)
+            const model = await this.organizationsService.getOrganizationalUnit(id);
             logger.debug(`organizations.controller exit: ${JSON.stringify(model)}`);
             if (model === undefined) {
                 res.status(404).send();
@@ -95,6 +108,4 @@ export class OrganizationalUnitsController implements interfaces.Controller {
         }
         return null;
     }
-
-
 }

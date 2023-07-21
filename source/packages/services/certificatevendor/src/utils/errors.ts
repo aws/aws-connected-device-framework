@@ -10,18 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { logger } from './logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
-export function handleError(e:Error): void {
+export function handleError(e: Error): void {
     logger.error(`handleError: ${JSON.stringify(e)}`);
 
     // throwing an error out of the Lambda handler will cause Lambda to retry the event
     // if it doesn't make sense to retry, e.g. input validation,
     // then just return and do not throw the error
 
-    if (e.name === 'NotFound' || e.message === 'CERTIFICATE_NOT_FOUND' ) {
+    if (e.name === 'NotFound' || e.message === 'CERTIFICATE_NOT_FOUND') {
         return;
-    } else if (e.name === 'ResourceNotFound' || e.message === 'UNABLE_TO_ACTIVATE_CERTIFICATE' ) {
+    } else if (e.name === 'ResourceNotFound' || e.message === 'UNABLE_TO_ACTIVATE_CERTIFICATE') {
         return;
     } else if (e.name === 'ArgumentError') {
         return;

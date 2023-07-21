@@ -10,16 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+export * from './client/targets.service';
+export * from './client/subscriptions.service';
+export * from './client/events.service';
+export * from './client/eventsources.service';
+export * from './client/messages.service';
+
 export * from './client/common.model';
 export * from './client/events.model';
-export * from './client/events.service';
 export * from './client/eventsources.model';
-export * from './client/eventsources.service';
 export * from './client/messages.model';
-export * from './client/messages.service';
 export * from './client/subscriptions.model';
-export * from './client/subscriptions.service';
 export * from './client/targets.model';
-export * from './client/targets.service';
-export { notificationsContainerModule } from './di/inversify.config';
+
 export { NOTIFICATIONS_CLIENT_TYPES } from './di/types';
+export { notificationsContainerModule } from './di/inversify.config';

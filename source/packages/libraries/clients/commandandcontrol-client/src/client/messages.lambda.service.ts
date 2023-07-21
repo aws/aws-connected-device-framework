@@ -15,8 +15,8 @@ import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
 import {
-    LambdaApiGatewayEventBuilder,
     LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
     LambdaInvokerService,
 } from '@awssolutions/cdf-lambda-invoke';
 import { RequestHeaders } from './common.model';
@@ -86,10 +86,7 @@ export class MessagesLambdaService extends MessagesServiceBase implements Messag
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.commandMessagesRelativeUrl(commandId))
             .setMethod('GET')
-            .setQueryStringParameters({
-                fromCreatedAtExclusive: `${fromCreatedAtExclusive}`,
-                count: `${count}`,
-            })
+            .setQueryStringParameters({ fromCreatedAtExclusive, count })
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);

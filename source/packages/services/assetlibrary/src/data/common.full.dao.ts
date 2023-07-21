@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { process, structure } from 'gremlin';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
 import { TypeUtils } from '../utils/typeUtils';
 import { BaseDaoFull } from './base.full.dao';
 import { FullAssembler } from './full.assembler';
@@ -65,19 +65,16 @@ export class CommonDaoFull extends BaseDaoFull {
             [relatedIn, relatedOut].forEach((t) => t.hasLabel(relationship).as('e'));
         }
 
+        [relatedIn, relatedOut].forEach((t) => t.otherV().hasLabel(template).as('v'));
+
         // if authz is enabled, only return associated vertices that the user is authorized to view
         if ((authorizedPaths?.length ?? 0) > 0) {
             // simplePath is used to prevent cyclic auth checks.
             // fold+unfold prevents auth from being blocked by simplePath in the case that a necessary auth path
             // was part of the initial traversal.
-            // Re-create 'e', as the fold/unfold step eliminates it.
-            [relatedIn, relatedOut].forEach((t) => t.dedup().fold().unfold().as('e'));
-
-            // get the next vertex. otherV is unavailable because the history was reset.
-            relatedIn.outV();
-            relatedOut.inV();
-
-            [relatedIn, relatedOut].forEach((t) => t.hasLabel(template).as('v'));
+            // Re-create 'v', as the fold/unfold step eliminates it.
+            // later, re-create 'e', as the fold/unfold step eliminates it.
+            [relatedIn, relatedOut].forEach((t) => t.dedup().fold().unfold().as('v'));
 
             const authorizedPathIds = authorizedPaths.map((path) => `group___${path}`);
             [relatedIn, relatedOut].forEach((t) =>
@@ -90,9 +87,17 @@ export class CommonDaoFull extends BaseDaoFull {
                     .as('authorization')
                     .select('v')
             );
-        } else {
-            // navigate to the linked vertex for each relation, filtering the type
-            [relatedIn, relatedOut].forEach((t) => t.otherV().hasLabel(template).as('v'));
+
+            // Find exactly one initial edge for each authorized vertex and save it as 'e'
+            // Note, this depends on a later step, which takes these traversals and starts them at V(entityDbId)
+            relatedIn
+                .map(__.outE().and(__.otherV().hasId(entityDbId)))
+                .as('e')
+                .select('v');
+            relatedOut
+                .map(__.inE().and(__.otherV().hasId(entityDbId)))
+                .as('e')
+                .select('v');
         }
 
         // apply filtering to the linked vertex (if required)

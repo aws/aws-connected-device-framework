@@ -11,15 +11,16 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import { send } from 'cfn-response-promise';
 import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
 
-import { logger } from './utils/logger';
-import {CustomResourceManager} from './customResources/customResource.manager';
-import {CustomResourceEvent} from './customResources/customResource.model';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { CustomResourceManager } from './customResources/customResource.manager';
+import { CustomResourceEvent } from './customResources/customResource.model';
 
-let customResourceManager:CustomResourceManager;
+let customResourceManager: CustomResourceManager;
 
 exports.handler = async (event: CustomResourceEvent, context: unknown) => {
     logger.debug(`event:${JSON.stringify(event)} context: ${JSON.stringify(context)}`);
@@ -35,5 +36,4 @@ exports.handler = async (event: CustomResourceEvent, context: unknown) => {
         logger.error(err);
         return await send(event, context, 'FAILED', err);
     }
-
 };

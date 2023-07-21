@@ -10,34 +10,45 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
-import { ComponentsDao } from './components.dao';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { BulkComponentsResult, ComponentResource, ComponentResourceList } from './components.model';
+import { TYPES } from '../di/types';
 import { OrganizationalUnitsService } from '../organizationalUnits/organizationalUnits.service';
+import { ComponentsDao } from './components.dao';
+import {
+    BulkComponentsResult,
+    ComponentResource,
+    ComponentResourceList,
+} from './components.model';
 
 @injectable()
 export class ComponentsService {
-
     constructor(
         @inject(TYPES.ComponentsDao) private componentsDao: ComponentsDao,
-        @inject(TYPES.OrganizationalUnitsService) private organizationalUnitService: OrganizationalUnitsService
+        @inject(TYPES.OrganizationalUnitsService)
+        private organizationalUnitService: OrganizationalUnitsService
+    ) {}
 
-    ) {
-    }
+    public async createBulk(
+        organizationalUnitId: string,
+        componentsResource: ComponentResource[]
+    ): Promise<BulkComponentsResult> {
+        logger.info(
+            `components.service createComponents in: organizationalUnitId: ${organizationalUnitId} componentsResource: ${JSON.stringify(
+                componentsResource
+            )}`
+        );
 
-    public async createBulk(organizationalUnitId: string, componentsResource: ComponentResource[]): Promise<BulkComponentsResult> {
-        logger.info(`components.service createComponents in: organizationalUnitId: ${organizationalUnitId} componentsResource: ${JSON.stringify(componentsResource)}`)
+        ow(organizationalUnitId, ow.string.nonEmpty);
+        ow(componentsResource, ow.array.nonEmpty);
 
-        ow(organizationalUnitId, ow.string.nonEmpty)
-        ow(componentsResource, ow.array.nonEmpty)
-
-        const organizationalUnit = await this.organizationalUnitService.getOrganizationalUnit(organizationalUnitId)
+        const organizationalUnit = await this.organizationalUnitService.getOrganizationalUnit(
+            organizationalUnitId
+        );
 
         if (!organizationalUnit) {
-            throw new Error(`Organizational Unit ${organizationalUnitId} does not exists`)
+            throw new Error(`Organizational Unit ${organizationalUnitId} does not exists`);
         }
 
         let success = 0;
@@ -45,7 +56,7 @@ export class ComponentsService {
         const errors: { [key: string]: string } = {};
         for (const component of componentsResource) {
             try {
-                await this.createComponent(organizationalUnitId, component)
+                await this.createComponent(organizationalUnitId, component);
                 success++;
             } catch (err) {
                 errors[`${component.name}`] = err;
@@ -57,65 +68,83 @@ export class ComponentsService {
             success,
             failed,
             total: success + failed,
-            errors
+            errors,
         };
-        logger.info(`components.service createComponents exit:`)
+        logger.info(`components.service createComponents exit:`);
         return response;
     }
 
-    public async createComponent(organizationalUnitId: string, componentResource: ComponentResource): Promise<void> {
-        logger.info(`components.service createComponent in: organizationalUnitId: ${organizationalUnitId} componentResource: ${JSON.stringify(componentResource)}`)
+    public async createComponent(
+        organizationalUnitId: string,
+        componentResource: ComponentResource
+    ): Promise<void> {
+        logger.info(
+            `components.service createComponent in: organizationalUnitId: ${organizationalUnitId} componentResource: ${JSON.stringify(
+                componentResource
+            )}`
+        );
 
-        ow(organizationalUnitId, ow.string.nonEmpty)
-        ow(componentResource.description, ow.string.nonEmpty)
-        ow(componentResource.name, ow.string.nonEmpty)
-        ow(componentResource.runOrder, ow.number.integer)
-        ow(componentResource.resourceFile, ow.string.nonEmpty)
-        ow(componentResource.parameters, ow.object.nonEmpty)
+        ow(organizationalUnitId, ow.string.nonEmpty);
+        ow(componentResource.description, ow.string.nonEmpty);
+        ow(componentResource.name, ow.string.nonEmpty);
+        ow(componentResource.runOrder, ow.number.integer);
+        ow(componentResource.resourceFile, ow.string.nonEmpty);
+        ow(componentResource.parameters, ow.object.nonEmpty);
 
         await this.componentsDao.createComponent({
             ...componentResource,
-            organizationalUnitId
-        })
+            organizationalUnitId,
+        });
 
-        logger.info(`component.service createComponent exit:`)
+        logger.info(`component.service createComponent exit:`);
     }
 
     public async listComponents(ouName: string): Promise<ComponentResourceList> {
-        logger.info(`components.service listComponents in: ouName: ${ouName}`)
-        const componentItems = await this.componentsDao.getComponentsByOu(ouName)
+        logger.info(`components.service listComponents in: ouName: ${ouName}`);
+        const componentItems = await this.componentsDao.getComponentsByOu(ouName);
 
-        const componentResourceList = componentItems.map(item => {
+        const componentResourceList = componentItems.map((item) => {
             return {
                 ...item,
-                ouName
-            }
-        })
+                ouName,
+            };
+        });
 
-        logger.info(`components.service listComponents exit: componentResourceList: ${JSON.stringify(componentResourceList)}`)
-        return componentResourceList
+        logger.info(
+            `components.service listComponents exit: componentResourceList: ${JSON.stringify(
+                componentResourceList
+            )}`
+        );
+        return componentResourceList;
     }
 
     public async deleteBulk(organizationalUnitId: string): Promise<void> {
-        logger.info(`components.service deleteBulk in: organizationalUnitId: ${organizationalUnitId}`)
-        ow(organizationalUnitId, ow.string.nonEmpty)
-        await this.componentsDao.deleteComponentsByOu(organizationalUnitId)
-        logger.info(`components.service deleteBulk exit:`)
+        logger.info(
+            `components.service deleteBulk in: organizationalUnitId: ${organizationalUnitId}`
+        );
+        ow(organizationalUnitId, ow.string.nonEmpty);
+        await this.componentsDao.deleteComponentsByOu(organizationalUnitId);
+        logger.info(`components.service deleteBulk exit:`);
     }
 
     public async getBulk(organizationalUnitId: string): Promise<ComponentResource[]> {
-        logger.info(`components.service getBulk in: organizationalUnitId: ${organizationalUnitId}`)
+        logger.info(
+            `components.service getBulk in: organizationalUnitId: ${organizationalUnitId}`
+        );
 
-        ow(organizationalUnitId, ow.string.nonEmpty)
+        ow(organizationalUnitId, ow.string.nonEmpty);
 
-        const componentItemList = await this.componentsDao.getComponentsByOu(organizationalUnitId)
-        const componentResourceList = componentItemList.map(componentItem => {
+        const componentItemList = await this.componentsDao.getComponentsByOu(organizationalUnitId);
+        const componentResourceList = componentItemList.map((componentItem) => {
             const { organizationalUnitId, ...component } = componentItem;
             return component;
+        });
 
-        })
-
-        logger.info(`components.service getBulk out: componentResourceList: ${JSON.stringify(componentResourceList)}`)
+        logger.info(
+            `components.service getBulk out: componentResourceList: ${JSON.stringify(
+                componentResourceList
+            )}`
+        );
         return componentResourceList;
     }
 }

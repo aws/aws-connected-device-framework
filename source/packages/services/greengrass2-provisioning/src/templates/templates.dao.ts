@@ -15,31 +15,40 @@ import clone from 'just-clone';
 import ow from 'ow';
 
 import {
-    BatchWriteCommandInput, DynamoDBDocumentClient, PutCommand, PutCommandInput, QueryCommand,
-    QueryCommandInput
+    BatchWriteCommandInput,
+    DynamoDBDocumentClient,
+    PutCommand,
+    PutCommandInput,
+    QueryCommand,
+    QueryCommandInput,
 } from '@aws-sdk/lib-dynamodb';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import {
-    DynamoDbPaginationKey, GSI1_INDEX_NAME, GSI2_INDEX_NAME, GSI3_INDEX_NAME
+    DynamoDbPaginationKey,
+    GSI1_INDEX_NAME,
+    GSI2_INDEX_NAME,
+    GSI3_INDEX_NAME,
 } from '../common/common.models';
 import { TYPES } from '../di/types';
 import { DocumentDbClientItem, DynamoDbUtils } from '../utils/dynamoDb.util';
-import { logger } from '../utils/logger.util';
 import {
-    createDelimitedAttribute, createDelimitedAttributePrefix, expandDelimitedAttribute, PkType
+    PkType,
+    createDelimitedAttribute,
+    createDelimitedAttributePrefix,
+    expandDelimitedAttribute,
 } from '../utils/pkUtils.util';
 import { Component, TemplateItem } from './templates.models';
 
 @injectable()
 export class TemplatesDao {
-
     private dbc: DynamoDBDocumentClient;
 
     public constructor(
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
-        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient,
+        @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient
     ) {
-        this.dbc = ddcFactory()
+        this.dbc = ddcFactory();
     }
 
     public async get(name: string, version: number | string): Promise<TemplateItem> {
@@ -50,13 +59,12 @@ export class TemplatesDao {
             KeyConditionExpression: `#hash=:hash AND begins_with(#range,:range)`,
             ExpressionAttributeNames: {
                 '#hash': 'pk',
-                '#range': 'sk'
+                '#range': 'sk',
             },
             ExpressionAttributeValues: {
                 ':hash': createDelimitedAttribute(PkType.Template, name),
-                ':range': createDelimitedAttributePrefix(PkType.TemplateVersion, version)
-            }
-
+                ':range': createDelimitedAttributePrefix(PkType.TemplateVersion, version),
+            },
         };
 
         logger.silly(`templates.dao get: QueryInput: ${JSON.stringify(params)}`);
@@ -75,8 +83,16 @@ export class TemplatesDao {
         return response;
     }
 
-    public async listVersions(name: string, count?: number, lastEvaluated?: TemplateVersionListPaginationKey): Promise<[TemplateItem[], TemplateVersionListPaginationKey]> {
-        logger.debug(`templates.dao listVersions: in: name:${name}, count:${count}, lastEvaluated:${JSON.stringify(lastEvaluated)}`);
+    public async listVersions(
+        name: string,
+        count?: number,
+        lastEvaluated?: TemplateVersionListPaginationKey
+    ): Promise<[TemplateItem[], TemplateVersionListPaginationKey]> {
+        logger.debug(
+            `templates.dao listVersions: in: name:${name}, count:${count}, lastEvaluated:${JSON.stringify(
+                lastEvaluated
+            )}`
+        );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
         if (lastEvaluated?.version) {
@@ -85,7 +101,7 @@ export class TemplatesDao {
                 sk: createDelimitedAttribute(PkType.TemplateVersion, lastEvaluated.version),
                 siKey2: createDelimitedAttribute(PkType.Template, name, PkType.Template),
                 siSort2: createDelimitedAttribute(PkType.TemplateVersion, lastEvaluated.version),
-            }
+            };
         }
 
         const params: QueryCommandInput = {
@@ -101,7 +117,7 @@ export class TemplatesDao {
                 ':range': createDelimitedAttributePrefix(PkType.TemplateVersion),
             },
             ExclusiveStartKey: exclusiveStartKey,
-            Limit: count
+            Limit: count,
         };
 
         logger.silly(`templates.dao listVersions: QueryInput: ${JSON.stringify(params)}`);
@@ -112,7 +128,6 @@ export class TemplatesDao {
             return [[], undefined];
         }
         logger.silly(`query result: ${JSON.stringify(results)}`);
-
 
         const getComponentsParams: QueryCommandInput = {
             TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
@@ -126,34 +141,46 @@ export class TemplatesDao {
                 ':range': createDelimitedAttributePrefix(PkType.TemplateVersion),
             },
             ExclusiveStartKey: exclusiveStartKey,
-            Limit: count
+            Limit: count,
         };
 
-        logger.silly(`templates.dao listVersions: getComponentsParams: ${JSON.stringify(getComponentsParams)}`);
+        logger.silly(
+            `templates.dao listVersions: getComponentsParams: ${JSON.stringify(
+                getComponentsParams
+            )}`
+        );
 
         let componentItems: unknown = [];
         // The components were not populated before
         const getComponentsResults = await this.dbc.send(new QueryCommand(getComponentsParams));
         if ((getComponentsResults?.Items?.length ?? 0) > 0) {
-            componentItems = getComponentsResults.Items.filter(
-                item => {
-                    const sk = expandDelimitedAttribute(item.sk);
-                    return sk.length === 4 && sk[2] === PkType.Component
-                }
-            )
-            logger.debug(`templates.dao listVersions: filtering components componentsItems: ${JSON.stringify(componentItems)}`);
+            componentItems = getComponentsResults.Items.filter((item) => {
+                const sk = expandDelimitedAttribute(item.sk);
+                return sk.length === 4 && sk[2] === PkType.Component;
+            });
+            logger.debug(
+                `templates.dao listVersions: filtering components componentsItems: ${JSON.stringify(
+                    componentItems
+                )}`
+            );
         }
 
         const response = this.assemble(results.Items.concat(componentItems));
         let paginationKey: TemplateVersionListPaginationKey;
         if (results.LastEvaluatedKey) {
-            const lastEvaluatedVersion = Number(expandDelimitedAttribute(results.LastEvaluatedKey.sk)[1]);
+            const lastEvaluatedVersion = Number(
+                expandDelimitedAttribute(results.LastEvaluatedKey.sk)[1]
+            );
             paginationKey = {
-                version: lastEvaluatedVersion
-            }
+                version: lastEvaluatedVersion,
+            };
         }
 
-        logger.debug(`templates.dao listVersions: exit: response:${JSON.stringify(response)}, paginationKey:${paginationKey}`);
+        logger.debug(
+            `templates.dao listVersions: exit: response:${JSON.stringify(
+                response
+            )}, paginationKey:${paginationKey}`
+        );
         return [response, paginationKey];
     }
 
@@ -165,11 +192,11 @@ export class TemplatesDao {
             IndexName: GSI3_INDEX_NAME,
             KeyConditionExpression: `#hash=:hash`,
             ExpressionAttributeNames: {
-                '#hash': 'siKey3'
+                '#hash': 'siKey3',
             },
             ExpressionAttributeValues: {
                 ':hash': createDelimitedAttribute(PkType.IotJob, jobId),
-            }
+            },
         };
 
         logger.silly(`templates.dao getTemplateIdByJobId: QueryInput: ${JSON.stringify(params)}`);
@@ -198,8 +225,8 @@ export class TemplatesDao {
 
         const params: BatchWriteCommandInput = {
             RequestItems: {
-                [process.env.AWS_DYNAMODB_TABLE_NAME]: []
-            }
+                [process.env.AWS_DYNAMODB_TABLE_NAME]: [],
+            },
         };
 
         // current template item
@@ -215,23 +242,26 @@ export class TemplatesDao {
                     jobConfig: template.jobConfig,
                     deploymentPolicies: template.deploymentPolicies,
                     createdAt: template.createdAt?.toISOString(),
-                    updatedAt: template.updatedAt?.toISOString()
-                }
-            }
-        }
+                    updatedAt: template.updatedAt?.toISOString(),
+                },
+            },
+        };
         params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(t);
 
         // versioned template item
         const tv = clone(t);
         tv.PutRequest.Item.sk = createDelimitedAttribute(PkType.TemplateVersion, template.version);
         delete tv.PutRequest.Item.siKey1;
-        tv.PutRequest.Item['siKey2'] = createDelimitedAttribute(PkType.Template, template.name, PkType.Template);
+        tv.PutRequest.Item['siKey2'] = createDelimitedAttribute(
+            PkType.Template,
+            template.name,
+            PkType.Template
+        );
         tv.PutRequest.Item['siSort2'] = tv.PutRequest.Item.sk;
         params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(tv);
 
         if ((template.components?.length ?? 0) > 0) {
-            template.components.forEach(component => {
-
+            template.components.forEach((component) => {
                 ow(component.key, ow.string.nonEmpty);
 
                 // current component items
@@ -239,19 +269,29 @@ export class TemplatesDao {
                     PutRequest: {
                         Item: {
                             pk: templateDbId,
-                            sk: createDelimitedAttribute(PkType.TemplateVersion, 'current', PkType.Component, component.key),
+                            sk: createDelimitedAttribute(
+                                PkType.TemplateVersion,
+                                'current',
+                                PkType.Component,
+                                component.key
+                            ),
                             key: component.key,
                             version: component.version,
                             configurationUpdate: component.configurationUpdate,
-                            runWith: component.runWith
-                        }
-                    }
+                            runWith: component.runWith,
+                        },
+                    },
                 };
                 params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(c);
 
                 // add versioned component items
                 const cv = clone(c);
-                const versionedComponentDbId = createDelimitedAttribute(PkType.TemplateVersion, template.version, PkType.Component, component.key);
+                const versionedComponentDbId = createDelimitedAttribute(
+                    PkType.TemplateVersion,
+                    template.version,
+                    PkType.Component,
+                    component.key
+                );
                 cv.PutRequest.Item.sk = versionedComponentDbId;
                 params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(cv);
             });
@@ -263,17 +303,22 @@ export class TemplatesDao {
         }
 
         logger.debug(`templates.dao save: exit:`);
-
     }
 
     public async associateDeployment(template: TemplateItem): Promise<void> {
-        logger.debug(`templates.dao associateDeployment: in: template:${JSON.stringify(template)}`);
+        logger.debug(
+            `templates.dao associateDeployment: in: template:${JSON.stringify(template)}`
+        );
 
         const params: PutCommandInput = {
             TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
             Item: {
                 pk: createDelimitedAttribute(PkType.Template, template.name),
-                sk: createDelimitedAttribute(PkType.TemplateVersion, template.version, 'deployment'),
+                sk: createDelimitedAttribute(
+                    PkType.TemplateVersion,
+                    template.version,
+                    'deployment'
+                ),
                 siKey2: createDelimitedAttribute(PkType.Deployment, template.deployment.id),
                 siSort2: createDelimitedAttribute(PkType.Deployment, template.deployment.jobId),
                 siKey3: createDelimitedAttribute(PkType.IotJob, template.deployment.jobId),
@@ -282,18 +327,24 @@ export class TemplatesDao {
                 version: template.version,
                 deployment: template.deployment.id,
                 jobId: template.deployment.jobId,
-                thingGroupName: template.deployment.thingGroupName
-            }
+                thingGroupName: template.deployment.thingGroupName,
+            },
         };
 
         await this.dbc.send(new PutCommand(params));
 
         logger.debug(`templates.dao associateDeployment: exit:`);
-
     }
 
-    public async list(count?: number, lastEvaluated?: TemplateListPaginationKey): Promise<[TemplateItem[], TemplateListPaginationKey]> {
-        logger.debug(`templates.dao list: in: count:${count}, lastEvaluated:${JSON.stringify(lastEvaluated)}`);
+    public async list(
+        count?: number,
+        lastEvaluated?: TemplateListPaginationKey
+    ): Promise<[TemplateItem[], TemplateListPaginationKey]> {
+        logger.debug(
+            `templates.dao list: in: count:${count}, lastEvaluated:${JSON.stringify(
+                lastEvaluated
+            )}`
+        );
 
         let exclusiveStartKey: DynamoDbPaginationKey;
         if (lastEvaluated?.name) {
@@ -301,7 +352,7 @@ export class TemplatesDao {
                 pk: createDelimitedAttribute(PkType.Template, lastEvaluated.name),
                 siKey1: PkType.Template,
                 sk: createDelimitedAttribute(PkType.TemplateVersion, 'current'),
-            }
+            };
         }
 
         const params: QueryCommandInput = {
@@ -309,14 +360,14 @@ export class TemplatesDao {
             IndexName: GSI1_INDEX_NAME,
             KeyConditionExpression: `#hash=:hash`,
             ExpressionAttributeNames: {
-                '#hash': 'siKey1'
+                '#hash': 'siKey1',
             },
             ExpressionAttributeValues: {
-                ':hash': PkType.Template
+                ':hash': PkType.Template,
             },
             Select: 'ALL_ATTRIBUTES',
             ExclusiveStartKey: exclusiveStartKey,
-            Limit: count
+            Limit: count,
         };
 
         logger.silly(`templates.dao list: params: ${JSON.stringify(params)}`);
@@ -333,11 +384,15 @@ export class TemplatesDao {
         if (results.LastEvaluatedKey) {
             const lastEvaluatedName = expandDelimitedAttribute(results.LastEvaluatedKey.pk)[1];
             paginationKey = {
-                name: lastEvaluatedName
-            }
+                name: lastEvaluatedName,
+            };
         }
 
-        logger.debug(`templates.dao list: exit: response:${JSON.stringify(response)}, paginationKey:${paginationKey}`);
+        logger.debug(
+            `templates.dao list: exit: response:${JSON.stringify(
+                response
+            )}, paginationKey:${paginationKey}`
+        );
         return [response, paginationKey];
     }
 
@@ -349,7 +404,7 @@ export class TemplatesDao {
 
         const t: { [version: string]: TemplateItem } = {};
         const c: { [version: string]: Component[] } = {};
-        items.forEach(item => {
+        items.forEach((item) => {
             const pk = expandDelimitedAttribute(item.pk);
             const sk = expandDelimitedAttribute(item.sk);
             const templateName = pk[1];
@@ -365,8 +420,8 @@ export class TemplatesDao {
                     deploymentPolicies: item.deploymentPolicies,
                     components: [],
                     createdAt: new Date(item.createdAt),
-                    updatedAt: new Date(item.updatedAt)
-                }
+                    updatedAt: new Date(item.updatedAt),
+                };
             } else if (sk.length === 4 && sk[2] === PkType.Component) {
                 // component
                 if (!c[key]) {
@@ -376,11 +431,11 @@ export class TemplatesDao {
                     key: item.key,
                     version: item.version,
                     configurationUpdate: item.configurationUpdate,
-                    runWith: item.runWith
+                    runWith: item.runWith,
                 });
             }
         });
-        Object.keys(t).forEach(k => {
+        Object.keys(t).forEach((k) => {
             t[k].components = c[k];
         });
         logger.debug(`templates.dao assemble: exit:${JSON.stringify(t)}`);
@@ -390,11 +445,10 @@ export class TemplatesDao {
     public async delete(template: TemplateItem): Promise<void> {
         logger.debug(`templates.dao delete: in: template:${JSON.stringify(template)}`);
 
-
         const params: BatchWriteCommandInput = {
             RequestItems: {
-                [process.env.AWS_DYNAMODB_TABLE_NAME]: []
-            }
+                [process.env.AWS_DYNAMODB_TABLE_NAME]: [],
+            },
         };
 
         // template
@@ -403,23 +457,28 @@ export class TemplatesDao {
             DeleteRequest: {
                 Key: {
                     pk: templateDbId,
-                    sk: createDelimitedAttributePrefix(PkType.TemplateVersion, template.version)
-                }
-            }
-        }
+                    sk: createDelimitedAttributePrefix(PkType.TemplateVersion, template.version),
+                },
+            },
+        };
         params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(t);
 
         // components
         if ((template.components?.length ?? 0) > 0) {
-            template.components.forEach(component => {
+            template.components.forEach((component) => {
                 const c = {
                     DeleteRequest: {
                         Key: {
                             pk: templateDbId,
-                            sk: createDelimitedAttribute(PkType.TemplateVersion, template.version, PkType.Component, component.key)
-                        }
-                    }
-                }
+                            sk: createDelimitedAttribute(
+                                PkType.TemplateVersion,
+                                template.version,
+                                PkType.Component,
+                                component.key
+                            ),
+                        },
+                    },
+                };
                 params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(c);
             });
         }
@@ -436,8 +495,8 @@ export class TemplatesDao {
 
 export type TemplateListPaginationKey = {
     name: string;
-}
+};
 
 export type TemplateVersionListPaginationKey = {
     version: number;
-}
+};

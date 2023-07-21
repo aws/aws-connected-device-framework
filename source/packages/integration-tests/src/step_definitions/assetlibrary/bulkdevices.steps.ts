@@ -11,6 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import 'reflect-metadata';
+
 import {
     BulkDevicesResource,
     Device20Resource,
@@ -21,7 +23,6 @@ import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 import { DataTable, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
 import { expect, use } from 'chai';
-import 'reflect-metadata';
 import { container } from '../../di/inversify.config';
 import { AUTHORIZATION_TOKEN } from '../common/common.steps';
 

@@ -13,15 +13,15 @@
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
 
 import { Batch } from '../batch/batch.service';
-import { ExtractService } from './extract.service';
-import { TransformService } from './transform.service';
-import { LoadService, Loaded } from './load.service';
+import { LabelsService } from '../labels/labels.service';
 import { S3Utils } from '../utils/s3.util';
-import {LabelsService} from '../labels/labels.service';
+import { ExtractService } from './extract.service';
+import { LoadService, Loaded } from './load.service';
+import { TransformService } from './transform.service';
 
 @injectable()
 export class ETLService {
@@ -40,11 +40,14 @@ export class ETLService {
 
         ow(batchId, 'deviceId', ow.string.nonEmpty);
 
-        let batch:Batch;
+        let batch: Batch;
         try {
-            batch= await this.s3Utils.get(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
-        } catch(e) {
-            throw new Error("NOT_FOUND");
+            batch = await this.s3Utils.get(
+                this.exportBucket,
+                `${this.exportKeyPrefix}_temp/${batchId}`
+            );
+        } catch (e) {
+            throw new Error('NOT_FOUND');
         }
 
         const items = await this.labelsService.getIdsByRange(batch.type, batch.range);
@@ -54,12 +57,10 @@ export class ETLService {
         const transformedBatch = await this.transformService.transform(extractedBatch);
         const loadedBatch = await this.loadService.load(transformedBatch);
 
-
-        await this.s3Utils.delete(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
+        await this.s3Utils.delete(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`);
 
         logger.debug(`ETLService: processBatch out:`);
 
         return loadedBatch;
-
     }
 }

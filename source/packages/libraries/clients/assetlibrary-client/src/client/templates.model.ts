@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export class TypeDefinitionModel {
-	properties?: { [key: string]: {type: string|string[]; format?: string; enum?: string[] }};
+    properties?: { [key: string]: { type: string | string[]; format?: string; enum?: string[] } };
     required?: string[];
     relations?: {
         out?: { [key: string]: RelationTarget[] };
@@ -23,8 +23,8 @@ export class TypeDefinitionModel {
 export type RelationTarget = RelationTargetSimple | RelationTargetExpanded;
 export type RelationTargetSimple = string;
 export type RelationTargetExpanded = {
-    name: string,
-    includeInAuth?:boolean,
+    name: string;
+    includeInAuth?: boolean;
 };
 export class TypeResource extends TypeDefinitionModel {
     templateId: string;
@@ -34,19 +34,19 @@ export class TypeResource extends TypeDefinitionModel {
 export type CategoryEnum = 'device' | 'group';
 export const CategoryEnum = {
     device: 'device' as CategoryEnum,
-    group: 'group' as CategoryEnum
+    group: 'group' as CategoryEnum,
 };
 
 export type StatusEnum = 'draft' | 'published';
 export const StatusEnum = {
     draft: 'draft' as StatusEnum,
-    published: 'published' as StatusEnum
+    published: 'published' as StatusEnum,
 };
 
 export class TypeResourceList {
-    results: TypeResource[]=[];
+    results: TypeResource[] = [];
     pagination?: {
-        offset:number;
-        count:number;
+        offset: number;
+        count: number;
     };
 }

@@ -10,24 +10,23 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger.util';
-import pLimit from 'p-limit';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { ListSubscriptionsByTopicResponse } from 'aws-sdk/clients/sns';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
+import pLimit from 'p-limit';
 import { v1 as uuid } from 'uuid';
-import { SubscriptionItem, UpdateSubcriptionRequest } from './subscription.models';
-import { SubscriptionAssembler } from './subscription.assembler';
-import { SubscriptionDao, PaginationKey } from './subscription.dao';
+import { TYPES } from '../../di/types';
 import { EventDao } from '../events/event.dao';
 import { SNSTarget } from '../targets/processors/sns.target';
 import { TargetService } from '../targets/target.service';
-import { TargetItem, TargetTypeStrings, TargetItemBase } from '../targets/targets.models';
-import { ListSubscriptionsByTopicResponse } from 'aws-sdk/clients/sns';
+import { TargetItem, TargetItemBase, TargetTypeStrings } from '../targets/targets.models';
+import { SubscriptionAssembler } from './subscription.assembler';
+import { PaginationKey, SubscriptionDao } from './subscription.dao';
+import { SubscriptionItem, UpdateSubcriptionRequest } from './subscription.models';
 
 @injectable()
 export class SubscriptionService {
-
     private readonly PROMISE_CONCURRENCY_LIMIT = 5;
 
     private sqs: AWS.SQS;
@@ -39,7 +38,8 @@ export class SubscriptionService {
         @inject(TYPES.TargetService) private targetService: TargetService,
         @inject(TYPES.SNSTarget) private snsTarget: SNSTarget,
         @inject('aws.sqs.asyncProcessing') private asyncProcessingQueue: string,
-        @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS) {
+        @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS
+    ) {
         this.sqs = sqsFactory();
     }
 
@@ -69,9 +69,30 @@ export class SubscriptionService {
                     continue;
                 }
                 if (existingSnsSubscriptions === undefined) {
-                    existingSnsSubscriptions = await this.snsTarget.listSubscriptions(subscription.sns?.topicArn);
+                    try {
+                        existingSnsSubscriptions = await this.snsTarget.listSubscriptions(
+                            subscription.sns?.topicArn
+                        );
+                    } catch (err) {
+                        if (err.hasOwnProperty('code') && err['code'] === 'NotFound') {
+                            // the listSubscriptions call throws a "NotFound" error if the topic does not exist.
+                            // in the case where deleting by-user, the topic gets deleted before the deletion of subscriptions gets updated in the dao.
+                            // we catch the error and act like no subscriptions are found on the topic.
+                            // this does not update subscriptions in the dao.
+                            logger.debug(
+                                `subscription.service get: assuming subscription delete is in-progress from error: ${JSON.stringify(
+                                    err
+                                )}`
+                            );
+                            existingSnsSubscriptions = { Subscriptions: [] };
+                        } else {
+                            throw err;
+                        }
+                    }
                 }
-                const matches = existingSnsSubscriptions.Subscriptions?.filter(s => s.Endpoint === target.getId());
+                const matches = existingSnsSubscriptions.Subscriptions?.filter(
+                    (s) => s.Endpoint === target.getId()
+                );
                 if (matches?.length > 0) {
                     // update with latest info if different to what we have
                     const latestArn = matches[0].SubscriptionArn;
@@ -96,20 +117,29 @@ export class SubscriptionService {
      * @param userId
      * @param excludeSubscriptionId
      */
-    public async listSnsTargetArns(userId: string, excludeSubscriptionId?: string): Promise<Set<string>> {
-        logger.debug(`subscription.service listTargetArns: in: userId:${userId}, excludeSubscriptionId:${excludeSubscriptionId}`);
+    public async listSnsTargetArns(
+        userId: string,
+        excludeSubscriptionId?: string
+    ): Promise<Set<string>> {
+        logger.debug(
+            `subscription.service listTargetArns: in: userId:${userId}, excludeSubscriptionId:${excludeSubscriptionId}`
+        );
 
         let subscriptions = await this.listByUser(userId);
         if (excludeSubscriptionId !== undefined) {
-            subscriptions = subscriptions.filter(s => s.id !== excludeSubscriptionId);
+            subscriptions = subscriptions.filter((s) => s.id !== excludeSubscriptionId);
         }
-        const targetArns = new Set(subscriptions
-            .map(s => Object.keys(s.targets)
-                .map(tt => s.targets[tt])
-                .flat())
-            .flat()
-            .map(t => t['subscriptionArn'])
-            .filter(arn => arn !== undefined));
+        const targetArns = new Set(
+            subscriptions
+                .map((s) =>
+                    Object.keys(s.targets)
+                        .map((tt) => s.targets[tt])
+                        .flat()
+                )
+                .flat()
+                .map((t) => t['subscriptionArn'])
+                .filter((arn) => arn !== undefined)
+        );
 
         logger.debug(`subscription.service listTargetArns: exit:${JSON.stringify(targetArns)}`);
         return targetArns;
@@ -131,7 +161,11 @@ export class SubscriptionService {
                 const targets = current.targets[targetType];
                 if (targets) {
                     for (const t of targets) {
-                        await this.safeDeleteTarget(subscriptionId, targetType as TargetTypeStrings, (t as TargetItemBase).getId());
+                        await this.safeDeleteTarget(
+                            subscriptionId,
+                            targetType as TargetTypeStrings,
+                            (t as TargetItemBase).getId()
+                        );
                     }
                 }
             }
@@ -142,7 +176,10 @@ export class SubscriptionService {
 
         // delete the sns topic if there are no remaining subscriptions for the user
         const subscriptions = await this.listByUser(current.user.id);
-        if (subscriptions === undefined || subscriptions.filter(s => s.id !== subscriptionId).length === 0) {
+        if (
+            subscriptions === undefined ||
+            subscriptions.filter((s) => s.id !== subscriptionId).length === 0
+        ) {
             await this.snsTarget.deleteTopic(current.user.id);
         }
 
@@ -157,8 +194,14 @@ export class SubscriptionService {
      * @param targetType
      * @param targetId
      */
-    public async safeDeleteTarget(subscriptionId: string, targetType: TargetTypeStrings, targetId: string): Promise<void> {
-        logger.debug(`subscription.service safeDeleteTarget: in: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`);
+    public async safeDeleteTarget(
+        subscriptionId: string,
+        targetType: TargetTypeStrings,
+        targetId: string
+    ): Promise<void> {
+        logger.debug(
+            `subscription.service safeDeleteTarget: in: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`
+        );
 
         ow(subscriptionId, ow.string.nonEmpty);
         ow(targetType, ow.string.nonEmpty);
@@ -169,7 +212,9 @@ export class SubscriptionService {
             throw new Error('SUBSCRIPTION_NOT_FOUND');
         }
 
-        const target = subscription.targets?.[targetType]?.flat().filter(t => t.getId() === targetId)?.[0];
+        const target = subscription.targets?.[targetType]
+            ?.flat()
+            .filter((t) => t.getId() === targetId)?.[0];
         if (target === undefined) {
             throw new Error('TARGET_NOT_FOUND');
         }
@@ -181,56 +226,75 @@ export class SubscriptionService {
         const otherTargetArns = await this.listSnsTargetArns(subscription.user.id, subscriptionId);
 
         // 2nd now that we know which targets are used across other subscriptions, we can exclude cleaning them up
-        const reused = (target['subscriptionArn'] !== undefined && otherTargetArns.has(target['subscriptionArn']));
+        const reused =
+            target['subscriptionArn'] !== undefined &&
+            otherTargetArns.has(target['subscriptionArn']);
 
         // 3rd we can now go ahead and safely delegate the deletion of the target
         this.targetService.delete(subscriptionId, targetType, targetId, !reused);
 
         logger.debug(`subscription.service safeDeleteTarget: exit:`);
-
     }
 
-    public async deleteByUser(userId: string, principal?: string, principalValue?: string): Promise<void> {
-        logger.debug(`subscription.service deleteByUser: in: userId:${userId}, principal:${principal}, principalValue:${principalValue}`);
+    public async deleteByUser(
+        userId: string,
+        principal?: string,
+        principalValue?: string
+    ): Promise<void> {
+        logger.debug(
+            `subscription.service deleteByUser: in: userId:${userId}, principal:${principal}, principalValue:${principalValue}`
+        );
 
         ow(userId, ow.string.nonEmpty);
 
         const subscriptions = await this.listByUser(userId, true, principal, principalValue);
 
         for (const sub of subscriptions) {
-            await this.sqs.sendMessage({
-                QueueUrl: this.asyncProcessingQueue,
-                MessageBody: JSON.stringify({ subscriptionId: sub.id }),
-                MessageAttributes: {
-                    messageType: {
-                        DataType: 'String',
-                        StringValue: 'DeleteSubscription'
-                    }
-                }
-            }).promise();
+            await this.sqs
+                .sendMessage({
+                    QueueUrl: this.asyncProcessingQueue,
+                    MessageBody: JSON.stringify({ subscriptionId: sub.id }),
+                    MessageAttributes: {
+                        messageType: {
+                            DataType: 'String',
+                            StringValue: 'DeleteSubscription',
+                        },
+                    },
+                })
+                .promise();
         }
 
         logger.debug(`subscription.service deleteByUser: exit:`);
     }
 
-    public async listByUser(userId: string, returnIdsOnly = false, principal?: string, principalValue?: string): Promise<SubscriptionItem[]> {
-        logger.debug(`subscription.service listByUser: in: userId:${userId}, returnIdsOnly:${returnIdsOnly}, principal:${principal}, principalValue:${principalValue}`);
+    public async listByUser(
+        userId: string,
+        returnIdsOnly = false,
+        principal?: string,
+        principalValue?: string
+    ): Promise<SubscriptionItem[]> {
+        logger.debug(
+            `subscription.service listByUser: in: userId:${userId}, returnIdsOnly:${returnIdsOnly}, principal:${principal}, principalValue:${principalValue}`
+        );
 
         ow(userId, ow.string.nonEmpty);
 
         let results: SubscriptionItem[] = [];
         let subscriptionIds: string[];
         if (principal !== undefined && principalValue !== undefined) {
-            subscriptionIds = await this.subscriptionDao.listSubscriptionIdsForUserPrincipal(userId, principal, principalValue);
+            subscriptionIds = await this.subscriptionDao.listSubscriptionIdsForUserPrincipal(
+                userId,
+                principal,
+                principalValue
+            );
         } else {
             subscriptionIds = await this.subscriptionDao.listSubscriptionIdsForUser(userId);
         }
 
         if (subscriptionIds?.length > 0) {
             if (returnIdsOnly) {
-                results = subscriptionIds.map(id => new SubscriptionItem(id));
+                results = subscriptionIds.map((id) => new SubscriptionItem(id));
             } else {
-
                 const limit = pLimit(this.PROMISE_CONCURRENCY_LIMIT);
                 const gets: Promise<SubscriptionItem>[] = [];
                 for (const id of subscriptionIds) {
@@ -243,13 +307,22 @@ export class SubscriptionService {
         return results;
     }
 
-
-    public async listByEvent(eventId: string, from?: PaginationKey): Promise<[SubscriptionItem[], PaginationKey]> {
-        logger.debug(`subscription.service listByEvent: in: eventId:${eventId}, from:${JSON.stringify(from)}`);
+    public async listByEvent(
+        eventId: string,
+        from?: PaginationKey
+    ): Promise<[SubscriptionItem[], PaginationKey]> {
+        logger.debug(
+            `subscription.service listByEvent: in: eventId:${eventId}, from:${JSON.stringify(
+                from
+            )}`
+        );
 
         ow(eventId, ow.string.nonEmpty);
 
-        const [results, pagintion] = await this.subscriptionDao.listSubscriptionsForEvent(eventId, from);
+        const [results, pagintion] = await this.subscriptionDao.listSubscriptionsForEvent(
+            eventId,
+            from
+        );
 
         logger.debug(`subscription.service listByEvent: exit: model: ${JSON.stringify(results)}`);
         return [results, pagintion];
@@ -290,9 +363,17 @@ export class SubscriptionService {
         }
 
         // verify that a subscription for the user/principalValue does not already exist
-        const existing = await this.subscriptionDao.listSubscriptionIdsForEventUserPrincipal(event.eventSourceId, event.id, event.principal, item.principalValue, item.user.id);
+        const existing = await this.subscriptionDao.listSubscriptionIdsForEventUserPrincipal(
+            event.eventSourceId,
+            event.id,
+            event.principal,
+            item.principalValue,
+            item.user.id
+        );
         if (existing?.length > 0) {
-            logger.debug(`subscription.service create: subscription ${existing[0]} already exists for this event/user/principal`);
+            logger.debug(
+                `subscription.service create: subscription ${existing[0]} already exists for this event/user/principal`
+            );
             throw new Error('SUBSCRIPTION_FOR_USER_PRINCIPAL_ALREADY_EXISTS');
         }
 
@@ -306,7 +387,13 @@ export class SubscriptionService {
             if (targets) {
                 for (const target of targets) {
                     (target as TargetItem).subscriptionId = item.id;
-                    await this.targetService.create(target, topicArn, item.principalValue, event, true);
+                    await this.targetService.create(
+                        target,
+                        topicArn,
+                        item.principalValue,
+                        event,
+                        true
+                    );
                 }
             }
         }
@@ -316,22 +403,20 @@ export class SubscriptionService {
 
         logger.debug(`subscription.service create: exit:${item.id}`);
         return item.id;
-
     }
 
     public async update(updated: UpdateSubcriptionRequest): Promise<void> {
         logger.debug(`subscription.service update: in: updated:${JSON.stringify(updated)}`);
 
         // validate input
-        ow(updated, ow.object.nonEmpty);
         ow(updated.id, ow.string.nonEmpty);
 
         if (!('enabled' in updated)) {
-            ow(updated.ruleParameterValues, "ruleParameterValues", ow.array.minLength(1))
+            ow(updated.ruleParameterValues, ow.object.nonEmpty);
         }
 
         if (updated.ruleParameterValues === undefined) {
-            ow(updated.enabled, "enabled", ow.boolean)
+            ow(updated.enabled, 'enabled', ow.boolean);
         }
 
         // retrieve current
@@ -357,5 +442,4 @@ export class SubscriptionService {
 
         logger.debug(`subscription.service update: exit:`);
     }
-
 }

@@ -10,12 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+/**
+ * AWS Connected Device Framework: Dashboard Facade
+ * Asset Library implementation of DevicesService *
+ */
+
+/* tslint:disable:no-unused-variable member-ordering */
 
 import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
 import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
+
 import {
     CertificateBatchRequest,
     CertificateBatchTask,

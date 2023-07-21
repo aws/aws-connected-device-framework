@@ -38,11 +38,11 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -63,11 +63,11 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -83,11 +83,11 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -108,11 +108,11 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -124,11 +124,11 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -146,11 +146,11 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -162,11 +162,11 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 }

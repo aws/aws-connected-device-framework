@@ -10,10 +10,13 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+
+import { sign } from 'jsonwebtoken';
+
 import { Request } from 'jest-express/lib/request';
 import { Response } from 'jest-express/lib/response';
-import { sign } from 'jsonwebtoken';
-import 'reflect-metadata';
+
 import { setClaims } from './authz.middleware';
 
 describe('AuthzMiddleware', () => {
@@ -51,7 +54,6 @@ describe('AuthzMiddleware', () => {
         } catch (err) {
             expect(err.message).toBe('Failed to parse claims');
         }
-
     });
 
     it('should send 403 response if fails to validate headers', async () => {
@@ -67,5 +69,5 @@ describe('AuthzMiddleware', () => {
 });
 
 const createAuthToken = (claims: any) => {
-    return sign({cdf_al: claims}, 'shared-secret');
+    return sign({ cdf_al: claims }, 'shared-secret');
 };

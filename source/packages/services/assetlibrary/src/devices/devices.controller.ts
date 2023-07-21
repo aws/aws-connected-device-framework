@@ -10,6 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Request, Response } from 'express';
 import { inject } from 'inversify';
 import {
@@ -30,8 +31,7 @@ import { assembleSortKeys } from '../data/model';
 import { TYPES } from '../di/types';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { GroupResourceList } from '../groups/groups.models';
-import { handleError } from '../utils/errors';
-import { logger } from '../utils/logger';
+import { InvalidQueryStringError, handleError } from '../utils/errors';
 import { DevicesAssembler } from './devices.assembler';
 import { Device10Resource, Device20Resource, DeviceResourceList } from './devices.models';
 import { DevicesService } from './devices.service';
@@ -246,6 +246,17 @@ export class DevicesController implements interfaces.Controller {
         let r: GroupResourceList = { results: [] };
 
         try {
+            if (Array.isArray(direction)) {
+                throw new InvalidQueryStringError(
+                    'Only one `direction` query param can be provided.'
+                );
+            }
+            if (Array.isArray(template)) {
+                throw new InvalidQueryStringError(
+                    'Only one `template` query param can be provided.'
+                );
+            }
+
             const sortKeys = assembleSortKeys(sort);
             const items = await this.devicesService.listRelatedGroups(
                 deviceId,
@@ -384,6 +395,20 @@ export class DevicesController implements interfaces.Controller {
         let r: DeviceResourceList = { results: [] };
 
         try {
+            if (Array.isArray(direction)) {
+                throw new InvalidQueryStringError(
+                    'Only one `direction` query param can be provided.'
+                );
+            }
+            if (Array.isArray(template)) {
+                throw new InvalidQueryStringError(
+                    'Only one `template` query param can be provided.'
+                );
+            }
+            if (Array.isArray(state)) {
+                throw new InvalidQueryStringError('Only one `state` query param can be provided.');
+            }
+
             const sortKeys = assembleSortKeys(sort);
             const items = await this.devicesService.listRelatedDevices(
                 deviceId,

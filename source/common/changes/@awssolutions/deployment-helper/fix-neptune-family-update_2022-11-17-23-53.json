@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/deployment-helper",
+      "comment": "Required Neptune engine version is now 1.2.0.0.R2 or greater.",
+      "type": "major"
+    }
+  ],
+  "packageName": "@awssolutions/deployment-helper",
+  "email": "anishrk@amazon.com"
+}

@@ -17,7 +17,6 @@ The [Greengrass V2 Installer Config Generator module](../greengrass2-installer-c
 
 The [Device Patcher module](../device-patcher/README.md) can be used for the initial installation and configuration of the physical Greengrass V2 core and client devices.
 
-
 ## Pre-requisites
 
 This module utilizes the [Provisioning module](../provisioning/README.md) to perform the actual provisioning which will be automatically installed by the [Installer module](../installer/README.md) when this module has been selected for install. [Provisioning templates](../provisioning/docs/provisioning-templates.md) are used to define how a core and/or client device should be provisioned. A provisioning template must be configured and uploaded to S3 to be referenced by the walkthrough below.
@@ -71,7 +70,7 @@ An example of a provisioning template that can be used to provision a Thing to r
             }
         }
     },
-    
+
     "CDF": {
         "createDeviceCertificate": true,
         "attachAdditionalPolicies": [{
@@ -125,18 +124,18 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 ```
 
 #### Response
+
 ```sh
 Content-Type: application/vnd.aws-cdf-v1.0+json
 location: /coreTasks/<taskId>
 x-taskid: <taskId>
 ```
 
-***
+---
 
 As this request is asynchronous (depending on how many need to be created, may take longer than API Gateway execution limit), a task is created which batches, queues and fans out the cores to be created. The response will return the header `x-taskid` to identify the task.
 
 Using the `x-taskid`, retrieve the status of the task:
-
 
 #### Request
 
@@ -166,12 +165,12 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
     "type": "Create"
 }
 ```
-***
+
+---
 
 Once the core task has completed successfully, you can retrieve its details:
 
 Replace `<core-name>` with the name of the core.
-
 
 ```sh
 GET /cores/<core-name>
@@ -180,7 +179,6 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 ```
 
 #### Response
-
 
 ```sh
 Content-Type: application/vnd.aws-cdf-v1.0+json
@@ -220,7 +218,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 }
 ```
 
-***
+---
 
 ### Create a Template
 
@@ -228,13 +226,13 @@ A template is what defines what components should be deployed to a Greengrass2 c
 
 Replace `<template-name>` with the name of the template.
 
-**NOTE: The template name is used as part of creating a thing group name, thing group applies limitation on how the name can be defined. Refer to the points below for quick reference and refer to the link  on the thing group naming convention from the developer document**
+**NOTE: The template name is used as part of creating a thing group name, thing group applies limitation on how the name can be defined. Refer to the points below for quick reference and refer to the link on the thing group naming convention from the developer document**
 [Thing Group Developer Document](https://docs.aws.amazon.com/iot/latest/developerguide/thing-groups.html)
 
 ```
 - Thing group names can't contain international characters, such as û, é and ñ.
 - You should not use personally identifiable information in your thing group name. The thing group name can appear in unencrypted communications and reports.
-- You should not use a colon character ( : ) in a thing group name. The colon character is used as a delimiter by other AWS IoT services and this can cause them to parse strings with thing group names incorrectly. 
+- You should not use a colon character ( : ) in a thing group name. The colon character is used as a delimiter by other AWS IoT services and this can cause them to parse strings with thing group names incorrectly.
 ```
 
 #### Request
@@ -262,7 +260,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 location: /templates/<template-name>
 ```
 
-***
+---
 
 Once created, run the following to view a template:
 
@@ -296,15 +294,16 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 
 ```
 
-***
+---
 
 ### Power on the core
 
-Before a GG2 deployment can be executed, the core itself must be powered on to allow it to self-register with the Greengrass2 platform. The steps defined in [Grreengrass V2 Provisioning Integration Testing](<docs/integration-testing.md>) can be used to setup a Greengrass2 core device on EC2 for testing.
+Before a GG2 deployment can be executed, the core itself must be powered on to allow it to self-register with the Greengrass2 platform. The steps defined in [Grreengrass V2 Provisioning Integration Testing](docs/integration-testing.md) can be used to setup a Greengrass2 core device on EC2 for testing.
 
 After powering on the core, you can verify that it has been successfully registered with the Greengrass2 platform by running the following to check its status (once connected `device.status` will be reported as `HEALTHY`):
 
 #### Request
+
 ```sh
 GET /cores/<core-name>
 Accept: application/vnd.aws-cdf-v1.0+json
@@ -312,6 +311,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 ```
 
 #### Response
+
 ```sh
 Content-Type: application/vnd.aws-cdf-v1.0+json
 
@@ -355,9 +355,9 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 A deployment task is what takes the components defined in the template and create a Greengrass2 deployment job. As this can take time, is an asynchronous process, with the response header `x-taskId` identifying the task.
 
 Replace the following:
+
 - `<template-name>` with the name of the template.
 - `<core-name>` with the name of the core.
-
 
 #### Request
 
@@ -387,11 +387,12 @@ location: /deploymentTasks/<taskId>
 x-taskid: <taskId>
 ```
 
-***
+---
 
 To view the status of the deployment task using the `x-taskId` as `<taskId>`:
 
 #### Request
+
 ```sh
 GET /deploymentTasks/<taskId>
 Accept: application/vnd.aws-cdf-v1.0+json
@@ -399,6 +400,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 ```
 
 #### Response
+
 ```sh
 Content-Type: application/vnd.aws-cdf-v1.0+json
 
@@ -428,6 +430,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
     "batchesTotal": 1
 }
 ```
+
 ### View Fleet Summary
 
 This service allows you to view what templates are running on the devices across the fleet.
@@ -437,7 +440,6 @@ GET /fleet/summary
 Accept: application/vnd.aws-cdf-v1.0+json
 Content-Type: application/vnd.aws-cdf-v1.0+json
 ```
-
 
 ```sh
 Content-Type: application/vnd.aws-cdf-v1.0+json
@@ -494,15 +496,17 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 }
 ```
 
- #### Response
+#### Response
+
 ```sh
 Content-Type: application/vnd.aws-cdf-v1.0+json
 location: /deviceTasks/<taskId>
 x-taskid: <taskId>
 ```
+
 The taskId returned in the header can be used to poll the progress of the task
 
-***
+---
 
 To view the status of client devices, query the deviceTasks endpoint with the taskId
 
@@ -569,7 +573,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 Make following REST call to delete a core (disassociate client devices, optionally delete client devices, optionally deprovision core form IoT Core ), replacing the following tokens
 
 - `<core-name>` - the name of the GG2 core to create
-- `<provisioning-template>` - the name of the provisioning template to use. If using the default cdf implementation, `` can be used for testing which is included with `cdf-infrastructure-demo`
+- `<provisioning-template>` - the name of the provisioning template to use. If using the default cdf implementation, ``can be used for testing which is included with`cdf-infrastructure-demo`
 - `<deprovision-core>` - Boolean value to indicate if we need remove the core from IoT Core
 - `<deprovision-client-devices>` - Boolean value to indicate if we need to remove client devices from IoT Core
 
@@ -595,6 +599,7 @@ Accept: application/vnd.aws-cdf-v1.0+json
     ]
 }
 ```
+
 #### Response
 
 ```sh
@@ -603,9 +608,10 @@ location: /coreTasks/<taskId>
 x-taskid: <taskId>
 ```
 
-***
+---
 
 Similar with CoreTask for creating Greengrass core, the response includes x-taskid in the header which you can use to poll the status of the task
+
 #### Request
 
 ```sh
@@ -668,8 +674,8 @@ Here is the list of `detail-type` that are available if you want to filter out t
 | DeploymentTask Created Event | A deploymentTask is created                      |
 | DeploymentTask Deleted Event | A deploymentTask is deleted                      |
 
-
 ## Additional Links
+
 - [High level architecture](docs/README.md)
 - [Application configuration](docs/configuration.md)
 - [Swagger](docs/swagger.yml)

@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 
 import { injectable } from 'inversify';
+
 import { PathHelper } from '../utils/path.helper';
 import {
     CommandResource,
@@ -47,20 +48,17 @@ export interface CommandsService {
     deleteCommand(commandId: string, additionalHeaders?: RequestHeaders): Promise<void>;
 }
 
-
 @injectable()
 export class CommandsServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }
 
-    protected commandsRelativeUrl() : string {
+    protected commandsRelativeUrl(): string {
         return '/commands';
     }
 
-    protected commandRelativeUrl(commandId:string) : string {
+    protected commandRelativeUrl(commandId: string): string {
         return PathHelper.encodeUrl('commands', commandId);
     }
-
 }

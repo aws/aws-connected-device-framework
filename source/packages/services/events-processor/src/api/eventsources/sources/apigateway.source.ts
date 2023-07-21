@@ -10,17 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { injectable } from 'inversify';
-import {logger} from '../../../utils/logger.util';
 import ow from 'ow';
-import {v1 as uuid} from 'uuid';
+import { v1 as uuid } from 'uuid';
 import { EventSourceDetailResource } from '../eventsource.models';
 import { EventSource } from './source.interface';
 
 @injectable()
-export class ApiGatewayEventSource implements EventSource  {
-
-    public async create(model:EventSourceDetailResource) : Promise<void> {
+export class ApiGatewayEventSource implements EventSource {
+    public async create(model: EventSourceDetailResource): Promise<void> {
         logger.debug(`apigateway.source create in: model:${JSON.stringify(model)}`);
 
         ow(model, ow.object.nonEmpty);
@@ -29,17 +28,16 @@ export class ApiGatewayEventSource implements EventSource  {
         ow(model.apigateway.attributes, ow.object.nonEmpty);
 
         // assign a unique event source id
-        if (model.id===undefined) {
-            model.id=uuid();
+        if (model.id === undefined) {
+            model.id = uuid();
         }
 
         logger.debug(`apigateway.source create: exit:`);
     }
 
-    public async delete(eventSourceId:string) : Promise<void> {
+    public async delete(eventSourceId: string): Promise<void> {
         logger.debug(`apigateway.source delete: in: eventSourceId:${eventSourceId}`);
 
         logger.debug(`apigateway.source delete: exit:`);
     }
-
 }

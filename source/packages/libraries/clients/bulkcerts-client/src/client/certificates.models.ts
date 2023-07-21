@@ -14,7 +14,7 @@
 export enum CommonNameGenerator {
     Sequential = 'sequential',
     List = 'list',
-    Static = 'static'
+    Static = 'static',
 }
 export interface CertificateChunkRequest {
     taskId: string;

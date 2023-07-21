@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -20,11 +21,10 @@ Globals:
     OpenApiVersion: 3.0.1
 
 Parameters:
-  
   ApplicationConfigurationOverride:
     Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
-  
+
   Environment:
     Description: Name of environment.  Used to name the created resources.
     Type: String
@@ -151,21 +151,20 @@ Parameters:
     Default: com.aws.cdf.greengrass2-provisioning
 
 Conditions:
-
-  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
-  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
-  DeployWithProvisionedCapacity: !Not [ !Equals [ !Ref ProvisionedConcurrentExecutions, "0" ] ]
-  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
-  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true" ]
-  DeployWithScaling: !Equals [ !Ref ApplyAutoscaling, "true" ]
+  DeployInVPC: !Not [!Equals [!Ref VpcId, 'N/A']]
+  DeployWithLambdaAuth:
+    !Or [!Equals [!Ref AuthType, 'LambdaRequest'], !Equals [!Ref AuthType, 'LambdaToken']]
+  DeployWithProvisionedCapacity: !Not [!Equals [!Ref ProvisionedConcurrentExecutions, '0']]
+  KmsKeyIdProvided: !Not [!Equals [!Ref KmsKeyId, '']]
+  EnableApiGatewayAccessLogs: !Equals [!Ref EnableApiGatewayAccessLogs, 'true']
+  DeployWithScaling: !Equals [!Ref ApplyAutoscaling, 'true']
 
 Resources:
-
   ApiGatewayApi:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+        Location: !Sub '${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}'
     DependsOn:
       - RESTLambdaFunction
 
@@ -174,7 +173,7 @@ Resources:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+        Location: !Sub '${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml'
     DependsOn:
       - RESTLambdaFunction
 
@@ -188,16 +187,16 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Condition: KmsKeyIdProvided
     Properties:
-      Description: "CDF greengrass2-provisioning policy for accessing KMS"
-      Path: "/cdf/greengrass2/"
+      Description: 'CDF greengrass2-provisioning policy for accessing KMS'
+      Path: '/cdf/greengrass2/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
               - 'kms:Decrypt'
               - 'kms:GenerateDataKey'
             Effect: Allow
-            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+            Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}'
 
   ApplicationPolicies:
     Type: 'AWS::IAM::ManagedPolicy'
@@ -205,12 +204,12 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W11
-            reason: "Lambda permissions to manage greengrass resources"
+            reason: 'Lambda permissions to manage greengrass resources'
     Properties:
       Description: 'cdf-greengrass2-provisioning application policies'
-      Path: "/"
+      Path: '/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Sid: eventbridge
             Action:
@@ -330,10 +329,10 @@ Resources:
           Principal:
             Service: lambda.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/cdf/greengrass2/"
+      Path: '/cdf/greengrass2/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
-        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref 'AWS::NoValue']
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
@@ -562,9 +561,9 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W28
-            reason: "safely naming this resources to be unique by environment"
+            reason: 'safely naming this resources to be unique by environment'
           - id: W73
-            reason: "Can be decided by the customer, to specify the billing mode"
+            reason: 'Can be decided by the customer, to specify the billing mode'
     Properties:
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
@@ -577,110 +576,109 @@ Resources:
           - Ref: AWS::NoValue
       TableName: !Sub 'cdf-greengrass2-provisioning-${Environment}'
       KeySchema:
-        - AttributeName: "pk"
-          KeyType: "HASH"
-        - AttributeName: "sk"
-          KeyType: "RANGE"
+        - AttributeName: 'pk'
+          KeyType: 'HASH'
+        - AttributeName: 'sk'
+          KeyType: 'RANGE'
       AttributeDefinitions:
-        - AttributeName: "pk"
-          AttributeType: "S"
-        - AttributeName: "sk"
-          AttributeType: "S"
-        - AttributeName: "siKey1"
-          AttributeType: "S"
-        - AttributeName: "siKey2"
-          AttributeType: "S"
-        - AttributeName: "siSort2"
-          AttributeType: "S"
-        - AttributeName: "siKey3"
-          AttributeType: "S"
-        - AttributeName: "siSort3"
-          AttributeType: "S"
-        - AttributeName: "siKey4"
-          AttributeType: "S"
-        - AttributeName: "siSort4"
-          AttributeType: "S"
-        - AttributeName: "siKey5"
-          AttributeType: "S"
-        - AttributeName: "siSort5"
-          AttributeType: "S"
-        - AttributeName: "siKey6"
-          AttributeType: "S"
-        - AttributeName: "siSort6"
-          AttributeType: "S"
+        - AttributeName: 'pk'
+          AttributeType: 'S'
+        - AttributeName: 'sk'
+          AttributeType: 'S'
+        - AttributeName: 'siKey1'
+          AttributeType: 'S'
+        - AttributeName: 'siKey2'
+          AttributeType: 'S'
+        - AttributeName: 'siSort2'
+          AttributeType: 'S'
+        - AttributeName: 'siKey3'
+          AttributeType: 'S'
+        - AttributeName: 'siSort3'
+          AttributeType: 'S'
+        - AttributeName: 'siKey4'
+          AttributeType: 'S'
+        - AttributeName: 'siSort4'
+          AttributeType: 'S'
+        - AttributeName: 'siKey5'
+          AttributeType: 'S'
+        - AttributeName: 'siSort5'
+          AttributeType: 'S'
+        - AttributeName: 'siKey6'
+          AttributeType: 'S'
+        - AttributeName: 'siSort6'
+          AttributeType: 'S'
       ProvisionedThroughput:
-        ReadCapacityUnits: "5"
-        WriteCapacityUnits: "5"
+        ReadCapacityUnits: '5'
+        WriteCapacityUnits: '5'
       GlobalSecondaryIndexes:
         - IndexName: 'siKey1-pk-index'
           KeySchema:
-            - AttributeName: "siKey1"
-              KeyType: "HASH"
-            - AttributeName: "pk"
-              KeyType: "RANGE"
+            - AttributeName: 'siKey1'
+              KeyType: 'HASH'
+            - AttributeName: 'pk'
+              KeyType: 'RANGE'
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: '5'
+            WriteCapacityUnits: '5'
         - IndexName: 'siKey2-siSort2-index'
           KeySchema:
-            - AttributeName: "siKey2"
-              KeyType: "HASH"
-            - AttributeName: "siSort2"
-              KeyType: "RANGE"
+            - AttributeName: 'siKey2'
+              KeyType: 'HASH'
+            - AttributeName: 'siSort2'
+              KeyType: 'RANGE'
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: '5'
+            WriteCapacityUnits: '5'
         - IndexName: 'siKey3-siSort3-index'
           KeySchema:
-            - AttributeName: "siKey3"
-              KeyType: "HASH"
-            - AttributeName: "siSort3"
-              KeyType: "RANGE"
+            - AttributeName: 'siKey3'
+              KeyType: 'HASH'
+            - AttributeName: 'siSort3'
+              KeyType: 'RANGE'
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: '5'
+            WriteCapacityUnits: '5'
         - IndexName: 'siKey4-siSort4-index'
           KeySchema:
-            - AttributeName: "siKey4"
-              KeyType: "HASH"
-            - AttributeName: "siSort4"
-              KeyType: "RANGE"
+            - AttributeName: 'siKey4'
+              KeyType: 'HASH'
+            - AttributeName: 'siSort4'
+              KeyType: 'RANGE'
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: '5'
+            WriteCapacityUnits: '5'
         - IndexName: 'siKey5-siSort5-index'
           KeySchema:
-            - AttributeName: "siKey5"
-              KeyType: "HASH"
-            - AttributeName: "siSort5"
-              KeyType: "RANGE"
+            - AttributeName: 'siKey5'
+              KeyType: 'HASH'
+            - AttributeName: 'siSort5'
+              KeyType: 'RANGE'
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: '5'
+            WriteCapacityUnits: '5'
         - IndexName: 'siKey6-siSort6-index'
           KeySchema:
-            - AttributeName: "siKey6"
-              KeyType: "HASH"
-            - AttributeName: "siSort6"
-              KeyType: "RANGE"
+            - AttributeName: 'siKey6'
+              KeyType: 'HASH'
+            - AttributeName: 'siSort6'
+              KeyType: 'RANGE'
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: '5'
+            WriteCapacityUnits: '5'
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
-
 
   DeviceTasksQueue:
     Type: AWS::SQS::Queue
@@ -766,12 +764,12 @@ Resources:
 Outputs:
   RESTLambdaFunctionConsoleUrl:
     Description: Console URL for the Lambda Function.
-    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/lambda/home?region=${AWS::Region}#/functions/${RESTLambdaFunction}"
+    Value: !Sub 'https://${AWS::Region}.console.aws.amazon.com/lambda/home?region=${AWS::Region}#/functions/${RESTLambdaFunction}'
   RESTLambdaArn:
     Description: REST API Lambda Arn
-    Value: !Sub "${RESTLambdaFunction.Arn}"
+    Value: !Sub '${RESTLambdaFunction.Arn}'
     Export:
-      Name: !Sub "cdf-greengrass2-provisioning-${Environment}-RESTLambdaArn"
+      Name: !Sub 'cdf-greengrass2-provisioning-${Environment}-RESTLambdaArn'
   RestApiFunctionName:
     Description: Events REST API lambda function name
     Value: !Ref RESTLambdaFunction

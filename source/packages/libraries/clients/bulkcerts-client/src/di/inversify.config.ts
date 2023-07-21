@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 
 import 'reflect-metadata';
+
 import '../config/env';
 
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
@@ -27,7 +28,7 @@ import { CertificatesTaskService } from '../client/certificatestask.service';
 import { BULKCERTS_CLIENT_TYPES } from './types';
 
 import AWS = require('aws-sdk');
-export const bulkcertsContainerModule = new ContainerModule (
+export const bulkcertsContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
@@ -35,29 +36,38 @@ export const bulkcertsContainerModule = new ContainerModule (
         _rebind: interfaces.Rebind
     ) => {
         if (process.env.BULKCERTS_MODE === 'lambda') {
-            bind<CertificatesTaskService>(BULKCERTS_CLIENT_TYPES.CertificatesTaskService).to(CertificatesTaskLambdaService);
-            bind<CertificatesService>(BULKCERTS_CLIENT_TYPES.CertificatesService).to(CertificatesLambdaService);
+            bind<CertificatesTaskService>(BULKCERTS_CLIENT_TYPES.CertificatesTaskService).to(
+                CertificatesTaskLambdaService
+            );
+            bind<CertificatesService>(BULKCERTS_CLIENT_TYPES.CertificatesService).to(
+                CertificatesLambdaService
+            );
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 // always check to see if bound first incase it was bound by another client
-                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
+                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
+                    LambdaInvokerService
+                );
                 decorate(injectable(), AWS.Lambda);
-                bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
-                    .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
-                        return () => {
-
-                            if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                                const lambda = new AWS.Lambda({region:process.env.AWS_REGION});
-                                bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
-                            }
-                            return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
-                        };
-                    });
+                bind<interfaces.Factory<AWS.Lambda>>(
+                    LAMBDAINVOKE_TYPES.LambdaFactory
+                ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
+                    return () => {
+                        if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
+                            const lambda = new AWS.Lambda({ region: process.env.AWS_REGION });
+                            bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
+                        }
+                        return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
+                    };
+                });
             }
-
         } else {
-            bind<CertificatesTaskService>(BULKCERTS_CLIENT_TYPES.CertificatesTaskService).to(CertificatesTaskApigwService);
-            bind<CertificatesService>(BULKCERTS_CLIENT_TYPES.CertificatesService).to(CertificatesApigwService);
+            bind<CertificatesTaskService>(BULKCERTS_CLIENT_TYPES.CertificatesTaskService).to(
+                CertificatesTaskApigwService
+            );
+            bind<CertificatesService>(BULKCERTS_CLIENT_TYPES.CertificatesService).to(
+                CertificatesApigwService
+            );
         }
     }
 );

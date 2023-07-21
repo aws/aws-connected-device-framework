@@ -15,26 +15,30 @@ import { IotData } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CommandItem, ShadowDeliveryMethod } from '../../commands/commands.models';
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger.util';
 import { MessageItem } from '../messages.models';
 import { WorkflowPublishAction } from './workflow.publishAction';
 
 @injectable()
 export class ShadowAction extends WorkflowPublishAction {
-
     private iotData: AWS.IotData;
 
     constructor(
-        @inject('aws.iot.shadow.name') private shadowName:string,
-        @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData) {
-            super();
-            this.iotData = iotDataFactory();
-        }
+        @inject('aws.iot.shadow.name') private shadowName: string,
+        @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData
+    ) {
+        super();
+        this.iotData = iotDataFactory();
+    }
 
-    async process(message:MessageItem,command:CommandItem): Promise<boolean> {
-        logger.debug(`workflow.shadow process: message:${JSON.stringify(message)}, command:${JSON.stringify(command)}`);
+    async process(message: MessageItem, command: CommandItem): Promise<boolean> {
+        logger.debug(
+            `workflow.shadow process: message:${JSON.stringify(message)}, command:${JSON.stringify(
+                command
+            )}`
+        );
 
         ow(this.shadowName, ow.string.nonEmpty);
         ow(command, ow.object.nonEmpty);
@@ -42,11 +46,11 @@ export class ShadowAction extends WorkflowPublishAction {
         ow(shadowDeliveryMethod.type, ow.string.equals('SHADOW'));
         ow(message, ow.object.nonEmpty);
 
-        const payload = super.replacePayloadTokens(message,command);
-                    
+        const payload = super.replacePayloadTokens(message, command);
+
         // enumerate all the targeted things, publishing to device specific topics
         ow(message.resolvedTargets, ow.array.minLength(1));
-        for(const target of message.resolvedTargets) {
+        for (const target of message.resolvedTargets) {
             target.correlationId = super.uidGenerator();
             try {
                 await this.publish(target.id, command.operation, target.correlationId, payload);
@@ -55,7 +59,6 @@ export class ShadowAction extends WorkflowPublishAction {
                 target.status = 'failed';
                 target.statusMessage = e.message ?? e.code;
             }
-
         }
 
         // we remove the status field to prevent any accidental overwrites when saving to the db in future steps
@@ -65,21 +68,30 @@ export class ShadowAction extends WorkflowPublishAction {
         return true;
     }
 
-    private async publish(thingName:string, operation:string, correlationId: string, payload:unknown) : Promise<void> {
-        logger.debug(`workflow.shadow publish: in: thingName:${thingName}, correlationId:${correlationId}, payload:${JSON.stringify(payload)}`);
+    private async publish(
+        thingName: string,
+        operation: string,
+        correlationId: string,
+        payload: unknown
+    ): Promise<void> {
+        logger.debug(
+            `workflow.shadow publish: in: thingName:${thingName}, correlationId:${correlationId}, payload:${JSON.stringify(
+                payload
+            )}`
+        );
 
         const shadowUpdate = {
             state: {
-                desired: {}
+                desired: {},
             },
-            clientToken: correlationId
+            clientToken: correlationId,
         };
         shadowUpdate.state.desired[operation] = payload;
 
         const params: IotData.UpdateThingShadowRequest = {
             thingName,
             shadowName: this.shadowName,
-            payload: JSON.stringify(shadowUpdate)
+            payload: JSON.stringify(shadowUpdate),
         };
 
         try {

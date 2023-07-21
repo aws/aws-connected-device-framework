@@ -1,22 +1,14 @@
 {
-    "extends": "../../../tsconfig.base.json",
-    "compilerOptions": {
-        "outDir": "dist",
-        "rootDir": "src"
-    },
-    "references": [
-        {
-            "path": "../../libraries/core/errors"
-        }
-    ],
-    "include": [
-        "src"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist",
-        ".vscode",
-        ".git",
-        "./**/__mocks__/*.ts"
-    ]
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "references": [
+    {
+      "path": "../../libraries/core/errors"
+    }
+  ],
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", ".vscode", ".git", "./**/__mocks__/*.ts"]
 }

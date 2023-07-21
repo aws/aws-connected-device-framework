@@ -1,6 +1,6 @@
-import { lambdaZip } from '.';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { lambdaZip } from '.';
 
 const defaultArray: string[] = [];
 const args = yargs(hideBin(process.argv))

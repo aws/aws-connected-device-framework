@@ -11,26 +11,25 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import AWS = require('aws-sdk');
-import {inject, injectable} from 'inversify';
+import { inject, injectable } from 'inversify';
 
-import {logger} from '../utils/logger.util';
-import {TYPES} from '../di/types';
-import {createDelimitedAttribute, PkType} from '../utils/pKUtils.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
+import { PkType, createDelimitedAttribute } from '../utils/pKUtils.util';
 
-
-import {ActivationItemList, ActivationItem } from './activation.model';
+import { ActivationItem, ActivationItemList } from './activation.model';
 
 @injectable()
 export class ActivationDao {
-
     private dc: AWS.DynamoDB.DocumentClient;
     private readonly SI1_INDEX = 'sk-si1Sort-index';
-    private readonly tableName = process.env.AWS_DYNAMODB_TABLE_NAME
+    private readonly tableName = process.env.AWS_DYNAMODB_TABLE_NAME;
 
     constructor(
-        @inject(TYPES.DynamoDbUtils) private dynamoDbUtils:DynamoDbUtils,
-        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient
+        @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
+        @inject(TYPES.DocumentClientFactory)
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this.dc = documentClientFactory();
     }
@@ -42,11 +41,14 @@ export class ActivationDao {
             TableName: this.tableName,
             Item: {
                 pk: createDelimitedAttribute(PkType.DeviceActivation, activation.activationId),
-                sk:  createDelimitedAttribute(PkType.Device, activation.deviceId),
-                si1Sort: createDelimitedAttribute(PkType.DeviceActivation, activation.activationId),
+                sk: createDelimitedAttribute(PkType.Device, activation.deviceId),
+                si1Sort: createDelimitedAttribute(
+                    PkType.DeviceActivation,
+                    activation.activationId
+                ),
                 createdAt: activation.createdAt?.toISOString(),
-                updatedAt: activation.updatedAt?.toISOString()
-            }
+                updatedAt: activation.updatedAt?.toISOString(),
+            },
         };
 
         await this.dc.put(params).promise();
@@ -62,11 +64,11 @@ export class ActivationDao {
             TableName: this.tableName,
             Item: {
                 pk: createDelimitedAttribute(PkType.DeviceActivation, activation.activationId),
-                sk:  createDelimitedAttribute(PkType.Device, activation.deviceId),
+                sk: createDelimitedAttribute(PkType.Device, activation.deviceId),
                 si1Sort: createDelimitedAttribute(PkType.Device, activation.activationId),
                 createdAt: activation.createdAt?.toISOString(),
-                updatedAt: activation.updatedAt?.toISOString()
-            }
+                updatedAt: activation.updatedAt?.toISOString(),
+            },
         };
 
         await this.dc.put(params).promise();
@@ -81,29 +83,31 @@ export class ActivationDao {
             TableName: this.tableName,
             KeyConditionExpression: `#pk=:pk`,
             ExpressionAttributeNames: { '#pk': 'pk' },
-            ExpressionAttributeValues: { ':pk': createDelimitedAttribute(PkType.DeviceActivation, activationId) }
+            ExpressionAttributeValues: {
+                ':pk': createDelimitedAttribute(PkType.DeviceActivation, activationId),
+            },
         };
 
         const queryResults = await this.dc.query(params).promise();
-        if (queryResults.Items===undefined || queryResults.Items.length===0) {
+        if (queryResults.Items === undefined || queryResults.Items.length === 0) {
             logger.debug('activations=.dao get: exit: undefined');
             return undefined;
         }
 
         // batch delete
-        const batchParams: AWS.DynamoDB.DocumentClient.BatchWriteItemInput = {RequestItems: {}};
-        batchParams.RequestItems[this.tableName]=[];
-        queryResults.Items.forEach(i=> {
-            const req : AWS.DynamoDB.DocumentClient.WriteRequest = {
+        const batchParams: AWS.DynamoDB.DocumentClient.BatchWriteItemInput = { RequestItems: {} };
+        batchParams.RequestItems[this.tableName] = [];
+        queryResults.Items.forEach((i) => {
+            const req: AWS.DynamoDB.DocumentClient.WriteRequest = {
                 DeleteRequest: {
                     Key: {
-                        'pk': i.pk,
-                        'sk': i.sk
-                    }
-                }
-            }
+                        pk: i.pk,
+                        sk: i.sk,
+                    },
+                },
+            };
             batchParams.RequestItems[this.tableName].push(req);
-        })
+        });
 
         const result = await this.dynamoDbUtils.batchWriteAll(batchParams);
         if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
@@ -120,18 +124,22 @@ export class ActivationDao {
             TableName: this.tableName,
             KeyConditionExpression: `#pk=:pk`,
             ExpressionAttributeNames: { '#pk': 'pk' },
-            ExpressionAttributeValues: { ':pk': createDelimitedAttribute(PkType.DeviceActivation, activationId) }
+            ExpressionAttributeValues: {
+                ':pk': createDelimitedAttribute(PkType.DeviceActivation, activationId),
+            },
         };
 
         const result = await this.dc.query(params).promise();
-        if (result.Items===undefined || result.Items.length===0) {
+        if (result.Items === undefined || result.Items.length === 0) {
             logger.debug('activations=.dao get: exit: undefined');
             return undefined;
         }
 
         const activationList = this.assemble(result.Items);
 
-        logger.debug(`activation.dao: get: exit: activationList: ${JSON.stringify(activationList)}`);
+        logger.debug(
+            `activation.dao: get: exit: activationList: ${JSON.stringify(activationList)}`
+        );
 
         return activationList.activations[0];
     }
@@ -145,23 +153,27 @@ export class ActivationDao {
             KeyConditionExpression: `#pk=:pk AND begins_with(#sk,:sk)`,
             ExpressionAttributeNames: {
                 '#pk': 'sk',
-                '#sk': 'si1Sort'
+                '#sk': 'si1Sort',
             },
             ExpressionAttributeValues: {
                 ':pk': createDelimitedAttribute(PkType.Device, deviceId),
-                ':sk': createDelimitedAttribute(PkType.DeviceActivation)
-            }
+                ':sk': createDelimitedAttribute(PkType.DeviceActivation),
+            },
         };
 
         const result = await this.dc.query(params).promise();
-        if (result.Items===undefined || result.Items.length===0) {
+        if (result.Items === undefined || result.Items.length === 0) {
             logger.debug('activations.dao getByDeviceId: exit: undefined');
             return undefined;
         }
 
         const activationList = this.assemble(result.Items);
 
-        logger.debug(`activation.dao: getByDeviceId: exit: activationList: ${JSON.stringify(activationList)}`);
+        logger.debug(
+            `activation.dao: getByDeviceId: exit: activationList: ${JSON.stringify(
+                activationList
+            )}`
+        );
 
         return activationList.activations[0];
     }
@@ -169,8 +181,7 @@ export class ActivationDao {
     private assemble(items: AWS.DynamoDB.DocumentClient.ItemList): ActivationItemList {
         const list = new ActivationItemList();
 
-        for(const i of items) {
-
+        for (const i of items) {
             const pkElements = i.pk.split(':');
             const skElements = i.sk.split(':');
 
@@ -178,12 +189,11 @@ export class ActivationDao {
                 deviceId: skElements[1],
                 activationId: pkElements[1],
                 createdAt: new Date(i.createdAt),
-                updatedAt: new Date(i.updatedAt)
+                updatedAt: new Date(i.updatedAt),
             };
 
             list.activations.push(activation);
         }
         return list;
     }
-
 }

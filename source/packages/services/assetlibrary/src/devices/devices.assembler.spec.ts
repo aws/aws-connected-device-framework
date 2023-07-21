@@ -11,10 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import { createMockInstance } from 'jest-create-mock-instance';
-import { DevicesAssembler } from './devices.assembler';
-import { DeviceItem, Device10Resource, Device20Resource } from './devices.models';
 import { FullAssembler } from '../data/full.assembler';
+import { DevicesAssembler } from './devices.assembler';
+import { Device10Resource, Device20Resource, DeviceItem } from './devices.models';
 
 describe('DevicesAssembler', () => {
     let mockedFullAssembler: jest.Mocked<FullAssembler>;
@@ -25,35 +26,35 @@ describe('DevicesAssembler', () => {
         instance = new DevicesAssembler(mockedFullAssembler);
     });
 
-    it('v1 resource relations assembled to item correctly', async() => {
+    it('v1 resource relations assembled to item correctly', async () => {
         // stubs
-        const resource = new Device10Resource ();
-        resource.deviceId= 'device001';
-        resource.templateId= 'templateA';
+        const resource = new Device10Resource();
+        resource.deviceId = 'device001';
+        resource.templateId = 'templateA';
         resource.groups = {
             rel1: ['group1'],
-            rel2: ['group2','group3']
+            rel2: ['group2', 'group3'],
         };
         resource.devices = {
-            rel3:['deviceA'],
-            rel4:['deviceB','deviceC']
+            rel3: ['deviceA'],
+            rel4: ['deviceB', 'deviceC'],
         };
 
-        const expected:DeviceItem = new DeviceItem({
+        const expected: DeviceItem = new DeviceItem({
             deviceId: 'device001',
             templateId: 'templateA',
             groups: {
                 out: {
-                    rel1: [{id:'group1'}],
-                    rel2: [{id:'group2'},{id:'group3'}]
-                }
+                    rel1: [{ id: 'group1' }],
+                    rel2: [{ id: 'group2' }, { id: 'group3' }],
+                },
             },
             devices: {
                 out: {
-                    rel3:[{id:'deviceA'}],
-                    rel4:[{id:'deviceB'},{id:'deviceC'}]
-                }
-            }
+                    rel3: [{ id: 'deviceA' }],
+                    rel4: [{ id: 'deviceB' }, { id: 'deviceC' }],
+                },
+            },
         });
 
         // execute
@@ -62,50 +63,49 @@ describe('DevicesAssembler', () => {
         // verify
         expect(actual).toBeDefined();
         expect(actual).toEqual(expected);
-
     });
 
-    it('v2 resource relations assembled to item correctly', async() => {
+    it('v2 resource relations assembled to item correctly', async () => {
         // stubs
-        const resource = new Device20Resource ();
-        resource.deviceId= 'device001';
-        resource.templateId= 'templateA';
+        const resource = new Device20Resource();
+        resource.deviceId = 'device001';
+        resource.templateId = 'templateA';
         resource.groups = {
             in: {
-                rel1: ['group1']
+                rel1: ['group1'],
             },
             out: {
-                rel2: ['group2','group3']
-            }
+                rel2: ['group2', 'group3'],
+            },
         };
         resource.devices = {
             in: {
-                rel3:['deviceA']
+                rel3: ['deviceA'],
             },
             out: {
-                rel4:['deviceB','deviceC']
-            }
+                rel4: ['deviceB', 'deviceC'],
+            },
         };
 
-        const expected:DeviceItem = new DeviceItem({
+        const expected: DeviceItem = new DeviceItem({
             deviceId: 'device001',
             templateId: 'templateA',
             groups: {
                 in: {
-                    rel1: [{id:'group1'}]
+                    rel1: [{ id: 'group1' }],
                 },
                 out: {
-                    rel2: [{id:'group2'},{id:'group3'}]
-                }
+                    rel2: [{ id: 'group2' }, { id: 'group3' }],
+                },
             },
             devices: {
                 in: {
-                    rel3:[{id:'deviceA'}]
+                    rel3: [{ id: 'deviceA' }],
                 },
                 out: {
-                    rel4:[{id:'deviceB'},{id:'deviceC'}]
-                }
-            }
+                    rel4: [{ id: 'deviceB' }, { id: 'deviceC' }],
+                },
+            },
         });
 
         // execute
@@ -114,7 +114,5 @@ describe('DevicesAssembler', () => {
         // verify
         expect(actual).toBeDefined();
         expect(actual).toEqual(expected);
-
     });
-
 });

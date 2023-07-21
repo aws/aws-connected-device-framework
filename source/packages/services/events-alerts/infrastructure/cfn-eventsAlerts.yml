@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,19 +11,17 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Events (Alerts) Service
 
-
 Parameters:
-  
   ApplicationConfigurationOverride:
     Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
   CDFSecurityGroupId:
@@ -69,26 +68,25 @@ Parameters:
       - silly
 
 Conditions:
-  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
-  DAXClusterEndpointProvided: !Not [ !Equals [ !Ref DAXClusterEndpoint, "" ] ]
-  DAXClusterArnProvided: !Not [ !Equals [ !Ref DAXClusterArn, "" ] ]
-  LoggingLevelProvided: !Not [ !Equals [ !Ref LoggingLevel, "" ] ]
+  KmsKeyIdProvided: !Not [!Equals [!Ref KmsKeyId, '']]
+  DAXClusterEndpointProvided: !Not [!Equals [!Ref DAXClusterEndpoint, '']]
+  DAXClusterArnProvided: !Not [!Equals [!Ref DAXClusterArn, '']]
+  LoggingLevelProvided: !Not [!Equals [!Ref LoggingLevel, '']]
 
 Resources:
-
   KmsPolicy:
     Type: AWS::IAM::ManagedPolicy
     Condition: KmsKeyIdProvided
     Properties:
-      Description: "cdf-events-processor policy for accessing KMS"
-      Path: "/cdf/events-processor/"
+      Description: 'cdf-events-processor policy for accessing KMS'
+      Path: '/cdf/events-processor/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
               - 'kms:Decrypt'
             Effect: Allow
-            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+            Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}'
 
   DynamoDBStreamLambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -98,68 +96,68 @@ Resources:
         Statement:
           Effect: Allow
           Principal:
-            Service: 
+            Service:
               - lambda.amazonaws.com
               - iot.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
-        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref 'AWS::NoValue']
 
   ApplicationPolicies:
     Type: 'AWS::IAM::ManagedPolicy'
     Properties:
       Description: 'cdf-events-processor application policies'
-      Path: "/"
+      Path: '/'
       PolicyDocument:
-        Version: "2012-10-17"
-        Statement:          
-          - Sid: "iampassrole"
+        Version: '2012-10-17'
+        Statement:
+          - Sid: 'iampassrole'
             Action:
-              - "iam:PassRole"
+              - 'iam:PassRole'
             Effect: Allow
-            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-events-*"
+            Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/cdf-events-*'
           - Sid: 'sns'
             Action: sns:publish
             Effect: Allow
-            Resource: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:cdf-events-*"
-          - Sid: "dynamodbStreams"
+            Resource: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:cdf-events-*'
+          - Sid: 'dynamodbStreams'
             Action:
               - dynamodb:DescribeStream
               - dynamodb:GetRecords
               - dynamodb:GetShardIterator
               - dynamodb:ListStreams
             Effect: Allow
-            Resource: 
+            Resource:
               - !Sub '${EventNotificationsTableArn}/stream/*'
-          - Sid: "dynamodb"
+          - Sid: 'dynamodb'
             Action:
               - dynamodb:Query
               - dynamodb:DescribeTable
             Effect: Allow
-            Resource: 
+            Resource:
               - !Sub '${EventNotificationsTableArn}/index/*'
               - !Sub '${EventConfigTableArn}/index/*'
           - !If
             - DAXClusterArnProvided
-            - Sid: "DAX"
+            - Sid: 'DAX'
               Action:
-                - "dax:BatchGetItem"
-                - "dax:BatchWriteItem"
-                - "dax:ConditionCheckItem"
-                - "dax:DeleteItem"
-                - "dax:PutItem"
-                - "dax:GetItem"
-                - "dax:Query"
-                - "dax:Scan"
-                - "dax:UpdateItem"
+                - 'dax:BatchGetItem'
+                - 'dax:BatchWriteItem'
+                - 'dax:ConditionCheckItem'
+                - 'dax:DeleteItem'
+                - 'dax:PutItem'
+                - 'dax:GetItem'
+                - 'dax:Query'
+                - 'dax:Scan'
+                - 'dax:UpdateItem'
               Effect: Allow
               Resource: !Ref DAXClusterArn
-            - !Ref "AWS::NoValue"
+            - !Ref 'AWS::NoValue'
 
   DynamoDBStreamLambdaFunction:
     Type: AWS::Serverless::Function
@@ -178,11 +176,7 @@ Resources:
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           AWS_DYNAMODB_DAX_ENDPOINTS:
-            !If [
-              DAXClusterEndpointProvided,
-              !Ref DAXClusterEndpoint,
-              !Ref "AWS::NoValue",
-            ]
+            !If [DAXClusterEndpointProvided, !Ref DAXClusterEndpoint, !Ref 'AWS::NoValue']
       Tracing: Active
       VpcConfig:
         Fn::If:
@@ -194,16 +188,15 @@ Resources:
 
   EventNotificationsSourceMapping:
     Type: AWS::Lambda::EventSourceMapping
-    Properties: 
+    Properties:
       EventSourceArn: !Ref EventNotificationsStreamArn
       FunctionName: !Ref DynamoDBStreamLambdaFunction
       StartingPosition: LATEST
 
-
 Outputs:
   DynamoDBStreamLambdaArn:
     Description: DynamoDB Stream Lambda Arn
-    Value: !Sub "${DynamoDBStreamLambdaFunction.Arn}"
+    Value: !Sub '${DynamoDBStreamLambdaFunction.Arn}'
   DynamoDBStreamLambdaConsoleUrl:
     Description: Console URL for the Lambda Function.
-    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/lambda/home?region=${AWS::Region}#/functions/${DynamoDBStreamLambdaFunction}"
+    Value: !Sub 'https://${AWS::Region}.console.aws.amazon.com/lambda/home?region=${AWS::Region}#/functions/${DynamoDBStreamLambdaFunction}'

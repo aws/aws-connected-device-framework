@@ -10,30 +10,29 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { logger } from './utils/logger';
-import {container} from './di/inversify.config';
-import { TYPES } from './di/types';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { Context, SNSEvent } from 'aws-lambda';
 import ow from 'ow';
-import { CertificatesService } from './certificates/certificates.service';
 import { CertificateChunkRequest } from './certificates/certificates.models';
-import {SNSEvent, Context} from 'aws-lambda';
+import { CertificatesService } from './certificates/certificates.service';
+import { container } from './di/inversify.config';
+import { TYPES } from './di/types';
 
-let service:CertificatesService;
+let service: CertificatesService;
 
 exports.handler = async (event: SNSEvent, _context: Context) => {
-  logger.debug(`handler: event: ${JSON.stringify(event)}`);
+    logger.debug(`handler: event: ${JSON.stringify(event)}`);
 
-  ow(event.Records, ow.array.nonEmpty);
-  ow(event.Records[0].EventSource, ow.string.equals('aws:sns'));
+    ow(event.Records, ow.array.nonEmpty);
+    ow(event.Records[0].EventSource, ow.string.equals('aws:sns'));
 
-  if (service===undefined) {
-    service = container.get(TYPES.CertificatesService);
-  }
+    if (service === undefined) {
+        service = container.get(TYPES.CertificatesService);
+    }
 
-  const chunkRequest:CertificateChunkRequest = JSON.parse(event.Records[0].Sns.Message);
-  logger.debug(`chunkRequest: ${JSON.stringify(chunkRequest)}`);
-  await service.createChunk(chunkRequest);
+    const chunkRequest: CertificateChunkRequest = JSON.parse(event.Records[0].Sns.Message);
+    logger.debug(`chunkRequest: ${JSON.stringify(chunkRequest)}`);
+    await service.createChunk(chunkRequest);
 
-  logger.debug('handler: exit:');
+    logger.debug('handler: exit:');
 };
-

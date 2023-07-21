@@ -1,98 +1,62 @@
 {
-  "name": "@cdf/thing-list-builder",
+  "name": "@awssolutions/cdf-thing-list-builder",
   "entries": [
     {
-      "version": "1.1.2",
-      "tag": "@cdf/thing-list-builder_v1.1.2",
-      "date": "Fri, 08 Apr 2022 07:03:46 GMT",
+      "version": "0.0.0",
+      "tag": "@awssolutions/cdf-thing-list-builder_v0.0.0",
+      "date": "Thu, 09 Mar 2023 22:35:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.2.0",
+      "tag": "@awssolutions/cdf-thing-list-builder_v0.2.0",
+      "date": "Wed, 08 Mar 2023 01:03:23 GMT",
       "comments": {
-        "patch": [
+        "dependency": [
           {
-            "comment": "modified the logic for extracting thingname from resource ARN"
+            "comment": "Dependency @awssolutions/cdf-assetlibrary-client version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^0.1.0 to ^0.2.0."
           }
         ]
       }
     },
     {
-      "version": "1.1.1",
-      "tag": "@cdf/thing-list-builder_v1.1.1",
-      "date": "Fri, 25 Mar 2022 06:23:54 GMT",
+      "version": "0.1.0",
+      "tag": "@awssolutions/cdf-thing-list-builder_v0.1.0",
+      "date": "Tue, 07 Mar 2023 23:22:30 GMT",
       "comments": {
-        "patch": [
+        "dependency": [
           {
-            "comment": "check if region and iot factory have been bound before"
+            "comment": "Dependency @awssolutions/cdf-assetlibrary-client version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^0.0.0 to ^0.1.0."
           }
         ]
       }
     },
     {
       "version": "1.1.0",
-      "tag": "@cdf/thing-list-builder_v1.1.0",
-      "date": "Fri, 25 Mar 2022 03:55:57 GMT",
+      "tag": "@awssolutions/cdf-thing-list-builder_v1.1.0",
+      "date": "Thu, 16 Feb 2023 18:41:02 GMT",
       "comments": {
-        "minor": [
-          {
-            "comment": "adding functionality to support command and control"
-          }
-        ]
-      }
-    },
-    {
-      "version": "1.0.2",
-      "tag": "@cdf/thing-list-builder_v1.0.2",
-      "date": "Mon, 21 Mar 2022 21:58:32 GMT",
-      "comments": {
-        "patch": [
-          {
-            "comment": "Upgrade dependencies marked as deprecated"
-          }
-        ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.1` to `^5.0.2`"
+            "comment": "Dependency @awssolutions/cdf-assetlibrary-client version bump from ^1.0.0 to ^1.1.0."
           },
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^3.0.0` to `^3.0.1`"
-          }
-        ]
-      }
-    },
-    {
-      "version": "1.0.1",
-      "tag": "@cdf/thing-list-builder_v1.0.1",
-      "date": "Thu, 10 Mar 2022 00:08:34 GMT",
-      "comments": {
-        "patch": [
-          {
-            "comment": "correct typo in assetlibrary client import"
-          }
-        ],
-        "dependency": [
-          {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.0` to `^5.0.1`"
-          }
-        ]
-      }
-    },
-    {
-      "version": "1.0.0",
-      "tag": "@cdf/thing-list-builder_v1.0.0",
-      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
-      "comments": {
-        "major": [
-          {
-            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
-          }
-        ],
-        "dependency": [
-          {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.2` to `^5.0.0`"
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^1.0.0 to ^1.1.0."
           },
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^3.0.0`"
-          },
-          {
-            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^1.0.0 to ^1.1.0."
           }
         ]
       }

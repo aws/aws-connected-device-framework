@@ -11,20 +11,21 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import { setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
-import chai_string = require('chai-string');
-import { use } from 'chai';
+
 import {
+    DeploymentTask,
+    DeploymentsService,
     GREENGRASS2_PROVISIONING_CLIENT_TYPES,
     NewDeploymentTask,
-    DeploymentsService,
-    DeploymentTask,
 } from '@awssolutions/cdf-greengrass2-provisioning-client';
-import {container} from '../../di/inversify.config';
-import { getAdditionalHeaders } from '../notifications/notifications.utils';
-import { buildModel, validateExpectedAttributes } from '../common/common.steps';
+import { DataTable, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
+import { use } from 'chai';
+import { container } from '../../di/inversify.config';
+import { buildModel, validateExpectedAttributes } from '../common/common.steps';
+import { getAdditionalHeaders } from '../notifications/notifications.utils';
 import { world } from './greengrass2.world';
+import chai_string = require('chai-string');
 use(chai_string);
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
@@ -36,26 +37,40 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-const deploymentsService: DeploymentsService = container.get(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DeploymentsService);
+const deploymentsService: DeploymentsService = container.get(
+    GREENGRASS2_PROVISIONING_CLIENT_TYPES.DeploymentsService
+);
 
-When('I create greengrass2-provisioning deployment task with attributes:', async function (data:DataTable) {
-    delete world.lastDeploymentTaskId;
-    try {
-        const task:NewDeploymentTask = buildModel(data);
-        world.lastDeploymentTaskId = await deploymentsService.createDeploymentTask(task, getAdditionalHeaders(world.authToken));
-    } catch (err) {
-        world.errStatus=err.status;
-        fail(`createDeploymentTask failed, err: ${JSON.stringify(err)}`);
+When(
+    'I create greengrass2-provisioning deployment task with attributes:',
+    async function (data: DataTable) {
+        delete world.lastDeploymentTaskId;
+        try {
+            const task: NewDeploymentTask = buildModel(data);
+            world.lastDeploymentTaskId = await deploymentsService.createDeploymentTask(
+                task,
+                getAdditionalHeaders(world.authToken)
+            );
+        } catch (err) {
+            world.errStatus = err.status;
+            fail(`createDeploymentTask failed, err: ${JSON.stringify(err)}`);
+        }
     }
-});
+);
 
-Then('last greengrass2-provisioning deployment task exists with attributes:', async function (data:DataTable) {
-    let task:DeploymentTask;
-    try {
-        task = await deploymentsService.getDeploymentTask(world.lastDeploymentTaskId, getAdditionalHeaders(world.authToken));
-    } catch (err) {
-        world.errStatus=err.status;
-        fail(`getDeploymentTask failed, err: ${JSON.stringify(err)}`);
+Then(
+    'last greengrass2-provisioning deployment task exists with attributes:',
+    async function (data: DataTable) {
+        let task: DeploymentTask;
+        try {
+            task = await deploymentsService.getDeploymentTask(
+                world.lastDeploymentTaskId,
+                getAdditionalHeaders(world.authToken)
+            );
+        } catch (err) {
+            world.errStatus = err.status;
+            fail(`getDeploymentTask failed, err: ${JSON.stringify(err)}`);
+        }
+        validateExpectedAttributes(task, data);
     }
-    validateExpectedAttributes(task, data);
-});
+);

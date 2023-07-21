@@ -10,28 +10,28 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../../di/types';
-import {logger} from '../../../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
+import { TYPES } from '../../../di/types';
 import { EventSourceDetailResource } from '../eventsource.models';
 import { EventSource } from './source.interface';
 
 @injectable()
-export class DynamoDbEventSource implements EventSource  {
-
+export class DynamoDbEventSource implements EventSource {
     private ddb: AWS.DynamoDB;
     private lambda: AWS.Lambda;
 
     constructor(
-        @inject('aws.lambda.dynamoDbStream.name') private dynamoDbStreamEntryLambda:string,
-	    @inject(TYPES.DynamoDBFactory) dynamoDBFactory: () => AWS.DynamoDB,
-        @inject(TYPES.LambdaFactory) lambdaFactory: () => AWS.Lambda) {
-            this.ddb = dynamoDBFactory();
-            this.lambda = lambdaFactory();
-        }
+        @inject('aws.lambda.dynamoDbStream.name') private dynamoDbStreamEntryLambda: string,
+        @inject(TYPES.DynamoDBFactory) dynamoDBFactory: () => AWS.DynamoDB,
+        @inject(TYPES.LambdaFactory) lambdaFactory: () => AWS.Lambda
+    ) {
+        this.ddb = dynamoDBFactory();
+        this.lambda = lambdaFactory();
+    }
 
-    public async create(model:EventSourceDetailResource) : Promise<void> {
+    public async create(model: EventSourceDetailResource): Promise<void> {
         logger.debug(`dynamodb.source create: in: model:${JSON.stringify(model)}`);
 
         ow(model, ow.object.nonEmpty);
@@ -42,39 +42,44 @@ export class DynamoDbEventSource implements EventSource  {
 
         // check to see if stream already exists on table
         let tableInfo: AWS.DynamoDB.Types.DescribeTableOutput;
-        try  {
-            tableInfo = await this.ddb.describeTable({TableName:table}).promise();
+        try {
+            tableInfo = await this.ddb.describeTable({ TableName: table }).promise();
         } catch (err) {
             logger.error(`dynamodb.source create: error:${err.code}`);
             throw new Error(`INVALID_TABLE: Table ${table} not found.`);
         }
 
         // if streams are not enabled, configure it
-        if (tableInfo.Table.StreamSpecification === undefined || tableInfo.Table.StreamSpecification.StreamEnabled===false) {
-            logger.debug(`dynamodb.source create: Stream not enabled for table ${table}, therefore enabling`);
+        if (
+            tableInfo.Table.StreamSpecification === undefined ||
+            tableInfo.Table.StreamSpecification.StreamEnabled === false
+        ) {
+            logger.debug(
+                `dynamodb.source create: Stream not enabled for table ${table}, therefore enabling`
+            );
             const updateParams: AWS.DynamoDB.UpdateTableInput = {
                 TableName: table,
                 StreamSpecification: {
                     StreamEnabled: true,
-                    StreamViewType: 'NEW_IMAGE'
-                }
+                    StreamViewType: 'NEW_IMAGE',
+                },
             };
             await this.ddb.updateTable(updateParams).promise();
-            tableInfo = await this.ddb.describeTable({TableName:table}).promise();
+            tableInfo = await this.ddb.describeTable({ TableName: table }).promise();
         }
 
         // wire up the event source mapping
-        const listParams:AWS.Lambda.Types.ListEventSourceMappingsRequest = {
+        const listParams: AWS.Lambda.Types.ListEventSourceMappingsRequest = {
             EventSourceArn: tableInfo.Table.LatestStreamArn,
-            FunctionName: this.dynamoDbStreamEntryLambda
+            FunctionName: this.dynamoDbStreamEntryLambda,
         };
         const eventSources = await this.lambda.listEventSourceMappings(listParams).promise();
-        if (eventSources.EventSourceMappings.length===0) {
-            const createParams:AWS.Lambda.Types.CreateEventSourceMappingRequest = {
+        if (eventSources.EventSourceMappings.length === 0) {
+            const createParams: AWS.Lambda.Types.CreateEventSourceMappingRequest = {
                 EventSourceArn: tableInfo.Table.LatestStreamArn,
                 FunctionName: this.dynamoDbStreamEntryLambda,
                 Enabled: true,
-                StartingPosition: 'LATEST'
+                StartingPosition: 'LATEST',
             };
             await this.lambda.createEventSourceMapping(createParams).promise();
         }
@@ -82,7 +87,7 @@ export class DynamoDbEventSource implements EventSource  {
         logger.debug(`dynamodb.source create: exit:`);
     }
 
-    public async delete(eventSourceId:string) : Promise<void> {
+    public async delete(eventSourceId: string): Promise<void> {
         logger.debug(`dynamodb.source delete: in: eventSourceId:${eventSourceId}`);
 
         // nothing to do, as we intentionally do not remove the dynamodb stream
@@ -90,5 +95,4 @@ export class DynamoDbEventSource implements EventSource  {
 
         logger.debug(`dynamodb.source delete: exit:`);
     }
-
 }

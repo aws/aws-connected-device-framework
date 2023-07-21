@@ -10,56 +10,54 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
-import { TypesService } from '../types/types.service';
 import { TypeCategory } from '../types/constants';
-import { InitDaoFull } from './init.full.dao';
 import { TypeDefinitionModel } from '../types/types.models';
+import { TypesService } from '../types/types.service';
+import { InitDaoFull } from './init.full.dao';
 import { InitService } from './init.service';
 
 @injectable()
 export class InitServiceFull implements InitService {
-
-    constructor( 
+    constructor(
         @inject(TYPES.InitDao) private initDao: InitDaoFull,
-        @inject(TYPES.TypesService) private typesService: TypesService) {}
+        @inject(TYPES.TypesService) private typesService: TypesService
+    ) {}
 
-        public async init(): Promise<void> {
-            logger.debug('init.service init: in:');
-    
-            const initialized  = await this.initDao.isInitialized();
-            if (!initialized) {
-                // seed the database with the type categories
-                await this.initDao.initialize();
-    
-                // create the root group type definition
-                const definition:TypeDefinitionModel= {
-                    properties: {}
-                }
-                await this.typesService.create('root', TypeCategory.Group, definition);
-                await this.typesService.publish('root', TypeCategory.Group);
-    
-            }
-    
-            // apply any database upgrades as needed (in sequence)
-            const version = await this.initDao.getVersion();
-            switch(version) {
-                case 0:
-                    await this.initDao.upgrade_from_0();
-                    await this.initDao.setVersion(1);
-                    break;
-    
-                // in the future add additional case statements for each new version. remember to remove
-                // the break from previous case versions so that the case statements all fall through so
-                // just one break exists before hitting the default case.
-    
-                default:
-                    // ignore the rest
-            }
-    
-            logger.debug(`init.service init: exit:`);
+    public async init(): Promise<void> {
+        logger.debug('init.service init: in:');
+
+        const initialized = await this.initDao.isInitialized();
+        if (!initialized) {
+            // seed the database with the type categories
+            await this.initDao.initialize();
+
+            // create the root group type definition
+            const definition: TypeDefinitionModel = {
+                properties: {},
+            };
+            await this.typesService.create('root', TypeCategory.Group, definition);
+            await this.typesService.publish('root', TypeCategory.Group);
         }
 
+        // apply any database upgrades as needed (in sequence)
+        const version = await this.initDao.getVersion();
+        switch (version) {
+            case 0:
+                await this.initDao.upgrade_from_0();
+                await this.initDao.setVersion(1);
+                break;
+
+            // in the future add additional case statements for each new version. remember to remove
+            // the break from previous case versions so that the case statements all fall through so
+            // just one break exists before hitting the default case.
+
+            default:
+            // ignore the rest
+        }
+
+        logger.debug(`init.service init: exit:`);
+    }
 }

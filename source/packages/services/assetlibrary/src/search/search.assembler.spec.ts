@@ -11,20 +11,20 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import { createMockInstance } from 'jest-create-mock-instance';
 
-import { SearchAssembler } from './search.assembler';
+import { createMockInstance } from 'jest-create-mock-instance';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { TypeUtils } from '../utils/typeUtils';
+import { SearchAssembler } from './search.assembler';
 
 describe('SearchServiceAssembler', () => {
-
     let instance: SearchAssembler;
     let mockedDeviceAssembler: jest.Mocked<DevicesAssembler>;
     let mockedGroupAssembler: jest.Mocked<GroupsAssembler>;
+
     let mockedTypeUtils: jest.Mocked<TypeUtils>;
-    
+
     let mockedSearchRequest: {
         types: string | string[] | undefined;
         ntypes: string | string[] | undefined;
@@ -47,7 +47,11 @@ describe('SearchServiceAssembler', () => {
         mockedDeviceAssembler = createMockInstance(DevicesAssembler);
         mockedGroupAssembler = createMockInstance(GroupsAssembler);
         mockedTypeUtils = createMockInstance(TypeUtils);
-        instance = new SearchAssembler(mockedDeviceAssembler, mockedGroupAssembler, mockedTypeUtils);
+        instance = new SearchAssembler(
+            mockedDeviceAssembler,
+            mockedGroupAssembler,
+            mockedTypeUtils
+        );
     });
 
     it('happy path to convert one search param to a search request model', async () => {

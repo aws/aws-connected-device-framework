@@ -11,44 +11,58 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Response } from 'express';
-import { interfaces, controller, response, httpPost, requestBody} from 'inversify-express-utils';
 import { inject } from 'inversify';
-import {TYPES} from '../di/types';
-import {logger} from '../utils/logger';
-import { PresignedUploadRequestModel, PresignedDownloadRequestModel, PresignedResponseModel } from './presignedurls.models';
-import {handleError} from '../utils/errors';
+import { controller, httpPost, interfaces, requestBody, response } from 'inversify-express-utils';
+import { TYPES } from '../di/types';
+import { handleError } from '../utils/errors';
+import { logger } from '../utils/logger';
+import {
+    PresignedDownloadRequestModel,
+    PresignedResponseModel,
+    PresignedUploadRequestModel,
+} from './presignedurls.models';
 import { PresignedUrlsService } from './presignedurls.service';
 
 @controller('/mqtt/presignedurls')
 export class PresignedUrlsController implements interfaces.Controller {
-
-    constructor( @inject(TYPES.PresignedUrlsService) private presignedUrlService: PresignedUrlsService) {}
+    constructor(
+        @inject(TYPES.PresignedUrlsService) private presignedUrlService: PresignedUrlsService
+    ) {}
 
     @httpPost('/uploads')
-    public async generateForUpload(@requestBody() model: PresignedUploadRequestModel, @response() res: Response) : Promise<PresignedResponseModel> {
-        logger.info(`presignedurls.controller  generateForUpload: in: model: ${JSON.stringify(model)}`);
+    public async generateForUpload(
+        @requestBody() model: PresignedUploadRequestModel,
+        @response() res: Response
+    ): Promise<PresignedResponseModel> {
+        logger.info(
+            `presignedurls.controller  generateForUpload: in: model: ${JSON.stringify(model)}`
+        );
 
-        let r:PresignedResponseModel;
+        let r: PresignedResponseModel;
         try {
             r = await this.presignedUrlService.generateForUpload(model);
             res.status(201);
-
         } catch (e) {
-            handleError(e,res);
+            handleError(e, res);
         }
         return r;
     }
 
     @httpPost('/downloads')
-    public async generateForDownloads(@requestBody() model: PresignedDownloadRequestModel, @response() res: Response) : Promise<PresignedResponseModel>  {
-        logger.info(`presignedurls.controller  generateForDownloads: in: model: ${JSON.stringify(model)}`);
+    public async generateForDownloads(
+        @requestBody() model: PresignedDownloadRequestModel,
+        @response() res: Response
+    ): Promise<PresignedResponseModel> {
+        logger.info(
+            `presignedurls.controller  generateForDownloads: in: model: ${JSON.stringify(model)}`
+        );
 
-        let r:PresignedResponseModel;
+        let r: PresignedResponseModel;
         try {
             r = await this.presignedUrlService.generateForDownload(model);
             res.status(201);
         } catch (e) {
-            handleError(e,res);
+            handleError(e, res);
         }
         return r;
     }

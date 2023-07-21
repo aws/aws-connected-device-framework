@@ -10,6 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { AuthzServiceFull } from '../authz/authz.full.service';
@@ -27,12 +28,13 @@ import { TypeDefinitionStatus } from '../types/types.models';
 import { TypesService } from '../types/types.service';
 import {
     GroupNotFoundError,
+    NotFoundError,
     ProfileNotFoundError,
     RelationValidationError,
     SchemaValidationError,
     TemplateNotFoundError,
 } from '../utils/errors';
-import { logger } from '../utils/logger';
+import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 import { TypeUtils } from '../utils/typeUtils';
 import { GroupsAssembler } from './groups.assembler';
 import { GroupsDaoFull } from './groups.full.dao';
@@ -41,6 +43,8 @@ import { GroupsService } from './groups.service';
 
 @injectable()
 export class GroupsServiceFull implements GroupsService {
+    private readonly DEFAULT_PAGINATION_COUNT = 500;
+
     constructor(
         @inject('authorization.enabled') private isAuthzEnabled: boolean,
         @inject('defaults.groups.validateAllowedParentPaths')
@@ -91,6 +95,10 @@ export class GroupsServiceFull implements GroupsService {
         await this.authServiceFull.authorizationCheck(groupPaths, [], ClaimAccess.R);
 
         const result = await this.groupsDao.get(groupPaths, includeGroups);
+
+        if (result === undefined) {
+            throw new NotFoundError('no group is found with provided path');
+        }
 
         const model = this.groupsAssembler.toGroupItems(result);
         logger.debug(`groups.full.service get: exit: model: ${JSON.stringify(model)}`);
@@ -464,6 +472,16 @@ export class GroupsServiceFull implements GroupsService {
 
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(category, 'category', ow.string.nonEmpty);
+        owCheckOptionalNumber(count, 1, 10000, 'count');
+        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
+
+        // default pagination
+        if (count === undefined) {
+            count = this.DEFAULT_PAGINATION_COUNT;
+        }
+        if (offset === undefined) {
+            offset = 0;
+        }
 
         // any ids need to be lowercase
         groupPath = groupPath.toLowerCase();
@@ -535,6 +553,7 @@ export class GroupsServiceFull implements GroupsService {
         logger.debug(`groups.full.service delete: in: groupPath: ${groupPath}`);
 
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
+        ow(groupPath, 'cannot delete root group', ow.string.not.equals('/'));
 
         // any ids need to be lowercase
         groupPath = groupPath.toLowerCase();
@@ -726,6 +745,8 @@ export class GroupsServiceFull implements GroupsService {
 
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
+        owCheckOptionalNumber(count, 1, 10000, 'count');
+        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
 
         // defaults
         if (direction === undefined || direction === null) {
@@ -786,6 +807,16 @@ export class GroupsServiceFull implements GroupsService {
 
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
+        owCheckOptionalNumber(count, 1, 10000, 'count');
+        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
+
+        // default pagination
+        if (count === undefined) {
+            count = this.DEFAULT_PAGINATION_COUNT;
+        }
+        if (offset === undefined) {
+            offset = 0;
+        }
 
         // defaults
         if (direction === undefined || direction === null) {

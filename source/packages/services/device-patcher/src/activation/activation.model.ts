@@ -34,7 +34,7 @@ export class ActivationItem {
 export class ActivationItemList {
     activations: ActivationItem[] = [];
     pagination?: {
-        offset:number|string;
+        offset: number | string;
         count: number;
     };
 }

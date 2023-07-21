@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
 import { TYPES } from '../di/types';
@@ -20,7 +20,6 @@ import { GroupExtractor } from './extractors/group.extractor';
 
 import { Batch } from '../batch/batch.service';
 import { TypeCategory } from '../types/constants';
-
 
 @injectable()
 export class ExtractService implements Extractor {
@@ -40,7 +39,6 @@ export class ExtractService implements Extractor {
 
         return await this.extractors[batch.category].extract(batch);
     }
-
 }
 
 export interface Extractor {

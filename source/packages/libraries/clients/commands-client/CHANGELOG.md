@@ -1,8 +1,9 @@
-# Change Log - @cdf/commands-client
+# Change Log - @awssolutions/commands-client
 
 This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
 
 ## 5.0.5
+
 Tue, 21 Jun 2022 00:47:55 GMT
 
 ### Patches
@@ -10,6 +11,7 @@ Tue, 21 Jun 2022 00:47:55 GMT
 - update to node 16.x
 
 ## 5.0.4
+
 Thu, 07 Apr 2022 05:00:50 GMT
 
 ### Patches
@@ -17,6 +19,7 @@ Thu, 07 Apr 2022 05:00:50 GMT
 - fix parsing of COMMANDS_HEADERS config setting
 
 ## 5.0.3
+
 Mon, 28 Mar 2022 00:28:46 GMT
 
 ### Patches
@@ -24,6 +27,7 @@ Mon, 28 Mar 2022 00:28:46 GMT
 - revert to latest aws-sdk
 
 ## 5.0.2
+
 Tue, 22 Mar 2022 22:51:44 GMT
 
 ### Patches
@@ -31,6 +35,7 @@ Tue, 22 Mar 2022 22:51:44 GMT
 - print module name when outputting loaded config on startup
 
 ## 5.0.1
+
 Mon, 21 Mar 2022 21:58:32 GMT
 
 ### Patches
@@ -38,6 +43,7 @@ Mon, 21 Mar 2022 21:58:32 GMT
 - Upgrade dependencies marked as deprecated
 
 ## 5.0.0
+
 Thu, 17 Feb 2022 09:27:38 GMT
 
 ### Breaking changes
@@ -45,6 +51,7 @@ Thu, 17 Feb 2022 09:27:38 GMT
 - migrate configuration to use dotenv-flow and deployment to use installer
 
 ## 4.1.2
+
 Tue, 28 Dec 2021 18:37:09 GMT
 
 ### Patches
@@ -52,6 +59,7 @@ Tue, 28 Dec 2021 18:37:09 GMT
 - Addressed github security dependabot alerts
 
 ## 4.1.1
+
 Tue, 28 Sep 2021 22:04:37 GMT
 
 ### Patches
@@ -59,7 +67,7 @@ Tue, 28 Sep 2021 22:04:37 GMT
 - Replaced references to CDF components being referred to as services to modules to avoid confusion with AWS services.
 
 ## 4.1.0
+
 Wed, 21 Jul 2021 16:46:57 GMT
 
 _Initial release_
-

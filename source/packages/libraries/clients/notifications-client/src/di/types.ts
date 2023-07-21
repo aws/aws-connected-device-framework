@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const NOTIFICATIONS_CLIENT_TYPES = {
-
     EventsService: Symbol.for('NotificationsClient_EventsService'),
     EventSourcesService: Symbol.for('NotificationsClient_EventSourcesService'),
     SubscriptionsService: Symbol.for('NotificationsClient_SubscriptionsService'),
@@ -19,5 +18,5 @@ export const NOTIFICATIONS_CLIENT_TYPES = {
     MessageDebugService: Symbol.for('NotificationsClient_MessageDebugService'),
 
     RestClient: Symbol.for('NotificationsClient_RestClient'),
-    RestClientFactory: Symbol.for('Factory<Notifications_RestClient>')
+    RestClientFactory: Symbol.for('Factory<Notifications_RestClient>'),
 };

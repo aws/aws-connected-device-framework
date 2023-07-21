@@ -1,10 +1,8 @@
-  
-
 # CUSTOM DEVICE AUTHORIZER
 
 This is a reference implementation of how a custom authorizer can be used as an alternate validation mechanism to authenticate devices with API Gateway.
 
-This custom authorizer is useful for constrained devices which are incapable of using the [AWS IoT Credentials Provider](https://docs.aws.amazon.com/iot/latest/developerguide/authorizing-direct-aws.html) to obtain temporary AWS credentials using the device's X.509 certificate.  Note that the AWS IoT Credentials Provider method is the recommended approach where possible.
+This custom authorizer is useful for constrained devices which are incapable of using the [AWS IoT Credentials Provider](https://docs.aws.amazon.com/iot/latest/developerguide/authorizing-direct-aws.html) to obtain temporary AWS credentials using the device's X.509 certificate. Note that the AWS IoT Credentials Provider method is the recommended approach where possible.
 
 Since creating this reference application, API Gateway now supports [mutual authentication](https://aws.amazon.com/blogs/compute/introducing-mutual-tls-authentication-for-amazon-api-gateway/) which would be a recommended approach to using this specific application, but is kept here as reference.
 
@@ -31,4 +29,4 @@ devicecert: -----BEGIN CERTIFICATE-----\nMIIDWjCCAkICCQCHBZwUBuqWrTANBgkqhkiG9w0
 ## Useful Links
 
 - [Application configuration](docs/configuration.md)
-- 
+-

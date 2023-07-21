@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,7 +11,7 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Simulation Manager
@@ -20,16 +21,15 @@ Globals:
     OpenApiVersion: 3.0.1
 
 Parameters:
-
   ApplicationConfigurationOverride:
     Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
 
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
-  
+
   TemplateSnippetS3UriBase:
     Description: |
       S3 uri of directory where template snippets are stored for the account.
@@ -131,19 +131,20 @@ Parameters:
       - silly
 
 Conditions:
-  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
-  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
-  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
-  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
-  CorsOriginProvided: !Not [ !Equals [ !Ref CorsOrigin, "" ] ]
-  LoggingLevelProvided: !Not [ !Equals [ !Ref LoggingLevel, "" ] ]
+  DeployInVPC: !Not [!Equals [!Ref VpcId, 'N/A']]
+  DeployWithLambdaAuth:
+    !Or [!Equals [!Ref AuthType, 'LambdaRequest'], !Equals [!Ref AuthType, 'LambdaToken']]
+  KmsKeyIdProvided: !Not [!Equals [!Ref KmsKeyId, '']]
+  EnableApiGatewayAccessLogs: !Equals [!Ref EnableApiGatewayAccessLogs, 'true']
+  CorsOriginProvided: !Not [!Equals [!Ref CorsOrigin, '']]
+  LoggingLevelProvided: !Not [!Equals [!Ref LoggingLevel, '']]
 
 Resources:
   ApiGatewayApi:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+        Location: !Sub '${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}'
     DependsOn:
       - RESTLambdaFunction
 
@@ -152,7 +153,7 @@ Resources:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+        Location: !Sub '${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml'
     DependsOn:
       - RESTLambdaFunction
 
@@ -173,10 +174,10 @@ Resources:
             Service:
               - lambda.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/cdf/simulationmanager/"
+      Path: '/cdf/simulationmanager/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
-        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue"]
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref 'AWS::NoValue']
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
@@ -187,45 +188,45 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Condition: KmsKeyIdProvided
     Properties:
-      Description: "cdf-provisioning policy for accessing KMS"
-      Path: "/cdf/simulationmanager/"
+      Description: 'cdf-provisioning policy for accessing KMS'
+      Path: '/cdf/simulationmanager/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
               - kms:Decrypt
               - kms:GenerateDataKey*
             Effect: Allow
-            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+            Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}'
 
   ApplicationPolicies:
     Type: 'AWS::IAM::ManagedPolicy'
     Properties:
       Description: 'cdf-simulation-manager application policies'
-      Path: "/cdf/simulationmanager/"
+      Path: '/cdf/simulationmanager/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
-              - "s3:Copy*"
-              - "s3:Put*"
+              - 's3:Copy*'
+              - 's3:Put*'
               - 's3:List*'
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:s3:::${BucketName}'
           - Action:
-              - "sns:Publish"
+              - 'sns:Publish'
             Effect: Allow
             Resource: !Ref SimulationLauncherSnsTopic
           - Action:
-              - "dynamodb:BatchGetItem"
-              - "dynamodb:GetItem"
-              - "dynamodb:Query"
-              - "dynamodb:Scan"
-              - "dynamodb:BatchWriteItem"
-              - "dynamodb:PutItem"
-              - "dynamodb:UpdateItem"
-              - "dynamodb:DeleteItem"
+              - 'dynamodb:BatchGetItem'
+              - 'dynamodb:GetItem'
+              - 'dynamodb:Query'
+              - 'dynamodb:Scan'
+              - 'dynamodb:BatchWriteItem'
+              - 'dynamodb:PutItem'
+              - 'dynamodb:UpdateItem'
+              - 'dynamodb:DeleteItem'
             Effect: Allow
             Resource:
               - !GetAtt SimulationDeviceState.Arn
@@ -252,8 +253,8 @@ Resources:
           AWS_SNS_TOPICS_LAUNCH: !Ref SimulationLauncherSnsTopic
           AWS_IOT_HOST: !GetAtt IotEndpoint.address
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
-          CORS_ORIGIN: !If [ CorsOriginProvided, !Ref CorsOrigin, !Ref AWS::NoValue ]
-          LOGGING_LEVEL: !If [ LoggingLevelProvided, !Ref LoggingLevel, !Ref AWS::NoValue ]
+          CORS_ORIGIN: !If [CorsOriginProvided, !Ref CorsOrigin, !Ref AWS::NoValue]
+          LOGGING_LEVEL: !If [LoggingLevelProvided, !Ref LoggingLevel, !Ref AWS::NoValue]
       Tracing: Active
 
       VpcConfig:
@@ -287,9 +288,9 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W28
-            reason: "safely naming this resources to be unique by environment"
+            reason: 'safely naming this resources to be unique by environment'
           - id: W73
-            reason: "Can be decided by the customer, to specify the billing mode"
+            reason: 'Can be decided by the customer, to specify the billing mode'
     Properties:
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
@@ -302,15 +303,15 @@ Resources:
           - Ref: AWS::NoValue
       TableName: !Sub 'cdf-simulation-${Environment}'
       AttributeDefinitions:
-        - AttributeName: "pk"
-          AttributeType: "S"
-        - AttributeName: "sk"
-          AttributeType: "S"
+        - AttributeName: 'pk'
+          AttributeType: 'S'
+        - AttributeName: 'sk'
+          AttributeType: 'S'
       KeySchema:
-        - AttributeName: "pk"
-          KeyType: "HASH"
-        - AttributeName: "sk"
-          KeyType: "RANGE"
+        - AttributeName: 'pk'
+          KeyType: 'HASH'
+        - AttributeName: 'sk'
+          KeyType: 'RANGE'
       ProvisionedThroughput:
         ReadCapacityUnits: 30
         WriteCapacityUnits: 30
@@ -322,9 +323,9 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W28
-            reason: "safely naming this resources to be unique by environment"
+            reason: 'safely naming this resources to be unique by environment'
           - id: W73
-            reason: "Can be decided by the customer, to specify the billing mode"
+            reason: 'Can be decided by the customer, to specify the billing mode'
     Properties:
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
@@ -337,15 +338,15 @@ Resources:
           - Ref: AWS::NoValue
       TableName: !Sub 'cdf-simulation-devices-${Environment}'
       AttributeDefinitions:
-        - AttributeName: "simulationId"
-          AttributeType: "S"
-        - AttributeName: "deviceId"
-          AttributeType: "S"
+        - AttributeName: 'simulationId'
+          AttributeType: 'S'
+        - AttributeName: 'deviceId'
+          AttributeType: 'S'
       KeySchema:
-        - AttributeName: "simulationId"
-          KeyType: "HASH"
-        - AttributeName: "deviceId"
-          KeyType: "RANGE"
+        - AttributeName: 'simulationId'
+          KeyType: 'HASH'
+        - AttributeName: 'deviceId'
+          KeyType: 'RANGE'
       ProvisionedThroughput:
         ReadCapacityUnits: 30
         WriteCapacityUnits: 30
@@ -363,61 +364,56 @@ Resources:
             Service: iot.amazonaws.com
           Action: sts:AssumeRole
       Policies:
-        -
-          PolicyName: "CaptureStatePolicy"
+        - PolicyName: 'CaptureStatePolicy'
           PolicyDocument:
-            Version: "2012-10-17"
+            Version: '2012-10-17'
             Statement:
-              -
-                Effect: "Allow"
+              - Effect: 'Allow'
                 Action:
                   - dynamodb:PutItem
                 Resource: !GetAtt SimulationDeviceState.Arn
-              -
-                Effect: "Allow"
+              - Effect: 'Allow'
                 Action:
-                  - "kms:Decrypt"
-                  - "kms:DescribeKey*"
-                  - "Kms:List*"
-                Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
-      Path: "/"
-      
+                  - 'kms:Decrypt'
+                  - 'kms:DescribeKey*'
+                  - 'Kms:List*'
+                Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}'
+      Path: '/'
+
   # TODO: this needs refactoring to decouple from the main simulation as is auto specific
   CaptureStateRule:
-    Type: "AWS::IoT::TopicRule"
+    Type: 'AWS::IoT::TopicRule'
     Properties:
       TopicRulePayload:
         Actions:
-          -
-            DynamoDBv2:
+          - DynamoDBv2:
               PutItem:
                 TableName: !Ref SimulationDeviceState
               RoleArn: !GetAtt CaptureStateRole.Arn
-        Description: "Capture last known vehicle state for use with the CDF Simulator"
-        AwsIotSqlVersion: "2016-03-23"
-        RuleDisabled: "false"
+        Description: 'Capture last known vehicle state for use with the CDF Simulator'
+        AwsIotSqlVersion: '2016-03-23'
+        RuleDisabled: 'false'
         Sql: "SELECT SimulationId as simulationId, topic(3) as deviceId, VIN as vin, GeoLocation.Latitude as latitude, GeoLocation.Longitude as longitude, Odometer.Metres as odometer, timestamp() as lastActivity FROM 'dt/cvra/+/cardata'"
 
   IotEndpoint:
     Type: Custom::IotEndpoint
     Version: 1.0
     Properties:
-      ServiceToken:
-        !Ref CustomResourceLambdaArn
+      ServiceToken: !Ref CustomResourceLambdaArn
 
 Outputs:
   RestApiFunctionName:
     Description: Events REST API lambda function name
     Value: !Ref RESTLambdaFunction
     Export:
-      Name: !Sub "cdf-simulation-manager-${Environment}-restApiFunctionName"
+      Name: !Sub 'cdf-simulation-manager-${Environment}-restApiFunctionName'
   ApiGatewayUrl:
     Description: Events REST API URL
     Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
     Export:
-      Name: !Sub "cdf-simulation-manager-${Environment}-apigatewayurl"
+      Name: !Sub 'cdf-simulation-manager-${Environment}-apigatewayurl'
   ApiGatewayHost:
     Description: Events REST API host
     Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
     Export:
-      Name: !Sub "cdf-simulation-manager-${Environment}-apigatewayhost"
+      Name: !Sub 'cdf-simulation-manager-${Environment}-apigatewayhost'

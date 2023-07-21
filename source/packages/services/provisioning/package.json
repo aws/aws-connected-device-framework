@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-provisioning",
-  "version": "0.0.2",
+  "version": "2.2.0",
   "description": "CDF Provisioning",
   "author": "Dean Hart",
   "files": [
@@ -37,11 +37,12 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@awssolutions/cdf-config-inject": "^0.0.0",
-    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^2.2.0",
+    "@awssolutions/cdf-errors": "^2.2.0",
     "@awssolutions/cdf-express-middleware": "^0.0.0",
     "@awssolutions/cdf-lambda-zip": "^0.0.0",
-    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-logger": "^2.2.0",
+    "@awssolutions/simple-cdf-logger": "^2.1.3",
     "@rushstack/eslint-config": "2.3.4",
     "@types/body-parser": "1.19.2",
     "@types/cors": "2.8.10",
@@ -53,7 +54,7 @@
     "@types/uuid": "8.3.0",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",
-    "aws-sdk": "2.1048.0",
+    "aws-sdk": "2.1386.0",
     "body-parser": "1.20.1",
     "cors": "2.8.5",
     "dotenv": "^8.2.0",

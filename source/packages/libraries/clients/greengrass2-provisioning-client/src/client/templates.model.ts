@@ -12,24 +12,24 @@
  *********************************************************************************************************************/
 
 export interface NewTemplate {
-	name:string;
-	components: Component[];
-	jobConfig?: JobConfig;
-	deploymentPolicies?: DeploymentPolicy;
-	enabled: boolean;
+    name: string;
+    components: Component[];
+    jobConfig?: JobConfig;
+    deploymentPolicies?: DeploymentPolicy;
+    enabled: boolean;
 }
- export interface Template extends NewTemplate {
-     version?: number;
+export interface Template extends NewTemplate {
+    version?: number;
 
-     deployment?: {
-         id: string;
-         thingGroupName: string;
-         jobId: string;
-     };
+    deployment?: {
+        id: string;
+        thingGroupName: string;
+        jobId: string;
+    };
 
-     createdAt?: Date;
-     updatedAt?: Date;
- }
+    createdAt?: Date;
+    updatedAt?: Date;
+}
 
 export interface Component {
     key: string;
@@ -43,39 +43,41 @@ export interface Component {
     };
 }
 export interface JobConfig {
-	jobExecutionsRolloutConfig?: {
-		exponentialRate: {
-			baseRatePerMinute: number;
-			incrementFactor: number;
-			rateIncreaseCriteria: {
-				numberOfNotifiedThings: number;
-				numberOfSucceededThings: number;
-			};
-		};
-		maximumPerMinute?: number;
-	};
-	abortConfig?: {
-		criteriaList: [{
-			failureType: string;
-			action: AbortConfigFailureType;
-			thresholdPercentage: number;
-			minNumberOfExecutedThings: number;
-		}];
-	};
-	timeoutConfig?: {
-		inProgressTimeoutInMinutes: number;
-	};
+    jobExecutionsRolloutConfig?: {
+        exponentialRate: {
+            baseRatePerMinute: number;
+            incrementFactor: number;
+            rateIncreaseCriteria: {
+                numberOfNotifiedThings: number;
+                numberOfSucceededThings: number;
+            };
+        };
+        maximumPerMinute?: number;
+    };
+    abortConfig?: {
+        criteriaList: [
+            {
+                failureType: string;
+                action: AbortConfigFailureType;
+                thresholdPercentage: number;
+                minNumberOfExecutedThings: number;
+            },
+        ];
+    };
+    timeoutConfig?: {
+        inProgressTimeoutInMinutes: number;
+    };
 }
 
 export interface DeploymentPolicy {
-	failureHandlingPolicy: FailureHandlingPolicy;
-	componentUpdatePolicy: {
-		timeoutInSeconds: number;
-		action: DeploymentPolicyAction;
-	};
-	configurationValidationPolicy: {
-		timeoutInSeconds: number;
-	}
+    failureHandlingPolicy: FailureHandlingPolicy;
+    componentUpdatePolicy: {
+        timeoutInSeconds: number;
+        action: DeploymentPolicyAction;
+    };
+    configurationValidationPolicy: {
+        timeoutInSeconds: number;
+    };
 }
 
 export type AbortConfigFailureType = 'FAILED' | 'REJECTED' | 'TIMED_OUT' | 'ALL';

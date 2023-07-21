@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Response } from 'express';
-import { logger } from './logger';
 
 export function handleError(e: Error, res: Response): void {
     logger.error(`handleError: ${e}`);
@@ -22,7 +22,7 @@ export function handleError(e: Error, res: Response): void {
         e.message === 'UNDEFINED_RELATIONS' ||
         (e.hasOwnProperty('code') && e['code'] === 'ValidationException') // Error object thrown from DynamoDB input validation contains 'code' field
     ) {
-        res.status(400).json({ error: e.message }).end();
+        res.status(400).json({ error: res.statusMessage }).end();
     } else if (e.message === 'NOT_FOUND') {
         res.status(404).json({ error: 'Item not found' }).end();
     } else if (
@@ -34,7 +34,7 @@ export function handleError(e: Error, res: Response): void {
     } else if (e.message === 'ALREADY_INITIALIZED') {
         res.status(409).json({ error: 'Already initialized' }).end();
     } else {
-        res.status(500).json({ error: e.message }).end();
+        res.status(500).json({ error: res.statusMessage }).end();
     }
 
     logger.error(`handleError: res.status: ${res.statusCode} ${res.statusMessage}`);

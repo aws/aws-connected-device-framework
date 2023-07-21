@@ -14,25 +14,18 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 /* eslint @typescript-eslint/explicit-module-boundary-types: 0 */
 declare module 'gremlin' {
-
     export namespace structure {
-        export class Edge {
-        }
+        export class Edge {}
         export class Graph {
             traversal(): process.GraphTraversalSource;
             toString(): string;
         }
-        export class Path {
-        }
-        export class Property {
-        }
-        export class Vertex {
-        }
-        export class VertexProperty {
-        }
+        export class Path {}
+        export class Property {}
+        export class Vertex {}
+        export class VertexProperty {}
     }
     export namespace process {
-
         export class AnonymousTraversalSource {
             constructor();
             static traversal(): AnonymousTraversalSource;
@@ -156,7 +149,7 @@ declare module 'gremlin' {
             write(...args: unknown[]): GraphTraversal;
         }
 
-        export const statics : {
+        export const statics: {
             V: any;
             addE: any;
             addInE: any;
@@ -251,36 +244,35 @@ declare module 'gremlin' {
         };
 
         export class TraversalStrategies {
-            addStrategy(stratey:TraversalStrategy): void;
-            applyStrategies(stratey:Traversal): Promise<void>;
-
+            addStrategy(stratey: TraversalStrategy): void;
+            applyStrategies(stratey: Traversal): Promise<void>;
         }
 
         export class TraversalStrategy {
-            apply(stratey:Traversal): void;
+            apply(stratey: Traversal): void;
         }
 
         export class EnumValue {
-            constructor(typeName:string, elementName:string);
+            constructor(typeName: string, elementName: string);
             toString(): string;
         }
 
         export class P {
-            constructor(operator:string, value:string, other:string);
+            constructor(operator: string, value: string, other: string);
             toString(): string;
             and(other: P): P;
             or(other: P): P;
 
-            static between(first:number|string, second:number|string): P;
-            static eq(args: number|string): P;
+            static between(first: number | string, second: number | string): P;
+            static eq(args: number | string): P;
             static gt(args: number): P;
             static gte(args: number): P;
-            static inside(first:number, second:number): P;
+            static inside(first: number, second: number): P;
             static lt(args: number): P;
             static lte(args: number): P;
             static neq(args: unknown): P;
             static not(...args: unknown[]): P;
-            static outside(first:number, second:number): P;
+            static outside(first: number, second: number): P;
             static test(...args: unknown[]): P;
             static within(...args: unknown[]): P;
             static without(...args: unknown[]): P;
@@ -303,31 +295,33 @@ declare module 'gremlin' {
             toList(): Promise<Traverser[]>;
             hasNext(): Promise<boolean>;
             iterate(): Promise<Traverser[]>;
-            next(): Promise<{value:Traverser | TraverserValue | TraverserMapValue, done:boolean}>;
+            next(): Promise<{
+                value: Traverser | TraverserValue | TraverserMapValue;
+                done: boolean;
+            }>;
             toString(): string;
         }
 
-        export class TraversalSideEffects {
-        }
+        export class TraversalSideEffects {}
 
-        export const withOptions : {
-            tokens: '~tinkerpop.valueMap.tokens',
-            none: 0,
-            ids: 1,
-            labels: 2,
-            keys: 4,
-            values: 8,
-            all: 15,
-            indexer: '~tinkerpop.index.indexer',
-            list: 0,
-            map: 1
+        export const withOptions: {
+            tokens: '~tinkerpop.valueMap.tokens';
+            none: 0;
+            ids: 1;
+            labels: 2;
+            keys: 4;
+            values: 8;
+            all: 15;
+            indexer: '~tinkerpop.index.indexer';
+            list: 0;
+            map: 1;
         };
 
         export type TraverserValue = string | string[] | number | number[] | boolean | boolean[];
-        export type TraverserMapValue = {[key:string]: TraverserValue};
+        export type TraverserMapValue = { [key: string]: TraverserValue };
 
         export class Traverser {
-            constructor(unknown:unknown, bulk:number);
+            constructor(unknown: unknown, bulk: number);
             [key: string]: TraverserValue;
         }
 
@@ -408,25 +402,19 @@ declare module 'gremlin' {
             label: string;
             value: string;
         };
-
     }
 
     export namespace driver {
-
         export class RemoteConnection {
-            constructor(url: string, options:any);
+            constructor(url: string, options: any);
         }
 
-        export class RemoteTraversal extends process.Traversal {
+        export class RemoteTraversal extends process.Traversal {}
 
-        }
-
-        export class RemoteStrategy extends process.TraversalStrategy {
-
-        }
+        export class RemoteStrategy extends process.TraversalStrategy {}
 
         export class DriverRemoteConnection extends RemoteConnection {
-            close():Promise<void>;
+            close(): Promise<void>;
         }
     }
 }

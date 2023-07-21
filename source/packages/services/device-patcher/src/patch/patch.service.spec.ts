@@ -12,14 +12,13 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 
-import {PatchService} from './patch.service';
-import {PatchDao} from './patch.dao';
-import {PatchManager} from './patch.manager';
-import {createMockInstance} from 'jest-create-mock-instance';
-import {PatchStatus, PatchType} from './patch.model';
+import { createMockInstance } from 'jest-create-mock-instance';
+import { PatchDao } from './patch.dao';
+import { PatchManager } from './patch.manager';
+import { PatchStatus, PatchType } from './patch.model';
+import { PatchService } from './patch.service';
 
 describe('PatchService', () => {
-
     let mockedPatchDao: jest.Mocked<PatchDao>;
     let mockedPatchManager: jest.Mocked<PatchManager>;
     let instance: PatchService;
@@ -31,53 +30,55 @@ describe('PatchService', () => {
         instance = new PatchService(mockedPatchDao, mockedPatchManager);
     });
 
-
     it('should create a patch', async () => {
-    
-        const patches = [{
-            'patchTemplateName': '<some-template-name>',
-            'deviceId': '<some-device-id>',
-            'patchType': PatchType.AGENTBASED,
-            'extraVars': {
-                "key1": "val1",
-                "key2": "val2"
-            }
-        },{
-            'patchTemplateName': '<some-template-name>',
-            'deviceId': '<some-device-id>',
-            'patchType': PatchType.AGENTBASED,
-            'extraVars': {
-                "key1": "val1",
-                "key2": "val2"
-            }
-        }];
+        const patches = [
+            {
+                patchTemplateName: '<some-template-name>',
+                deviceId: '<some-device-id>',
+                patchType: PatchType.AGENTBASED,
+                extraVars: {
+                    key1: 'val1',
+                    key2: 'val2',
+                },
+            },
+            {
+                patchTemplateName: '<some-template-name>',
+                deviceId: '<some-device-id>',
+                patchType: PatchType.AGENTBASED,
+                extraVars: {
+                    key1: 'val1',
+                    key2: 'val2',
+                },
+            },
+        ];
 
-        const mockCreatePatch = mockedPatchManager.create =
-            jest.fn().mockReturnValueOnce(undefined);
-    
-        const mockSavePatch = mockedPatchDao.saveBatches =
-            jest.fn().mockReturnValueOnce(undefined);
+        const mockCreatePatch = (mockedPatchManager.create = jest
+            .fn()
+            .mockReturnValueOnce(undefined));
+
+        const mockSavePatch = (mockedPatchDao.saveBatches = jest
+            .fn()
+            .mockReturnValueOnce(undefined));
 
         await instance.createBulk(patches);
 
         expect(mockCreatePatch.mock.calls.length).toBe(2);
         expect(mockSavePatch.mock.calls.length).toBe(1);
-    
     });
 
     it('should deploy a patch', async () => {
         const patch = {
-            'patchTemplateName': '<some-template-name>',
-            'patchType': PatchType.AGENTBASED,
-            'deviceId': '<some-device-id>',
-            'patchId': '<some-patch-id>'
+            patchTemplateName: '<some-template-name>',
+            patchType: PatchType.AGENTBASED,
+            deviceId: '<some-device-id>',
+            patchId: '<some-patch-id>',
         };
 
-        const mockUpdatePatch = mockedPatchDao.update =
-            jest.fn().mockReturnValueOnce(undefined);
+        const mockUpdatePatch = (mockedPatchDao.update = jest.fn().mockReturnValueOnce(undefined));
 
-        const mockDeployPatch = mockedPatchManager.deploy =
-            jest.fn().mockReturnValueOnce(undefined);
+        const mockDeployPatch = (mockedPatchManager.deploy = jest
+            .fn()
+            .mockReturnValueOnce(undefined));
 
         const response = await instance.deploy(patch);
 
@@ -85,23 +86,23 @@ describe('PatchService', () => {
 
         expect(mockUpdatePatch.mock.calls.length).toBe(1);
         expect(mockDeployPatch.mock.calls.length).toBe(1);
-
     });
 
     it('should get a patch', async () => {
         const patchId = '<some-patch-id>';
         const mockedGetPatchResponse = {
-            'deviceId': 'my-test-core-id',
-            'patchId': '<some-patch-id>',
-            'createdAt': '<some-date>',
-            'updatedAt': '<some-date>',
-            'patchTemplateName': 'my-template',
-            'patchStatus': 'success',
-            'patchType': 'agentbased'
-        }
+            deviceId: 'my-test-core-id',
+            patchId: '<some-patch-id>',
+            createdAt: '<some-date>',
+            updatedAt: '<some-date>',
+            patchTemplateName: 'my-template',
+            patchStatus: 'success',
+            patchType: 'agentbased',
+        };
 
-        const mockGetPatch = mockedPatchDao.get =
-            jest.fn().mockReturnValueOnce(mockedGetPatchResponse);
+        const mockGetPatch = (mockedPatchDao.get = jest
+            .fn()
+            .mockReturnValueOnce(mockedGetPatchResponse));
 
         const response = await instance.get(patchId);
 
@@ -115,64 +116,68 @@ describe('PatchService', () => {
         expect(response).toHaveProperty('patchType');
 
         expect(mockGetPatch.mock.calls.length).toBe(1);
-
     });
 
     it('should list a patches', async () => {
         const deviceId = '<some-device-id>';
-        const mockedlistPatchResponse =[
-            [{
-                'deviceId': 'my-test-core-id',
-                'patchId': '<some-patch-id>',
-                'createdAt': '<some-date>',
-                'updatedAt': '<some-date>',
-                'patchTemplateName': 'my-template',
-                'patchStatus': 'success',
-                'patchType': 'agentbased'
-            },{
-                'deviceId': 'my-test-core-id',
-                'patchId': '<some-patch-id>',
-                'createdAt': '<some-date>',
-                'updatedAt': '<some-date>',
-                'patchTemplateName': 'my-template',
-                'patchStatus': 'failed',
-                'patchType': 'agentbased'
-            }]
-        ]
+        const mockedlistPatchResponse = [
+            [
+                {
+                    deviceId: 'my-test-core-id',
+                    patchId: '<some-patch-id>',
+                    createdAt: '<some-date>',
+                    updatedAt: '<some-date>',
+                    patchTemplateName: 'my-template',
+                    patchStatus: 'success',
+                    patchType: 'agentbased',
+                },
+                {
+                    deviceId: 'my-test-core-id',
+                    patchId: '<some-patch-id>',
+                    createdAt: '<some-date>',
+                    updatedAt: '<some-date>',
+                    patchTemplateName: 'my-template',
+                    patchStatus: 'failed',
+                    patchType: 'agentbased',
+                },
+            ],
+        ];
 
-
-        const mockListPatch = mockedPatchDao.list =
-            jest.fn().mockReturnValueOnce(mockedlistPatchResponse);
+        const mockListPatch = (mockedPatchDao.list = jest
+            .fn()
+            .mockReturnValueOnce(mockedlistPatchResponse));
 
         const response = await instance.listPatchesByDeviceId(deviceId);
 
         expect(response).toBeDefined();
         expect(response[0].length).toEqual(2);
         expect(mockListPatch.mock.calls.length).toBe(1);
-
     });
 
     it('should delete a patch', async () => {
         const patchId = '<some-patch-id>';
 
         const mockedGetPatchResponse = {
-            'deviceId': 'my-test-core-id',
-            'patchId': '<some-patch-id>',
-            'createdAt': '<some-date>',
-            'updatedAt': '<some-date>',
-            'patchTemplateName': 'my-template',
-            'patchStatus': 'success',
-            'patchType': 'agentbased'
-        }
+            deviceId: 'my-test-core-id',
+            patchId: '<some-patch-id>',
+            createdAt: '<some-date>',
+            updatedAt: '<some-date>',
+            patchTemplateName: 'my-template',
+            patchStatus: 'success',
+            patchType: 'agentbased',
+        };
 
-        const mockGetPatch = mockedPatchDao.get =
-            jest.fn().mockReturnValueOnce(mockedGetPatchResponse);
+        const mockGetPatch = (mockedPatchDao.get = jest
+            .fn()
+            .mockReturnValueOnce(mockedGetPatchResponse));
 
-        const mockDeletePatchDao = mockedPatchDao.delete =
-            jest.fn().mockReturnValueOnce(undefined);
+        const mockDeletePatchDao = (mockedPatchDao.delete = jest
+            .fn()
+            .mockReturnValueOnce(undefined));
 
-        const mockDeletePatchManager = mockedPatchManager.delete =
-            jest.fn().mockReturnValueOnce(undefined);
+        const mockDeletePatchManager = (mockedPatchManager.delete = jest
+            .fn()
+            .mockReturnValueOnce(undefined));
 
         const response = await instance.delete(patchId);
 
@@ -180,70 +185,67 @@ describe('PatchService', () => {
         expect(mockDeletePatchDao.mock.calls.length).toBe(1);
         expect(mockDeletePatchManager.mock.calls.length).toBe(1);
         expect(mockGetPatch.mock.calls.length).toBe(1);
-
     });
 
     it('should update a patch', async () => {
         const patch = {
-            'deviceId': 'my-test-core-id',
-            'patchId': '<some-patch-id>',
-            'patchTemplateName': 'my-template',
-        }
+            deviceId: 'my-test-core-id',
+            patchId: '<some-patch-id>',
+            patchTemplateName: 'my-template',
+        };
         const mockedGetPatchResponse = {
-            'deviceId': 'my-test-core-id',
-            'patchId': '<some-patch-id>',
-            'createdAt': '<some-date>',
-            'updatedAt': '<some-date>',
-            'patchTemplateName': 'my-template',
-            'patchStatus': 'success',
-            'patchType': 'agentbased'
-        }
+            deviceId: 'my-test-core-id',
+            patchId: '<some-patch-id>',
+            createdAt: '<some-date>',
+            updatedAt: '<some-date>',
+            patchTemplateName: 'my-template',
+            patchStatus: 'success',
+            patchType: 'agentbased',
+        };
 
-        const mockGetPatch = mockedPatchDao.get =
-            jest.fn().mockReturnValueOnce(mockedGetPatchResponse);
+        const mockGetPatch = (mockedPatchDao.get = jest
+            .fn()
+            .mockReturnValueOnce(mockedGetPatchResponse));
 
-        const mockUpdatePatch = mockedPatchDao.update =
-            jest.fn().mockReturnValueOnce(undefined);
+        const mockUpdatePatch = (mockedPatchDao.update = jest.fn().mockReturnValueOnce(undefined));
 
         const response = await instance.update(patch);
 
         expect(response).toBeUndefined();
         expect(mockUpdatePatch.mock.calls.length).toBe(1);
         expect(mockGetPatch.mock.calls.length).toBe(1);
-
     });
 
     it('should retry a patch', async () => {
         const patchId = '<some-patch-id>';
         const patch = {
-            'deviceId': 'my-test-core-id',
-            'patchTemplateName': 'my-template',
-            'patchStatus': PatchStatus.RETRY
-        }
+            deviceId: 'my-test-core-id',
+            patchTemplateName: 'my-template',
+            patchStatus: PatchStatus.RETRY,
+        };
 
         const mockedGetPatchResponse = {
-            'deviceId': 'my-test-core-id',
-            'patchId': '<some-patch-id>',
-            'createdAt': '<some-date>',
-            'updatedAt': '<some-date>',
-            'patchTemplateName': 'my-template',
-            'patchStatus': 'success',
-            'patchType': 'agentbased'
-        }
+            deviceId: 'my-test-core-id',
+            patchId: '<some-patch-id>',
+            createdAt: '<some-date>',
+            updatedAt: '<some-date>',
+            patchTemplateName: 'my-template',
+            patchStatus: 'success',
+            patchType: 'agentbased',
+        };
 
-        const mockGetPatch = mockedPatchDao.get =
-            jest.fn().mockReturnValueOnce(mockedGetPatchResponse);
+        const mockGetPatch = (mockedPatchDao.get = jest
+            .fn()
+            .mockReturnValueOnce(mockedGetPatchResponse));
 
-
-        const mockUpdatePatchManager = mockedPatchManager.update =
-            jest.fn().mockReturnValueOnce(undefined);
-
+        const mockUpdatePatchManager = (mockedPatchManager.update = jest
+            .fn()
+            .mockReturnValueOnce(undefined));
 
         const response = await instance.retry(patchId, patch);
 
         expect(response).toBeUndefined();
         expect(mockUpdatePatchManager.mock.calls.length).toBe(1);
         expect(mockGetPatch.mock.calls.length).toBe(1);
-
     });
-})
+});

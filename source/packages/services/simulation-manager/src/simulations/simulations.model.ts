@@ -13,26 +13,24 @@
 import { TaskOverride } from 'aws-sdk/clients/ecs';
 import { RunItem } from '../runs/runs.models';
 export interface SimulationItem {
-
     id?: string;
-    name:string;
-    deviceCount:number;
+    name: string;
+    deviceCount: number;
 
-    status?:SimulationStatus;
+    status?: SimulationStatus;
 
     /* attribute keys and values required by the tasks */
     tasks: {
         /* an optional setup specific task */
-        setup?: Task
+        setup?: Task;
         /* an optional pre-provisioning task  */
-        provisioning?: Task,
+        provisioning?: Task;
         /* the simulation task */
-        simulation: Task,
+        simulation: Task;
     };
 
     /* S3 key of any modules required by the tasks */
     modules?: StringMap;
-
 }
 
 export type Task = {
@@ -51,13 +49,13 @@ export type ThreadInfo = {
     rampUpSecs: number;
 };
 
-export type StringMap = {[key: string] : string};
-export type AnyMap = {[key: string] : string};
+export type StringMap = { [key: string]: string };
+export type AnyMap = { [key: string]: string };
 
 export enum SimulationStatus {
-    preparing='preparing',
-    provisioning='provisioning',
-    provisioned='provisioned'
+    preparing = 'preparing',
+    provisioning = 'provisioning',
+    provisioned = 'provisioned',
 }
 
 export interface TemplateProperties {
@@ -71,7 +69,7 @@ export interface TemplateProperties {
     };
 }
 
-export type SimulationTaskOverride = Pick<TaskOverride, 'taskRoleArn'>
+export type SimulationTaskOverride = Pick<TaskOverride, 'taskRoleArn'>;
 
 export interface CreateSimulationRequest {
     simulation: SimulationItem;

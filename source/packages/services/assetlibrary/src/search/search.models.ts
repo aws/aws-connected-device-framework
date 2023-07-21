@@ -15,21 +15,21 @@ import { DeviceBaseResource } from '../devices/devices.models';
 import { GroupBaseResource } from '../groups/groups.models';
 
 export enum SearchRequestFilterDirection {
-	in = 'in',
-	out = 'out'
+    in = 'in',
+    out = 'out',
 }
-export type SearchRequestFilterTraversal =  {
-	relation?: string;
-	direction?: SearchRequestFilterDirection;
+export type SearchRequestFilterTraversal = {
+    relation?: string;
+    direction?: SearchRequestFilterDirection;
 };
 export type SearchRequestFilter = {
-	traversals?: SearchRequestFilterTraversal[];
-	field: string;
-	value: string | number | boolean;
+    traversals?: SearchRequestFilterTraversal[];
+    field: string;
+    value: string | number | boolean;
 };
 export type SearchRequestFacet = {
-	traversals?: SearchRequestFilterTraversal[];
-	field: string;
+    traversals?: SearchRequestFilterTraversal[];
+    field: string;
 };
 export type SearchRequestFilters = SearchRequestFilter[];
 
@@ -61,12 +61,12 @@ export class SearchRequestModel {
     sort?: SortKeys;
 }
 
-export type FacetResults = {[key:string]: number};
+export type FacetResults = { [key: string]: number };
 export interface SearchResultsResource {
-	results: (GroupBaseResource|DeviceBaseResource)[] | FacetResults;
-	pagination?: {
-		offset: string|number;
-		count: number;
-	};
-	total?: number;
+    results: (GroupBaseResource | DeviceBaseResource)[] | FacetResults;
+    pagination?: {
+        offset: string | number;
+        count: number;
+    };
+    total?: number;
 }

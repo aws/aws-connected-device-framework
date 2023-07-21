@@ -11,106 +11,107 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface EditableTemplateResource {
-	name: string;
-	components: Component[];
-	jobConfig?: JobConfig;
-	deploymentPolicies?: DeploymentPolicy;
+    name: string;
+    components: Component[];
+    jobConfig?: JobConfig;
+    deploymentPolicies?: DeploymentPolicy;
 }
 export interface TemplateResource extends EditableTemplateResource {
-	version?: number | 'current';
+    version?: number | 'current';
 
-	deployment?: {
-		id: string;
-		thingGroupName: string;
-		jobId: string;
-	}
+    deployment?: {
+        id: string;
+        thingGroupName: string;
+        jobId: string;
+    };
 
-	createdAt: Date;
-	updatedAt?: Date;
+    createdAt: Date;
+    updatedAt?: Date;
 }
 
 export interface TemplateListResource {
-	templates: TemplateResource[];
-	pagination?: {
-		lastEvaluated?: {
-			name: string
-		},
-		count?: number
-	};
+    templates: TemplateResource[];
+    pagination?: {
+        lastEvaluated?: {
+            name: string;
+        };
+        count?: number;
+    };
 }
 export interface TemplateVersionListResource {
-	templates: TemplateResource[];
-	pagination?: {
-		lastEvaluated?: {
-			version: number
-		},
-		count?: number
-	};
+    templates: TemplateResource[];
+    pagination?: {
+        lastEvaluated?: {
+            version: number;
+        };
+        count?: number;
+    };
 }
 
 export interface TemplateItem {
-	name: string;
-	version?: number | 'current';
-	components: Component[];
-	jobConfig?: JobConfig;
-	deploymentPolicies?: DeploymentPolicy;
+    name: string;
+    version?: number | 'current';
+    components: Component[];
+    jobConfig?: JobConfig;
+    deploymentPolicies?: DeploymentPolicy;
 
-	deployment?: {
-		id: string;
-		thingGroupName: string;
-		jobId: string;
-	}
+    deployment?: {
+        id: string;
+        thingGroupName: string;
+        jobId: string;
+    };
 
-	createdAt?: Date;
-	updatedAt?: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface Component {
-	key: string;
-	version: string;
-	configurationUpdate?: {
-		merge?: string;
-		reset?: string[];
-	};
-	runWith?: {
-		posixUser: string;
-	};
-
+    key: string;
+    version: string;
+    configurationUpdate?: {
+        merge?: string;
+        reset?: string[];
+    };
+    runWith?: {
+        posixUser: string;
+    };
 }
 export interface JobConfig {
-	jobExecutionsRolloutConfig?: {
-		exponentialRate: {
-			baseRatePerMinute: number;
-			incrementFactor: number;
-			rateIncreaseCriteria: {
-				numberOfNotifiedThings: number;
-				numberOfSucceededThings: number;
-			};
-		};
-		maximumPerMinute?: number;
-	};
-	abortConfig?: {
-		criteriaList: [{
-			failureType: string;
-			action: AbortConfigFailureType;
-			thresholdPercentage: number;
-			minNumberOfExecutedThings: number;
-		}];
-	};
-	timeoutConfig?: {
-		inProgressTimeoutInMinutes: number;
-	};
+    jobExecutionsRolloutConfig?: {
+        exponentialRate: {
+            baseRatePerMinute: number;
+            incrementFactor: number;
+            rateIncreaseCriteria: {
+                numberOfNotifiedThings: number;
+                numberOfSucceededThings: number;
+            };
+        };
+        maximumPerMinute?: number;
+    };
+    abortConfig?: {
+        criteriaList: [
+            {
+                failureType: string;
+                action: AbortConfigFailureType;
+                thresholdPercentage: number;
+                minNumberOfExecutedThings: number;
+            },
+        ];
+    };
+    timeoutConfig?: {
+        inProgressTimeoutInMinutes: number;
+    };
 }
 
 export interface DeploymentPolicy {
-	failureHandlingPolicy: FailureHandlingPolicy;
-	componentUpdatePolicy: {
-		timeoutInSeconds: number;
-		action: DeploymentPolicyAction;
-	};
-	configurationValidationPolicy: {
-		timeoutInSeconds: number;
-	}
+    failureHandlingPolicy: FailureHandlingPolicy;
+    componentUpdatePolicy: {
+        timeoutInSeconds: number;
+        action: DeploymentPolicyAction;
+    };
+    configurationValidationPolicy: {
+        timeoutInSeconds: number;
+    };
 }
 
 export type AbortConfigFailureType = 'FAILED' | 'REJECTED' | 'TIMED_OUT' | 'ALL';

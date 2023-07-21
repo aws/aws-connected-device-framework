@@ -11,16 +11,15 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import { createMockInstance } from 'jest-create-mock-instance';
 
-import { BatchService } from './batch.service';
-import { TypeBatcher } from './batchers/type.batcher';
-import { CategoryBatcher } from './batchers/category.batcher';
 import { S3Utils } from '../utils/s3.util';
-
+import { BatchService } from './batch.service';
+import { CategoryBatcher } from './batchers/category.batcher';
+import { TypeBatcher } from './batchers/type.batcher';
 
 describe('BatchService', () => {
-
     let mockedTypeBatcher: jest.Mocked<TypeBatcher>;
     let mockedCategoryBatcher: jest.Mocked<CategoryBatcher>;
     let mockedS3Utils: jest.Mocked<S3Utils>;
@@ -33,73 +32,96 @@ describe('BatchService', () => {
     });
 
     it('should get batches by types', async () => {
-        const expected = [{
-            id: 'some-uuid',
-            category: 'device',
-            type: 'type1',
-            range: [0, 100],
-            timestamp: 'timestamp'
-        },{
-            id: 'some-uuid',
-            category: 'device',
-            type: 'type2',
-            range: [100,200],
-            timestamp: 'timestamp'
-        },{
-            id: 'some-uuid',
-            category: 'group',
-            type: 'type1',
-            range: [0, 100],
-            timestamp: 'timestamp'
-        },{
-            id: 'some-uuid',
-            category: 'group',
-            type: 'type2',
-            range: [100,200],
-            timestamp: 'timestamp'
-        }];
+        const expected = [
+            {
+                id: 'some-uuid',
+                category: 'device',
+                type: 'type1',
+                range: [0, 100],
+                timestamp: 'timestamp',
+            },
+            {
+                id: 'some-uuid',
+                category: 'device',
+                type: 'type2',
+                range: [100, 200],
+                timestamp: 'timestamp',
+            },
+            {
+                id: 'some-uuid',
+                category: 'group',
+                type: 'type1',
+                range: [0, 100],
+                timestamp: 'timestamp',
+            },
+            {
+                id: 'some-uuid',
+                category: 'group',
+                type: 'type2',
+                range: [100, 200],
+                timestamp: 'timestamp',
+            },
+        ];
 
         mockedTypeBatcher.batch = jest.fn().mockReturnValueOnce(expected);
 
-        instance = new BatchService(mockedCategoryBatcher, mockedTypeBatcher, 100, 'type', 'exportBucket', 'exportKey', mockedS3Utils);
+        instance = new BatchService(
+            mockedCategoryBatcher,
+            mockedTypeBatcher,
+            100,
+            'type',
+            'exportBucket',
+            'exportKey',
+            mockedS3Utils
+        );
 
         const response = await instance.batch();
 
         expect(response).toEqual(expected);
-
     });
 
     it('should get batches by categories', async () => {
-        const expected = [{
-            id: 'some-uuid',
-            category: 'device',
-            range: [0, 100],
-            timestamp: 'timestamp'
-        },{
-            id: 'some-uuid',
-            category: 'device',
-            range: [100,200],
-            timestamp: 'timestamp'
-        },{
-            id: 'some-uuid',
-            category: 'group',
-            range: [0, 100],
-            timestamp: 'timestamp'
-        },{
-            id: 'some-uuid',
-            category: 'group',
-            range: [100,200],
-            timestamp: 'timestamp'
-        }];
+        const expected = [
+            {
+                id: 'some-uuid',
+                category: 'device',
+                range: [0, 100],
+                timestamp: 'timestamp',
+            },
+            {
+                id: 'some-uuid',
+                category: 'device',
+                range: [100, 200],
+                timestamp: 'timestamp',
+            },
+            {
+                id: 'some-uuid',
+                category: 'group',
+                range: [0, 100],
+                timestamp: 'timestamp',
+            },
+            {
+                id: 'some-uuid',
+                category: 'group',
+                range: [100, 200],
+                timestamp: 'timestamp',
+            },
+        ];
 
         mockedCategoryBatcher.batch = jest.fn().mockReturnValueOnce(expected);
 
-        instance = new BatchService(mockedCategoryBatcher, mockedTypeBatcher, 100, 'category', 'exportBucket', 'exportKey', mockedS3Utils);
+        instance = new BatchService(
+            mockedCategoryBatcher,
+            mockedTypeBatcher,
+            100,
+            'category',
+            'exportBucket',
+            'exportKey',
+            mockedS3Utils
+        );
 
         const response = await instance.batch();
 
         expect(response).toEqual(expected);
-
     });
-
 });

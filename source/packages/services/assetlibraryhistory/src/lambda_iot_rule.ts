@@ -11,20 +11,21 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { container } from './di/inversify.config';
-import { logger } from './utils/logger';
-import { EventsService } from './events/events.service';
 import { TYPES } from './di/types';
 import { EventModel } from './events/events.models';
+import { EventsService } from './events/events.service';
 
-const eventsService:EventsService = container.get(TYPES.EventsService);
+const eventsService: EventsService = container.get(TYPES.EventsService);
 
 exports.iot_rule_handler = async (event: EventModel, _context: unknown) => {
-  logger.debug(`events.service create: in: event: ${JSON.stringify(event)}`);
+    logger.debug(`events.service create: in: event: ${JSON.stringify(event)}`);
 
-  // TODO validation
+    // TODO validation
 
-  await eventsService.create(event);
+    await eventsService.create(event);
 
-  logger.debug('events.service create: exit:');
+    logger.debug('events.service create: exit:');
 };

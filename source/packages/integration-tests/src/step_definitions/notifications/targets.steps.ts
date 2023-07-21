@@ -10,25 +10,25 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { expect, use } from 'chai';
+import chaiUuid = require('chai-uuid');
+use(chaiUuid);
+
+import { setDefaultTimeout, When, DataTable } from '@cucumber/cucumber';
+import { AUTHORIZATION_TOKEN, RESPONSE_STATUS } from '../common/common.steps';
+import { container } from '../../di/inversify.config';
 import {
     NOTIFICATIONS_CLIENT_TYPES,
     SubscriptionsService,
     TargetsService,
 } from '@awssolutions/cdf-notifications-client/dist';
-import { TargetResource } from '@awssolutions/cdf-notifications-client/dist/client/targets.model';
-import { DataTable, When, setDefaultTimeout } from '@cucumber/cucumber';
-import { expect, use } from 'chai';
-import { container } from '../../di/inversify.config';
-import { AUTHORIZATION_TOKEN, RESPONSE_STATUS } from '../common/common.steps';
 import {
     SUBSCRIPTION_ID,
     createTarget,
     deleteTarget,
     getAdditionalHeaders,
 } from './notifications.utils';
-import chaiUuid = require('chai-uuid');
-
-use(chaiUuid);
+import { TargetResource } from '@awssolutions/cdf-notifications-client/dist/client/targets.model';
 
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
@@ -73,16 +73,19 @@ When(
 When(
     'I remove {string} target with {string} {string}',
     async function (targetType: string, key: string, value: string) {
+        // logger.debug(`I remove '${targetType}' target with '${key}' '${value}'`);
         this[RESPONSE_STATUS] = null;
         try {
             const subscription = await subscriptionsService.getSubscription(
                 this[SUBSCRIPTION_ID],
                 getAdditionalHeaders(this[AUTHORIZATION_TOKEN])
             );
+            // logger.debug(`\t subscription: ${JSON.stringify(subscription)}`);
             expect(subscription, 'subscription').to.not.be.undefined;
             const target = subscription?.targets?.[targetType]?.filter(
                 (t: TargetResource) => t[key] === value
             )?.[0];
+            // logger.debug(`\t target: ${JSON.stringify(target)}`);
             expect(target, 'target').to.not.be.undefined;
             let endpoint: string;
             switch (targetType) {
@@ -104,6 +107,7 @@ When(
                     throw new Error('unknown target type');
             }
 
+            // logger.debug(`\t endpoint: ${endpoint}, value: ${target[endpoint]}`);
             await deleteTarget(
                 targetsService,
                 this,

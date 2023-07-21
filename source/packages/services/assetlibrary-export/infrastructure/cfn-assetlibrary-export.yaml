@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,7 +11,7 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Asset Library Export Service
@@ -20,12 +21,11 @@ Globals:
     OpenApiVersion: 3.0.1
 
 Parameters:
-
   ApplicationConfigurationOverride:
     Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
 
@@ -63,38 +63,35 @@ Parameters:
     Default: 10
 
 Conditions:
-
-  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+  DeployInVPC: !Not [!Equals [!Ref VpcId, 'N/A']]
 
 Resources:
-
   ApplicationPolicies:
     Type: 'AWS::IAM::ManagedPolicy'
     Metadata:
       cfn_nag:
         rules_to_suppress:
           - id: W13
-            reason: "This Policy allows lambda function to put Objects in S3 bucket"
+            reason: 'This Policy allows lambda function to put Objects in S3 bucket'
     Properties:
       Description: 'cdf-assetlibrary-export application policies'
-      Path: "/cdf/assetlibrary-export/applicationpolicies/"
+      Path: '/cdf/assetlibrary-export/applicationpolicies/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Action:
-              - "s3:PutObject"
-              - "s3:PutObjectAcl"
-              - "s3:GetObject"
-              - "s3:GetObjectAcl"
-              - "s3:DeleteObject"
-            Resource: !Sub "arn:aws:s3:::${BucketName}/*"
+              - 's3:PutObject'
+              - 's3:PutObjectAcl'
+              - 's3:GetObject'
+              - 's3:GetObjectAcl'
+              - 's3:DeleteObject'
+            Resource: !Sub 'arn:aws:s3:::${BucketName}/*'
           - Effect: Allow
             Action:
-              - "s3:ListBucket"
-              - "s3:GetBucketLocation"
-            Resource: !Sub "arn:aws:s3:::${BucketName}"
-
+              - 's3:ListBucket'
+              - 's3:GetBucketLocation'
+            Resource: !Sub 'arn:aws:s3:::${BucketName}'
 
   BatchExecutionRole:
     Type: AWS::IAM::Role
@@ -106,7 +103,7 @@ Resources:
           Principal:
             Service: lambda.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/cdf/assetlibrary-export/"
+      Path: '/cdf/assetlibrary-export/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
         - arn:aws:iam::aws:policy/AWSLambdaExecute
@@ -125,7 +122,7 @@ Resources:
           Principal:
             Service: lambda.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/cdf/assetlibrary-export/"
+      Path: '/cdf/assetlibrary-export/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
         - arn:aws:iam::aws:policy/AWSLambdaExecute
@@ -189,10 +186,9 @@ Resources:
 
   # State Machine Definition
   AssetLibraryExportStateMachine:
-    Type: "AWS::StepFunctions::StateMachine"
+    Type: 'AWS::StepFunctions::StateMachine'
     Properties:
-      DefinitionString:
-        !Sub
+      DefinitionString: !Sub
         - |-
           {
             "Comment": "State Machine to Batch and perform ETL to export data from Asset Library to S3",
@@ -240,10 +236,10 @@ Resources:
             }
           }
         - {
-          BatchLambdaArn: !GetAtt BatchLambdaFunction.Arn,
-          ETLLambdaArn: !GetAtt ETLLambdaFunction.Arn,
-          ExportCompletionSNSTopicArn: !Ref ExportCompletionSNSTopic
-        }
+            BatchLambdaArn: !GetAtt BatchLambdaFunction.Arn,
+            ETLLambdaArn: !GetAtt ETLLambdaFunction.Arn,
+            ExportCompletionSNSTopicArn: !Ref ExportCompletionSNSTopic,
+          }
       RoleArn: !GetAtt AssetLibraryExportStateMachineRole.Arn
 
   ExportCompletionSNSTopic:
@@ -253,59 +249,59 @@ Resources:
       KmsMasterKeyId: !Ref KmsKeyId
 
   AssetLibraryExportStateMachineRole:
-    Type: "AWS::IAM::Role"
+    Type: 'AWS::IAM::Role'
     Properties:
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Effect: "Allow"
+          - Effect: 'Allow'
             Principal:
               Service:
                 - !Sub states.${AWS::Region}.amazonaws.com
-            Action: "sts:AssumeRole"
-      Path: "/"
+            Action: 'sts:AssumeRole'
+      Path: '/'
       Policies:
         - PolicyName: InvokePolicy
           PolicyDocument:
-            Version: "2012-10-17"
+            Version: '2012-10-17'
             Statement:
               - Effect: Allow
                 Action:
-                  - "lambda:InvokeFunction"
+                  - 'lambda:InvokeFunction'
                 Resource:
                   - !GetAtt ETLLambdaFunction.Arn
                   - !GetAtt BatchLambdaFunction.Arn
               - Effect: Allow
                 Action:
-                  - "sns:Publish"
+                  - 'sns:Publish'
                 Resource: !Ref ExportCompletionSNSTopic
               - Action:
                   - kms:Decrypt
                   - kms:GenerateDataKey*
                 Effect: Allow
-                Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+                Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}'
 
 Outputs:
   ETLLambdaFunctionName:
     Description: AssetLibrary Export ETL Lambda Function name
     Value: !Ref ETLLambdaFunction
     Export:
-      Name: !Sub "cdf-assetLibrary-export-${Environment}-etlLambdaFunctionName"
+      Name: !Sub 'cdf-assetLibrary-export-${Environment}-etlLambdaFunctionName'
 
   BatchLambdaFunctionName:
     Description: AssetLibrary Export Batch Lambda Function name
     Value: !Ref BatchLambdaFunction
     Export:
-      Name: !Sub "cdf-assetLibrary-export-${Environment}-batchLambdaFunctionName"
+      Name: !Sub 'cdf-assetLibrary-export-${Environment}-batchLambdaFunctionName'
 
   ExportCompletionSnsTopic:
     Description: SNS Topic
     Value: !Ref ExportCompletionSNSTopic
     Export:
-      Name: !Sub "cdf-assetLibrary-export-${Environment}-exportCompletionSnsTopic"
+      Name: !Sub 'cdf-assetLibrary-export-${Environment}-exportCompletionSnsTopic'
 
   AssetLibraryExportStateMachineArn:
     Description: AssetLibrary Export State Machine ARN
     Value: !Ref AssetLibraryExportStateMachine
     Export:
-      Name: !Sub "cdf-assetlibrary-export-${Environment}-stateMachineArn"
+      Name: !Sub 'cdf-assetlibrary-export-${Environment}-stateMachineArn'

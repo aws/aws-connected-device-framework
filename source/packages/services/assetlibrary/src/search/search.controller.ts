@@ -10,6 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Request, Response } from 'express';
 import { inject } from 'inversify';
 import {
@@ -25,7 +26,6 @@ import { TYPES } from '../di/types';
 import { SearchAssembler } from '../search/search.assembler';
 import { SearchResultsResource } from '../search/search.models';
 import { handleError } from '../utils/errors';
-import { logger } from '../utils/logger';
 import { SearchService } from './search.service';
 
 @controller('')

@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-commandandcontrol-client",
-  "version": "0.0.2",
+  "version": "2.2.0",
   "description": "CDF Command and Control Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -8,13 +8,15 @@
   "scripts": {
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
-    "build": "npx tsc -b",
+    "build": "tsc",
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/cdf-client-request-signer": "^0.0.2",
-    "@awssolutions/cdf-assetlibrary-client": "^0.0.2",
-    "@awssolutions/cdf-lambda-invoke": "^0.0.2",
+    "@awssolutions/cdf-assetlibrary-client": "^2.2.0",
+    "@awssolutions/cdf-client-request-signer": "^2.2.0",
+    "@awssolutions/cdf-config-inject": "^2.2.0",
+    "@awssolutions/cdf-lambda-invoke": "^2.2.0",
+    "@awssolutions/simple-cdf-logger": "^2.2.0",
     "dotenv-flow": "~3.2.0",
     "http-errors": "~2.0.0",
     "inversify": "6.0.1",
@@ -30,7 +32,7 @@
     "winston-transport": "4.4.0"
   },
   "peerDependencies": {
-    "aws-sdk": "2.1048.0"
+    "aws-sdk": "2.1386.0"
   },
   "devDependencies": {
     "@types/dotenv-flow": "~3.2.0",

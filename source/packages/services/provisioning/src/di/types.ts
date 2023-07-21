@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const TYPES = {
-
     Controller: Symbol.for('Controller'),
     ThingsService: Symbol.for('ThingsService'),
     EventEmitter: Symbol.for('EventEmitter'),
@@ -20,7 +19,9 @@ export const TYPES = {
     ClientIdEnforcementPolicyStepProcessor: Symbol.for('ClientIdEnforcementPolicyStepProcessor'),
     CreateDeviceCertificateStepProcessor: Symbol.for('CreateDeviceCertificateStepProcessor'),
     CreateAwsCertiticateProcessor: Symbol.for('CreateAwsCertiticateProcessor'),
-    RegisterDeviceCertificateWithoutCAStepProcessor: Symbol.for('RegisterDeviceCertificateWithoutCAStepProcessor'),
+    RegisterDeviceCertificateWithoutCAStepProcessor: Symbol.for(
+        'RegisterDeviceCertificateWithoutCAStepProcessor',
+    ),
     UseACMPCAStepProcessor: Symbol.for('UseACMPCAStepProcessor'),
     AttachAdditionalPoliciesProcessor: Symbol.for('AttachAdditionalPoliciesProcessor'),
 
@@ -35,6 +36,5 @@ export const TYPES = {
     ACMPCA: Symbol.for('ACMPCA'),
     ACMPCAFactory: Symbol.for('Factory<ACMPCA>'),
     STS: Symbol.for('STS'),
-    STSFactory: Symbol.for('Factory<STS>')
-
+    STSFactory: Symbol.for('Factory<STS>'),
 };

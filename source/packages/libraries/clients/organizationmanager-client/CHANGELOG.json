@@ -1,9 +1,39 @@
 {
-  "name": "@cdf/organizationmanager-client",
+  "name": "@awssolutions/cdf-organizationmanager-client",
   "entries": [
     {
+      "version": "0.0.0",
+      "tag": "@awssolutions/cdf-organizationmanager-client_v0.0.0",
+      "date": "Thu, 09 Mar 2023 22:35:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.1.0",
+      "tag": "@awssolutions/cdf-organizationmanager-client_v0.1.0",
+      "date": "Tue, 07 Mar 2023 23:22:30 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^0.0.0 to ^0.1.0."
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.0",
+      "tag": "@awssolutions/cdf-organizationmanager-client_v1.1.0",
+      "date": "Thu, 16 Feb 2023 18:41:02 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^1.0.0 to ^1.1.0."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.2.1",
-      "tag": "@cdf/organizationmanager-client_v0.2.1",
+      "tag": "@awssolutions/cdf-organizationmanager-client_v0.2.1",
       "date": "Wed, 03 Aug 2022 02:00:13 GMT",
       "comments": {
         "patch": [
@@ -15,7 +45,7 @@
     },
     {
       "version": "0.2.0",
-      "tag": "@cdf/organizationmanager-client_v0.2.0",
+      "tag": "@awssolutions/cdf-organizationmanager-client_v0.2.0",
       "date": "Fri, 29 Jul 2022 02:59:14 GMT",
       "comments": {
         "minor": [
@@ -27,7 +57,7 @@
     },
     {
       "version": "4.1.1",
-      "tag": "@cdf/assetlibrary-client_v4.1.1",
+      "tag": "@awssolutions/cdf-assetlibrary-client_v4.1.1",
       "date": "Wed, 11 Aug 2021 01:26:49 GMT",
       "comments": {
         "patch": [
@@ -39,7 +69,7 @@
     },
     {
       "version": "4.1.0",
-      "tag": "@cdf/assetlibrary-client_v4.1.0",
+      "tag": "@awssolutions/cdf-assetlibrary-client_v4.1.0",
       "date": "Fri, 23 Jul 2021 16:14:32 GMT",
       "comments": {
         "minor": [
@@ -51,7 +81,7 @@
     },
     {
       "version": "4.0.2",
-      "tag": "@cdf/assetlibrary-client_v4.0.2",
+      "tag": "@awssolutions/cdf-assetlibrary-client_v4.0.2",
       "date": "Wed, 21 Jul 2021 16:46:57 GMT",
       "comments": {}
     }

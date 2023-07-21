@@ -11,10 +11,14 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { injectable } from "inversify";
-import { PathHelper } from "../utils/path.helper";
-import { RequestHeaders } from "./common.model";
-import { BulkComponentsResource, BulkComponentsResult, ComponentResource } from "./components.model";
+import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
+import { RequestHeaders } from './common.model';
+import {
+    BulkComponentsResource,
+    BulkComponentsResult,
+    ComponentResource,
+} from './components.model';
 
 export interface BulkComponentsService {
     bulkCreateComponents(

@@ -11,28 +11,28 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface NewDeployment {
-	coreName: string;
+    coreName: string;
 }
 
 export interface Deployment extends NewDeployment {
-	taskId?: string,
-	taskStatus: DeploymentTaskStatus;
-	statusMessage?: string;
-	createdAt?: Date;
-	updatedAt?: Date;
+    taskId?: string;
+    taskStatus: DeploymentTaskStatus;
+    statusMessage?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export type DeploymentTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';
 
-export const DeploymentTaskCreatedEvent = 'DeploymentTask Created Event'
+export const DeploymentTaskCreatedEvent = 'DeploymentTask Created Event';
 
-export const DeploymentTaskDeletedEvent = 'DeploymentTask Deleted Event'
+export const DeploymentTaskDeletedEvent = 'DeploymentTask Deleted Event';
 
 export type DeploymentTaskId = string;
 
 export type DeploymentTaskCreatedPayload = {
-	coreName: string,
-	taskId: DeploymentTaskId,
-	status: 'success' | 'failed'
-	message?: string
-}
+    coreName: string;
+    taskId: DeploymentTaskId;
+    status: 'success' | 'failed';
+    message?: string;
+};

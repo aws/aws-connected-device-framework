@@ -10,7 +10,6 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-
 import { SearchRequestModel } from '@awssolutions/cdf-assetlibrary-client';
 
 export interface NewDeployment {
@@ -75,13 +74,13 @@ export interface NewDeploymentTask {
 }
 
 export interface DeploymentTask extends NewDeploymentTask {
-	id: string;
-	taskStatus: DeploymentTaskStatus;
-	statusMessage?: string;
-	createdAt: Date;
-	updatedAt?: Date;
+    id: string;
+    taskStatus: DeploymentTaskStatus;
+    statusMessage?: string;
+    createdAt: Date;
+    updatedAt?: Date;
 
-	deployments?: Deployment[];
+    deployments?: Deployment[];
 
     // no. of batches the task has been split into
     batchesTotal?: number;
@@ -89,4 +88,4 @@ export interface DeploymentTask extends NewDeploymentTask {
     batchesComplete?: number;
 }
 
-export type DeploymentTaskStatus = 'Waiting'|'InProgress'|'Success'|'Failure';
+export type DeploymentTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';

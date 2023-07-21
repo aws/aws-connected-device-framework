@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,7 +11,7 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: |
@@ -20,20 +21,20 @@ Description: |
 
 Parameters:
   RESTLambdaFunction:
-    Description:  Lambda Name to apply autoscaling.
+    Description: Lambda Name to apply autoscaling.
     Type: String
     MinLength: 1
-  RESTLambdaAlias:  
+  RESTLambdaAlias:
     Description: Lambda alias to apply autoscaling.
     Type: String
     Default: live
     MinLength: 1
   RESTLambdaMinCapacity:
-    Description:  The minimum value to scale to in response to a scale-in event.
+    Description: The minimum value to scale to in response to a scale-in event.
     Type: Number
     Default: 1
   RESTLambdaMaxCapacity:
-    Description:  The maximum value to scale to in response to a scale-out event.
+    Description: The maximum value to scale to in response to a scale-out event.
     Type: Number
     Default: 100
   RESTLambdaTargetUtilization:
@@ -41,20 +42,20 @@ Parameters:
     Type: Number
     Default: 0.7
   SQSLambdaFunction:
-    Description:  Lambda Name to apply autoscaling.
+    Description: Lambda Name to apply autoscaling.
     Type: String
     MinLength: 1
-  SQSLambdaAlias:  
+  SQSLambdaAlias:
     Description: Lambda alias to apply autoscaling.
     Type: String
     Default: live
     MinLength: 1
   SQSLambdaMinCapacity:
-    Description:  The minimum value to scale to in response to a scale-in event.
+    Description: The minimum value to scale to in response to a scale-in event.
     Type: Number
     Default: 1
   SQSLambdaMaxCapacity:
-    Description:  The maximum value to scale to in response to a scale-out event.
+    Description: The maximum value to scale to in response to a scale-out event.
     Type: Number
     Default: 100
   SQSLambdaTargetUtilization:
@@ -62,15 +63,15 @@ Parameters:
     Type: Number
     Default: 0.7
   DynamoDbTableName:
-    Description:  DynamoDB table Name to apply autoscaling.
+    Description: DynamoDB table Name to apply autoscaling.
     Type: String
     MinLength: 1
   DynamoDbMinCapacity:
-    Description:  The minimum value to scale to in response to a scale-in event.
+    Description: The minimum value to scale to in response to a scale-in event.
     Type: Number
     Default: 5
   DynamoDbMaxCapacity:
-    Description:  The maximum value to scale to in response to a scale-out event.
+    Description: The maximum value to scale to in response to a scale-out event.
     Type: Number
     Default: 100
   DynamoDbTargetUtilization:
@@ -78,9 +79,7 @@ Parameters:
     Type: Number
     Default: 70
 
-
 Resources:
-
   ##### REST LAMBDA AUTOSCALING #####
 
   RESTLambdaScalableTarget:
@@ -88,7 +87,7 @@ Resources:
     Properties:
       MaxCapacity: !Ref RESTLambdaMaxCapacity
       MinCapacity: !Ref RESTLambdaMinCapacity
-      ResourceId: !Sub "function:${RESTLambdaFunction}:${RESTLambdaAlias}"
+      ResourceId: !Sub 'function:${RESTLambdaFunction}:${RESTLambdaAlias}'
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/lambda.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_Lambda
       ScalableDimension: lambda:function:ProvisionedConcurrency
       ServiceNamespace: lambda
@@ -111,7 +110,7 @@ Resources:
     Properties:
       MaxCapacity: !Ref SQSLambdaMaxCapacity
       MinCapacity: !Ref SQSLambdaMinCapacity
-      ResourceId: !Sub "function:${SQSLambdaFunction}:${SQSLambdaAlias}"
+      ResourceId: !Sub 'function:${SQSLambdaFunction}:${SQSLambdaAlias}'
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/lambda.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_Lambda
       ScalableDimension: lambda:function:ProvisionedConcurrency
       ServiceNamespace: lambda
@@ -127,199 +126,194 @@ Resources:
         PredefinedMetricSpecification:
           PredefinedMetricType: LambdaProvisionedConcurrencyUtilization
 
-
   ##### DYNAMODB TABLE AUTOSCALING #####
 
-  DynamoDbTableWriteCapacityScalableTarget: 
+  DynamoDbTableWriteCapacityScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
-    Properties: 
+    Properties:
       MaxCapacity: !Ref DynamoDbMaxCapacity
       MinCapacity: !Ref DynamoDbMinCapacity
       ResourceId: !Sub table/${DynamoDbTableName}
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
-      ScalableDimension: "dynamodb:table:WriteCapacityUnits"
+      ScalableDimension: 'dynamodb:table:WriteCapacityUnits'
       ServiceNamespace: dynamodb
 
-  DynamoDbTableWriteScalingPolicy: 
+  DynamoDbTableWriteScalingPolicy:
     Type: AWS::ApplicationAutoScaling::ScalingPolicy
-    Properties: 
+    Properties:
       PolicyName: dynamodbScalingPolicy
       PolicyType: TargetTrackingScaling
       ScalingTargetId: !Ref DynamoDbTableWriteCapacityScalableTarget
-      TargetTrackingScalingPolicyConfiguration: 
+      TargetTrackingScalingPolicyConfiguration:
         TargetValue: !Ref DynamoDbTargetUtilization
         ScaleInCooldown: 60
         ScaleOutCooldown: 60
-        PredefinedMetricSpecification: 
+        PredefinedMetricSpecification:
           PredefinedMetricType: DynamoDBWriteCapacityUtilization
 
-  DynamoDbTableReadCapacityScalableTarget: 
+  DynamoDbTableReadCapacityScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
-    Properties: 
+    Properties:
       MaxCapacity: !Ref DynamoDbMaxCapacity
       MinCapacity: !Ref DynamoDbMinCapacity
       ResourceId: !Sub table/${DynamoDbTableName}
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
-      ScalableDimension: "dynamodb:table:ReadCapacityUnits"
+      ScalableDimension: 'dynamodb:table:ReadCapacityUnits'
       ServiceNamespace: dynamodb
 
-  DynamoDbTableReadScalingPolicy: 
+  DynamoDbTableReadScalingPolicy:
     Type: AWS::ApplicationAutoScaling::ScalingPolicy
-    Properties: 
+    Properties:
       PolicyName: dynamodbScalingPolicy
       PolicyType: TargetTrackingScaling
       ScalingTargetId: !Ref DynamoDbTableReadCapacityScalableTarget
-      TargetTrackingScalingPolicyConfiguration: 
+      TargetTrackingScalingPolicyConfiguration:
         TargetValue: !Ref DynamoDbTargetUtilization
         ScaleInCooldown: 60
         ScaleOutCooldown: 60
-        PredefinedMetricSpecification: 
+        PredefinedMetricSpecification:
           PredefinedMetricType: DynamoDBReadCapacityUtilization
-
 
   ##### DYNAMODB GSI1 AUTOSCALING #####
 
-  DynamoDbGsi1WriteCapacityScalableTarget: 
+  DynamoDbGsi1WriteCapacityScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
-    Properties: 
+    Properties:
       MaxCapacity: !Ref DynamoDbMaxCapacity
       MinCapacity: !Ref DynamoDbMinCapacity
       ResourceId: !Sub table/${DynamoDbTableName}/index/siKey1-pk-index
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
-      ScalableDimension: "dynamodb:index:WriteCapacityUnits"
+      ScalableDimension: 'dynamodb:index:WriteCapacityUnits'
       ServiceNamespace: dynamodb
 
-  DynamoDbGsi1WriteScalingPolicy: 
+  DynamoDbGsi1WriteScalingPolicy:
     Type: AWS::ApplicationAutoScaling::ScalingPolicy
-    Properties: 
+    Properties:
       PolicyName: dynamodbScalingPolicy
       PolicyType: TargetTrackingScaling
       ScalingTargetId: !Ref DynamoDbGsi1WriteCapacityScalableTarget
-      TargetTrackingScalingPolicyConfiguration: 
+      TargetTrackingScalingPolicyConfiguration:
         TargetValue: !Ref DynamoDbTargetUtilization
         ScaleInCooldown: 60
         ScaleOutCooldown: 60
-        PredefinedMetricSpecification: 
+        PredefinedMetricSpecification:
           PredefinedMetricType: DynamoDBWriteCapacityUtilization
 
-  DynamoDbGsi1ReadCapacityScalableTarget: 
+  DynamoDbGsi1ReadCapacityScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
-    Properties: 
+    Properties:
       MaxCapacity: !Ref DynamoDbMaxCapacity
       MinCapacity: !Ref DynamoDbMinCapacity
       ResourceId: !Sub table/${DynamoDbTableName}/index/siKey1-pk-index
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
-      ScalableDimension: "dynamodb:index:ReadCapacityUnits"
+      ScalableDimension: 'dynamodb:index:ReadCapacityUnits'
       ServiceNamespace: dynamodb
 
-  DynamoGsi1DbReadScalingPolicy: 
+  DynamoGsi1DbReadScalingPolicy:
     Type: AWS::ApplicationAutoScaling::ScalingPolicy
-    Properties: 
+    Properties:
       PolicyName: dynamodbScalingPolicy
       PolicyType: TargetTrackingScaling
       ScalingTargetId: !Ref DynamoDbGsi1ReadCapacityScalableTarget
-      TargetTrackingScalingPolicyConfiguration: 
+      TargetTrackingScalingPolicyConfiguration:
         TargetValue: !Ref DynamoDbTargetUtilization
         ScaleInCooldown: 60
         ScaleOutCooldown: 60
-        PredefinedMetricSpecification: 
+        PredefinedMetricSpecification:
           PredefinedMetricType: DynamoDBReadCapacityUtilization
-
 
   ##### DYNAMODB GSI2 AUTOSCALING #####
 
-  DynamoDbGsi2WriteCapacityScalableTarget: 
+  DynamoDbGsi2WriteCapacityScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
-    Properties: 
+    Properties:
       MaxCapacity: !Ref DynamoDbMaxCapacity
       MinCapacity: !Ref DynamoDbMinCapacity
       ResourceId: !Sub table/${DynamoDbTableName}/index/siKey2-siSort2-index
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
-      ScalableDimension: "dynamodb:index:WriteCapacityUnits"
+      ScalableDimension: 'dynamodb:index:WriteCapacityUnits'
       ServiceNamespace: dynamodb
 
-  DynamoDbGsi2WriteScalingPolicy: 
+  DynamoDbGsi2WriteScalingPolicy:
     Type: AWS::ApplicationAutoScaling::ScalingPolicy
-    Properties: 
+    Properties:
       PolicyName: dynamodbScalingPolicy
       PolicyType: TargetTrackingScaling
       ScalingTargetId: !Ref DynamoDbGsi2WriteCapacityScalableTarget
-      TargetTrackingScalingPolicyConfiguration: 
+      TargetTrackingScalingPolicyConfiguration:
         TargetValue: !Ref DynamoDbTargetUtilization
         ScaleInCooldown: 60
         ScaleOutCooldown: 60
-        PredefinedMetricSpecification: 
+        PredefinedMetricSpecification:
           PredefinedMetricType: DynamoDBWriteCapacityUtilization
 
-  DynamoDbGsi2ReadCapacityScalableTarget: 
+  DynamoDbGsi2ReadCapacityScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
-    Properties: 
+    Properties:
       MaxCapacity: !Ref DynamoDbMaxCapacity
       MinCapacity: !Ref DynamoDbMinCapacity
       ResourceId: !Sub table/${DynamoDbTableName}/index/siKey2-siSort2-index
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
-      ScalableDimension: "dynamodb:index:ReadCapacityUnits"
+      ScalableDimension: 'dynamodb:index:ReadCapacityUnits'
       ServiceNamespace: dynamodb
 
-  DynamoGsi2DbReadScalingPolicy: 
+  DynamoGsi2DbReadScalingPolicy:
     Type: AWS::ApplicationAutoScaling::ScalingPolicy
-    Properties: 
+    Properties:
       PolicyName: dynamodbScalingPolicy
       PolicyType: TargetTrackingScaling
       ScalingTargetId: !Ref DynamoDbGsi2ReadCapacityScalableTarget
-      TargetTrackingScalingPolicyConfiguration: 
+      TargetTrackingScalingPolicyConfiguration:
         TargetValue: !Ref DynamoDbTargetUtilization
         ScaleInCooldown: 60
         ScaleOutCooldown: 60
-        PredefinedMetricSpecification: 
+        PredefinedMetricSpecification:
           PredefinedMetricType: DynamoDBReadCapacityUtilization
-
 
   ##### DYNAMODB GSI3 AUTOSCALING #####
 
-  DynamoDbGsi3WriteCapacityScalableTarget: 
+  DynamoDbGsi3WriteCapacityScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
-    Properties: 
+    Properties:
       MaxCapacity: !Ref DynamoDbMaxCapacity
       MinCapacity: !Ref DynamoDbMinCapacity
       ResourceId: !Sub table/${DynamoDbTableName}/index/siKey3-siSort3-index
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
-      ScalableDimension: "dynamodb:index:WriteCapacityUnits"
+      ScalableDimension: 'dynamodb:index:WriteCapacityUnits'
       ServiceNamespace: dynamodb
 
-  DynamoDbGsi3WriteScalingPolicy: 
+  DynamoDbGsi3WriteScalingPolicy:
     Type: AWS::ApplicationAutoScaling::ScalingPolicy
-    Properties: 
+    Properties:
       PolicyName: dynamodbScalingPolicy
       PolicyType: TargetTrackingScaling
       ScalingTargetId: !Ref DynamoDbGsi3WriteCapacityScalableTarget
-      TargetTrackingScalingPolicyConfiguration: 
+      TargetTrackingScalingPolicyConfiguration:
         TargetValue: !Ref DynamoDbTargetUtilization
         ScaleInCooldown: 60
         ScaleOutCooldown: 60
-        PredefinedMetricSpecification: 
+        PredefinedMetricSpecification:
           PredefinedMetricType: DynamoDBWriteCapacityUtilization
 
-  DynamoDbGsi3ReadCapacityScalableTarget: 
+  DynamoDbGsi3ReadCapacityScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
-    Properties: 
+    Properties:
       MaxCapacity: !Ref DynamoDbMaxCapacity
       MinCapacity: !Ref DynamoDbMinCapacity
       ResourceId: !Sub table/${DynamoDbTableName}/index/siKey3-siSort3-index
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
-      ScalableDimension: "dynamodb:index:ReadCapacityUnits"
+      ScalableDimension: 'dynamodb:index:ReadCapacityUnits'
       ServiceNamespace: dynamodb
 
-  DynamoGsi3DbReadScalingPolicy: 
+  DynamoGsi3DbReadScalingPolicy:
     Type: AWS::ApplicationAutoScaling::ScalingPolicy
-    Properties: 
+    Properties:
       PolicyName: dynamodbScalingPolicy
       PolicyType: TargetTrackingScaling
       ScalingTargetId: !Ref DynamoDbGsi3ReadCapacityScalableTarget
-      TargetTrackingScalingPolicyConfiguration: 
+      TargetTrackingScalingPolicyConfiguration:
         TargetValue: !Ref DynamoDbTargetUtilization
         ScaleInCooldown: 60
         ScaleOutCooldown: 60
-        PredefinedMetricSpecification: 
+        PredefinedMetricSpecification:
           PredefinedMetricType: DynamoDBReadCapacityUtilization
-

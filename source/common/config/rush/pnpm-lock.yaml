@@ -70,6 +70,7 @@ specifiers:
   '@rush-temp/cdf-simulation-launcher': file:./projects/cdf-simulation-launcher.tgz
   '@rush-temp/cdf-simulation-manager': file:./projects/cdf-simulation-manager.tgz
   '@rush-temp/cdf-thing-list-builder': file:./projects/cdf-thing-list-builder.tgz
+  '@rush-temp/simple-cdf-logger': file:./projects/simple-cdf-logger.tgz
   '@rushstack/eslint-config': 2.3.4
   '@types/adm-zip': 0.4.34
   '@types/archiver': ~5.3.1
@@ -100,8 +101,7 @@ specifiers:
   '@types/js-yaml': 3.12.5
   '@types/json-stable-stringify': 1.0.32
   '@types/json2csv': 4.5.1
-  '@types/jsonpath-plus': 5.0.2
-  '@types/jsonwebtoken': 8.5.0
+  '@types/jsonpath-plus': 5.0.1
   '@types/jwk-to-pem': 2.0.0
   '@types/lodash': 4.14.168
   '@types/luxon': 2.0.9
@@ -129,7 +129,7 @@ specifiers:
   aws-iot-device-sdk: 2.2.8
   aws-iot-device-sdk-v2: 1.6.5
   aws-lambda: 1.0.6
-  aws-sdk: 2.1048.0
+  aws-sdk: 2.1386.0
   aws-serverless-express: 3.4.0
   aws-xray-sdk: ~3.3.4
   aws-xray-sdk-core: ~3.3.4
@@ -223,7 +223,7 @@ specifiers:
   superagent: 7.1.1
   supports-color: 8.0.0
   ts-jest: ~29.0.5
-  typed-rest-client: 1.8.0
+  typed-rest-client: 1.8.9
   typescript: ~4.9.4
   url: 0.11.0
   uuid: 8.3.2
@@ -302,6 +302,7 @@ dependencies:
   '@rush-temp/cdf-simulation-launcher': file:projects/cdf-simulation-launcher.tgz_supports-color@8.0.0
   '@rush-temp/cdf-simulation-manager': file:projects/cdf-simulation-manager.tgz_supports-color@8.0.0
   '@rush-temp/cdf-thing-list-builder': file:projects/cdf-thing-list-builder.tgz_supports-color@8.0.0
+  '@rush-temp/simple-cdf-logger': file:projects/simple-cdf-logger.tgz_supports-color@8.0.0
   '@rushstack/eslint-config': 2.3.4_545c65bc4c1ad2972898efd0609dbc00
   '@types/adm-zip': 0.4.34
   '@types/archiver': 5.3.2
@@ -332,8 +333,7 @@ dependencies:
   '@types/js-yaml': 3.12.5
   '@types/json-stable-stringify': 1.0.32
   '@types/json2csv': 4.5.1
-  '@types/jsonpath-plus': 5.0.2
-  '@types/jsonwebtoken': 8.5.0
+  '@types/jsonpath-plus': 5.0.1
   '@types/jwk-to-pem': 2.0.0
   '@types/lodash': 4.14.168
   '@types/luxon': 2.0.9
@@ -361,7 +361,7 @@ dependencies:
   aws-iot-device-sdk: 2.2.8_supports-color@8.0.0
   aws-iot-device-sdk-v2: 1.6.5_supports-color@8.0.0
   aws-lambda: 1.0.6
-  aws-sdk: 2.1048.0
+  aws-sdk: 2.1386.0
   aws-serverless-express: 3.4.0
   aws-xray-sdk: 3.3.6
   aws-xray-sdk-core: 3.3.6
@@ -455,7 +455,7 @@ dependencies:
   superagent: 7.1.1_supports-color@8.0.0
   supports-color: 8.0.0
   ts-jest: 29.0.5_3284db61681bf9266d06d0d2919b2000
-  typed-rest-client: 1.8.0
+  typed-rest-client: 1.8.9
   typescript: 4.9.5
   url: 0.11.0
   uuid: 8.3.2
@@ -646,6 +646,47 @@ packages:
     resolution: {integrity: sha512-BAZhriHHfvnGOd0P9xcnGu8DGyxOa0lgmEw+Tc6nZpXJzx0P+1Sd76q5gE5d/IZ0r5VTB6rfwwKUoG6iShNCwQ==}
     dependencies:
       tslib: 2.4.0
+    dev: false
+
+  /@aws-sdk/client-cloudformation/3.38.0:
+    resolution: {integrity: sha512-IFuNaSrrA2RDv+JJKCXfrBQi9+TN4vQpA6DqNjsK1Upovo5k4J/CU5Or2LifiXK1zlgQMVkwfCIaZsHNTDQGhw==}
+    engines: {node: '>=10.0.0'}
+    dependencies:
+      '@aws-crypto/sha256-browser': 1.2.2
+      '@aws-crypto/sha256-js': 1.2.2
+      '@aws-sdk/client-sts': 3.38.0
+      '@aws-sdk/config-resolver': 3.38.0
+      '@aws-sdk/credential-provider-node': 3.38.0
+      '@aws-sdk/fetch-http-handler': 3.38.0
+      '@aws-sdk/hash-node': 3.38.0
+      '@aws-sdk/invalid-dependency': 3.38.0
+      '@aws-sdk/middleware-content-length': 3.38.0
+      '@aws-sdk/middleware-host-header': 3.38.0
+      '@aws-sdk/middleware-logger': 3.38.0
+      '@aws-sdk/middleware-retry': 3.38.0
+      '@aws-sdk/middleware-serde': 3.38.0
+      '@aws-sdk/middleware-signing': 3.38.0
+      '@aws-sdk/middleware-stack': 3.38.0
+      '@aws-sdk/middleware-user-agent': 3.38.0
+      '@aws-sdk/node-config-provider': 3.38.0
+      '@aws-sdk/node-http-handler': 3.38.0
+      '@aws-sdk/protocol-http': 3.38.0
+      '@aws-sdk/smithy-client': 3.38.0
+      '@aws-sdk/types': 3.38.0
+      '@aws-sdk/url-parser': 3.38.0
+      '@aws-sdk/util-base64-browser': 3.37.0
+      '@aws-sdk/util-base64-node': 3.37.0
+      '@aws-sdk/util-body-length-browser': 3.37.0
+      '@aws-sdk/util-body-length-node': 3.37.0
+      '@aws-sdk/util-user-agent-browser': 3.38.0
+      '@aws-sdk/util-user-agent-node': 3.38.0
+      '@aws-sdk/util-utf8-browser': 3.37.0
+      '@aws-sdk/util-utf8-node': 3.37.0
+      '@aws-sdk/util-waiter': 3.38.0
+      entities: 2.2.0
+      fast-xml-parser: 3.19.0
+      tslib: 2.4.0
+      uuid: 8.3.2
     dev: false
 
   /@aws-sdk/client-cloudformation/3.53.0:
@@ -5776,8 +5817,8 @@ packages:
       '@types/node': 18.11.19
     dev: false
 
-  /@types/jsonpath-plus/5.0.2:
-    resolution: {integrity: sha512-s67hpzTVH+gyVli40QMna0CBloDeRmzwujvCJgV/lp6D7GhBbbH9bJDSzBJuckcaXsOtCFKn1DtQMFo9i9vtKg==}
+  /@types/jsonpath-plus/5.0.1:
+    resolution: {integrity: sha512-kdhqBgp6Wm5bDAvEg1iX/QQGwt7pfFp7XnGDi/ETuw1BMM6a1n/FwanCemzVocedXvTXJuOX0bPmu/WpMejHTA==}
     dev: false
 
   /@types/jsonwebtoken/8.5.0:
@@ -5786,8 +5827,8 @@ packages:
       '@types/node': 18.11.19
     dev: false
 
-  /@types/jsonwebtoken/9.0.0:
-    resolution: {integrity: sha512-mM4TkDpA9oixqg1Fv2vVpOFyIVLJjm5x4k0V+K/rEsizfjD7Tk7LKk3GTtbB7KCfP0FEHQtsZqFxYA0+sijNVg==}
+  /@types/jsonwebtoken/9.0.1:
+    resolution: {integrity: sha512-c5ltxazpWabia/4UzhIoaDcIza4KViOQhdbjRlfcIGVnsE3c3brkz9Z+F/EeJIECOQP7W7US2hNE930cWWkPiw==}
     dependencies:
       '@types/node': 18.11.19
     dev: false
@@ -6696,7 +6737,7 @@ packages:
     engines: {node: '>= 4.8.0'}
     dependencies:
       antlr4: 4.8.0
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       bignumber.js: 3.1.2
       jmespath: 0.15.0
       uuid: 3.4.0
@@ -7087,7 +7128,7 @@ packages:
     resolution: {integrity: sha512-Z9lmZBiDYejzjMWuQSDXuZWAqAun6vGt7WApB1r0f8tLNf0IlTGsH30qENfP1kXeTbbMgPpt1bPEeMZjYDTXxQ==}
     hasBin: true
     dependencies:
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       commander: 3.0.2
       js-yaml: 3.14.1
       watchpack: 2.4.0
@@ -7097,7 +7138,7 @@ packages:
     resolution: {integrity: sha512-9GNFMRrEMG5y3Jvv+V4azWvc+qNWdWLTjDdhf/zgMlz8haaaLWv0xeAIWxz9PuWUBawsVxy0zZotjCdR3Xq+2w==}
     hasBin: true
     dependencies:
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       commander: 3.0.2
       js-yaml: 3.14.1
       watchpack: 2.4.0
@@ -7116,6 +7157,22 @@ packages:
       url: 0.10.3
       uuid: 3.3.2
       xml2js: 0.4.19
+    dev: false
+
+  /aws-sdk/2.1386.0:
+    resolution: {integrity: sha512-bmUvpNRR4x1YvTaAm7WK/2lSNVPrNuiYlleU47GA5Xskh8PKaWedGHvGinH2YwhC720hM0Qc4f4/snUPGJ0eYg==}
+    engines: {node: '>= 10.0.0'}
+    dependencies:
+      buffer: 4.9.2
+      events: 1.1.1
+      ieee754: 1.1.13
+      jmespath: 0.16.0
+      querystring: 0.2.0
+      sax: 1.2.1
+      url: 0.10.3
+      util: 0.12.5
+      uuid: 8.0.0
+      xml2js: 0.5.0
     dev: false
 
   /aws-serverless-express/3.3.6:
@@ -7545,7 +7602,7 @@ packages:
     resolution: {integrity: sha512-xq+q3SRMOxGivLhBNaUdC64hDTQwejJ+H0T/NB1XMtTVEwNTrfFF3gAxiyW0Bu/xWEGhjVKgUcMhCrUy2+uCWg==}
     dependencies:
       base64-js: 1.5.1
-      ieee754: 1.1.13
+      ieee754: 1.2.1
       isarray: 1.0.0
     dev: false
 
@@ -10094,7 +10151,7 @@ packages:
     resolution: {integrity: sha512-g5OzvQbwzRtTpgBUVRAkTho+ZPyPdzOwQN7cLePvoXAh6Ji8xtOS8KGaMunWE+bz+LBBA48H4hVcHN/Ss8imww==}
     dependencies:
       ansi-styles: 3.2.1
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       chalk: 2.4.2
       figures: 2.0.0
       inquirer: 1.2.3
@@ -10369,6 +10426,13 @@ packages:
   /is-generator-fn/2.1.0:
     resolution: {integrity: sha512-cTIB4yPYL/Grw0EaSzASzg6bBy9gqCofvWN8okThAYIxKJZC+udlRAmGbM0XLeniEJSs8uEgHPGuHSe1XsOLSQ==}
     engines: {node: '>=6'}
+    dev: false
+
+  /is-generator-function/1.0.10:
+    resolution: {integrity: sha512-jsEjy9l3yiXEQ+PsXdmBwEPcOxaXWLspKdplFUVI9vq1iZgIekeC0L167qeu86czQaxed3q/Uzuw0swL0irL8A==}
+    engines: {node: '>= 0.4'}
+    dependencies:
+      has-tostringtag: 1.0.0
     dev: false
 
   /is-generator/1.0.3:
@@ -11583,6 +11647,11 @@ packages:
     engines: {node: '>= 0.6.0'}
     dev: false
 
+  /jmespath/0.16.0:
+    resolution: {integrity: sha512-9FzQjJ7MATs1tSpnco1K6ayiYE3figslrXA72G2HQ/n76RzvYlofyi5QM+iX4YRs/pu3yzxlVQSST23+dMDknw==}
+    engines: {node: '>= 0.6.0'}
+    dev: false
+
   /js-sdsl/2.1.4:
     resolution: {integrity: sha512-/Ew+CJWHNddr7sjwgxaVeIORIH4AMVC9dy0hPf540ZGMVgS9d3ajwuVdyhDt6/QUvT8ATjR3yuYBKsS79F+H4A==}
     dev: false
@@ -11752,22 +11821,6 @@ packages:
   /jsonpath-plus/5.0.7:
     resolution: {integrity: sha512-7TS6wsiw1s2UMK/A6nA4n0aUJuirCVhJ87nWX5je5MPOl0z5VTr2qs7nMP8NZ2ed3rlt6kePTqddgVPE9F0i0w==}
     engines: {node: '>=10.0.0'}
-    dev: false
-
-  /jsonwebtoken/8.5.1:
-    resolution: {integrity: sha512-XjwVfRS6jTMsqYs0EsuJ4LGxXV14zQybNd4L2r0UvbVnSF9Af8x7p5MzbJ90Ioz/9TI41/hTCvznF/loiSzn8w==}
-    engines: {node: '>=4', npm: '>=1.4.28'}
-    dependencies:
-      jws: 3.2.2
-      lodash.includes: 4.3.0
-      lodash.isboolean: 3.0.3
-      lodash.isinteger: 4.0.4
-      lodash.isnumber: 3.0.3
-      lodash.isplainobject: 4.0.6
-      lodash.isstring: 4.0.1
-      lodash.once: 4.1.1
-      ms: 2.1.3
-      semver: 5.7.1
     dev: false
 
   /jsonwebtoken/9.0.0:
@@ -11989,24 +12042,8 @@ packages:
     resolution: {integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==}
     dev: false
 
-  /lodash.includes/4.3.0:
-    resolution: {integrity: sha512-W3Bx6mdkRTGtlJISOvVD/lbqjTlPPUDTMnlXZFnVwi9NKJ6tiAk6LVdlhZMm17VZisqhKcgzpO5Wz91PCt5b0w==}
-    dev: false
-
-  /lodash.isboolean/3.0.3:
-    resolution: {integrity: sha512-Bz5mupy2SVbPHURB98VAcw+aHh4vRV5IPNhILUCsOzRmsTmSQ17jIuqopAentWoehktxGd9e/hbIXq980/1QJg==}
-    dev: false
-
   /lodash.isequal/4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
-    dev: false
-
-  /lodash.isinteger/4.0.4:
-    resolution: {integrity: sha512-DBwtEWN2caHQ9/imiNeEA5ys1JoRtRfY3d7V9wkqtbycnAmTvRRmbHKDV4a0EYc678/dia0jrte4tjYwVBaZUA==}
-    dev: false
-
-  /lodash.isnumber/3.0.3:
-    resolution: {integrity: sha512-QYqzpfwO3/CWf3XP+Z+tkQsfaLL/EnUlXWVkIk5FUPc4sBdTehEqZONuyRt2P67PXAk+NXmTBcc97zw9t1FQrw==}
     dev: false
 
   /lodash.isobjectlike/4.0.0:
@@ -12015,10 +12052,6 @@ packages:
 
   /lodash.isplainobject/4.0.6:
     resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
-    dev: false
-
-  /lodash.isstring/4.0.1:
-    resolution: {integrity: sha512-0wJxfxH1wgO3GrbuP+dTTk7op+6L41QCXbGINEmD+ny/G/eCqGzxyCsh7159S+mgDDcoarnBw6PC1PS5+wUGgw==}
     dev: false
 
   /lodash.map/4.6.0:
@@ -12031,10 +12064,6 @@ packages:
 
   /lodash.memoize/4.1.2:
     resolution: {integrity: sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag==}
-    dev: false
-
-  /lodash.once/4.1.1:
-    resolution: {integrity: sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==}
     dev: false
 
   /lodash.pad/4.5.1:
@@ -13386,13 +13415,6 @@ packages:
     resolution: {integrity: sha512-t+x1zEHDjBwkDGY5v5ApnZ/utcd4XYDiJsaQQoptTXgUXX95sDg1elCdJghzicm7n2mbCBJ3uYWr6M22SO19rg==}
     dev: false
 
-  /qs/6.10.5:
-    resolution: {integrity: sha512-O5RlPh0VFtR78y79rgcgKK4wbAI0C5zGVLztOIdpWX6ep368q5Hv6XRxDvXuZ9q3C6v+e3n8UfZZJw7IIG27eQ==}
-    engines: {node: '>=0.6'}
-    dependencies:
-      side-channel: 1.0.4
-    dev: false
-
   /qs/6.11.0:
     resolution: {integrity: sha512-MvjoMCJwEarSbUYk5O+nmoSzSutSsTwF85zcHPQ9OrlFoZOYIjaqBAJIqIXjptyD5vThxGq52Xu/MaJzRkIk4Q==}
     engines: {node: '>=0.6'}
@@ -13814,7 +13836,7 @@ packages:
     resolution: {integrity: sha512-o9Nn70AmciuPaFM3nBTh3C3Xs1oDTNcp9Ec1KwPuoOPLFdmx8jKnRWQkMvFyiqrm7TRyz0n3VXux/GwtBfmChw==}
     hasBin: true
     dependencies:
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       lodash.map: 4.6.0
       lodash.trimend: 4.5.1
       lodash.trimstart: 4.5.1
@@ -14013,6 +14035,7 @@ packages:
 
   /shortid/2.2.15:
     resolution: {integrity: sha512-5EaCy2mx2Jgc/Fdn9uuDuNIIfWBpzY4XIlhoqtXF6qsf+/+SGZ+FxDdX/ZsMZiWupIWNqAEmiNY4RC+LSmCeOw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     dependencies:
       nanoid: 2.1.11
     dev: false
@@ -15030,12 +15053,12 @@ packages:
     resolution: {integrity: sha512-eiDBDOmkih5pMbo9OqsqPRGMljLodLcwd5XD5JbtNB0o89xZAwynY9EdCDsJU7LtcVCClu9DvM7/0Ep1hYX3EQ==}
     dev: false
 
-  /typed-rest-client/1.8.0:
-    resolution: {integrity: sha512-Nu1MrdH6ECrRW5gHoRAdubgCs4oH6q5/J76jsEC8bVDfvVoVPkigukPalhMHPwb7ZvpsZqPptd5zpt/QdtrdBw==}
+  /typed-rest-client/1.8.9:
+    resolution: {integrity: sha512-uSmjE38B80wjL85UFX3sTYEUlvZ1JgCRhsWj/fJ4rZ0FqDUFoIuodtiVeE+cUqiVTOKPdKrp/sdftD15MDek6g==}
     dependencies:
-      qs: 6.10.5
+      qs: 6.11.0
       tunnel: 0.0.6
-      underscore: 1.8.3
+      underscore: 1.13.6
     dev: false
 
   /typedarray-to-buffer/3.1.5:
@@ -15090,8 +15113,8 @@ packages:
     resolution: {integrity: sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==}
     dev: false
 
-  /underscore/1.8.3:
-    resolution: {integrity: sha1-Tz+1OxBuYJf8+ctBCfKl6b36UCI=}
+  /underscore/1.13.6:
+    resolution: {integrity: sha512-+A5Sja4HP1M08MaXya7p5LvjuM7K6q/2EaC0+iovj/wOcMsTzMvDFbasi/oSapiwOlt252IqsKqPjCl7huKS0A==}
     dev: false
 
   /union-value/1.0.1:
@@ -15198,6 +15221,16 @@ packages:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: false
 
+  /util/0.12.5:
+    resolution: {integrity: sha512-kZf/K6hEIrWHI6XqOFUiiMa+79wE/D8Q+NCNAWclkyg3b4d2k7s0QGepNjiABc+aR3N1PAyHL7p6UcLY6LmrnA==}
+    dependencies:
+      inherits: 2.0.4
+      is-arguments: 1.1.1
+      is-generator-function: 1.0.10
+      is-typed-array: 1.1.9
+      which-typed-array: 1.1.8
+    dev: false
+
   /utils-merge/1.0.1:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
@@ -15212,6 +15245,11 @@ packages:
   /uuid/3.4.0:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
     deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    hasBin: true
+    dev: false
+
+  /uuid/8.0.0:
+    resolution: {integrity: sha512-jOXGuXZAWdsTH7eZLtyXMqUb9EcWMGZNbL9YcGBJl4MH4nrxHmZJhEHvyLFrkxo+28uLb/NYRcStH48fnD0Vzw==}
     hasBin: true
     dev: false
 
@@ -15557,6 +15595,19 @@ packages:
       xmlbuilder: 9.0.7
     dev: false
 
+  /xml2js/0.5.0:
+    resolution: {integrity: sha512-drPFnkQJik/O+uPKpqSgr22mpuFHqKdbS835iAQrUC73L2F5WkboIRd63ai/2Yg6I1jzifPFKH2NTK+cfglkIA==}
+    engines: {node: '>=4.0.0'}
+    dependencies:
+      sax: 1.2.1
+      xmlbuilder: 11.0.1
+    dev: false
+
+  /xmlbuilder/11.0.1:
+    resolution: {integrity: sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==}
+    engines: {node: '>=4.0'}
+    dev: false
+
   /xmlbuilder/9.0.7:
     resolution: {integrity: sha512-7YXTQc3P2l9+0rjaUbLwMKRhtmwg1M1eDf6nag7urC7pIPYLD9W/jmzQ4ptRSUbodw5S0jfoGTflLemQibSpeQ==}
     engines: {node: '>=4.0'}
@@ -15672,7 +15723,7 @@ packages:
     dev: false
 
   file:projects/cdf-assetlibrary-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-p11h34diVfKs2TN93U98Xz66kaczXo9/SfqijAfpnsleJrlwVqLbqEUrhPzvFOn+WeM5rNJbVNNREuiSRKp/Fw==, tarball: file:projects/cdf-assetlibrary-client.tgz}
+    resolution: {integrity: sha512-82jZp3ko/UpAJhPgrZxqtGnskE+oAOw1lQOIqGH87g7I06eLsY6g0J5r4bb0Ln7F+YwteiHLwCSWTu5jg0uUlw==, tarball: file:projects/cdf-assetlibrary-client.tgz}
     id: file:projects/cdf-assetlibrary-client.tgz
     name: '@rush-temp/cdf-assetlibrary-client'
     version: 0.0.0
@@ -15686,7 +15737,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       cz-customizable: 6.3.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0_supports-color@8.0.0
@@ -15722,7 +15773,7 @@ packages:
     dev: false
 
   file:projects/cdf-assetlibrary-export.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-Ekwuj+sF9Jz0u0PYZ0HtKmQ56wE1qzQxgggfjnn9kwiFtOdoXhz59lnrSXeM5ySV9XwkKnRlLjf783tYGhmhyw==, tarball: file:projects/cdf-assetlibrary-export.tgz}
+    resolution: {integrity: sha512-iNVze/x5hqGBiNNUZf8xpm3m0an1pUrPs5ejPd7m4SWIJlr543wmP75nfjkBa2hLbPBb2PVLU+yo7aQIBH2Elg==, tarball: file:projects/cdf-assetlibrary-export.tgz}
     id: file:projects/cdf-assetlibrary-export.tgz
     name: '@rush-temp/cdf-assetlibrary-export'
     version: 0.0.0
@@ -15736,14 +15787,14 @@ packages:
       '@types/express-version-request': 1.7.1
       '@types/jest': 26.0.18
       '@types/json-stable-stringify': 1.0.32
-      '@types/jsonwebtoken': 8.5.0
+      '@types/jsonwebtoken': 9.0.1
       '@types/lodash': 4.14.168
       '@types/luxon': 2.0.9
       '@types/prettyjson': 0.0.29
       '@types/shortid': 0.0.29
       '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
       '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       dotenv: 8.6.0
       dotenv-flow: 3.2.0
       eslint: 7.15.0_supports-color@8.0.0
@@ -15759,7 +15810,7 @@ packages:
       jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
-      jsonwebtoken: 8.5.1
+      jsonwebtoken: 9.0.0
       lodash: 4.17.21
       logform: 2.4.2
       luxon: 2.3.0
@@ -15787,7 +15838,7 @@ packages:
     dev: false
 
   file:projects/cdf-assetlibrary-history.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-4q8IeDafjUf+Msf3FFwrrzcjzC4D0kUAclLoXQm1A0XeLUjfjGxMfXro/KTWcOWcu8TIp6VdyCMUW91V3RA6ww==, tarball: file:projects/cdf-assetlibrary-history.tgz}
+    resolution: {integrity: sha512-2yTaArasLPtQrsoIgvr8XfV+CtohslK7Sdc8BZ8pzvEqO4hZWra/VpUjeP2kM7Yw6MG/2Zk77MISakfKzdQc3g==, tarball: file:projects/cdf-assetlibrary-history.tgz}
     id: file:projects/cdf-assetlibrary-history.tgz
     name: '@rush-temp/cdf-assetlibrary-history'
     version: 0.0.0
@@ -15805,7 +15856,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       atob: 2.1.2
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       body-parser: 1.20.1
       btoa: 1.2.1
       cors: 2.8.5
@@ -15845,7 +15896,7 @@ packages:
     dev: false
 
   file:projects/cdf-assetlibrary.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-crjNGzq78mEqzv4AaXehOR+SaJEvNDTeBvIKb+V5VyuH7CIMKR+qJeOo6RJKW4XfQUAKeZpoVmcNKec+YOCBvA==, tarball: file:projects/cdf-assetlibrary.tgz}
+    resolution: {integrity: sha512-xBdP9wPMiEUdGsvo7cZ/IXTbkyutpXWkIDzmzg2l3T0QL109ne2luGAWB7VccsqtmElOlgr26bUQ3fq0DcU3JA==, tarball: file:projects/cdf-assetlibrary.tgz}
     id: file:projects/cdf-assetlibrary.tgz
     name: '@rush-temp/cdf-assetlibrary'
     version: 0.0.0
@@ -15859,13 +15910,13 @@ packages:
       '@types/express-version-request': 1.7.1
       '@types/jest': 26.0.23
       '@types/json-stable-stringify': 1.0.32
-      '@types/jsonwebtoken': 8.5.0
+      '@types/jsonwebtoken': 9.0.1
       '@types/prettyjson': 0.0.29
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       ajv: 6.12.3
       async-local-storage: 2.3.1
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       body-parser: 1.20.1
       cors: 2.8.5
       dotenv: 8.6.0
@@ -15887,7 +15938,7 @@ packages:
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
       json-stable-stringify: 1.0.1
-      jsonwebtoken: 8.5.1
+      jsonwebtoken: 9.0.0
       just-clone: 3.2.1
       logform: 2.4.2
       mime: 2.5.2
@@ -15912,7 +15963,7 @@ packages:
     dev: false
 
   file:projects/cdf-assetlibraryhistory-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-3jphuDCBTUcM6+/j9TFebdHqAiWU841A5tp7JEXV0kFgtgTHLBBgJTiSpxP31/yJUoLVsRd3uzxr6sP+J+q/wQ==, tarball: file:projects/cdf-assetlibraryhistory-client.tgz}
+    resolution: {integrity: sha512-9Te56oAzAXoZZC6kzlmp59yHfatzy9QQAtHjI91Dtm8si9SO9K0g0sQEzpXbeeZbAo3e8BL1DH/zGn2PeG0h9w==, tarball: file:projects/cdf-assetlibraryhistory-client.tgz}
     id: file:projects/cdf-assetlibraryhistory-client.tgz
     name: '@rush-temp/cdf-assetlibraryhistory-client'
     version: 0.0.0
@@ -15924,7 +15975,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0_supports-color@8.0.0
       http-errors: 2.0.0
@@ -15958,7 +16009,7 @@ packages:
     dev: false
 
   file:projects/cdf-auth-devicecert.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-u2volTyWKrJ219EIVwvn+bGMH+cc87Q2T4ow6YmyyIbzD85M0kt9Gc5u6kD6P+wVJANKo5N66j84APkyi2Ub+Q==, tarball: file:projects/cdf-auth-devicecert.tgz}
+    resolution: {integrity: sha512-suoRfC6SMtzQdAbkJ3tUZngHALS78ONycWiI7X5Pm3ci1CNDMv3b2XTHBRtwuJA6Zr9NDnzaxUhVUnHCOttLEA==, tarball: file:projects/cdf-auth-devicecert.tgz}
     id: file:projects/cdf-auth-devicecert.tgz
     name: '@rush-temp/cdf-auth-devicecert'
     version: 0.0.0
@@ -15999,7 +16050,7 @@ packages:
     dev: false
 
   file:projects/cdf-auth-jwt.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-xhY8e6HHMnBbuTdgVreuejSW5+GFGMIBTc5vze5mpteKeqPOVuu1j0UjfnCA2k1c8FadZtsO7Sn/Kj/+0173jA==, tarball: file:projects/cdf-auth-jwt.tgz}
+    resolution: {integrity: sha512-hzHR6Cs9XU9CeYEjr4DHT1TDI6gvXQu2ovRtyFyqX88HkwHKZXi8iEkaee38tduTlM6NGz+ffiMAxNyShYizaQ==, tarball: file:projects/cdf-auth-jwt.tgz}
     id: file:projects/cdf-auth-jwt.tgz
     name: '@rush-temp/cdf-auth-jwt'
     version: 0.0.0
@@ -16008,7 +16059,7 @@ packages:
       '@types/aws-lambda': 8.10.65
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
-      '@types/jsonwebtoken': 8.5.0
+      '@types/jsonwebtoken': 9.0.1
       '@types/jwk-to-pem': 2.0.0
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
@@ -16022,7 +16073,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
-      jsonwebtoken: 8.5.1
+      jsonwebtoken: 9.0.0
       jwk-to-pem: 2.0.4
       logform: 2.4.2
       nodemon: 2.0.20
@@ -16046,7 +16097,7 @@ packages:
     dev: false
 
   file:projects/cdf-bulkcerts-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-nzjVUpMOhgdHvXBdTQixSzBvX2iov879zIecd5nIM/A3tC57YClfyE229BBFN9IWipbkiVcGEeuAwZ98wYGDSA==, tarball: file:projects/cdf-bulkcerts-client.tgz}
+    resolution: {integrity: sha512-80eSmJUTmp8CLh6AElphOIsTbQ4ZF2X79ltS/l6Lt6X+Kp4vl4+cyR40/k+RISao3527Jl9zOt0YvGp0xXBYHw==, tarball: file:projects/cdf-bulkcerts-client.tgz}
     id: file:projects/cdf-bulkcerts-client.tgz
     name: '@rush-temp/cdf-bulkcerts-client'
     version: 0.0.0
@@ -16059,7 +16110,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0_supports-color@8.0.0
       http-errors: 2.0.0
@@ -16093,7 +16144,7 @@ packages:
     dev: false
 
   file:projects/cdf-bulkcerts.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-b0u74GsuIbQ8NyIbre3Up/rAGwrmoEERVpyH2CGJoTntBBNRphI4fgWxhsw+ORE5z4s1uGKf2dZ/2Xv5eSmzyQ==, tarball: file:projects/cdf-bulkcerts.tgz}
+    resolution: {integrity: sha512-RKMWWLNPXZaNGcbpPvixucVqebFeKntY84kzxy9HOfLNX3VdBxGNZ+zqNIPhe59aUGm+1Qm/EMFlyuYm2I2q5A==, tarball: file:projects/cdf-bulkcerts.tgz}
     id: file:projects/cdf-bulkcerts.tgz
     name: '@rush-temp/cdf-bulkcerts'
     version: 0.0.0
@@ -16110,7 +16161,7 @@ packages:
       '@types/uuid': 8.3.0
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       aws-serverless-express: 3.4.0
       body-parser: 1.20.1
       cors: 2.8.5
@@ -16152,7 +16203,7 @@ packages:
     dev: false
 
   file:projects/cdf-certificate-activator.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-U1NsxzQaSyifgJK6QR8hta8TA4VHMiopJQaW6Jd9/CLvDZcpvnEiAhqobn8sJhLmjdcivrAmGsMi6GKHRN+j+A==, tarball: file:projects/cdf-certificate-activator.tgz}
+    resolution: {integrity: sha512-p97oGTOC8B/G6/3nQMGao9Q4hGYEaS1r/Kd7nt9IyFx0tdBDYApz+yuskN0MF8K9XPyRQpIlaPdYQcz72oxNlQ==, tarball: file:projects/cdf-certificate-activator.tgz}
     id: file:projects/cdf-certificate-activator.tgz
     name: '@rush-temp/cdf-certificate-activator'
     version: 0.0.0
@@ -16165,7 +16216,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       atob: 2.1.2
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       config: 3.3.6
       dotenv: 8.6.0
       dotenv-flow: 3.2.0
@@ -16202,7 +16253,7 @@ packages:
     dev: false
 
   file:projects/cdf-certificate-vendor.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-odYQdxZWPy2mW67TeRSCO5ws7AS4kMFrhevoTSysMCFtS5wZfzzc8TtBI4Co1hC19gwAOrxpJaqKq1O4z3jkTg==, tarball: file:projects/cdf-certificate-vendor.tgz}
+    resolution: {integrity: sha512-PKCu8L1ySIjgB7LF8OA/zhsL93EdsyIBKSZUP61G6wXB7eSHKjBagz/oZceJuS8qpg4zcCGok6Tzu6Sw/iEemw==, tarball: file:projects/cdf-certificate-vendor.tgz}
     id: file:projects/cdf-certificate-vendor.tgz
     name: '@rush-temp/cdf-certificate-vendor'
     version: 0.0.0
@@ -16213,7 +16264,7 @@ packages:
       '@types/pem': 1.9.5
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       dotenv: 8.6.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0_supports-color@8.0.0
@@ -16283,7 +16334,7 @@ packages:
     dev: false
 
   file:projects/cdf-command-and-control.tgz:
-    resolution: {integrity: sha512-nI5ESuiwwp7GjymFTKUvW+dZFIk9t5YAS9IusMRV2muTgBHMxLXyfJzDrfa4F52yMYMM31uLh3eaQY7kWf+RsQ==, tarball: file:projects/cdf-command-and-control.tgz}
+    resolution: {integrity: sha512-0RcKxcGmd/6RPHuXHe24d9dWbmMgcJB5XN3IFkrtKPpA7/L7DiYyagbcNKqKLittFLeUxSx4vRRA/VUq2LcvPQ==, tarball: file:projects/cdf-command-and-control.tgz}
     name: '@rush-temp/cdf-command-and-control'
     version: 0.0.0
     dependencies:
@@ -16299,7 +16350,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       ajv: 6.12.3
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       aws-xray-sdk: 3.3.6
       aws-xray-sdk-core: 3.3.6
       body-parser: 1.20.1
@@ -16342,7 +16393,7 @@ packages:
     dev: false
 
   file:projects/cdf-commandandcontrol-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-sXQ+zL3RR2Ydt0phS00qDmvfeQUXkQZDyu4InFaLkuQWWTfDtO4EMmoIKFUxXwxvP4tYf/QiT559vDfGOMlFaw==, tarball: file:projects/cdf-commandandcontrol-client.tgz}
+    resolution: {integrity: sha512-027f0yWssxjKDWSXfnypfDTzhGvyusju7HZwlprijSN4i41Hl03tElZUunFilzDN8NzxYCsIOAZ8XJCcLidmMw==, tarball: file:projects/cdf-commandandcontrol-client.tgz}
     id: file:projects/cdf-commandandcontrol-client.tgz
     name: '@rush-temp/cdf-commandandcontrol-client'
     version: 0.0.0
@@ -16355,7 +16406,7 @@ packages:
       '@types/superagent': 4.1.10
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0_supports-color@8.0.0
       http-errors: 2.0.0
@@ -16389,7 +16440,7 @@ packages:
     dev: false
 
   file:projects/cdf-commands-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-33r9cM7a9pmrBlH6jHIQ48VEDoD6GVn1X92Xk67vcs299uoDq2Mr4DeDQjdDxvjlAmUlifYzmB3+97wOqZWpEw==, tarball: file:projects/cdf-commands-client.tgz}
+    resolution: {integrity: sha512-KKqkxIr69CB7XtiGt5EPVtwfDwz8J9D9orshDA9XOrawAYJwjBJ51P4Tgj+k4Xn9Nr2aIxH310GyKv5MELQYkg==, tarball: file:projects/cdf-commands-client.tgz}
     id: file:projects/cdf-commands-client.tgz
     name: '@rush-temp/cdf-commands-client'
     version: 0.0.0
@@ -16434,7 +16485,7 @@ packages:
     dev: false
 
   file:projects/cdf-commands.tgz:
-    resolution: {integrity: sha512-tjpq+Jp0L15PVkKdexZ/pTC71OGb6xa+xK8Y0/Oojql/cjFjNchVvK6nBpJGkhtRJXG3e/+xuMnYd25LlRdIiw==, tarball: file:projects/cdf-commands.tgz}
+    resolution: {integrity: sha512-2Xx10TS5mu9AOA9S1CCIW5ZMstWriSjyahvz1FjgBzFcdRn6C++cWiiu4jLvYkF3hAnLa9mh1vVIM/Q5iduHmQ==, tarball: file:projects/cdf-commands.tgz}
     name: '@rush-temp/cdf-commands'
     version: 0.0.0
     dependencies:
@@ -16491,7 +16542,7 @@ packages:
     dev: false
 
   file:projects/cdf-config-inject.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-JvOm2PyMswUdAT3ActArxbDpXo587BKGYRsnVL+yAB9WUMH8LKp3W3KivBF56IfofQL7Q+2upX6cnbhbPt3YKw==, tarball: file:projects/cdf-config-inject.tgz}
+    resolution: {integrity: sha512-YzocobbVoE4RgZrzvYVbOYeGm0rE4TfEY6oC364/Zm2RYb2Ud8QyyqS3Lri1sX6CgMs6F/TxD659A7MaxJickg==, tarball: file:projects/cdf-config-inject.tgz}
     id: file:projects/cdf-config-inject.tgz
     name: '@rush-temp/cdf-config-inject'
     version: 0.0.0
@@ -16524,7 +16575,7 @@ packages:
     dev: false
 
   file:projects/cdf-deployment-helper.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-rUzsoQzPucA9aftbe0AtkMKje5sb1I6fddSy9Fx+Kb/1cmQ6hnEgySBEFLt7uOgR4/2Z9e3F1IW5SEXh+ZDL9w==, tarball: file:projects/cdf-deployment-helper.tgz}
+    resolution: {integrity: sha512-p00T6fbe1uA/mb5R1iZG96ezHMBpAbBPL/Jq1jYPQ3UhQvWYZDRpDpxwFlOkBN/1MQoPC2EBwKjEc/hgPosd+A==, tarball: file:projects/cdf-deployment-helper.tgz}
     id: file:projects/cdf-deployment-helper.tgz
     name: '@rush-temp/cdf-deployment-helper'
     version: 0.0.0
@@ -16533,12 +16584,12 @@ packages:
       '@types/aws-lambda': 8.10.65
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
-      '@types/jsonwebtoken': 8.5.0
+      '@types/jsonwebtoken': 9.0.1
       '@types/node': 16.11.7
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       cfn-response-promise: 1.0.1
       dotenv-flow: 3.2.0
       eslint: 7.26.0_supports-color@8.0.0
@@ -16553,7 +16604,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
-      jsonwebtoken: 8.5.1
+      jsonwebtoken: 9.0.0
       logform: 2.4.2
       nodemon: 2.0.20
       nyc: 15.1.0_supports-color@8.0.0
@@ -16575,7 +16626,7 @@ packages:
     dev: false
 
   file:projects/cdf-device-monitoring.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-fQt4HLhNtRHFsv9PsQEaPNWszOkwDtC2UkqQoy3VnK+X9+E8JBVERWgHPVhNnShFQ6Gf75mqGiWZmPAPTytvaQ==, tarball: file:projects/cdf-device-monitoring.tgz}
+    resolution: {integrity: sha512-gLz8aXNHjuvae32ZirhUvvSnIv0AHWRy6XqaxVMeO/cpxeqRZuo3VI3q5CvnxeXmaPXDGeayo0zF7ZAsrROSUQ==, tarball: file:projects/cdf-device-monitoring.tgz}
     id: file:projects/cdf-device-monitoring.tgz
     name: '@rush-temp/cdf-device-monitoring'
     version: 0.0.0
@@ -16621,7 +16672,7 @@ packages:
     dev: false
 
   file:projects/cdf-device-patcher-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-0gPUoEwp9xsPa9jTOeQ13j0Oe80k2KgNqFojLI2MfrDVH7hCX9bq7xEpfshK7AVqtcMIHJKMAS1ReUogSvaVbg==, tarball: file:projects/cdf-device-patcher-client.tgz}
+    resolution: {integrity: sha512-H8zQNlBu3fTw2Q8HCMfxcyLT2iY8gLD7oWITQ/ApoOaP5ooDm7Qvtn1b5kjvvpiQbUQKscWeMnqKvuUWeRCdXw==, tarball: file:projects/cdf-device-patcher-client.tgz}
     id: file:projects/cdf-device-patcher-client.tgz
     name: '@rush-temp/cdf-device-patcher-client'
     version: 0.0.0
@@ -16634,7 +16685,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       cz-customizable: 6.3.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0_supports-color@8.0.0
@@ -16669,7 +16720,7 @@ packages:
     dev: false
 
   file:projects/cdf-device-patcher.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-T79RueMeoI9j/RDgYa62g00h6p5vl9nC9E4KH2gIxuJNV3sEEozsOwsK8G+V6eI2T/tsOCX3JvPIK3ONrNfKoQ==, tarball: file:projects/cdf-device-patcher.tgz}
+    resolution: {integrity: sha512-l4UXDcVoJK9TsYRGE6nqOp7B7j4luD8wxUf/2J+iPzoHQtkl9TrmLxeRnGjvffX4KXyXembKIspTKaGaz619vA==, tarball: file:projects/cdf-device-patcher.tgz}
     id: file:projects/cdf-device-patcher.tgz
     name: '@rush-temp/cdf-device-patcher'
     version: 0.0.0
@@ -16690,7 +16741,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       atob: 2.1.2
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       body-parser: 1.20.1
       btoa: 1.2.1
       config: 3.3.6
@@ -16842,7 +16893,7 @@ packages:
     dev: false
 
   file:projects/cdf-event-publisher.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-wkO3yZ7jztYmtH82xs34Sy0zywWatncVWkmTm0hu6GAhLlkprCpI8ZVZBk5VuAU2ywH3BvSg+WZTa2JxKUf8AA==, tarball: file:projects/cdf-event-publisher.tgz}
+    resolution: {integrity: sha512-nwJ/QOizn8bYIyyO0Ypv4Q4j9v/DiCO5/9jQoZdpeQRghtAUVw6kH5w0SsUhcuhrGlwhpIksoVWbMbjkUe6ksA==, tarball: file:projects/cdf-event-publisher.tgz}
     id: file:projects/cdf-event-publisher.tgz
     name: '@rush-temp/cdf-event-publisher'
     version: 0.0.0
@@ -16881,7 +16932,7 @@ packages:
     dev: false
 
   file:projects/cdf-events-alerts.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-4UW1BGhm8EEU1bQu4XdAoAWV4AwNXPfoBiUYLN8HA4v4H50nEiNhOcbLgeb/SAuSU8Cgl3wEySW+1pMYV6Sf7w==, tarball: file:projects/cdf-events-alerts.tgz}
+    resolution: {integrity: sha512-17xfUaVJnxLza/noviKupPYhPKt63ZKo24nvjOZXVJf2Kl3fqg0shvhxgXQ8BdvJHFTdgsnB7wU99DxHFLlFJw==, tarball: file:projects/cdf-events-alerts.tgz}
     id: file:projects/cdf-events-alerts.tgz
     name: '@rush-temp/cdf-events-alerts'
     version: 0.0.0
@@ -16895,7 +16946,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       amazon-dax-client: 1.2.7
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       dot: 1.1.3
       dotenv: 8.6.0
       dotenv-flow: 3.2.0
@@ -16931,7 +16982,7 @@ packages:
     dev: false
 
   file:projects/cdf-events-processor.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-ELeOnyz5awmrpsJO8VegzHFHmacHbnVgeRW1Ks50olbc2X6EpiiBQ1tv0c4ypdfV4skx/LhwE3CLTWZ/o0Iqkw==, tarball: file:projects/cdf-events-processor.tgz}
+    resolution: {integrity: sha512-uXrKnCK2FQDxxPqWpQ2aQ7gEam4ye3wdPn1S20yx3oG4qKRFSjhZATDovdP5G1XjqZH6cfXZ1F/XfRsIvhXV3Q==, tarball: file:projects/cdf-events-processor.tgz}
     id: file:projects/cdf-events-processor.tgz
     name: '@rush-temp/cdf-events-processor'
     version: 0.0.0
@@ -16948,7 +16999,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       amazon-dax-client: 1.2.7
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       body-parser: 1.20.1
       cors: 2.8.5
       dotenv: 8.6.0
@@ -17023,7 +17074,7 @@ packages:
     dev: false
 
   file:projects/cdf-greengrass2-installer-config-generators.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-d5ygW0QCymzuxWFBopaiZivMLxpHev+npEkIHmDdisTJtaZ+SnE85xgPfi6QqDKMWOiZDsHnK41jNWOLuF/xkw==, tarball: file:projects/cdf-greengrass2-installer-config-generators.tgz}
+    resolution: {integrity: sha512-7kD0qVF4UpL4IZAxGcH8JyjbBwCyH55tEwD5QA31j7zNXaHK1XNmwM2PzEhhw/sg8EJyHtDF8p1H/K6hxqZX0w==, tarball: file:projects/cdf-greengrass2-installer-config-generators.tgz}
     id: file:projects/cdf-greengrass2-installer-config-generators.tgz
     name: '@rush-temp/cdf-greengrass2-installer-config-generators'
     version: 0.0.0
@@ -17065,7 +17116,7 @@ packages:
     dev: false
 
   file:projects/cdf-greengrass2-provisioning-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-WL5UZq+pVgM2gnCrxV4W/U2iUBNU+o8xMVI8m+CmQ85S5vfNAx+0mAdOYH4ynCaSM+6k7qaUW3raXLGvsWchuQ==, tarball: file:projects/cdf-greengrass2-provisioning-client.tgz}
+    resolution: {integrity: sha512-vYW3FaxFDNgO1ykDdrpi428HD2CogDiSFv5h1uPWqBzfhI1KK3kkqlvA2y/szdTuSwcVOrlytBBCXQLf9pkL7A==, tarball: file:projects/cdf-greengrass2-provisioning-client.tgz}
     id: file:projects/cdf-greengrass2-provisioning-client.tgz
     name: '@rush-temp/cdf-greengrass2-provisioning-client'
     version: 0.0.0
@@ -17078,7 +17129,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0_supports-color@8.0.0
       http-errors: 2.0.0
@@ -17112,7 +17163,7 @@ packages:
     dev: false
 
   file:projects/cdf-greengrass2-provisioning.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-pFndCL4k+c6RwR9/LVztvfRF2yaKFlfSWb9tJ2lBI1TiJpqKSYuVoxJKjf6mmnNl9an/2FCWxp7cd0k/TdKbqg==, tarball: file:projects/cdf-greengrass2-provisioning.tgz}
+    resolution: {integrity: sha512-2qnaGW3QO4BNxC6jx9G/aXZhCA6G4YIGoSoJmUzwNYpHe95C52B4FXzM2eKn61/JJm7l82QSMBnDQaU8Lp05Bw==, tarball: file:projects/cdf-greengrass2-provisioning.tgz}
     id: file:projects/cdf-greengrass2-provisioning.tgz
     name: '@rush-temp/cdf-greengrass2-provisioning'
     version: 0.0.0
@@ -17185,7 +17236,7 @@ packages:
     dev: false
 
   file:projects/cdf-installer.tgz_c3b1e5de68a6810493d1cf76d747e20a:
-    resolution: {integrity: sha512-wsa7BGfG0PO+kXcDM8t8o6oEiTwqKvOcW957+S3U0/1+CnhxZZpq7D4fvH/xT+OWeEpCo1mI8C3zAFnSTdAjww==, tarball: file:projects/cdf-installer.tgz}
+    resolution: {integrity: sha512-KcioHHKiH9SsudZmithnXx4O3eKv/Hcl8Wwvac4ON0MLLt5HnZ3LbkjQGUlry+61eSQL2Sc1WPOGD4/DuktFfw==, tarball: file:projects/cdf-installer.tgz}
     id: file:projects/cdf-installer.tgz
     name: '@rush-temp/cdf-installer'
     version: 0.0.0
@@ -17251,11 +17302,12 @@ packages:
     dev: false
 
   file:projects/cdf-integration-tests.tgz_39c40f0eb041e1e032be051403b5059d:
-    resolution: {integrity: sha512-1xhG8io4oXcfFvpLyeeYWjmTZ4xAqRWRGcRbOIkri5Glb2+SbkSy7H2TAVW7jwDLE2PDMP7GBXAkVHJ8MBbs/Q==, tarball: file:projects/cdf-integration-tests.tgz}
+    resolution: {integrity: sha512-2l7emrjTVxPH9RpyLDnUuGMRA8piB1M6ltF6RU0CDAXcNDfoK0slzFf82YRjT8p3wtlvCZRmgbN42IXdx9Sq2w==, tarball: file:projects/cdf-integration-tests.tgz}
     id: file:projects/cdf-integration-tests.tgz
     name: '@rush-temp/cdf-integration-tests'
     version: 0.0.0
     dependencies:
+      '@aws-sdk/client-cloudformation': 3.38.0
       '@aws-sdk/client-ec2': 3.38.0
       '@aws-sdk/client-greengrassv2': 3.38.0
       '@aws-sdk/client-s3': 3.38.0_@aws-sdk+signature-v4-crt@3.38.0
@@ -17269,14 +17321,14 @@ packages:
       '@types/dotenv-flow': 3.2.0
       '@types/js-yaml': 3.12.5
       '@types/json-stable-stringify': 1.0.32
-      '@types/jsonpath-plus': 5.0.2
-      '@types/jsonwebtoken': 9.0.0
+      '@types/jsonpath-plus': 5.0.1
+      '@types/jsonwebtoken': 8.5.0
       '@types/node': 16.11.7
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       atob: 2.1.2
       aws-iot-device-sdk-v2: 1.6.5_supports-color@8.0.0
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       axios: 0.25.0
       chai: 4.2.0
       chai-string: 1.5.0_chai@4.2.0
@@ -17299,7 +17351,7 @@ packages:
       replace-in-file: 6.3.5
       shx: 0.3.3
       superagent: 7.1.1_supports-color@8.0.0
-      typed-rest-client: 1.8.0
+      typed-rest-client: 1.8.9
       typescript: 4.2.4
       winston: 3.3.3
       winston-transport: 4.4.0
@@ -17313,7 +17365,7 @@ packages:
     dev: false
 
   file:projects/cdf-lambda-invoke.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-+U7G73I9Bn9q4E1CS0g37XLZZpI/J4SfPKO1jUHCMRBfzo4+6B9waBUi9kvjBUAP+zho/hCP6yxKmXnV7rQOLQ==, tarball: file:projects/cdf-lambda-invoke.tgz}
+    resolution: {integrity: sha512-p7tcZ/SxCNfAk7B+XM6btVaVWZS7N7M/x9mWVWYv2ErVf91pEM/r3/fs9PZV6quTSZnKMoAFbBRXTWtDsZ4K8g==, tarball: file:projects/cdf-lambda-invoke.tgz}
     id: file:projects/cdf-lambda-invoke.tgz
     name: '@rush-temp/cdf-lambda-invoke'
     version: 0.0.0
@@ -17324,7 +17376,7 @@ packages:
       '@types/jest': 26.0.23
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0_supports-color@8.0.0
       http-errors: 1.8.0
@@ -17417,7 +17469,7 @@ packages:
     dev: false
 
   file:projects/cdf-notifications-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-e0BU9n264vjX9utXArlX1kD9/wqC/zDmii7FUzf7pmSzsFVLm1/FQ7DjzzKpNcN2dB0EM2tQuDWNSMPyLHinvw==, tarball: file:projects/cdf-notifications-client.tgz}
+    resolution: {integrity: sha512-QTZs5PDEGwlc1jDarB1jed5A+O+msearAVjxR6TqweKz8CL8N5VwfhEMavW3LjS6oZrvPqVAOuCFkCj+UrrTUA==, tarball: file:projects/cdf-notifications-client.tgz}
     id: file:projects/cdf-notifications-client.tgz
     name: '@rush-temp/cdf-notifications-client'
     version: 0.0.0
@@ -17430,7 +17482,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0_supports-color@8.0.0
       http-errors: 2.0.0
@@ -17464,7 +17516,7 @@ packages:
     dev: false
 
   file:projects/cdf-organization-manager.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-WFNE+X1tyROaK3ca3rWqPvmJQgQpbc+l0S6HgEVdt5t1ohqhHWugDkiH/RVY6nGtlqdDlIgXDMYgHMtpUHn8+A==, tarball: file:projects/cdf-organization-manager.tgz}
+    resolution: {integrity: sha512-2xtn0FyA3LC/oJbYSM2sZNeOE0Af4v/CJbtp5qvRU0jgQf/Hr//Ra7h77jb+wG2SKqaNIOMj51Wi3dJwpxeaSQ==, tarball: file:projects/cdf-organization-manager.tgz}
     id: file:projects/cdf-organization-manager.tgz
     name: '@rush-temp/cdf-organization-manager'
     version: 0.0.0
@@ -17480,7 +17532,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-lambda: 1.0.7
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       body-parser: 1.20.1
       cors: 2.8.5
       eslint: 7.26.0_supports-color@8.0.0
@@ -17518,7 +17570,7 @@ packages:
     dev: false
 
   file:projects/cdf-organizationmanager-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-DGM/EXRVOwt64LUt7uUzTz4sS3WtbDtRLC5J3ADDR6IT+tUuJO1gdtNOlEJb/9Hf1ByraA/LzYe0GmxJyD5GDg==, tarball: file:projects/cdf-organizationmanager-client.tgz}
+    resolution: {integrity: sha512-z6icT7JBTTqYyCx95HAFTRN3grP/58oziq2I7RkzmOr3UQXxbYF8r1aB4P5NqIHUDvhBV5+1Xr6TN7F+Tflx6A==, tarball: file:projects/cdf-organizationmanager-client.tgz}
     id: file:projects/cdf-organizationmanager-client.tgz
     name: '@rush-temp/cdf-organizationmanager-client'
     version: 0.0.0
@@ -17531,7 +17583,7 @@ packages:
       '@types/superagent': 4.1.10
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       cz-customizable: 6.3.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0_supports-color@8.0.0
@@ -17566,7 +17618,7 @@ packages:
     dev: false
 
   file:projects/cdf-provisioning-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-8p+q0LfKj1EQ3JPO5R/+CfwQTwxCc7yRcqpRPtaad5Hzxu0shLZesXbK+OFTDEAo7K84dDA3Ipomc1jzBhODRQ==, tarball: file:projects/cdf-provisioning-client.tgz}
+    resolution: {integrity: sha512-kKSsaw8MV4QAWJqbBFUcQTodAxW9v/dY36O9KKMyTwTHs2cyqkXgCXQNb97u84LOBwv9RvCgZfk0tpuuAjYmgw==, tarball: file:projects/cdf-provisioning-client.tgz}
     id: file:projects/cdf-provisioning-client.tgz
     name: '@rush-temp/cdf-provisioning-client'
     version: 0.0.0
@@ -17578,7 +17630,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0_supports-color@8.0.0
       http-errors: 2.0.0
@@ -17612,7 +17664,7 @@ packages:
     dev: false
 
   file:projects/cdf-provisioning.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-JieqKxijoCW431PGeq4t/D64k7Z+tfgKDcVmwoRxEULz3fI5UpWqFtOfSPDPPX+K9HOxPon1BIG945G+aFpXMA==, tarball: file:projects/cdf-provisioning.tgz}
+    resolution: {integrity: sha512-lwO0SzBkUVw2kArE8KyubU+5zx/4KPkbfRXEoQUZ5IdTSeVJ+q1W6RdsMIz6Ip+1jjNOB59V0dnyJn1phB/CTg==, tarball: file:projects/cdf-provisioning.tgz}
     id: file:projects/cdf-provisioning.tgz
     name: '@rush-temp/cdf-provisioning'
     version: 0.0.0
@@ -17628,7 +17680,7 @@ packages:
       '@types/uuid': 8.3.0
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.1048.0
+      aws-sdk: 2.1386.0
       body-parser: 1.20.1
       cors: 2.8.5
       dotenv: 8.6.0
@@ -17673,7 +17725,7 @@ packages:
     dev: false
 
   file:projects/cdf-simulation-launcher.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-yyDhDtUNlgDnGMceQy2y5zElGAlwTKq7cqDm1Os0xSGCOFnawCbaE/qffCZBQ4jIDv/kmhPfHbsG4/h0V44icA==, tarball: file:projects/cdf-simulation-launcher.tgz}
+    resolution: {integrity: sha512-VFmJMCvt3UOl8r8vWip+X1DKd6g8fzDZ2Lk4jGDPx8wQ9b+d2zMex0/Qq15ibFdQ1/getk0PGcKz0X3Pibh+dw==, tarball: file:projects/cdf-simulation-launcher.tgz}
     id: file:projects/cdf-simulation-launcher.tgz
     name: '@rush-temp/cdf-simulation-launcher'
     version: 0.0.0
@@ -17713,7 +17765,7 @@ packages:
     dev: false
 
   file:projects/cdf-simulation-manager.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-G39INixPj/mI8p7ISfo9lcVPSE+R1xgMvbGKLwHzLAh6phovmIG1FsudCkowx9bhxS3alf/+F5o0DMaa9FdNEQ==, tarball: file:projects/cdf-simulation-manager.tgz}
+    resolution: {integrity: sha512-zu+c8b+lUfP9R4N8oPDfWJ5oCS9eQv8kSPKdlxP5Bogs/4cGsbCs7v1myOgKKRNbnkr6c7S78lrFSPbBr/wjtQ==, tarball: file:projects/cdf-simulation-manager.tgz}
     id: file:projects/cdf-simulation-manager.tgz
     name: '@rush-temp/cdf-simulation-manager'
     version: 0.0.0
@@ -17769,7 +17821,7 @@ packages:
     dev: false
 
   file:projects/cdf-thing-list-builder.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-z28QzB+VbS0SWaRYR5ZIh0C8NRSXm1OVHfOx8kta7A7IWL1fNtOGgq+z5Dxex8hQE+g6ZupqDmDTP5GPY/JTZw==, tarball: file:projects/cdf-thing-list-builder.tgz}
+    resolution: {integrity: sha512-igO4DnSkQlyueb9D3t1Nqi1EKGLl0yt2MPHT4mgjVslAoVEb5GEdsnMRXgEe05YWbW/MDnFUq1Nx6eN0jQQdLQ==, tarball: file:projects/cdf-thing-list-builder.tgz}
     id: file:projects/cdf-thing-list-builder.tgz
     name: '@rush-temp/cdf-thing-list-builder'
     version: 0.0.0
@@ -17794,6 +17846,39 @@ packages:
       ow: 0.23.0
       shx: 0.3.3
       superagent: 7.1.1_supports-color@8.0.0
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
+      winston: 3.3.3
+      winston-transport: 4.4.0
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/simple-cdf-logger.tgz_supports-color@8.0.0:
+    resolution: {integrity: sha512-P2v0Zb0zLs/PX7MNgwtoUjDR9+kVJjNSHLhYtST7DLtAsJ49HTUAYmQ/PsbwDOulcpk8WxZeJQgauaSOZ0N3gg==, tarball: file:projects/simple-cdf-logger.tgz}
+    id: file:projects/simple-cdf-logger.tgz
+    name: '@rush-temp/simple-cdf-logger'
+    version: 0.0.0
+    dependencies:
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/jest': 26.0.23
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
+      eslint: 7.26.0_supports-color@8.0.0
+      jest: 26.6.3_supports-color@8.0.0
+      jest-create-mock-instance: 1.1.0
+      jest-haste-map: 26.6.2
+      jest-mock: 26.6.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
+      jest-resolve: 26.6.2
+      logform: 2.4.2
+      nyc: 15.1.0_supports-color@8.0.0
+      readable-stream: 3.6.0
+      shx: 0.3.3
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3

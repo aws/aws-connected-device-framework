@@ -1,9 +1,9 @@
 {
-  "name": "@cdf/device-simulator-base",
+  "name": "@awssolutions/device-simulator-base",
   "entries": [
     {
       "version": "2.0.0",
-      "tag": "@cdf/device-simulator-base_v2.0.0",
+      "tag": "@awssolutions/device-simulator-base_v2.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",
       "comments": {
         "major": [
@@ -15,7 +15,7 @@
     },
     {
       "version": "1.0.1",
-      "tag": "@cdf/device-simulator-base_v1.0.1",
+      "tag": "@awssolutions/device-simulator-base_v1.0.1",
       "date": "Wed, 21 Jul 2021 16:46:57 GMT",
       "comments": {}
     }

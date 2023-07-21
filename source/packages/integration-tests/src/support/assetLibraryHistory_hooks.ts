@@ -10,19 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {
-    ASSETLIBRARY_CLIENT_TYPES,
-    CategoryEnum,
-    DevicesService,
-    Group10Resource,
-    GroupsService,
-    TemplatesService,
-    TypeResource,
-} from '@awssolutions/cdf-assetlibrary-client/dist';
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
+import {
+    GroupsService,
+    DevicesService,
+    TemplatesService,
+    CategoryEnum,
+    TypeResource,
+    Group10Resource,
+    ASSETLIBRARY_CLIENT_TYPES,
+} from '@awssolutions/cdf-assetlibrary-client/dist';
+import { container } from '../di/inversify.config';
 import { sign } from 'jsonwebtoken';
 import { Dictionary } from '../../../libraries/core/lambda-invoke/src';
-import { container } from '../di/inversify.config';
 import { create_root_authorized_group_template } from './assetLibrary_hooks';
 
 setDefaultTimeout(30 * 1000);

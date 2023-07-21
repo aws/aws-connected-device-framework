@@ -12,8 +12,8 @@ An AMI is created using the following steps:
 ```sh
 # Download root certificate
 
-# go to home if you're using SSM to login 
-cd ~/ 
+# go to home if you're using SSM to login
+cd ~/
 
 mkdir ~/certs &&
  curl -o ~/certs/AmazonRootCA1.pem https://www.amazontrust.com/repository/AmazonRootCA1.pem  &&
@@ -52,8 +52,8 @@ export ARTIFACTS_S3_PREFIX=<s3-prefix>
 export AMI_ID=<ami-id>
 export IAM_INSTANCE_PROFILE=<iam-instance-profile>
 
-export certs_presigned_url=$(aws s3 presign s3://${ARTIFACTS_S3_BUCKET}/${ARTIFACTS_S3_PREFIX}${THING_NAME}/${THING_NAME}/certs.zip) 
-export config_presigned_url=$(aws s3 presign s3://${ARTIFACTS_S3_BUCKET}/${ARTIFACTS_S3_PREFIX}${THING_NAME}/${THING_NAME}/installerConfig.yml) 
+export certs_presigned_url=$(aws s3 presign s3://${ARTIFACTS_S3_BUCKET}/${ARTIFACTS_S3_PREFIX}${THING_NAME}/${THING_NAME}/certs.zip)
+export config_presigned_url=$(aws s3 presign s3://${ARTIFACTS_S3_BUCKET}/${ARTIFACTS_S3_PREFIX}${THING_NAME}/${THING_NAME}/installerConfig.yml)
 
 cat << EOF > ggv2_core_device_install_script.txt
 #!/bin/bash
@@ -83,4 +83,3 @@ instance_metadata=$(aws ec2 run-instances \
 ```
 
 After a couple of minutes a new EC2 instance should be up and running representing the Greengrass V2 core device. Shortly after you should see the device registed as a Greengrass V2 core device within the AWS IoT console.
-

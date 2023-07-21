@@ -10,38 +10,38 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { TYPES } from '../di/types';
 import { DynamoDbTargetDao } from './dynamoDb.target.dao';
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
 @injectable()
 export class DynamoDBTarget {
+    public constructor(@inject(TYPES.DynamoDbTargetDao) private ddbTargetDao: DynamoDbTargetDao) {}
 
-    public constructor(
-        @inject(TYPES.DynamoDbTargetDao) private ddbTargetDao: DynamoDbTargetDao) {
-    }
-
-    public async writeAlert(item: unknown, targetTableName: string) : Promise<void>{
-        logger.debug(`Dynamodb.target writeAlert: in: targetTableName:${targetTableName}, item:${JSON.stringify(item)}`);
+    public async writeAlert(item: unknown, targetTableName: string): Promise<void> {
+        logger.debug(
+            `Dynamodb.target writeAlert: in: targetTableName:${targetTableName}, item:${JSON.stringify(
+                item
+            )}`
+        );
 
         // validate input
         ow(targetTableName, ow.string.nonEmpty);
         ow(item, ow.object.nonEmpty);
 
-        const params:DocumentClient.BatchWriteItemInput = {
-            RequestItems: {
-            }
+        const params: DocumentClient.BatchWriteItemInput = {
+            RequestItems: {},
         };
         const alert = {
             PutRequest: {
-                Item: item
-            }
+                Item: item,
+            },
         };
 
-        params.RequestItems[targetTableName]=[alert];
+        params.RequestItems[targetTableName] = [alert];
 
         const result = await this.ddbTargetDao.batchWriteAll(params);
         if (this.ddbTargetDao.hasUnprocessedItems(result)) {
@@ -51,4 +51,4 @@ export class DynamoDBTarget {
     }
 }
 
-export type DynamoDbRecord = {[key: string]: string};
+export type DynamoDbRecord = { [key: string]: string };

@@ -11,5 +11,5 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const TYPES = {
-    AssetLibUpdate: Symbol.for('AssetLibUpdate')
+    AssetLibUpdate: Symbol.for('AssetLibUpdate'),
 };

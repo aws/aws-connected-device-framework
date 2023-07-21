@@ -12,30 +12,30 @@
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger';
 
-import { Extractor, Extracted } from '../extract.service';
 import { DevicesService } from '../../devices/devices.service';
+import { Extracted, Extractor } from '../extract.service';
 
+import ow from 'ow';
 import { Batch } from '../../batch/batch.service';
 import { TypeCategory } from '../../types/constants';
-import ow from 'ow';
 
 @injectable()
 export class DeviceExtractor implements Extractor {
-
     private attributesList: string[];
 
     constructor(
         @inject(TYPES.DevicesService) private deviceService: DevicesService,
-        @inject('defaults.etl.extract.deviceExtractor.expandComponents') private expandComponents: boolean,
-        @inject('defaults.etl.extract.deviceExtractor.includeGroups') private includeGroups: boolean,
+        @inject('defaults.etl.extract.deviceExtractor.expandComponents')
+        private expandComponents: boolean,
+        @inject('defaults.etl.extract.deviceExtractor.includeGroups')
+        private includeGroups: boolean,
         @inject('defaults.etl.extract.deviceExtractor.attributes') private attributes: string
     ) {
-        this.attributesList = this.attributes === ''
-            ? []
-            : this.attributesList = this.attributes.split(',');
+        this.attributesList =
+            this.attributes === '' ? [] : (this.attributesList = this.attributes.split(','));
     }
 
     public async extract(batch: Batch): Promise<Extracted> {
@@ -48,18 +48,21 @@ export class DeviceExtractor implements Extractor {
         ow(batch.items, 'batchType', ow.array.nonEmpty);
         ow(batch.timestamp, 'batchType', ow.number.greaterThan(0));
 
-        const attributes = this.attributesList.length === 0
-            ? undefined
-            : this.attributesList;
+        const attributes = this.attributesList.length === 0 ? undefined : this.attributesList;
 
-        const deviceItemList = await this.deviceService.getBulk(batch.items, this.expandComponents, attributes, this.includeGroups);
+        const deviceItemList = await this.deviceService.getBulk(
+            batch.items,
+            this.expandComponents,
+            attributes,
+            this.includeGroups
+        );
 
         const extractedBatch = {
             id: batch.id,
             category: TypeCategory.Device,
             type: batch.type,
             items: deviceItemList.results,
-            timestamp: batch.timestamp
+            timestamp: batch.timestamp,
         };
 
         logger.debug(`DeviceExtractor: extract: out:`);

@@ -1,6 +1,7 @@
 # PROVISIONING CONFIGURATION
 
 The recommended way to create a local configuration file for the Provisioning service is through CDF's [installer](../../installer/README.md#deployment-using-wizard).
+
 ## Configuration for Running Locally
 
 Once you have deployed CDF to your AWS account, you can generate `.env` file to be used for your local development.
@@ -24,7 +25,7 @@ AWS_S3_TEMPLATES_SUFFIX=.json
 CORS_ORIGIN=*
 #  The allowed CORS headers to expose.
 CORS_EXPOSED_HEADERS=content-type,location
-# If a custom domain has been configured for this module, specifying its base path here will remove 
+# If a custom domain has been configured for this module, specifying its base path here will remove
 # the base path from the request to allow the module to map the incoming request to the correct lambda handler
 CUSTOMDOMAIN_BASEPATH=
 # he default expiration days for new certificates

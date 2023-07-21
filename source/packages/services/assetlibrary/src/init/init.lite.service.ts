@@ -16,9 +16,7 @@ import { InitService } from './init.service';
 
 @injectable()
 export class InitServiceLite implements InitService {
-
     public async init(): Promise<void> {
         throw new NotSupportedError();
     }
-
 }

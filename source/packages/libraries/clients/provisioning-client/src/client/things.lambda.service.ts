@@ -10,7 +10,6 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-
 import {
     LAMBDAINVOKE_TYPES,
     LambdaApiGatewayEventBuilder,
@@ -18,6 +17,7 @@ import {
 } from '@awssolutions/cdf-lambda-invoke';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
+
 import {
     BulkProvisionThingsRequest,
     BulkProvisionThingsResponse,
@@ -27,6 +27,7 @@ import {
     RequestHeaders,
     Thing,
 } from './things.model';
+
 import { ThingsService, ThingsServiceBase } from './things.service';
 
 @injectable()

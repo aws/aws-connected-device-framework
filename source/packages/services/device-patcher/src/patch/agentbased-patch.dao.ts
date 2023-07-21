@@ -13,21 +13,21 @@
 import AWS = require('aws-sdk');
 import { inject, injectable } from 'inversify';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger.util';
-import { createDelimitedAttribute, PkType } from '../utils/pKUtils.util';
+import { PkType, createDelimitedAttribute } from '../utils/pKUtils.util';
 
 import { AssociationModel } from './patch.model';
 
 @injectable()
 export class AgentbasedPatchDao {
-
     private dc: AWS.DynamoDB.DocumentClient;
     private readonly SI1_INDEX = 'sk-si1Sort-index';
-    private readonly tableName = process.env.AWS_DYNAMODB_TABLE_NAME
+    private readonly tableName = process.env.AWS_DYNAMODB_TABLE_NAME;
 
     constructor(
-        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient
+        @inject(TYPES.DocumentClientFactory)
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this.dc = documentClientFactory();
     }
@@ -39,11 +39,18 @@ export class AgentbasedPatchDao {
             TableName: this.tableName,
             Item: {
                 pk: createDelimitedAttribute(PkType.DevicePatch, association.patchId),
-                sk: createDelimitedAttribute(PkType.DevicePatch, PkType.DevicePatchAssociation, 'map'),
-                si1Sort: createDelimitedAttribute(PkType.DevicePatchAssociation, association.associationId),
+                sk: createDelimitedAttribute(
+                    PkType.DevicePatch,
+                    PkType.DevicePatchAssociation,
+                    'map'
+                ),
+                si1Sort: createDelimitedAttribute(
+                    PkType.DevicePatchAssociation,
+                    association.associationId
+                ),
                 patchId: association.patchId,
-                associationId: association.associationId
-            }
+                associationId: association.associationId,
+            },
         };
 
         await this.dc.put(params).promise();
@@ -58,8 +65,12 @@ export class AgentbasedPatchDao {
             TableName: this.tableName,
             Key: {
                 pk: createDelimitedAttribute(PkType.DevicePatch, association.patchId),
-                sk: createDelimitedAttribute(PkType.DevicePatch, PkType.DevicePatchAssociation, 'map')
-            }
+                sk: createDelimitedAttribute(
+                    PkType.DevicePatch,
+                    PkType.DevicePatchAssociation,
+                    'map'
+                ),
+            },
         };
 
         await this.dc.delete(params).promise();
@@ -76,16 +87,20 @@ export class AgentbasedPatchDao {
             KeyConditionExpression: `#pk=:pk AND begins_with(#sk,:sk)`,
             ExpressionAttributeNames: {
                 '#pk': 'sk',
-                '#sk': 'si1Sort'
+                '#sk': 'si1Sort',
             },
             ExpressionAttributeValues: {
-                ':pk': createDelimitedAttribute(PkType.DevicePatch, PkType.DevicePatchAssociation, 'map'),
-                ':sk': createDelimitedAttribute(PkType.DevicePatchAssociation, associationId)
-            }
+                ':pk': createDelimitedAttribute(
+                    PkType.DevicePatch,
+                    PkType.DevicePatchAssociation,
+                    'map'
+                ),
+                ':sk': createDelimitedAttribute(PkType.DevicePatchAssociation, associationId),
+            },
         };
 
         const result = await this.dc.query(params).promise();
-        if (result.Items===undefined || result.Items.length===0) {
+        if (result.Items === undefined || result.Items.length === 0) {
             logger.debug('agentbasedPatchs.dao query: exit: undefined');
             return undefined;
         }
@@ -98,7 +113,9 @@ export class AgentbasedPatchDao {
             associationId: pkElements[1],
         };
 
-        logger.debug(`agentbasedpatch.dao:getByAssociationId:out:${JSON.stringify(patchAssociation)}`);
+        logger.debug(
+            `agentbasedpatch.dao:getByAssociationId:out:${JSON.stringify(patchAssociation)}`
+        );
 
         return patchAssociation;
     }
@@ -110,12 +127,16 @@ export class AgentbasedPatchDao {
             TableName: this.tableName,
             Key: {
                 pk: createDelimitedAttribute(PkType.DevicePatch, patchId),
-                sk: createDelimitedAttribute(PkType.DevicePatch, PkType.DevicePatchAssociation, 'map')
-            }
+                sk: createDelimitedAttribute(
+                    PkType.DevicePatch,
+                    PkType.DevicePatchAssociation,
+                    'map'
+                ),
+            },
         };
 
         const result = await this.dc.get(params).promise();
-        if (result.Item===undefined) {
+        if (result.Item === undefined) {
             logger.debug('agentbasedPatchs.dao exit: undefined');
             return undefined;
         }
@@ -131,5 +152,4 @@ export class AgentbasedPatchDao {
 
         return patchAssociation;
     }
-
 }

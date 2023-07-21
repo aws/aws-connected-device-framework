@@ -68,6 +68,5 @@ Feature: Command & Control - Shadows
       | $.replies.[2].action     | reply                                                                  |
       | $.replies.[2].payload    | {"response":"second"}                                                  |
 
-
   @teardown_commandandcontrol_shadows
   Scenario: Teardown

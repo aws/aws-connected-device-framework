@@ -10,29 +10,29 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
-import {logger} from '../utils/logger';
 import { EventActionFactory } from './actions/eventaction.factory';
-import { EventModel } from './events.models';
 import { EventAction } from './actions/eventaction.interfaces';
 import { UnsupportedAction } from './actions/eventaction.unsupported';
+import { EventModel } from './events.models';
 
 @injectable()
 export class EventsService {
-
     constructor(
-        @inject(TYPES.EventActionFactory) private eventActionFactory: EventActionFactory) {}
+        @inject(TYPES.EventActionFactory) private eventActionFactory: EventActionFactory
+    ) {}
 
-    public async create(event: EventModel) : Promise<void> {
+    public async create(event: EventModel): Promise<void> {
         logger.debug(`events.service create: in: event: ${JSON.stringify(event)}`);
 
         // TODO validation
 
         // determine the action to take based on the status
-        const actions:EventAction[] = this.eventActionFactory.getAction(event);
+        const actions: EventAction[] = this.eventActionFactory.getAction(event);
 
-        if (actions===null || actions.length===0) {
+        if (actions === null || actions.length === 0) {
             throw new Error('UNSUPPORTED_ACTION');
         }
 
@@ -43,14 +43,12 @@ export class EventsService {
                 throw new Error('UNSUPPORTED_ACTION');
             } else {
                 chainedEvent = await a.execute(chainedEvent);
-                if (chainedEvent===null) {
+                if (chainedEvent === null) {
                     throw new Error('ACTION_FAILED');
                 }
-
             }
         }
 
         logger.debug('events.service create: exit:');
     }
-
 }

@@ -16,68 +16,68 @@ import { TypeCategory } from './constants';
 export class TypeModel {
     templateId: string;
     category: TypeCategory;
-	schema: TypeVersionModel;
+    schema: TypeVersionModel;
 }
 
 export class TypeVersionModel {
-	version: number;
+    version: number;
     definition: TypeDefinitionModel;
     status: TypeDefinitionStatus;
     relations: TypeRelationsModel;
 }
 
 export class TypeDefinitionModel {
-	properties?: {
+    properties?: {
         [key: string]: {
-            type: string[]
-        }
+            type: string[];
+        };
     };
-	// properties?: { [key: string]: string|string[] };
+    // properties?: { [key: string]: string|string[] };
     required?: string[];
     relations?: TypeRelationsModel;
     components?: string[];
 }
 
 export class TypeRelationsModel {
-	out?: { [key: string]: string[] };
+    out?: { [key: string]: string[] };
     in?: { [key: string]: string[] };
 
-    public outgoingIncludes(rel:string,template:string ) : boolean {
-        if (this.out===undefined) {
-           return false;
+    public outgoingIncludes(rel: string, template: string): boolean {
+        if (this.out === undefined) {
+            return false;
         }
-        if (this.out[rel]===undefined) {
+        if (this.out[rel] === undefined) {
             return false;
         }
         return this.out[rel].includes(template);
     }
 
-    public incomingIncludes(rel:string,template:string ) : boolean {
-        if (this.in===undefined) {
-           return false;
+    public incomingIncludes(rel: string, template: string): boolean {
+        if (this.in === undefined) {
+            return false;
         }
-        if (this.in[rel]===undefined) {
+        if (this.in[rel] === undefined) {
             return false;
         }
         return this.in[rel].includes(template);
     }
 
-    public addOutgoing(rel:string, template:string): void {
-        if (this.out===undefined) {
-            this.out= {};
+    public addOutgoing(rel: string, template: string): void {
+        if (this.out === undefined) {
+            this.out = {};
         }
-        if (this.out[rel]===undefined) {
-            this.out[rel]= [];
+        if (this.out[rel] === undefined) {
+            this.out[rel] = [];
         }
         this.out[rel].push(template);
     }
 
-    public addIncoming(rel:string, template:string): void {
-        if (this.in===undefined) {
-            this.in= {};
+    public addIncoming(rel: string, template: string): void {
+        if (this.in === undefined) {
+            this.in = {};
         }
-        if (this.in[rel]===undefined) {
-            this.in[rel]= [];
+        if (this.in[rel] === undefined) {
+            this.in[rel] = [];
         }
         this.in[rel].push(template);
     }
@@ -89,15 +89,15 @@ export class TypeResource extends TypeDefinitionModel {
 }
 
 export class TypeResourceList {
-    results: TypeResource[]=[];
+    results: TypeResource[] = [];
     pagination?: {
-        offset:number;
-        count:number;
+        offset: number;
+        count: number;
     };
 }
 
 export enum TypeDefinitionStatus {
-    draft='draft',
-    published='published',
-    deprecated='deprecated'
+    draft = 'draft',
+    published = 'published',
+    deprecated = 'deprecated',
 }

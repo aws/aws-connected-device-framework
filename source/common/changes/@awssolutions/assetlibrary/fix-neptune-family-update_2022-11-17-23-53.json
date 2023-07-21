@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/assetlibrary",
+      "comment": "Neptune deployment group version upgraded to 1.2.",
+      "type": "major"
+    }
+  ],
+  "packageName": "@awssolutions/assetlibrary",
+  "email": "anishrk@amazon.com"
+}

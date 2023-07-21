@@ -10,6 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { inject, injectable } from 'inversify';
 import { Claims } from '../authz/claims';
 import { DevicesAssembler } from '../devices/devices.assembler';
@@ -18,7 +19,7 @@ import { TYPES } from '../di/types';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { GroupItem } from '../groups/groups.models';
 import { TypeCategory } from '../types/constants';
-import { logger } from '../utils/logger';
+import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 import { SearchDaoFull } from './search.full.dao';
 import { FacetResults, SearchRequestModel } from './search.models';
 import { SearchService } from './search.service';
@@ -39,7 +40,9 @@ export class SearchServiceFull implements SearchService {
     ): Promise<[(GroupItem | DeviceItem)[], number, number]> {
         logger.debug(`search.full.service search: in: model: ${JSON.stringify(model)}`);
 
-        // TODO: validation
+        // TODO: more validation
+        owCheckOptionalNumber(model.count, 1, 10000, 'count');
+        owCheckOptionalNumber(model.offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
 
         // all ids must be lowercase
         this.setIdsToLowercase(model);
@@ -85,6 +88,12 @@ export class SearchServiceFull implements SearchService {
         return [models, model.offset, model.count];
     }
 
+    public async delete(model: SearchRequestModel): Promise<void> {
+        logger.debug(`search.full.service delete: in: model: ${JSON.stringify(model)}`);
+        const authorizedPaths = this.getAuthorizedPaths();
+        await this.searchDao.delete(model, authorizedPaths);
+    }
+
     public async facet(model: SearchRequestModel): Promise<FacetResults> {
         logger.debug(`search.full.service facet: in: model: ${JSON.stringify(model)}`);
 
@@ -98,12 +107,6 @@ export class SearchServiceFull implements SearchService {
         const facets = await this.searchDao.facet(model, authorizedPaths);
         logger.debug(`search.full.service facet: exit: models: ${facets}`);
         return facets;
-    }
-
-    public async delete(model: SearchRequestModel): Promise<void> {
-        logger.debug(`search.full.service delete: in: model: ${JSON.stringify(model)}`);
-        const authorizedPaths = this.getAuthorizedPaths();
-        await this.searchDao.delete(model, authorizedPaths);
     }
 
     public async summary(model: SearchRequestModel): Promise<number> {

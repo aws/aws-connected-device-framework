@@ -10,19 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { expect } from 'chai';
+import { Given, setDefaultTimeout, When, DataTable, Then } from '@cucumber/cucumber';
 import {
-    ASSETLIBRARY_CLIENT_TYPES,
+    TemplatesService,
     CategoryEnum,
     StatusEnum,
-    TemplatesService,
     TypeResource,
+    ASSETLIBRARY_CLIENT_TYPES,
 } from '@awssolutions/cdf-assetlibrary-client';
-import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
-import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
-import { expect } from 'chai';
+import { RESPONSE_STATUS, replaceTokens, AUTHORIZATION_TOKEN } from '../common/common.steps';
 import { container } from '../../di/inversify.config';
-import { AUTHORIZATION_TOKEN, RESPONSE_STATUS, replaceTokens } from '../common/common.steps';
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
     context (you can also define helper methods in it). World can be access by using the this keyword inside

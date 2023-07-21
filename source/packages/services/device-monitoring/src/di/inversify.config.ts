@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import '@awssolutions/cdf-config-inject';
 
 import { Container } from 'inversify';

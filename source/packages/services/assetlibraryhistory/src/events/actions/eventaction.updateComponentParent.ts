@@ -10,20 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger';
-import { injectable, inject } from 'inversify';
-import { EventAction } from './eventaction.interfaces';
 import { EventsDao } from '../events.dao';
-import { EventModel, StateHistoryModel, EventType } from '../events.models';
+import { EventModel, EventType, StateHistoryModel } from '../events.models';
+import { EventAction } from './eventaction.interfaces';
 
 @injectable()
 export class UpdateComponentParentAction implements EventAction {
+    constructor(@inject(TYPES.EventsDao) private eventsDao: EventsDao) {}
 
-    constructor(
-        @inject(TYPES.EventsDao) private eventsDao: EventsDao) {}
-
-    async execute(event:EventModel): Promise<EventModel> {
+    async execute(event: EventModel): Promise<EventModel> {
         logger.debug(`eventaction.updateComponentParent execute: event:${JSON.stringify(event)}}`);
 
         // TODO: validation
@@ -33,33 +31,35 @@ export class UpdateComponentParentAction implements EventAction {
         // retrieve the existing stored history of the parent device
         const existingEvent = await this.eventsDao.getLatest(parentDeviceId);
 
-        let existingState= {};
-        if (existingEvent!==undefined) {
+        let existingState = {};
+        if (existingEvent !== undefined) {
             // we have a latest
             existingState = JSON.parse(existingEvent.state);
         }
 
         // augment with the change
         switch (event.event) {
-        case EventType.create:
-            existingState['components'].push(componentId);
-            break;
-        case EventType.delete:
-            delete existingState['components'][componentId];
-            break;
-        default:
-            logger.debug(`eventaction.updateComponentParent execute: unsupported event:${event.event}`);
-            return null;
+            case EventType.create:
+                existingState['components'].push(componentId);
+                break;
+            case EventType.delete:
+                delete existingState['components'][componentId];
+                break;
+            default:
+                logger.debug(
+                    `eventaction.updateComponentParent execute: unsupported event:${event.event}`
+                );
+                return null;
         }
 
         // save the versions
-        const toSave:StateHistoryModel = {
+        const toSave: StateHistoryModel = {
             objectId: parentDeviceId,
             type: event.type,
             time: event.time,
             event: EventType.modify,
             user: event.user,
-            state: JSON.stringify(existingState)
+            state: JSON.stringify(existingState),
         };
 
         await this.eventsDao.create(toSave);
@@ -67,7 +67,5 @@ export class UpdateComponentParentAction implements EventAction {
         await this.eventsDao.update(toSave);
 
         return event;
-
     }
-
 }

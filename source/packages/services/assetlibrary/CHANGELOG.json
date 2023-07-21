@@ -1,9 +1,74 @@
 {
-  "name": "@cdf/assetlibrary",
+  "name": "@awssolutions/cdf-assetlibrary",
   "entries": [
     {
+      "version": "0.0.0",
+      "tag": "@awssolutions/cdf-assetlibrary_v0.0.0",
+      "date": "Thu, 09 Mar 2023 22:35:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.2.0",
+      "tag": "@awssolutions/cdf-assetlibrary_v0.2.0",
+      "date": "Wed, 08 Mar 2023 01:03:23 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from ^0.1.0 to ^0.2.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^0.1.0 to ^0.2.0."
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.0",
+      "tag": "@awssolutions/cdf-assetlibrary_v0.1.0",
+      "date": "Tue, 07 Mar 2023 23:22:30 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^0.0.0 to ^0.1.0."
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.0",
+      "tag": "@awssolutions/cdf-assetlibrary_v1.1.0",
+      "date": "Thu, 16 Feb 2023 18:41:01 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^1.0.0 to ^1.1.0."
+          }
+        ],
+        "major": [
+          {
+            "comment": "Neptune deployment group version upgraded to 1.2."
+          }
+        ]
+      }
+    },
+    {
       "version": "6.1.0",
-      "tag": "@cdf/assetlibrary_v6.1.0",
+      "tag": "@awssolutions/cdf-assetlibrary_v6.1.0",
       "date": "Mon, 11 Jul 2022 22:20:13 GMT",
       "comments": {
         "minor": [
@@ -15,7 +80,7 @@
     },
     {
       "version": "6.0.9",
-      "tag": "@cdf/assetlibrary_v6.0.9",
+      "tag": "@awssolutions/cdf-assetlibrary_v6.0.9",
       "date": "Fri, 24 Jun 2022 21:00:45 GMT",
       "comments": {
         "patch": [
@@ -27,7 +92,7 @@
     },
     {
       "version": "6.0.8",
-      "tag": "@cdf/assetlibrary_v6.0.8",
+      "tag": "@awssolutions/cdf-assetlibrary_v6.0.8",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",
       "comments": {
         "patch": [
@@ -37,14 +102,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^4.0.1` to `^4.0.2`"
+            "comment": "Updating dependency \"@awssolutions/cdf-config-inject\" from `^4.0.1` to `^4.0.2`"
           }
         ]
       }
     },
     {
       "version": "6.0.7",
-      "tag": "@cdf/assetlibrary_v6.0.7",
+      "tag": "@awssolutions/cdf-assetlibrary_v6.0.7",
       "date": "Thu, 16 Jun 2022 19:05:36 GMT",
       "comments": {
         "patch": [
@@ -56,7 +121,7 @@
     },
     {
       "version": "6.0.6",
-      "tag": "@cdf/assetlibrary_v6.0.6",
+      "tag": "@awssolutions/cdf-assetlibrary_v6.0.6",
       "date": "Wed, 27 Apr 2022 06:44:55 GMT",
       "comments": {
         "patch": [
@@ -68,7 +133,7 @@
     },
     {
       "version": "6.0.5",
-      "tag": "@cdf/assetlibrary_v6.0.5",
+      "tag": "@awssolutions/cdf-assetlibrary_v6.0.5",
       "date": "Thu, 07 Apr 2022 05:00:50 GMT",
       "comments": {
         "patch": [
@@ -80,7 +145,7 @@
     },
     {
       "version": "6.0.4",
-      "tag": "@cdf/assetlibrary_v6.0.4",
+      "tag": "@awssolutions/cdf-assetlibrary_v6.0.4",
       "date": "Wed, 30 Mar 2022 00:46:17 GMT",
       "comments": {
         "patch": [
@@ -95,7 +160,7 @@
     },
     {
       "version": "6.0.3",
-      "tag": "@cdf/assetlibrary_v6.0.3",
+      "tag": "@awssolutions/cdf-assetlibrary_v6.0.3",
       "date": "Tue, 15 Mar 2022 18:37:51 GMT",
       "comments": {
         "patch": [
@@ -107,7 +172,7 @@
     },
     {
       "version": "6.0.2",
-      "tag": "@cdf/assetlibrary_v6.0.2",
+      "tag": "@awssolutions/cdf-assetlibrary_v6.0.2",
       "date": "Thu, 10 Mar 2022 00:08:34 GMT",
       "comments": {
         "patch": [
@@ -119,7 +184,7 @@
     },
     {
       "version": "6.0.1",
-      "tag": "@cdf/assetlibrary_v6.0.1",
+      "tag": "@awssolutions/cdf-assetlibrary_v6.0.1",
       "date": "Thu, 17 Feb 2022 10:54:42 GMT",
       "comments": {
         "patch": [
@@ -131,7 +196,7 @@
     },
     {
       "version": "6.0.0",
-      "tag": "@cdf/assetlibrary_v6.0.0",
+      "tag": "@awssolutions/cdf-assetlibrary_v6.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",
       "comments": {
         "major": [
@@ -141,23 +206,23 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-errors\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-logger\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-config-inject\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/express-middleware\" from `^2.1.0` to `^3.0.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-express-middleware\" from `^2.1.0` to `^3.0.0`"
           }
         ]
       }
     },
     {
       "version": "5.4.3",
-      "tag": "@cdf/assetlibrary_v5.4.3",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.4.3",
       "date": "Fri, 04 Feb 2022 17:03:38 GMT",
       "comments": {
         "patch": [
@@ -169,7 +234,7 @@
     },
     {
       "version": "5.4.2",
-      "tag": "@cdf/assetlibrary_v5.4.2",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.4.2",
       "date": "Tue, 25 Jan 2022 19:57:26 GMT",
       "comments": {
         "patch": [
@@ -181,7 +246,7 @@
     },
     {
       "version": "5.4.1",
-      "tag": "@cdf/assetlibrary_v5.4.1",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.4.1",
       "date": "Wed, 05 Jan 2022 18:34:59 GMT",
       "comments": {
         "patch": [
@@ -193,7 +258,7 @@
     },
     {
       "version": "5.4.0",
-      "tag": "@cdf/assetlibrary_v5.4.0",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.4.0",
       "date": "Wed, 29 Dec 2021 20:21:35 GMT",
       "comments": {
         "minor": [
@@ -205,7 +270,7 @@
     },
     {
       "version": "5.3.9",
-      "tag": "@cdf/assetlibrary_v5.3.9",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.3.9",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",
       "comments": {
         "patch": [
@@ -220,7 +285,7 @@
     },
     {
       "version": "5.3.8",
-      "tag": "@cdf/assetlibrary_v5.3.8",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.3.8",
       "date": "Wed, 08 Dec 2021 21:31:23 GMT",
       "comments": {
         "patch": [
@@ -232,7 +297,7 @@
     },
     {
       "version": "5.3.7",
-      "tag": "@cdf/assetlibrary_v5.3.7",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.3.7",
       "date": "Wed, 08 Dec 2021 17:48:56 GMT",
       "comments": {
         "patch": [
@@ -244,7 +309,7 @@
     },
     {
       "version": "5.3.6",
-      "tag": "@cdf/assetlibrary_v5.3.6",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.3.6",
       "date": "Tue, 09 Nov 2021 18:18:19 GMT",
       "comments": {
         "patch": [
@@ -259,7 +324,7 @@
     },
     {
       "version": "5.3.5",
-      "tag": "@cdf/assetlibrary_v5.3.5",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.3.5",
       "date": "Tue, 19 Oct 2021 23:02:07 GMT",
       "comments": {
         "patch": [
@@ -274,7 +339,7 @@
     },
     {
       "version": "5.3.4",
-      "tag": "@cdf/assetlibrary_v5.3.4",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.3.4",
       "date": "Wed, 29 Sep 2021 23:23:30 GMT",
       "comments": {
         "patch": [
@@ -286,7 +351,7 @@
     },
     {
       "version": "5.3.3",
-      "tag": "@cdf/assetlibrary_v5.3.3",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.3.3",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",
       "comments": {
         "patch": [
@@ -302,14 +367,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^3.0.1`"
+            "comment": "Updating dependency \"@awssolutions/cdf-config-inject\" from `^3.0.0` to `^3.0.1`"
           }
         ]
       }
     },
     {
       "version": "5.3.2",
-      "tag": "@cdf/assetlibrary_v5.3.2",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.3.2",
       "date": "Fri, 20 Aug 2021 16:07:58 GMT",
       "comments": {
         "patch": [
@@ -321,7 +386,7 @@
     },
     {
       "version": "5.3.1",
-      "tag": "@cdf/assetlibrary_v5.3.1",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.3.1",
       "date": "Wed, 11 Aug 2021 01:26:49 GMT",
       "comments": {
         "patch": [
@@ -336,7 +401,7 @@
     },
     {
       "version": "5.3.0",
-      "tag": "@cdf/assetlibrary_v5.3.0",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.3.0",
       "date": "Thu, 29 Jul 2021 00:16:37 GMT",
       "comments": {
         "minor": [
@@ -346,14 +411,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/express-middleware\" from `^2.0.0` to `^2.1.0`"
+            "comment": "Updating dependency \"@awssolutions/cdf-express-middleware\" from `^2.0.0` to `^2.1.0`"
           }
         ]
       }
     },
     {
       "version": "5.2.0",
-      "tag": "@cdf/assetlibrary_v5.2.0",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.2.0",
       "date": "Fri, 23 Jul 2021 16:14:32 GMT",
       "comments": {
         "minor": [
@@ -365,7 +430,7 @@
     },
     {
       "version": "5.1.0",
-      "tag": "@cdf/assetlibrary_v5.1.0",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.1.0",
       "date": "Fri, 23 Jul 2021 15:55:06 GMT",
       "comments": {
         "minor": [
@@ -377,7 +442,7 @@
     },
     {
       "version": "5.0.0",
-      "tag": "@cdf/assetlibrary_v5.0.0",
+      "tag": "@awssolutions/cdf-assetlibrary_v5.0.0",
       "date": "Wed, 21 Jul 2021 16:46:57 GMT",
       "comments": {
         "major": [

@@ -11,48 +11,48 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import {injectable} from "inversify";
-import {logger} from "../utils/logger";
-import {OrganizationalUnitItem, OrganizationalUnitResource} from "./organizationalUnits.model";
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { injectable } from 'inversify';
+import { OrganizationalUnitItem, OrganizationalUnitResource } from './organizationalUnits.model';
 
 @injectable()
 export class OrganizationalUnitsAssembler {
     public toResourceList(items: OrganizationalUnitItem[]): OrganizationalUnitResource[] {
-        logger.debug(`organizationalUnit.assembler toResourceList: in: item:${JSON.stringify(items)}`);
-        const resourcelist = items.map(r => this.toResource(r))
-        logger.debug(`organizationalUnit.assembler toResourceList: out: ${JSON.stringify(resourcelist)}`)
+        logger.debug(
+            `organizationalUnit.assembler toResourceList: in: item:${JSON.stringify(items)}`
+        );
+        const resourcelist = items.map((r) => this.toResource(r));
+        logger.debug(
+            `organizationalUnit.assembler toResourceList: out: ${JSON.stringify(resourcelist)}`
+        );
         return resourcelist;
     }
 
     public toResource(item: OrganizationalUnitItem): OrganizationalUnitResource {
         logger.debug(`organizationalUnit.assembler toResource: in: item:${JSON.stringify(item)}`);
-        const {
-            id,
-            name,
-            createdAt
-        } = item
+        const { id, name, createdAt } = item;
 
         const resource: OrganizationalUnitResource = {
-            id, name, createdAt: new Date(createdAt)
-        }
-        logger.debug(`organizationalUnit.assembler toResource: out: ${JSON.stringify(item)}`)
+            id,
+            name,
+            createdAt: new Date(createdAt),
+        };
+        logger.debug(`organizationalUnit.assembler toResource: out: ${JSON.stringify(item)}`);
         return resource;
     }
 
-
     public toItem(resource: OrganizationalUnitResource): OrganizationalUnitItem {
-        logger.debug(`organizationalUnit.assembler toResource: in: item:${JSON.stringify(resource)}`);
-        const {
-            id,
-            name,
-            createdAt
-        } = resource
+        logger.debug(
+            `organizationalUnit.assembler toResource: in: item:${JSON.stringify(resource)}`
+        );
+        const { id, name, createdAt } = resource;
 
         const item: OrganizationalUnitItem = {
-            id, name, createdAt: createdAt.toISOString()
-        }
-        logger.debug(`organizationalUnit.assembler toResource: out: ${JSON.stringify(item)}`)
+            id,
+            name,
+            createdAt: createdAt.toISOString(),
+        };
+        logger.debug(`organizationalUnit.assembler toResource: out: ${JSON.stringify(item)}`);
         return item;
     }
-
 }

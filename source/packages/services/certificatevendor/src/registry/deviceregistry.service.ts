@@ -10,37 +10,37 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger';
-import ow from 'ow';
-import { RegistryManager } from './registry.interfaces';
-import { TYPES } from '../di/types';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Iot } from 'aws-sdk';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import { TYPES } from '../di/types';
+import { RegistryManager } from './registry.interfaces';
 
 @injectable()
 export class DeviceRegistryManager implements RegistryManager {
-
     private readonly iot: AWS.Iot;
 
     constructor(
         @inject('defaults.device.status.success.key') private successKey: string,
         @inject('defaults.device.status.success.value') private successValue: string,
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot) {
-            this.iot = iotFactory();
+        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot
+    ) {
+        this.iot = iotFactory();
     }
 
-    public async isWhitelisted(deviceId:string) : Promise<boolean> {
+    public async isWhitelisted(deviceId: string): Promise<boolean> {
         logger.debug(`deviceregistry.service isWhitelisted: in: deviceId:${deviceId}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
-        let whitelisted=true;
+        let whitelisted = true;
 
         try {
-            await this.iot.describeThing({thingName:deviceId}).promise();
+            await this.iot.describeThing({ thingName: deviceId }).promise();
         } catch (err) {
-            if (err.name==='ResourceNotFoundException') {
-                whitelisted=false;
+            if (err.name === 'ResourceNotFoundException') {
+                whitelisted = false;
             } else {
                 throw err;
             }
@@ -50,32 +50,34 @@ export class DeviceRegistryManager implements RegistryManager {
         return whitelisted;
     }
 
-    public async updateAssetStatus(deviceId:string) : Promise<void> {
+    public async updateAssetStatus(deviceId: string): Promise<void> {
         logger.debug(`deviceregistry.service updateAssetStatus: in: deviceId:${deviceId}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
-        if (this.successKey===undefined || this.successKey === null) {
-            logger.warn('deviceregistry.service updateAssetStatus: exit: successKey not set, therefore not updating device registry');
+        if (this.successKey === undefined || this.successKey === null) {
+            logger.warn(
+                'deviceregistry.service updateAssetStatus: exit: successKey not set, therefore not updating device registry'
+            );
             return;
         }
-        if (this.successValue===undefined || this.successValue === null) {
-            logger.warn('deviceregistry.service updateAssetStatus: exit: successValue not set, therefore not updating device registry');
+        if (this.successValue === undefined || this.successValue === null) {
+            logger.warn(
+                'deviceregistry.service updateAssetStatus: exit: successValue not set, therefore not updating device registry'
+            );
             return;
         }
 
         const params: Iot.Types.UpdateThingRequest = {
-            thingName:deviceId,
+            thingName: deviceId,
             attributePayload: {
-                attributes: {
-                },
-                merge: true
-            }
+                attributes: {},
+                merge: true,
+            },
         };
         params.attributePayload.attributes[this.successKey] = this.successValue;
         await this.iot.updateThing(params).promise();
 
         logger.debug('deviceregistry.service updateAssetStatus: exit:');
     }
-
 }

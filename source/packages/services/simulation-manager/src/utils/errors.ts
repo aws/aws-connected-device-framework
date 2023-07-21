@@ -13,33 +13,36 @@
 import { Response } from 'express';
 import { logger } from './logger';
 
-export function handleError(e:ErrorWithResponse, res:Response): void {
+export function handleError(e: ErrorWithResponse, res: Response): void {
     logger.error(`handleError: ${e}`);
 
     let message = e.message;
     let status;
-    if (e.response!==undefined) {
-        status=e.response.status;
+    if (e.response !== undefined) {
+        status = e.response.status;
         const json = JSON.parse(e.response.text);
         if (json['error']) {
             message = json['error'];
         }
     }
 
-    if (status===400 || e.name=== 'ArgumentError' || message === 'FAILED_VALIDATION' || message === 'STATUS_PENDING' || message === 'INVALID_RELATION') {
-        res.status(400).json({error: message}).end();
-
-    } else if (status===404 || message === 'NOT_FOUND') {
-        res.status(404).json({error: 'Resource does not exist'}).end();
-
-    } else if (status===409) {
-        res.status(409).json({error: message}).end();
-
+    if (
+        status === 400 ||
+        e.name === 'ArgumentError' ||
+        message === 'FAILED_VALIDATION' ||
+        message === 'STATUS_PENDING' ||
+        message === 'INVALID_RELATION'
+    ) {
+        res.status(400).json({ error: message }).end();
+    } else if (status === 404 || message === 'NOT_FOUND') {
+        res.status(404).json({ error: 'Resource does not exist' }).end();
+    } else if (status === 409) {
+        res.status(409).json({ error: message }).end();
     } else {
         // NO_PROVISIONING_TEMPLATE_CONFIGURED
         // NO_ROOT_CA_CONFIGURED
         // NO_ROOT_CA_CERTIFICATE_PEM
-        res.status(500).json({error: message}).end();
+        res.status(500).json({ error: message }).end();
     }
 
     logger.error(`handleError: res.status: ${res.statusCode} ${res.statusMessage}`);

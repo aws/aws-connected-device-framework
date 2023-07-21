@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-
+/* tslint:disable:no-unused-variable member-ordering */
 import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
 import createError from 'http-errors';
 import { injectable } from 'inversify';
@@ -22,7 +22,6 @@ import { DevicesService, DevicesServiceBase } from './devices.service';
 
 @injectable()
 export class DevicesApigwService extends DevicesServiceBase implements DevicesService {
-
     private readonly baseUrl: string;
 
     public constructor() {
@@ -30,7 +29,10 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         this.baseUrl = process.env.GREENGRASS2PROVISIONING_BASE_URL;
     }
 
-    async createDeviceTask(task: NewDeviceTask, additionalHeaders?: RequestHeaders): Promise<string> {
+    async createDeviceTask(
+        task: NewDeviceTask,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
         ow(task, ow.object.nonEmpty);
         ow(task.devices, 'devices', ow.array.nonEmpty);
         ow(task.devices, 'devices', ow.array.nonEmpty);
@@ -75,7 +77,6 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
                 throw createError(err.response.status, err.response.text);
             });
     }
-
 
     async getDevice(name: string, additionalHeaders?: RequestHeaders): Promise<Device> {
         ow(name, ow.string.nonEmpty);

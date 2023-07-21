@@ -11,23 +11,26 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { Before, setDefaultTimeout } from '@cucumber/cucumber';
+import fs from 'fs';
+
 import {
     COMMANDANDCONTROL_CLIENT_TYPES,
     CommandsService,
 } from '@awssolutions/cdf-commandandcontrol-client';
 import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
-import { Before, setDefaultTimeout } from '@cucumber/cucumber';
-import fs from 'fs';
-import os from 'os';
+
 import { container } from '../di/inversify.config';
+import { listCommands } from '../step_definitions/commandandcontrol/commands.steps';
+import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
+import os from 'os';
+
+import AWS = require('aws-sdk');
+import path = require('path');
 import {
     CommandAndControlProvisioningWorld,
     world,
 } from '../step_definitions/commandandcontrol/commandandcontrol.world';
-import { listCommands } from '../step_definitions/commandandcontrol/commands.steps';
-import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
-import AWS = require('aws-sdk');
-import path = require('path');
 
 setDefaultTimeout(30 * 1000);
 
@@ -98,7 +101,9 @@ async function createThing(thingName: string): Promise<void> {
             })
             .promise();
     } catch (e) {
-        const policyDocument = process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYDOCUMENT;
+        let policyDocument = process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYDOCUMENT;
+        policyDocument = policyDocument.split('${AWS_REGION}').join(process.env.AWS_REGION);
+        policyDocument = policyDocument.split('${AWS_ACCOUNTID}').join(process.env.AWS_ACCOUNTID);
 
         await iot
             .createPolicy({
@@ -219,8 +224,8 @@ async function deleteThingGroup(thingGroupName: string) {
 }
 
 async function teardown_commandandcontrol_topics_feature() {
-    await createThing('cdf-integration-test-cac-topics-device1');
-    await createThing('cdf-integration-test-cac-topics-device2');
+    await deleteThing('cdf-integration-test-cac-topics-device1');
+    await deleteThing('cdf-integration-test-cac-topics-device2');
 }
 
 Before({ tags: '@setup_commandandcontrol_topics' }, async function () {

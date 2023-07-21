@@ -77,7 +77,7 @@ export class SearchLambdaService extends SearchServiceBase implements SearchServ
         const req = new SearchRequestModel();
         req.clone(searchRequest);
 
-        const qs = req.toLambdaMultiValueQueryString()
+        const qs = req.toLambdaMultiValueQueryString();
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.searchRelativeUrl())

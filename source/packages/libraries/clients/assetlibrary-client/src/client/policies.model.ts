@@ -24,7 +24,7 @@ export interface Policy {
 
     type: string;
 
-    description:string;
+    description: string;
 
     appliesTo: string[];
 

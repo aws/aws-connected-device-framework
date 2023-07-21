@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 
 import { injectable } from 'inversify';
+
 import { PathHelper } from '../utils/path.helper';
 import { RequestHeaders } from './common.model';
 import { ClientServiceBase } from './common.service';
@@ -25,39 +26,59 @@ import {
 } from './messages.model';
 
 export interface MessagesService {
-    createMessage(message: NewMessageResource, additionalHeaders?: RequestHeaders ): Promise<string>;
-    getMessage(messageId: string, additionalHeaders?: RequestHeaders ): Promise<MessageResource>;
-    listMessages(commandId:string, count?:number, fromCreatedAtExclusive?:number ): Promise<MessageList>
-    getRecipient(messageId: string, thingName:string, additionalHeaders?: RequestHeaders) : Promise<Recipient>;
-    listRecipients(messageId: string, fromThingNameExclusive?:string, count?:string, additionalHeaders?: RequestHeaders) : Promise<RecipientList>;
-    listReplies(messageId: string, thingName: string, fromReceivedAtExclusive?:number, count?:string, additionalHeaders?: RequestHeaders) : Promise<ReplyList>;
+    createMessage(
+        message: NewMessageResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string>;
+    getMessage(messageId: string, additionalHeaders?: RequestHeaders): Promise<MessageResource>;
+    listMessages(
+        commandId: string,
+        count?: number,
+        fromCreatedAtExclusive?: number
+    ): Promise<MessageList>;
+    getRecipient(
+        messageId: string,
+        thingName: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<Recipient>;
+    listRecipients(
+        messageId: string,
+        fromThingNameExclusive?: string,
+        count?: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<RecipientList>;
+    listReplies(
+        messageId: string,
+        thingName: string,
+        fromReceivedAtExclusive?: number,
+        count?: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ReplyList>;
 }
 
 @injectable()
 export class MessagesServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }
 
-    protected commandMessagesRelativeUrl(commandId:string) : string {
+    protected commandMessagesRelativeUrl(commandId: string): string {
         return PathHelper.encodeUrl('commands', commandId, 'messages');
     }
 
-    protected messageRelativeUrl(messageId:string) : string {
+    protected messageRelativeUrl(messageId: string): string {
         return PathHelper.encodeUrl('messages', messageId);
     }
 
-    protected messageRecipientsRelativeUrl(messageId:string) : string {
+    protected messageRecipientsRelativeUrl(messageId: string): string {
         return PathHelper.encodeUrl('messages', messageId, 'recipients');
     }
 
-    protected messageRecipientRelativeUrl(messageId:string, thingName:string) : string {
+    protected messageRecipientRelativeUrl(messageId: string, thingName: string): string {
         return PathHelper.encodeUrl('messages', messageId, 'recipients', thingName);
     }
 
-    protected messageRepliesRelativeUrl(messageId:string, thingName:string) : string {
+    protected messageRepliesRelativeUrl(messageId: string, thingName: string): string {
         return PathHelper.encodeUrl('messages', messageId, 'recipients', thingName, 'replies');
     }
-
 }

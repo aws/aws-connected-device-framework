@@ -10,18 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { inject, injectable } from "inversify";
-import { TYPES } from "../di/types";
-import { logger } from "../utils/logger.util";
+import { GetCoreDeviceCommand, GreengrassV2Client } from '@aws-sdk/client-greengrassv2';
+import { SQSClient, SendMessageCommand, SendMessageCommandOutput } from '@aws-sdk/client-sqs';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { DeviceTasksDao } from "./deviceTasks.dao";
-import { DeviceTaskItem } from "./deviceTasks.model";
+import pLimit from 'p-limit';
 import { generate } from 'shortid';
-import { SendMessageCommand, SendMessageCommandOutput, SQSClient } from "@aws-sdk/client-sqs";
-import pLimit from "p-limit";
-import { DeviceItem } from "../devices/devices.model";
-import { DevicesService } from "../devices/devices.service";
-import { GetCoreDeviceCommand, GreengrassV2Client } from "@aws-sdk/client-greengrassv2";
+import { DeviceItem } from '../devices/devices.model';
+import { DevicesService } from '../devices/devices.service';
+import { TYPES } from '../di/types';
+import { DeviceTasksDao } from './deviceTasks.dao';
+import { DeviceTaskItem } from './deviceTasks.model';
 
 @injectable()
 export class DeviceTasksService {
@@ -32,7 +32,7 @@ export class DeviceTasksService {
         @inject(TYPES.DeviceTasksDao) private deviceTasksDao: DeviceTasksDao,
         @inject(TYPES.DevicesService) private devicesService: DevicesService,
         @inject(TYPES.SQSFactory) sqsFactory: () => SQSClient,
-        @inject(TYPES.Greengrassv2Factory) ggv2Factory: () => GreengrassV2Client,
+        @inject(TYPES.Greengrassv2Factory) ggv2Factory: () => GreengrassV2Client
     ) {
         this.sqs = sqsFactory();
         this.greengrassV2 = ggv2Factory();
@@ -49,7 +49,11 @@ export class DeviceTasksService {
     }
 
     public async create(request: DeviceTaskItem, coreName: string): Promise<string> {
-        logger.debug(`deviceTasks.service create: in: request:${JSON.stringify(request)}, coreName: ${coreName}`);
+        logger.debug(
+            `deviceTasks.service create: in: request:${JSON.stringify(
+                request
+            )}, coreName: ${coreName}`
+        );
 
         ow(request, ow.object.nonEmpty);
         ow(coreName, 'core name', ow.string.nonEmpty);
@@ -62,17 +66,21 @@ export class DeviceTasksService {
         }
 
         if (request.type === 'Delete') {
-            ow(request.options, 'delete devices options', ow.object.nonEmpty)
+            ow(request.options, 'delete devices options', ow.object.nonEmpty);
         }
 
         try {
             // Check if core device exists or not
-            const response = await this.greengrassV2.send(new GetCoreDeviceCommand({
-                coreDeviceThingName: coreName
-            }))
-            logger.silly(`deviceTasks.service create: in: core:${response.coreDeviceThingName} exists`)
+            const response = await this.greengrassV2.send(
+                new GetCoreDeviceCommand({
+                    coreDeviceThingName: coreName,
+                })
+            );
+            logger.silly(
+                `deviceTasks.service create: in: core:${response.coreDeviceThingName} exists`
+            );
         } catch (Exception) {
-            logger.error(`deviceTasks.service create: error: core:${coreName} does not exists`)
+            logger.error(`deviceTasks.service create: error: core:${coreName} does not exists`);
             throw new Error(`FAILED_VALIDATION`);
         }
 
@@ -80,18 +88,18 @@ export class DeviceTasksService {
         const task: DeviceTaskItem = {
             id: generate(),
             coreName,
-            devices: request.devices.map(c => {
+            devices: request.devices.map((c) => {
                 return {
                     ...c,
                     taskStatus: 'Waiting',
                     coreName,
-                    createdAt: new Date()
+                    createdAt: new Date(),
                 };
             }),
             type: request.type,
             options: request.options,
             taskStatus: 'Waiting',
-            createdAt: new Date()
+            createdAt: new Date(),
         };
 
         // there could be 100's of requested devices, therefore split into batches for more efficient processing
@@ -113,32 +121,40 @@ export class DeviceTasksService {
         const limit = pLimit(parseInt(process.env.PROMISES_CONCURRENCY));
         for (const batch of batches) {
             sqsFutures.push(
-                limit(() => this.sqs.send(
-                    new SendMessageCommand({
-                        QueueUrl: process.env.AWS_SQS_QUEUES_DEVICE_TASKS,
-                        MessageBody: JSON.stringify({
-                            taskId: task.id,
-                            devices: batch,
-                        }),
-                        MessageAttributes: {
-                            messageType: {
-                                DataType: 'String',
-                                StringValue: `DeviceTask:${request.type}`
-                            }
-                        }
-                    })
-                ))
+                limit(() =>
+                    this.sqs.send(
+                        new SendMessageCommand({
+                            QueueUrl: process.env.AWS_SQS_QUEUES_DEVICE_TASKS,
+                            MessageBody: JSON.stringify({
+                                taskId: task.id,
+                                devices: batch,
+                            }),
+                            MessageAttributes: {
+                                messageType: {
+                                    DataType: 'String',
+                                    StringValue: `DeviceTask:${request.type}`,
+                                },
+                            },
+                        })
+                    )
+                )
             );
         }
         await Promise.all(sqsFutures);
 
         logger.debug(`deviceTasks.service create: exit: ${task.id}`);
         return task.id;
-
     }
 
-    public async processDeleteDeviceTaskBatch(taskId: string, devices: DeviceItem[]): Promise<void> {
-        logger.debug(`deviceTasks.service processDeleteDeviceTaskBatch: in: taskId:${taskId}, devices:${JSON.stringify(devices)}`);
+    public async processDeleteDeviceTaskBatch(
+        taskId: string,
+        devices: DeviceItem[]
+    ): Promise<void> {
+        logger.debug(
+            `deviceTasks.service processDeleteDeviceTaskBatch: in: taskId:${taskId}, devices:${JSON.stringify(
+                devices
+            )}`
+        );
 
         let failed = false;
         let failedReason: string;
@@ -159,9 +175,15 @@ export class DeviceTasksService {
 
             // create the cores
             deletedDevices = await this.devicesService.deleteDevices(task, devices);
-            deletedDevices = await this.devicesService.disassociateDevicesFromCore(task, deletedDevices, task.coreName)
+            deletedDevices = await this.devicesService.disassociateDevicesFromCore(
+                task,
+                deletedDevices,
+                task.coreName
+            );
         } catch (e) {
-            logger.error(`devices.service processDeleteDeviceTaskBatch: e: ${e.name}: ${e.message}`);
+            logger.error(
+                `devices.service processDeleteDeviceTaskBatch: e: ${e.name}: ${e.message}`
+            );
             failed = true;
             failedReason = e.message;
         }
@@ -172,9 +194,15 @@ export class DeviceTasksService {
         logger.debug(`deviceTasks.service processDeleteDeviceTaskBatch: exit:`);
     }
 
-
-    public async processCreateDeviceTaskBatch(taskId: string, devices: DeviceItem[]): Promise<void> {
-        logger.debug(`deviceTasks.service processCreateDeviceTaskBatch: in: taskId:${taskId}, devices:${JSON.stringify(devices)}`);
+    public async processCreateDeviceTaskBatch(
+        taskId: string,
+        devices: DeviceItem[]
+    ): Promise<void> {
+        logger.debug(
+            `deviceTasks.service processCreateDeviceTaskBatch: in: taskId:${taskId}, devices:${JSON.stringify(
+                devices
+            )}`
+        );
 
         let failed = false;
         let failedReason: string;
@@ -195,10 +223,15 @@ export class DeviceTasksService {
 
             // create the cores
             processedDevices = await this.devicesService.createDevices(task, devices);
-            processedDevices = await this.devicesService.associateDevicesWithCore(task, processedDevices, task.coreName)
-
+            processedDevices = await this.devicesService.associateDevicesWithCore(
+                task,
+                processedDevices,
+                task.coreName
+            );
         } catch (e) {
-            logger.error(`coreTasks.service processCreateDeviceTaskBatch: e: ${e.name}: ${e.message}`);
+            logger.error(
+                `coreTasks.service processCreateDeviceTaskBatch: e: ${e.name}: ${e.message}`
+            );
             failed = true;
             failedReason = e.message;
         }
@@ -209,8 +242,17 @@ export class DeviceTasksService {
         logger.debug(`deviceTasks.service processCreateDeviceTaskBatch: exit:`);
     }
 
-    private async saveBatchStatus(taskId: string, devices: DeviceItem[], failed: boolean, failedReason: string): Promise<void> {
-        logger.debug(`deviceTasks.service saveBatchStatus: in: taskId:${taskId}, failed:${failed}, failedReason:${failedReason}, devices:${JSON.stringify(devices)}`);
+    private async saveBatchStatus(
+        taskId: string,
+        devices: DeviceItem[],
+        failed: boolean,
+        failedReason: string
+    ): Promise<void> {
+        logger.debug(
+            `deviceTasks.service saveBatchStatus: in: taskId:${taskId}, failed:${failed}, failedReason:${failedReason}, devices:${JSON.stringify(
+                devices
+            )}`
+        );
 
         // update the batch progress
         const batchProgress = await this.deviceTasksDao.incrementBatchesCompleted(taskId);
@@ -219,7 +261,7 @@ export class DeviceTasksService {
         const task = await this.deviceTasksDao.get(taskId, true);
         if (task !== undefined) {
             // determine if failed
-            const hasFailedCores = devices.some(c => c.taskStatus === 'Failure');
+            const hasFailedCores = devices.some((c) => c.taskStatus === 'Failure');
             if (failed === true || hasFailedCores === true) {
                 task.taskStatus = 'Failure';
                 task.statusMessage = task.statusMessage ?? failedReason;
@@ -233,7 +275,7 @@ export class DeviceTasksService {
             }
 
             // if all batches have been completed, update the overall task state to complete
-            if ((batchProgress.complete === batchProgress.total) && task.taskStatus !== 'Failure') {
+            if (batchProgress.complete === batchProgress.total && task.taskStatus !== 'Failure') {
                 task.taskStatus = 'Success';
                 task.updatedAt = new Date();
             }

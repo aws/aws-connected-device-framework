@@ -10,7 +10,6 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-
 import { EventConditions } from './events.model';
 import {
     DynamodDBTargetResource,
@@ -24,7 +23,7 @@ export interface SubscriptionBaseResource {
     id?: string;
 
     principalValue?: string;
-    ruleParameterValues?: { [key: string] : string};
+    ruleParameterValues?: { [key: string]: string };
     event?: {
         id: string;
         name?: string;
@@ -72,8 +71,8 @@ export interface SubscriptionResourceList {
     results: SubscriptionV1Resource[] | SubscriptionV2Resource[];
     pagination?: {
         offset: {
-            eventId: string,
-            subscriptionId: string
-        }
+            eventId: string;
+            subscriptionId: string;
+        };
     };
 }

@@ -11,30 +11,34 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { AbortConfig, JobExecutionsRolloutConfig, TimeoutConfig } from "../commands/commands.models";
+import {
+    AbortConfig,
+    JobExecutionsRolloutConfig,
+    TimeoutConfig,
+} from '../commands/commands.models';
 
 export interface TemplateSummaryModel {
-	templateId:string;
-	operation:string;
-	description:string;
+    templateId: string;
+    operation: string;
+    description: string;
 }
 export interface TemplateModel extends TemplateSummaryModel {
-	document:string;
-	requiredDocumentParameters?:string[];
-	requiredFiles?:string[];
-	allowFileUploads?: boolean;
+    document: string;
+    requiredDocumentParameters?: string[];
+    requiredFiles?: string[];
+    allowFileUploads?: boolean;
 
-	presignedUrlExpiresInSeconds?:number;
-	rolloutMaximumPerMinute?:number;
-	jobExecutionsRolloutConfig?: JobExecutionsRolloutConfig;
-	abortConfig?: AbortConfig;
-	timeoutConfig?: TimeoutConfig;
+    presignedUrlExpiresInSeconds?: number;
+    rolloutMaximumPerMinute?: number;
+    jobExecutionsRolloutConfig?: JobExecutionsRolloutConfig;
+    abortConfig?: AbortConfig;
+    timeoutConfig?: TimeoutConfig;
 }
 
 export interface TemplateListModel {
-	templates:TemplateSummaryModel[];
-	pagination?: {
-		maxResults:number,
-		nextToken:string
-	};
+    templates: TemplateSummaryModel[];
+    pagination?: {
+        maxResults: number;
+        nextToken: string;
+    };
 }

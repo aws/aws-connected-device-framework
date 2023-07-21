@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { container } from './di/inversify.config';
+
 import { json } from 'body-parser';
 
 import { Application, NextFunction, Request, Response } from 'express';
@@ -26,20 +27,20 @@ const corsAllowedOrigin = process.env.CORS_ORIGIN;
 const server = new InversifyExpressServer(container);
 
 server.setConfig((app) => {
-  // only process requests with the correct versioned content type
-  app.use(json({ type: CDF_V1_TYPE }));
+    // only process requests with the correct versioned content type
+    app.use(json({ type: CDF_V1_TYPE }));
 
-  // set the versioned content type for all responses
-  app.use( (__: Request, res: Response, next: NextFunction)=> {
-    res.setHeader('Content-Type', CDF_V1_TYPE);
-    if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
-      res.setHeader('Access-Control-Allow-Origin', corsAllowedOrigin);
-    }
-    next();
-  });
+    // set the versioned content type for all responses
+    app.use((__: Request, res: Response, next: NextFunction) => {
+        res.setHeader('Content-Type', CDF_V1_TYPE);
+        if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
+            res.setHeader('Access-Control-Allow-Origin', corsAllowedOrigin);
+        }
+        next();
+    });
 });
 
-export const serverInstance:Application = server.build();
+export const serverInstance: Application = server.build();
 const port = process.env.PORT;
 serverInstance.listen(port);
 

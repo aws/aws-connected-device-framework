@@ -11,7 +11,7 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: CDF Deployment Helper (AWS Connected Device Framework)
 
@@ -38,7 +38,7 @@ Resources:
   CustomResourceVPCLambda:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "cdf-cfnCustomResourcesVPC-${Environment}"
+      FunctionName: !Sub 'cdf-cfnCustomResourcesVPC-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_custom_resource_proxy.handler
       MemorySize: 128
@@ -52,22 +52,22 @@ Resources:
           - !Ref CDFSecurityGroupId
       Environment:
         Variables:
-          APP_CONFIG_DIR: "config"
-          COMMANDANDCONTROL_API_FUNCTION_NAME: !Sub "cdf-commandandcontrol-rest-${Environment}"
+          APP_CONFIG_DIR: 'config'
+          COMMANDANDCONTROL_API_FUNCTION_NAME: !Sub 'cdf-commandandcontrol-rest-${Environment}'
           COMMANDANDCONTROL_MODE: lambda
 
   CustomResourceLambdaVPCRole:
     Type: AWS::IAM::Role
     Properties:
-      Description: "CDF Core application configuration override"
+      Description: 'CDF Core application configuration override'
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           Effect: Allow
           Principal:
             Service: lambda.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
@@ -76,80 +76,80 @@ Resources:
         - !Ref CustomResourceLambdaVPCPolicies
 
   CustomResourceLambdaVPCPolicies:
-    Type: "AWS::IAM::ManagedPolicy"
+    Type: 'AWS::IAM::ManagedPolicy'
     Metadata:
       cfn_nag:
         rules_to_suppress:
           - id: W13
-            reason: "EC2 full access on resources is to manage unnamed resources"
+            reason: 'EC2 full access on resources is to manage unnamed resources'
     Properties:
-      Description: "CDF Core application configuration override"
-      Path: "/"
+      Description: 'CDF Core application configuration override'
+      Path: '/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Sid: "iot"
+          - Sid: 'iot'
             Action:
-              - "iot:*"
+              - 'iot:*'
             Effect: Allow
-            Resource: "*"
-          - Sid: "sts"
+            Resource: '*'
+          - Sid: 'sts'
             Action:
-              - "sts:*"
+              - 'sts:*'
             Effect: Allow
-            Resource: "*"
-          - Sid: "eventbridge"
+            Resource: '*'
+          - Sid: 'eventbridge'
             Action:
-              - "events:PutEvents"
+              - 'events:PutEvents'
             Effect: Allow
-            Resource: "*"
-          - Sid: "iampassrole"
+            Resource: '*'
+          - Sid: 'iampassrole'
             Action:
-              - "iam:PassRole"
+              - 'iam:PassRole'
             Effect: Allow
-            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-*"
+            Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/cdf-*'
           - Effect: Allow
             Action:
-              - "s3:ListBucket"
-              - "s3:GetObject"
+              - 's3:ListBucket'
+              - 's3:GetObject'
             Resource:
-              - !Sub "arn:aws:s3:::${ArtifactsBucket}"
+              - !Sub 'arn:aws:s3:::${ArtifactsBucket}'
           - Action:
-              - "ec2:DescribeVpcEndpoints"
+              - 'ec2:DescribeVpcEndpoints'
             Effect: Allow
-            Resource: "*"
-          - Sid: "lambda"
+            Resource: '*'
+          - Sid: 'lambda'
             Action:
-              - "lambda:AddPermission"
-              - "lambda:CreateEventSourceMapping"
-              - "lambda:DeleteEventSourceMapping"
-              - "lambda:ListEventSourceMappings"
+              - 'lambda:AddPermission'
+              - 'lambda:CreateEventSourceMapping'
+              - 'lambda:DeleteEventSourceMapping'
+              - 'lambda:ListEventSourceMappings'
             Effect: Allow
-            Resource: "*"
+            Resource: '*'
           - Action:
-              - "lambda:Invoke*"
+              - 'lambda:Invoke*'
             Effect: Allow
             Resource:
-              - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-*"
+              - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-*'
 
   CustomResourceVpcLambdaArnSsmParameter:
-    Type: "AWS::SSM::Parameter"
+    Type: 'AWS::SSM::Parameter'
     Properties:
       Description: Custom Resource VPC Lambda ARN
-      Name: !Sub "/cdf/deployment-helper-vpc/${Environment}/CustomResourceVpcLambdaArn"
+      Name: !Sub '/cdf/deployment-helper-vpc/${Environment}/CustomResourceVpcLambdaArn'
       Type: String
       Value: !GetAtt CustomResourceVPCLambda.Arn
 
   NotAvailableSsmParameter:
-    Type: "AWS::SSM::Parameter"
+    Type: 'AWS::SSM::Parameter'
     Properties:
       Description: Store Emptry string in SSM parameter to be used for optional parameter
-      Name: !Sub "/cdf/deployment-helper-vpc/${Environment}/NotAvailable"
+      Name: !Sub '/cdf/deployment-helper-vpc/${Environment}/NotAvailable'
       Type: String
-      Value: "N/A"
+      Value: 'N/A'
 
 Outputs:
   CustomResourceVpcLambdaArn:
     Value: !GetAtt CustomResourceVPCLambda.Arn
     Export:
-      Name: !Sub "cdf-deployment-helper-vpc-${Environment}-customResourceVpcLambdaArn"
+      Name: !Sub 'cdf-deployment-helper-vpc-${Environment}-customResourceVpcLambdaArn'

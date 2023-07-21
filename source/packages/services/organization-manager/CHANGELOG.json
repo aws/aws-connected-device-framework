@@ -1,9 +1,42 @@
 {
-  "name": "@cdf/organization-manager",
+  "name": "@awssolutions/cdf-organization-manager",
   "entries": [
     {
+      "version": "0.0.0",
+      "tag": "@awssolutions/cdf-organization-manager_v0.0.0",
+      "date": "Thu, 09 Mar 2023 22:35:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.2.0",
+      "tag": "@awssolutions/cdf-organization-manager_v0.2.0",
+      "date": "Wed, 08 Mar 2023 01:03:23 GMT",
+      "comments": {}
+    },
+    {
+      "version": "1.1.0",
+      "tag": "@awssolutions/cdf-organization-manager_v1.1.0",
+      "date": "Thu, 16 Feb 2023 18:41:02 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^1.0.0 to ^1.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^1.0.0 to ^1.1.0."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.1.1",
-      "tag": "@cdf/organization-manager_v0.1.1",
+      "tag": "@awssolutions/cdf-organization-manager_v0.1.1",
       "date": "Wed, 03 Aug 2022 02:00:13 GMT",
       "comments": {
         "patch": [
@@ -15,12 +48,21 @@
     },
     {
       "version": "0.1.0",
-      "tag": "@cdf/organization-manager_v0.1.0",
+      "tag": "@awssolutions/cdf-organization-manager_v0.1.0",
       "date": "Fri, 29 Jul 2022 02:59:14 GMT",
       "comments": {
-        "minor": [
+        "dependency": [
           {
-            "comment": "new module to associate cdf components to AWS accounts or organizational unit"
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-lambda-invoke version bump from ^0.0.0 to ^0.1.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-logger version bump from ^0.0.0 to ^0.1.0."
           }
         ]
       }

@@ -41,12 +41,12 @@ source/packages/libraries/clients/greengrass-deployment-client/package.json:5
 source/packages/libraries/core/logger/package.json:5
 source/packages/libraries/simulator/device-simulator-base/package.json:5
 
-source/common/changes/@cdf/assetlibraryhistory-client/fix_deploy_scripts_2021-08-10-16-58.json:10
-source/common/changes/@cdf/config-inject/fix_deploy_scripts_2021-08-10-16-58.json:10
-source/common/changes/@cdf/express-middleware/fix_deploy_scripts_2021-08-10-16-58.json:10
-source/common/changes/@cdf/greengrass-provisioning-client/fix_deploy_scripts_2021-08-10-16-58.json:10
-source/common/changes/@cdf/logger/fix_deploy_scripts_2021-08-10-16-58.json:10
-source/common/changes/@cdf/notifications-client/fix_deploy_scripts_2021-08-10-16-58.json:10
+source/common/changes/@awssolutions/assetlibraryhistory-client/fix_deploy_scripts_2021-08-10-16-58.json:10
+source/common/changes/@awssolutions/config-inject/fix_deploy_scripts_2021-08-10-16-58.json:10
+source/common/changes/@awssolutions/express-middleware/fix_deploy_scripts_2021-08-10-16-58.json:10
+source/common/changes/@awssolutions/greengrass-provisioning-client/fix_deploy_scripts_2021-08-10-16-58.json:10
+source/common/changes/@awssolutions/logger/fix_deploy_scripts_2021-08-10-16-58.json:10
+source/common/changes/@awssolutions/notifications-client/fix_deploy_scripts_2021-08-10-16-58.json:10
 
 source/packages/services/events-processor/infrastructure/swagger.yml:946
 source/packages/services/greengrass-provisioning/infrastructure/swagger.yml:1011

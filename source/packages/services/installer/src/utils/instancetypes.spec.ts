@@ -13,62 +13,62 @@
 import { compareNeptuneInstancetypeNames } from './instancetypes';
 
 describe('compareNeptuneInstancetypes', () => {
-  it('should sort instance types by instanceFamily and tshirt size', async () => {
-    const sorted = [
-      'db.r5.large',
-      'db.r5.xlarge',
-      'db.r5.2xlarge',
-      'db.r5.4xlarge',
-      'db.r5.8xlarge',
-      'db.r5.12xlarge',
-      'db.r5.16xlarge',
-      'db.r5.24xlarge',
-      'db.r5d.large',
-      'db.r5d.xlarge',
-      'db.r5d.2xlarge',
-      'db.r5d.4xlarge',
-      'db.r5d.8xlarge',
-      'db.r5d.12xlarge',
-      'db.r5d.24xlarge',
-      'db.r6g.large',
-      'db.r6g.xlarge',
-      'db.r6g.2xlarge',
-      'db.r6g.4xlarge',
-      'db.r6g.8xlarge',
-      'db.r6g.12xlarge',
-      'db.r6g.16xlarge',
-      'db.t3.medium',
-      'db.t4g.medium',
-    ];
+    it('should sort instance types by instanceFamily and tshirt size', async () => {
+        const sorted = [
+            'db.r5.large',
+            'db.r5.xlarge',
+            'db.r5.2xlarge',
+            'db.r5.4xlarge',
+            'db.r5.8xlarge',
+            'db.r5.12xlarge',
+            'db.r5.16xlarge',
+            'db.r5.24xlarge',
+            'db.r5d.large',
+            'db.r5d.xlarge',
+            'db.r5d.2xlarge',
+            'db.r5d.4xlarge',
+            'db.r5d.8xlarge',
+            'db.r5d.12xlarge',
+            'db.r5d.24xlarge',
+            'db.r6g.large',
+            'db.r6g.xlarge',
+            'db.r6g.2xlarge',
+            'db.r6g.4xlarge',
+            'db.r6g.8xlarge',
+            'db.r6g.12xlarge',
+            'db.r6g.16xlarge',
+            'db.t3.medium',
+            'db.t4g.medium',
+        ];
 
-    const shuffled = [
-      'db.r6g.8xlarge',
-      'db.r5d.12xlarge',
-      'db.r5.large',
-      'db.r5d.xlarge',
-      'db.r6g.12xlarge',
-      'db.r5d.8xlarge',
-      'db.r6g.large',
-      'db.r5d.4xlarge',
-      'db.r6g.4xlarge',
-      'db.r5d.2xlarge',
-      'db.r6g.16xlarge',
-      'db.r5.16xlarge',
-      'db.r5d.large',
-      'db.t4g.medium',
-      'db.r6g.xlarge',
-      'db.t3.medium',
-      'db.r5.4xlarge',
-      'db.r5.8xlarge',
-      'db.r5.xlarge',
-      'db.r5.2xlarge',
-      'db.r5d.24xlarge',
-      'db.r5.12xlarge',
-      'db.r5.24xlarge',
-      'db.r6g.2xlarge',
-    ];
+        const shuffled = [
+            'db.r6g.8xlarge',
+            'db.r5d.12xlarge',
+            'db.r5.large',
+            'db.r5d.xlarge',
+            'db.r6g.12xlarge',
+            'db.r5d.8xlarge',
+            'db.r6g.large',
+            'db.r5d.4xlarge',
+            'db.r6g.4xlarge',
+            'db.r5d.2xlarge',
+            'db.r6g.16xlarge',
+            'db.r5.16xlarge',
+            'db.r5d.large',
+            'db.t4g.medium',
+            'db.r6g.xlarge',
+            'db.t3.medium',
+            'db.r5.4xlarge',
+            'db.r5.8xlarge',
+            'db.r5.xlarge',
+            'db.r5.2xlarge',
+            'db.r5d.24xlarge',
+            'db.r5.12xlarge',
+            'db.r5.24xlarge',
+            'db.r6g.2xlarge',
+        ];
 
-    shuffled.sort(compareNeptuneInstancetypeNames);
-    expect(shuffled).toEqual(sorted);
-  });
+        shuffled.sort(compareNeptuneInstancetypeNames);
+        expect(shuffled).toEqual(sorted);
+    });
 });
