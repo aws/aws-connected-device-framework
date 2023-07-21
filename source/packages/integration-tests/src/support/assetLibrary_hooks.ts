@@ -10,23 +10,23 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import {
-    GroupsService,
-    DevicesService,
-    TemplatesService,
-    CategoryEnum,
-    TypeResource,
-    Group20Resource,
-    ProfilesService,
     ASSETLIBRARY_CLIENT_TYPES,
+    CategoryEnum,
     Device20Resource,
+    DevicesService,
+    Group20Resource,
+    GroupsService,
+    ProfilesService,
+    RelationTargetExpanded,
     RequestHeaders,
+    TemplatesService,
+    TypeResource,
 } from '@awssolutions/cdf-assetlibrary-client/dist';
+import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import { sign } from 'jsonwebtoken';
 import { container } from '../di/inversify.config';
 import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
-import { RelationTargetExpanded } from '@awssolutions/cdf-assetlibrary-client/dist';
 
 setDefaultTimeout(30 * 1000);
 
@@ -327,6 +327,8 @@ export async function create_root_authorized_group_template(templateId: string) 
     await templatesService.updateTemplate(groupType, additionalHeaders);
 
     await templatesService.publishTemplate(CategoryEnum.group, templateId, additionalHeaders);
+
+    return;
 }
 async function enable_root_group_template_self_auth() {
     // First, check if self-auth already exists. Enabling it multiple times pollutes the database.
