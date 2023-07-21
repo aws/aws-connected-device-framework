@@ -71,17 +71,14 @@ export class RunsDao {
         };
 
         const results: { [key: string]: unknown }[] = [];
-        while (true) {
-            // eslint-disable-line no-constant-condition
-            const response = await this._dc.query(params).promise();
+        let response;
+        do {
+            response = await this._dc.query(params).promise();
             if (response.Items !== undefined) {
                 results.push(...response.Items);
             }
-            if (response.LastEvaluatedKey === undefined) {
-                break;
-            }
             params.ExclusiveStartKey = response.LastEvaluatedKey;
-        }
+        } while (response.LastEvaluatedKey !== undefined);
 
         logger.debug(`runs.dao listDeviceState: exit:${JSON.stringify(results)}`);
         return results;
