@@ -11,11 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import chai, { expect } from 'chai';
-import { Given, setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { JSONPath } from 'jsonpath-plus';
 import { sign } from 'jsonwebtoken';
-import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 
 import {
     CloudFormationClient,
@@ -99,7 +99,7 @@ Then('it fails with a {int}', function (status: number) {
     expect(this[RESPONSE_STATUS], 'response').eq(status);
 });
 
-Then('no operation is needed', () => {});
+Then('no operation is needed', () => undefined);
 
 export function validateExpectedAttributes<T>(model: T, data: DataTable, world?: unknown): void {
     const d = data.rowsHash();
