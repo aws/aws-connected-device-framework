@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-deployment-helper",
+      "comment": "Update to Node v18 LTS.",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-deployment-helper"
+}

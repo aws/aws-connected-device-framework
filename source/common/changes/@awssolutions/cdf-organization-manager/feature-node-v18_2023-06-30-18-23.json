@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-organization-manager",
+      "comment": "Update to Node v18 LTS.",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-organization-manager"
+}

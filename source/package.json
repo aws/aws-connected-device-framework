@@ -3,8 +3,8 @@
   "author": "Dean Hart",
   "scripts": {},
   "engines": {
-    "node": "=14",
-    "pnpm": "=6"
+    "node": "=18",
+    "pnpm": "=8"
   },
   "private": true,
   "husky": {

@@ -16,8 +16,8 @@
     "bundle": "../../../infrastructure/bundle-package.bash auth-jwt"
   },
   "dependencies": {
-    "@awssolutions/cdf-errors": "^2.2.0",
-    "@awssolutions/cdf-config-inject": "^2.2.0",
+    "@awssolutions/cdf-errors": "workspace:^2.2.0",
+    "@awssolutions/cdf-config-inject": "workspace:^2.2.0",
     "axios": "0.21.2",
     "js-yaml": "4.1.0",
     "jsonwebtoken": "9.0.0",

@@ -234,7 +234,7 @@ Resources:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       AutoPublishAlias: live
       Timeout: 60
       Environment:

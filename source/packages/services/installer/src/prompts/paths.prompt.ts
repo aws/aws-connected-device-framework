@@ -13,8 +13,9 @@
 import findUp from 'find-up';
 import fs from 'fs';
 import inquirer from 'inquirer';
-import inquirerFuzzyPath from 'inquirer-fuzzy-path';
 import path from 'path';
+
+const inquirerFuzzyPath = require('inquirer-fuzzy-path');
 
 inquirer.registerPrompt('fuzzypath', inquirerFuzzyPath);
 

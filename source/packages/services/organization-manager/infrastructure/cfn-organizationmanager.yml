@@ -244,7 +244,7 @@ Resources:
       Handler: lambda_proxy_eventbridge.handler
       MemorySize: 512
       Role: !GetAtt EventBridgeLambdaExecutionRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
@@ -261,7 +261,7 @@ Resources:
       Handler: lambda_proxy.handler
       MemorySize: 256
       Role: !GetAtt RESTLambdaExecutionRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-commands",
+      "comment": "Update to Node v18 LTS.",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-commands"
+}

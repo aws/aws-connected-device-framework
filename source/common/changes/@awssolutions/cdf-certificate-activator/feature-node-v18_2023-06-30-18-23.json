@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-certificate-activator",
+      "comment": "Update to Node v18 LTS.",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-certificate-activator"
+}
