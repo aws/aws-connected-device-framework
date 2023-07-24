@@ -39,7 +39,7 @@ import { TemplatesValidator } from '../templates/templates.validator';
 import { HttpHeaderUtils } from '../utils/httpHeaders';
 import { TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 // Load everything needed to the Container
 export const container = new Container();
 

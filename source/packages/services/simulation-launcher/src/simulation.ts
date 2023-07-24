@@ -14,7 +14,7 @@ import '@awssolutions/cdf-config-inject';
 import { TaskOverride } from 'aws-sdk/clients/ecs';
 import { logger } from './utils/logger';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 
 export type SimulationTaskOverride = Pick<TaskOverride, 'taskRoleArn'>;
 

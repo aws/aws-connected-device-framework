@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { TYPES } from '../di/types';

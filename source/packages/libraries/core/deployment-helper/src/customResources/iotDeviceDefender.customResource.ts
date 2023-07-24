@@ -13,6 +13,7 @@
 import { inject, injectable } from 'inversify';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import Iot, { AuditCheckConfigurations } from 'aws-sdk/clients/iot';
 import ow from 'ow';
 import { TYPES } from '../di/types';

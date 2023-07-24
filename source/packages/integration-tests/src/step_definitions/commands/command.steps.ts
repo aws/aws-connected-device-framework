@@ -26,7 +26,7 @@ import {
 import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
 import { AUTHORIZATION_TOKEN, replaceTokens, RESPONSE_STATUS } from '../common/common.steps';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 export const COMMAND_ID = 'commandId';
 export const COMMAND_DETAILS = 'commandDetails';
 /*

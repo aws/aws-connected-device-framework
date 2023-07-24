@@ -13,6 +13,7 @@
 import { inject, injectable } from 'inversify';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import ow from 'ow';
 import { TYPES } from '../di/types';
 import { CustomResource } from './customResource';

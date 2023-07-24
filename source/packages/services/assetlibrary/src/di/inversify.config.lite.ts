@@ -33,7 +33,7 @@ import { TypesServiceLite } from '../types/types.lite.service';
 import { TypesService } from '../types/types.service';
 import { TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 
 export const LiteContainerModule = new ContainerModule(
     (

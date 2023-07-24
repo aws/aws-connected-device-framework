@@ -25,7 +25,7 @@ import { MessagesLambdaService } from '../client/messages.lambda.service';
 import { MessagesService } from '../client/messages.service';
 import { COMMANDANDCONTROL_CLIENT_TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 export const commandAndControlContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,

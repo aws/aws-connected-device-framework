@@ -29,7 +29,7 @@ import {
 } from './certificates.models';
 import { CertificatesTaskDao } from './certificatestask.dao';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 @injectable()
 export class CertificatesService {
     private _iot: AWS.Iot;

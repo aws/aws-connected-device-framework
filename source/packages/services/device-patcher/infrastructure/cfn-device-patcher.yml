@@ -353,7 +353,7 @@ Resources:
       FunctionName: !Sub 'cdf-device-patcher-sqs-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_sqs_proxy.handler
-      MemorySize: 128
+      MemorySize: 256
       Role: !GetAtt SQSLambdaExecutionRole.Arn
       Runtime: nodejs16.x
       AutoPublishAlias: live
@@ -385,7 +385,7 @@ Resources:
       FunctionName: !Sub 'cdf-device-patcher-ssm-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_sqs_ssm_proxy.handler
-      MemorySize: 128
+      MemorySize: 256
       Role: !GetAtt SSMEventsLambdaExecutionRole.Arn
       Runtime: nodejs16.x
       AutoPublishAlias: live

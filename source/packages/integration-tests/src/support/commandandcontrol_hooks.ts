@@ -20,17 +20,17 @@ import {
 } from '@awssolutions/cdf-commandandcontrol-client';
 import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 
+import os from 'os';
 import { container } from '../di/inversify.config';
 import { listCommands } from '../step_definitions/commandandcontrol/commands.steps';
 import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
-import os from 'os';
 
-import AWS = require('aws-sdk');
-import path = require('path');
+import AWS from 'aws-sdk';
 import {
     CommandAndControlProvisioningWorld,
     world,
 } from '../step_definitions/commandandcontrol/commandandcontrol.world';
+import path = require('path');
 
 setDefaultTimeout(30 * 1000);
 

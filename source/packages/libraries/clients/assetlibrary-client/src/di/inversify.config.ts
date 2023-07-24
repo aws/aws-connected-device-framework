@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
+import AWS from 'aws-sdk';
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import { DevicesApigwService } from '../client/devices.apigw.service';
 import { DevicesLambdaService } from '../client/devices.lambda.service';
@@ -32,7 +33,6 @@ import { TemplatesLambdaService } from '../client/templates.lambda.service';
 import { TemplatesService } from '../client/templates.service';
 import '../config/env';
 import { ASSETLIBRARY_CLIENT_TYPES } from './types';
-import AWS = require('aws-sdk');
 
 export const assetLibraryContainerModule = new ContainerModule(
     (

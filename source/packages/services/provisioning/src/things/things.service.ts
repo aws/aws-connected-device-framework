@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { AWSError, Iot } from 'aws-sdk';
+import AWS, { AWSError, Iot } from 'aws-sdk';
 import {
     DescribeThingGroupResponse,
     DescribeThingRegistrationTaskRequest,
@@ -44,7 +44,6 @@ import {
     ThingGroupModel,
     ThingPolicyModel,
 } from './things.models';
-import AWS = require('aws-sdk');
 
 @injectable()
 export class ThingsService {

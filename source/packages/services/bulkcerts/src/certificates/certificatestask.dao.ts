@@ -11,12 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { DynamoDB } from 'aws-sdk';
+import AWS, { DynamoDB } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { TYPES } from '../di/types';
 import { CertificateBatchTaskWithChunks, TaskStatus } from './certificatestask.models';
-import AWS = require('aws-sdk');
 
 @injectable()
 export class CertificatesTaskDao {

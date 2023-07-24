@@ -24,7 +24,7 @@ import { MessageCompilerService } from '../targets/messageCompiler.service';
 import { SNSTarget } from '../targets/sns.target';
 import { TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 import AmazonDaxClient = require('amazon-dax-client');
 // Note: importing @controller's carries out a one time inversify metadata generation...
 

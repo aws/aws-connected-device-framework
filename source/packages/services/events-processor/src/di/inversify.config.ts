@@ -51,7 +51,7 @@ import { DDBStreamTransformer } from '../transformers/ddbstream.transformer';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
 import { TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 import AmazonDaxClient = require('amazon-dax-client');
 // Load everything needed to the Container
 export const container = new Container();

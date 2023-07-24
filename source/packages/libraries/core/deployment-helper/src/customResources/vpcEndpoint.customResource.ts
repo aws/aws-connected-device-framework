@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import { VpcEndpointRouteTableIdList, VpcEndpointSubnetIdList } from 'aws-sdk/clients/ec2';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
