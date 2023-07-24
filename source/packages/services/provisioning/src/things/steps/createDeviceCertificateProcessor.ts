@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import * as pem from 'pem';
@@ -19,7 +20,6 @@ import { CertUtils } from '../../utils/cert';
 import { CreateDeviceCertificateParameters } from '../things.models';
 import { ProvisioningStepData } from './provisioningStep.model';
 import { ProvisioningStepProcessor } from './provisioningStepProcessor';
-import AWS = require('aws-sdk');
 
 @injectable()
 export class CreateDeviceCertificateStepProcessor implements ProvisioningStepProcessor {

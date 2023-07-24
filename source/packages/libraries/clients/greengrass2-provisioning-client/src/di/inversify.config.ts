@@ -36,7 +36,7 @@ import { TemplatesLambdaService } from '../client/templates.lambda.service';
 import { TemplatesService } from '../client/templates.service';
 import { GREENGRASS2_PROVISIONING_CLIENT_TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 export const greengrass2ProvisioningContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,

@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import AWS from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
 import { CommandListModel, CommandModel, CommandSummaryModel } from './commands.models';
-import AWS = require('aws-sdk');
 
 @injectable()
 export class CommandsDao {

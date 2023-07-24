@@ -11,10 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import * as Errors from '@awssolutions/cdf-errors';
+import AWS from 'aws-sdk';
 import * as pem from 'pem';
 import { promisify } from 'util';
 import { logger } from './utils/logger';
-import AWS = require('aws-sdk');
 
 /**
  * Class implementing custom authorization needed by CDF APIs.

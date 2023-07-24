@@ -12,9 +12,9 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 
+import AWS from 'aws-sdk';
 import { AccountsDao } from './accounts.dao';
 import { AccountsItem } from './accounts.models';
-import AWS = require('aws-sdk');
 
 describe('AccountsDao', function () {
     let mockedDynamoDb: AWS.DynamoDB.DocumentClient;

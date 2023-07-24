@@ -11,10 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import '@awssolutions/cdf-config-inject';
+import AWS from 'aws-sdk';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 import { HttpHeaderUtils } from '../utils/httpHeaders';
 import { TYPES } from './types';
-import AWS = require('aws-sdk');
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
 import '../accounts/accounts.controller';

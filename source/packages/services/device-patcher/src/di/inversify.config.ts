@@ -14,7 +14,7 @@ import '@awssolutions/cdf-config-inject';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 import 'reflect-metadata';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 
 import { HttpHeaderUtils } from '../utils/httpHeaders';
 import { TYPES } from './types';

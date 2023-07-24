@@ -32,7 +32,7 @@ import {
 } from '../../support/provisioning_hooks';
 import { AUTHORIZATION_TOKEN, replaceTokens } from '../common/common.steps';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 import chai_string = require('chai-string');
 
 use(chai_string);

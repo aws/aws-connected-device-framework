@@ -13,6 +13,7 @@
 import 'reflect-metadata';
 
 import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
+import AWS from 'aws-sdk';
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import { AccountsApigwService } from '../client/accounts.apigw.service';
 import { AccountsLambdaService } from '../client/accounts.lambda.service';
@@ -25,7 +26,6 @@ import { OrganizationalUnitsLambdaService } from '../client/organizationalUnits.
 import { OrganizationalUnitsService } from '../client/organizationalUnits.service';
 import '../config/env';
 import { ORGMANLIBRARY_CLIENT_TYPES } from './types';
-import AWS = require('aws-sdk');
 
 export const organizationManagerContainerModule = new ContainerModule(
     (

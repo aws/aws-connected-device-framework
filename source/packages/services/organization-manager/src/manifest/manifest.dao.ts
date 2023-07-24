@@ -11,11 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
 import { PkType, createDelimitedAttributePrefix } from '../utils/pkUtils.util';
 import { AccountsByRegionListMap, RegionListByOrganizationalUnitMap } from './manifest.model';
-import AWS = require('aws-sdk');
 
 @injectable()
 export class ManifestDao {

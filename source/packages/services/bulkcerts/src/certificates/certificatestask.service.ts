@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { SNS } from 'aws-sdk';
+import AWS, { SNS } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { v1 as uuid } from 'uuid';
@@ -25,7 +25,6 @@ import {
     CommonNameGenerator,
     TaskStatus,
 } from './certificatestask.models';
-import AWS = require('aws-sdk');
 
 @injectable()
 export class CertificatesTaskService {

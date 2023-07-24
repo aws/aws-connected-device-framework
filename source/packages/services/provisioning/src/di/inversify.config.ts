@@ -29,7 +29,7 @@ import { ThingsService } from '../things/things.service';
 import { CertUtils } from '../utils/cert';
 import { TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 
 // Load everything needed to the Container
 export const container = new Container();

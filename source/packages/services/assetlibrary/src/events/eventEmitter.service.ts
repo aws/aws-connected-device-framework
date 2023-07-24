@@ -15,7 +15,7 @@ import { inject, injectable } from 'inversify';
 import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 
 @injectable()
 export class EventEmitter {

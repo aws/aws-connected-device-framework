@@ -27,7 +27,7 @@ import { CertificatesTaskLambdaService } from '../client/certificatestask.lambda
 import { CertificatesTaskService } from '../client/certificatestask.service';
 import { BULKCERTS_CLIENT_TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 export const bulkcertsContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,

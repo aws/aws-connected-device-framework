@@ -12,12 +12,12 @@
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
 import atob from 'atob';
+import AWS from 'aws-sdk';
 import { AttributeValue, DocumentClient } from 'aws-sdk/clients/dynamodb';
 import btoa from 'btoa';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
 import { StateHistoryListModel, StateHistoryModel } from './events.models';
-import AWS = require('aws-sdk');
 
 @injectable()
 export class EventsDao {

@@ -300,7 +300,7 @@ Resources:
       Handler: lambda_proxy.handler
       Layers:
         - !Ref OpenSslLambdaLayerArn
-      MemorySize: 128
+      MemorySize: 512
       Role: !GetAtt ApiLambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 300

@@ -509,7 +509,7 @@ Resources:
       CodeUri: ../bundle.zip
       Handler: lambda_sqs_handler.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 900

@@ -350,7 +350,7 @@ Resources:
       FunctionName: !Sub 'cdf-commands-presignedUrls-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/commands/dist/presignedurl_iot_rule.presignedurl_rule_handler
-      MemorySize: 128
+      MemorySize: 512
       Role: !GetAtt PresignedUrlLambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30
@@ -372,7 +372,7 @@ Resources:
       FunctionName: !Sub 'cdf-commands-jobLifecycle-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/commands/dist/job_lifecycle_iot_rule.job_lifecycle_rule_handler
-      MemorySize: 128
+      MemorySize: 512
       Role: !GetAtt JobLifecycleLambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30
@@ -394,7 +394,7 @@ Resources:
       FunctionName: !Sub 'cdf-commands-rest-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/commands/dist/lambda_proxy.handler
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt RESTLambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30

@@ -46,7 +46,7 @@ import { VpcEndpointCustomResource } from '../customResources/vpcEndpoint.custom
 import { VpcEndpointCheckCustomResource } from '../customResources/vpcEndpointCheck.customResource';
 import { TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 // Load everything needed to the Container
 export const container = new Container();
 

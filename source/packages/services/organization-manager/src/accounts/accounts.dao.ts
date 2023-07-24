@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import { TransactWriteItemList, Update } from 'aws-sdk/clients/dynamodb';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
@@ -28,7 +29,6 @@ import {
     AccountsItem,
     DynamoDbPaginationKey,
 } from './accounts.models';
-import AWS = require('aws-sdk');
 @injectable()
 export class AccountsDao {
     private _dc: AWS.DynamoDB.DocumentClient;

@@ -20,10 +20,13 @@ function mergeBuildOptions(userOptions: BuildOptions) {
         ...userOptions,
     };
 
+    // EDIT: disable marking aws-sdk as external until resolution of
+    // https://github.com/aws/aws-connected-device-framework/issues/135
+    //
     // aws-sdk is always marked external when building for lambda.
     // It is added here rather than in defaults so that user options
     // cannot prevent this.
-    result.external = ['aws-sdk', ...(result.external ?? [])];
+    // result.external = ['aws-sdk', ...(result.external ?? [])];
 
     return result;
 }

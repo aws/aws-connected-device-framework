@@ -69,7 +69,7 @@ Resources:
       FunctionName: !Sub 'cdf-cfnCustomResources-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_custom_resource_proxy.handler
-      MemorySize: 128
+      MemorySize: 512
       Role: !GetAtt CustomResourceLambdaRole.Arn
       Runtime: nodejs16.x
       Timeout: 60

@@ -15,7 +15,7 @@ import 'reflect-metadata';
 import '@awssolutions/cdf-config-inject';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 
 import { BatchService } from '../batch/batch.service';
 import { CategoryBatcher } from '../batch/batchers/category.batcher';

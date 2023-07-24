@@ -23,7 +23,7 @@ import { EventsApigwService } from '../client/events.apigw.service';
 import { EventsLambdaService } from '../client/events.lambda.service';
 import { ASSETLIBRARYHISTORY_CLIENT_TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 export const assetLibraryHistoryContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,

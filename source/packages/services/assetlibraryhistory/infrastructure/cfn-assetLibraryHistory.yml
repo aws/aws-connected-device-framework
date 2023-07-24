@@ -291,7 +291,7 @@ Resources:
       FunctionName: !Sub 'cdf-assetLibraryHistory-events-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_iot_rule.iot_rule_handler
-      MemorySize: 128
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30
@@ -308,7 +308,7 @@ Resources:
       FunctionName: !Sub 'cdf-assetLibraryHistory-rest-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_proxy.handler
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt RESTLambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30

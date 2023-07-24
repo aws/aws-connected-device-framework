@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
 
+import AWS from 'aws-sdk';
 import { TYPES } from '../di/types';
 import { CustomResource } from './customResource';
 import { CustomResourceEvent } from './customResource.model';
