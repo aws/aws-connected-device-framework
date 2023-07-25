@@ -14,6 +14,7 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { inject, injectable } from 'inversify';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import { TYPES } from '../di/types';
 
 @injectable()

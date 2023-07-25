@@ -358,7 +358,7 @@ Resources:
       CodeUri: ../bundle.zip
       Handler: lambda_topic_command_response_handler.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30
@@ -408,7 +408,7 @@ Resources:
       CodeUri: ../bundle.zip
       Handler: lambda_shadow_command_response_handler.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30
@@ -458,7 +458,7 @@ Resources:
       CodeUri: ../bundle.zip
       Handler: lambda_job_command_response_handler.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30

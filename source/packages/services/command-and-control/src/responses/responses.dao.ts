@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
