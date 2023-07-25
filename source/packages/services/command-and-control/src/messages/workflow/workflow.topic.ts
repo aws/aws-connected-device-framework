@@ -15,6 +15,7 @@ import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import { CommandItem, TopicDeliveryMethod } from '../../commands/commands.models';
 import { TYPES } from '../../di/types';
 import { MessageItem } from '../messages.models';

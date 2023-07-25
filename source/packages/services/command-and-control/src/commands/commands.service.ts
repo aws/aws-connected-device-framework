@@ -18,6 +18,7 @@ import pLimit from 'p-limit';
 import ShortUniqueId from 'short-unique-id';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import { SendMessageResult } from 'aws-sdk/clients/sqs';
 import { TYPES } from '../di/types';
 import { MessageItem, MessageListPaginationKey } from '../messages/messages.models';

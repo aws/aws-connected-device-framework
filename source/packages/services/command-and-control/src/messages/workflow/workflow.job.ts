@@ -21,6 +21,7 @@ import {
 } from '@awssolutions/cdf-provisioning-client';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import { CommandItem, JobDeliveryMethod } from '../../commands/commands.models';
 import { TYPES } from '../../di/types';
 import { MessageItem, Recipient } from '../messages.models';

@@ -17,6 +17,7 @@ import ow from 'ow';
 import pLimit from 'p-limit';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import ShortUniqueId from 'short-unique-id';
 import { CommandsDao } from '../commands/commands.dao';
 import { CommandItem } from '../commands/commands.models';
