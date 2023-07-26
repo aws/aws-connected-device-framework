@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-events-alerts",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "CDF Events (Alerts)",
   "author": "Dean Hart",
   "files": [
@@ -37,11 +37,11 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@awssolutions/cdf-config-inject": "^2.2.0",
-    "@awssolutions/cdf-errors": "^2.2.0",
+    "@awssolutions/cdf-config-inject": "^2.3.0",
+    "@awssolutions/cdf-errors": "^2.3.0",
     "@awssolutions/cdf-lambda-zip": "~0.0.0",
-    "@awssolutions/cdf-logger": "^2.2.0",
-    "@awssolutions/simple-cdf-logger": "^2.2.0",
+    "@awssolutions/cdf-logger": "^2.3.0",
+    "@awssolutions/simple-cdf-logger": "^2.3.0",
     "@rushstack/eslint-config": "2.3.4",
     "@types/cors": "2.8.10",
     "@types/dot": "1.1.4",

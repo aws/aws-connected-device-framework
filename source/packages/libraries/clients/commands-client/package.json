@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-commands-client",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "CDF Commands Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/cdf-lambda-invoke": "^2.2.0",
+    "@awssolutions/cdf-lambda-invoke": "^2.3.0",
     "aws-sdk": "2.1386.0",
     "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",

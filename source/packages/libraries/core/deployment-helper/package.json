@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-deployment-helper",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "CDF Deployment Helper",
   "author": "Hassan khokhar",
   "scripts": {
@@ -14,11 +14,11 @@
     "bundle:deploy": "node ../../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
-    "@awssolutions/cdf-lambda-invoke": "^2.2.0",
-    "@awssolutions/cdf-logger": "^2.2.0",
-    "@awssolutions/cdf-config-inject": "^2.2.0",
-    "@awssolutions/cdf-commandandcontrol-client": "^2.2.0",
-    "@awssolutions/simple-cdf-logger": "^2.2.0",
+    "@awssolutions/cdf-lambda-invoke": "^2.3.0",
+    "@awssolutions/cdf-logger": "^2.3.0",
+    "@awssolutions/cdf-config-inject": "^2.3.0",
+    "@awssolutions/cdf-commandandcontrol-client": "^2.3.0",
+    "@awssolutions/simple-cdf-logger": "^2.3.0",
     "aws-sdk": "2.1386.0",
     "cfn-response-promise": "1.0.1",
     "http-errors": "1.8.0",

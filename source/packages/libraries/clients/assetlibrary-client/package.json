@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-assetlibrary-client",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "CDF Asset Library Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -12,9 +12,9 @@
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/cdf-client-request-signer": "^2.2.0",
-    "@awssolutions/cdf-lambda-invoke": "^2.2.0",
-    "@awssolutions/simple-cdf-logger": "^2.2.0",
+    "@awssolutions/cdf-client-request-signer": "^2.3.0",
+    "@awssolutions/cdf-lambda-invoke": "^2.3.0",
+    "@awssolutions/simple-cdf-logger": "^2.3.0",
     "aws-sdk": "2.1386.0",
     "http-errors": "~2.0.0",
     "inversify": "6.0.1",

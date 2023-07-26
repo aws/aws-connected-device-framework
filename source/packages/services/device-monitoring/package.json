@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-device-monitoring",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "CDF Device Monitoring",
   "author": "Rahul Sareen",
   "files": [
@@ -45,12 +45,12 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@awssolutions/cdf-assetlibrary-client": "^2.2.0",
-    "@awssolutions/cdf-config-inject": "^2.2.0",
-    "@awssolutions/cdf-errors": "^2.2.0",
-    "@awssolutions/cdf-lambda-invoke": "^2.2.0",
-    "@awssolutions/cdf-logger": "^2.2.0",
-    "@awssolutions/simple-cdf-logger": "^2.2.0",
+    "@awssolutions/cdf-assetlibrary-client": "^2.3.0",
+    "@awssolutions/cdf-config-inject": "^2.3.0",
+    "@awssolutions/cdf-errors": "^2.3.0",
+    "@awssolutions/cdf-lambda-invoke": "^2.3.0",
+    "@awssolutions/cdf-logger": "^2.3.0",
+    "@awssolutions/simple-cdf-logger": "^2.3.0",
     "dotenv": "^8.2.0",
     "dotenv-flow": "~3.2.0",
     "http-errors": "1.8.0",
