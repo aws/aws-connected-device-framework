@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-deployment-helper",
-  "version": "0.0.0",
+  "version": "2.2.0",
   "description": "CDF Deployment Helper",
   "author": "Hassan khokhar",
   "scripts": {
@@ -58,7 +58,7 @@
     "typescript": "4.2.4",
     "@types/node": "16.11.7",
     "@types/dotenv-flow": "~3.2.0",
-    "@awssolutions/cdf-lambda-zip": "^0.0.0"
+    "@awssolutions/cdf-lambda-zip": "~0.0.0"
   },
   "jest": {
     "roots": [

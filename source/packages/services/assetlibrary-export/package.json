@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-assetlibrary-export",
-  "version": "0.0.0",
+  "version": "2.2.0",
   "description": "CDF Asset Library Export Service",
   "author": "Hassan Khokhar",
   "files": [
@@ -39,9 +39,9 @@
   "dependencies": {},
   "devDependencies": {
     "@awssolutions/cdf-config-inject": "^2.2.0",
-    "@awssolutions/cdf-lambda-zip": "^0.0.0",
+    "@awssolutions/cdf-lambda-zip": "~0.0.0",
     "@awssolutions/cdf-logger": "^2.2.0",
-    "@awssolutions/simple-cdf-logger": "^2.1.3",
+    "@awssolutions/simple-cdf-logger": "^2.2.0",
     "@rushstack/eslint-config": "2.3.1",
     "@types/body-parser": "1.19.2",
     "@types/cors": "2.8.8",
