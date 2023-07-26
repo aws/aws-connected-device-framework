@@ -11,8 +11,8 @@
     "bundle": "../../../infrastructure/bundle-package.bash auth-devicecert"
   },
   "dependencies": {
-    "@awssolutions/cdf-errors": "^2.2.0",
-    "@awssolutions/cdf-config-inject": "^2.2.0",
+    "@awssolutions/cdf-errors": "^2.3.0",
+    "@awssolutions/cdf-config-inject": "^2.3.0",
     "aws-sdk": "2.1386.0",
     "js-yaml": "4.1.0",
     "logform": "2.4.2",

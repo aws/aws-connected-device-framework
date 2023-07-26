@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-commands",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "CDF Commands",
   "author": "Dean Hart",
   "scripts": {
@@ -12,13 +12,13 @@
     "bundle": "../../../infrastructure/bundle-package.bash commands"
   },
   "dependencies": {
-    "@awssolutions/cdf-errors": "^2.2.0",
-    "@awssolutions/cdf-logger": "^2.2.0",
-    "@awssolutions/cdf-lambda-invoke": "^2.2.0",
-    "@awssolutions/cdf-assetlibrary-client": "^2.2.0",
+    "@awssolutions/cdf-errors": "^2.3.0",
+    "@awssolutions/cdf-logger": "^2.3.0",
+    "@awssolutions/cdf-lambda-invoke": "^2.3.0",
+    "@awssolutions/cdf-assetlibrary-client": "^2.3.0",
     "@awssolutions/cdf-express-middleware": "~0.0.0",
-    "@awssolutions/cdf-config-inject": "^2.2.0",
-    "@awssolutions/cdf-provisioning-client": "^2.2.0",
+    "@awssolutions/cdf-config-inject": "^2.3.0",
+    "@awssolutions/cdf-provisioning-client": "^2.3.0",
     "ajv": "6.12.3",
     "aws-sdk": "2.1386.0",
     "body-parser": "1.20.1",
