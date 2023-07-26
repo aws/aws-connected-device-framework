@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-integration-tests",
-  "version": "0.0.0",
+  "version": "2.2.0",
   "description": "CDF Integration Tests",
   "author": "Dean Hart",
   "scripts": {
@@ -76,6 +76,5 @@
     "shx": "0.3.3",
     "typescript": "4.2.4",
     "@types/deep-equal-in-any-order": "1.0.1"
-  },
-  "private": true
+  }
 }

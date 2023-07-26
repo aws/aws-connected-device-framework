@@ -84,7 +84,7 @@
       "packageName": "@awssolutions/cdf-commands-client",
       "projectFolder": "packages/libraries/clients/commands-client",
       "reviewCategory": "library",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-commandandcontrol-client",
@@ -138,19 +138,19 @@
       "packageName": "@awssolutions/cdf-config-inject",
       "projectFolder": "packages/libraries/config/config-inject",
       "reviewCategory": "library",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-environment-sanitizer",
       "projectFolder": "packages/libraries/core/environment-sanitizer",
       "reviewCategory": "library",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-errors",
       "projectFolder": "packages/libraries/core/errors",
       "reviewCategory": "library",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-event-publisher",
@@ -180,7 +180,7 @@
       "packageName": "@awssolutions/cdf-logger",
       "projectFolder": "packages/libraries/core/logger",
       "reviewCategory": "library",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-thing-list-builder",
@@ -192,7 +192,7 @@
       "packageName": "@awssolutions/cdf-device-simulator-base",
       "projectFolder": "packages/libraries/simulator/device-simulator-base",
       "reviewCategory": "library",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-deployment-helper",
@@ -252,7 +252,7 @@
       "packageName": "@awssolutions/cdf-commands",
       "projectFolder": "packages/services/commands",
       "reviewCategory": "production",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-command-and-control",
@@ -312,13 +312,13 @@
       "packageName": "@awssolutions/cdf-simulation-launcher",
       "projectFolder": "packages/services/simulation-launcher",
       "reviewCategory": "production",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-simulation-manager",
       "projectFolder": "packages/services/simulation-manager",
       "reviewCategory": "production",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-provisioning",
@@ -329,8 +329,8 @@
     {
       "packageName": "@awssolutions/cdf-integration-tests",
       "projectFolder": "packages/integration-tests",
-      "reviewCategory": "tests",
-      "versionPolicyName": "internal"
+      "reviewCategory": "production",
+      "versionPolicyName": "external"
     }
   ],
   /**
