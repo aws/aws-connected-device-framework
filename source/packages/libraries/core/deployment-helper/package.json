@@ -78,6 +78,5 @@
       "json",
       "node"
     ]
-  },
-  "private": true
+  }
 }
