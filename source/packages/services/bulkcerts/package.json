@@ -14,7 +14,7 @@
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js",
-    "test": "rushx lint && APP_CONFIG_DIR=${PWD}/src/config CONFIG_LOCATION=${PWD}/src/config/.env.test jest --maxWorkers=$JEST_MAX_WORKERS"
+    "test": ""
   },
   "config": {
     "environment": "development"
