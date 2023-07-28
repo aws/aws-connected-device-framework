@@ -25,17 +25,22 @@ jobs:
         run: |
           npm install -g @microsoft/rush
       
-      - name: Install Dependencies
+      - name: Install dependencies
         shell: bash
         run: |
-          npm i
+          yarn install
+
+      - name: Build packages
+        shell: bash
+        run: |
+          yarn build
 
       - name: Run lint
         shell: bash
         run: |
-          npm run lint
+          yarn run lint
 
       - name: Run unit tests
         shell: bash
         run: |
-          npm test
+          yarn test
