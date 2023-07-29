@@ -17,6 +17,7 @@ import { logger } from '@awssolutions/simple-cdf-logger';
 import {
     LAMBDAINVOKE_TYPES,
     LambdaApiGatewayEventBuilder,
+    LambdaApiGatewayEventResponse,
     LambdaInvokerService,
 } from '@awssolutions/cdf-lambda-invoke';
 import ow from 'ow';
@@ -134,7 +135,7 @@ export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
         functionName: string,
         headers: { [key: string]: string },
         group: { [key: string]: string }
-    ): Promise<any> {
+    ): Promise<LambdaApiGatewayEventResponse> {
         logger.debug(
             `AssetLibraryBulkGroupsCustomResource: patchGroup: in: functionName:${functionName}, group:${JSON.stringify(
                 group

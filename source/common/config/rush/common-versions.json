@@ -66,18 +66,6 @@
         "^18.11.18",
         "14.6.1"
       ],
-      "@typescript-eslint/eslint-plugin": [
-        "4.23.0",
-        "4.9.1"
-      ],
-      "@typescript-eslint/parser": [
-        "4.23.0",
-        "4.9.1"
-      ],
-      "eslint": [
-        "7.26.0",
-        "7.15.0"
-      ],
       "jest": [
         "^29.3.1",
         "26.6.3"
@@ -155,10 +143,6 @@
       "winston-transport": [
         "4.4.0",
         "4.3.0"
-      ],
-      "@rushstack/eslint-config": [
-        "2.3.4",
-        "2.3.1"
       ],
       "@types/cors": [
         "2.8.10",

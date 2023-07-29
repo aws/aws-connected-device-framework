@@ -138,6 +138,7 @@ export class OrganizationalUnitsService {
 
         const organizationalUnits: OrganizationalUnitResource[] = [];
 
+        // eslint-disable-next-line no-unsafe-optional-chaining
         for (const ou of listOrganizationalUnitsForParentResponse?.OrganizationalUnits) {
             const listTagsForResourceResponse = await this._organizations
                 .listTagsForResource({ ResourceId: ou.Id })
