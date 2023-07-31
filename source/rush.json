@@ -141,6 +141,12 @@
       "versionPolicyName": "external"
     },
     {
+      "packageName": "@awssolutions/eslint-config-custom",
+      "projectFolder": "packages/libraries/config/eslint-config-custom",
+      "reviewCategory": "library",
+      "versionPolicyName": "internal"
+    },    
+    {
       "packageName": "@awssolutions/cdf-environment-sanitizer",
       "projectFolder": "packages/libraries/core/environment-sanitizer",
       "reviewCategory": "library",

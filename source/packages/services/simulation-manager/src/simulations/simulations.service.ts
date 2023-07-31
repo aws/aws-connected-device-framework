@@ -55,6 +55,7 @@ export class SimulationsService {
         ow(simulation.deviceCount, ow.number.greaterThan(0));
 
         if (taskOverrides?.taskRoleArn) {
+            // eslint-disable-next-line no-unsafe-optional-chaining
             const [_, roleName] = taskOverrides?.taskRoleArn.split('/');
             ow(roleName, ow.string.startsWith('cdf-simulation-launcher'));
         }

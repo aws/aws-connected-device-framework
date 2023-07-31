@@ -330,6 +330,7 @@ export class SubscriptionDao {
         let r = await this._cachedDc.query(params).promise();
 
         while (r.Items?.length > 0) {
+            // eslint-disable-next-line no-unsafe-optional-chaining
             subscriptionIds.push(...r.Items?.map((i) => (i['pk'] as string).split(':')[1]));
             if (r.LastEvaluatedKey === undefined) {
                 break;
@@ -367,6 +368,7 @@ export class SubscriptionDao {
         const subscriptionIds: string[] = [];
         let r = await this._cachedDc.query(params).promise();
         while (r.Items?.length > 0) {
+            // eslint-disable-next-line no-unsafe-optional-chaining
             subscriptionIds.push(...r.Items?.map((i) => (i['pk'] as string).split(':')[1]));
             if (r.LastEvaluatedKey === undefined) {
                 break;

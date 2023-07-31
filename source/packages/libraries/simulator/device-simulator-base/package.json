@@ -31,7 +31,7 @@
     "dotenv-flow": "~3.2.0"
   },
   "devDependencies": {
-    "@rushstack/eslint-config": "2.3.4",
+    "@awssolutions/eslint-config-custom": "~0.0.0",
     "@types/aws-iot-device-sdk": "2.2.2",
     "@types/jest": "26.0.23",
     "@types/js-yaml": "3.12.5",
@@ -39,9 +39,8 @@
     "@types/pem": "1.9.5",
     "@types/shortid": "0.0.29",
     "@types/yargs": "~17.0.20",
-    "@typescript-eslint/eslint-plugin": "4.23.0",
-    "@typescript-eslint/parser": "4.23.0",
-    "eslint": "7.26.0",
+    "@typescript-eslint/eslint-plugin": "6.2.0",
+    "eslint": "8.46.0",
     "jest": "26.6.3",
     "jest-create-mock-instance": "1.1.0",
     "jest-haste-map": "26.6.2",

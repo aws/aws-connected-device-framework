@@ -63,6 +63,7 @@ export enum PkType {
     Thing = 'T',
     ThingGroup = 'TG',
 
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     Reply = 'R',
     Action = 'A',
 
