@@ -12,8 +12,9 @@
     "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/cdf-lambda-invoke": "^2.3.0",
-    "@awssolutions/simple-cdf-logger": "^2.3.0",
+    "@awssolutions/cdf-client-request-signer": "workspace:^2.3.0",
+    "@awssolutions/cdf-lambda-invoke": "workspace:^2.3.0",
+    "@awssolutions/simple-cdf-logger": "workspace:^2.3.0",
     "aws-sdk": "2.1386.0",
     "dotenv-flow": "~3.2.0",
     "http-errors": "~2.0.0",
@@ -25,17 +26,16 @@
     "ow": "0.23.0",
     "readable-stream": "3.6.0",
     "reflect-metadata": "0.1.13",
-    "superagent": "6.1.0",
+    "superagent": "7.1.1",
     "winston": "3.3.3",
-    "winston-transport": "4.4.0",
-    "@awssolutions/cdf-client-request-signer": "^2.3.0"
+    "winston-transport": "4.4.0"
   },
   "devDependencies": {
-    "@awssolutions/eslint-config-custom": "~0.0.0",
+    "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
     "@typescript-eslint/eslint-plugin": "6.2.0",
     "@types/http-errors": "~2.0.1",
-    "@types/node": "14.6.1",
-    "@types/superagent": "4.1.10",
+    "@types/node": "^18.17.0",
+    "@types/superagent": "4.1.15",
     "@types/dotenv-flow": "~3.2.0",
     "eslint": "8.46.0",
     "cz-customizable": "~6.3.0",

@@ -13,8 +13,10 @@
 import findUp from 'find-up';
 import fs from 'fs';
 import inquirer from 'inquirer';
-import inquirerFuzzyPath from 'inquirer-fuzzy-path';
 import path from 'path';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const inquirerFuzzyPath = require('inquirer-fuzzy-path');
 
 inquirer.registerPrompt('fuzzypath', inquirerFuzzyPath);
 

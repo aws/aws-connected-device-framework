@@ -311,7 +311,7 @@ Resources:
       Handler: lambda_apigw_proxy.handler
       MemorySize: 256
       Role: !GetAtt RESTLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
@@ -355,7 +355,7 @@ Resources:
       Handler: lambda_sqs_proxy.handler
       MemorySize: 256
       Role: !GetAtt SQSLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
@@ -387,7 +387,7 @@ Resources:
       Handler: lambda_sqs_ssm_proxy.handler
       MemorySize: 256
       Role: !GetAtt SSMEventsLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce

@@ -71,8 +71,7 @@ cd $root_dir
 rm -rf deploy
 mkdir deploy
 
-# pinning to an older version here as latest pnpm (6.20.1) has broken `enable-pre-post-scripts=true`
-npx pnpm@6.4.0 recursive run bundle
+npx pnpm recursive run bundle
 
 if [ "$RELEASE_PREP" = "true" ]; then
   rush clean:postrelease            # deep clean of complied files, excluding any bundles

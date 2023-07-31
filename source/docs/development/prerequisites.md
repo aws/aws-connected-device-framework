@@ -4,7 +4,7 @@ Tool / Technology | Reason
 ---|---
 [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) | Simple way to manage multiple versions of Node.js
 [rush](https://rushjs.io/pages/developer/new_developer/) | Build/Bundle tool
-Node.js v16.x | Install using `nvm install 16`, and/or switch to it using `nvm use 16`
+Node.js v18.x | Install using `nvm install 18`, and/or switch to it using `nvm use 18`
 [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) | Version control
 
 Please reference each tool's documentation for full installation instructions, linked above.

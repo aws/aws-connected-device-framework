@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "aws-sdk": "2.1386.0",
-    "@awssolutions/cdf-config-inject": "^2.3.0",
+    "@awssolutions/cdf-config-inject": "workspace:^2.3.0",
     "js-yaml": "3.13.1",
     "logform": "2.4.2",
     "ow": "0.17.0",
@@ -27,8 +27,8 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
-    "@awssolutions/cdf-lambda-zip": "~0.0.0",
-    "@awssolutions/eslint-config-custom": "~0.0.0",
+    "@awssolutions/cdf-lambda-zip": "workspace:~0.0.0",
+    "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
     "@types/jest": "26.0.18",
     "@typescript-eslint/eslint-plugin": "6.2.0",
     "eslint": "8.46.0",

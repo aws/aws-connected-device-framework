@@ -77,7 +77,7 @@ stages:
 
 default:
   image:
-    name: public.ecr.aws/lambda/nodejs:16
+    name: public.ecr.aws/lambda/nodejs:18
     entrypoint: [""]
   before_script:
     - *common-install-deployment-dependencies
@@ -207,7 +207,7 @@ deployLive:
 
 release:
   image:
-    name: public.ecr.aws/lambda/nodejs:16
+    name: public.ecr.aws/lambda/nodejs:18
     entrypoint: [""]
   stage: release
   before_script:
