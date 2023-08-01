@@ -12,9 +12,9 @@
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/cdf-client-request-signer": "^2.3.0",
-    "@awssolutions/cdf-lambda-invoke": "^2.3.0",
-    "@awssolutions/simple-cdf-logger": "^2.3.0",
+    "@awssolutions/cdf-client-request-signer": "workspace:^2.3.0",
+    "@awssolutions/cdf-lambda-invoke": "workspace:^2.3.0",
+    "@awssolutions/simple-cdf-logger": "workspace:^2.3.0",
     "aws-sdk": "2.1386.0",
     "http-errors": "~2.0.0",
     "inversify": "6.0.1",
@@ -32,7 +32,7 @@
     "dotenv-flow": "~3.2.0"
   },
   "devDependencies": {
-    "@awssolutions/eslint-config-custom": "~0.0.0",
+    "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
     "@typescript-eslint/eslint-plugin": "6.2.0",
     "@types/http-errors": "~2.0.1",
     "@types/query-string": "^6.3.0",
@@ -51,7 +51,7 @@
     "ts-jest": "26.5.6",
     "typescript": "4.2.4",
     "@types/dotenv-flow": "~3.2.0",
-    "@types/node": "16.11.7"
+    "@types/node": "^18.17.0"
   },
   "jest": {
     "roots": [

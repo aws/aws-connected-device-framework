@@ -10,8 +10,8 @@
     "test": "rushx lint && NODE_ENV= jest --silent --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/cdf-errors": "^2.3.0",
-    "@awssolutions/cdf-config-inject": "^2.3.0",
+    "@awssolutions/cdf-errors": "workspace:^2.3.0",
+    "@awssolutions/cdf-config-inject": "workspace:^2.3.0",
     "aws-sdk": "2.1386.0",
     "js-yaml": "4.1.0",
     "logform": "2.4.2",
@@ -23,7 +23,7 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
-    "@awssolutions/eslint-config-custom": "~0.0.0",
+    "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
     "@types/pem": "1.9.5",
     "eslint": "8.46.0",
     "nodemon": "2.0.20",

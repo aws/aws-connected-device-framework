@@ -16,7 +16,7 @@
     "test": "npm run lint && npx jest --maxWorkers=$JEST_MAX_WORKERS"
   },
   "devDependencies": {
-    "@awssolutions/eslint-config-custom": "~0.0.0",
+    "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
     "@typescript-eslint/eslint-plugin": "6.2.0",
     "@types/archiver": "~5.3.1",
     "@types/glob": "~8.0.1",
@@ -26,6 +26,7 @@
     "eslint": "8.46.0",
     "glob": "~8.1.0",
     "jest": "~29.4.1",
+    "shx": "0.3.3",
     "ts-jest": "~29.0.5",
     "typescript": "~4.9.4",
     "yargs": "~17.6.2"

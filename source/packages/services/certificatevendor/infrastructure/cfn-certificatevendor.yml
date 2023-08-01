@@ -276,7 +276,7 @@ Resources:
           !GetAtt LambdaExecutionRoleWithCsr.Arn,
           !GetAtt LambdaExecutionRole.Arn,
         ]
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:

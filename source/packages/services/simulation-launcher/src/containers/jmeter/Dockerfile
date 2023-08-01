@@ -128,8 +128,8 @@ websocket-samplers=1.2.2 \
 
 RUN  curl --location --silent --show-error --output ${JMETER_HOME}/lib/ext/mqtt-xmeter-1.0.1-jar-with-dependencies.jar https://github.com/emqx/mqtt-jmeter/releases/download/1.0.1/mqtt-xmeter-1.0.1-jar-with-dependencies.jar
 
-# install nodejs 16, commonly used by test plans
-RUN curl -fsSL https://rpm.nodesource.com/setup_16.x | bash - \
+# install nodejs 18, commonly used by test plans
+RUN curl -fsSL https://rpm.nodesource.com/setup_18.x | bash - \
     && yum install -y nodejs
 
  # add additional dependencies

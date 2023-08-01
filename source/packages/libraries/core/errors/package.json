@@ -13,7 +13,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "devDependencies": {
-    "@awssolutions/eslint-config-custom": "~0.0.0",
+    "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
     "@typescript-eslint/eslint-plugin": "6.2.0",
     "eslint": "8.46.0",
     "nyc": "15.1.0",

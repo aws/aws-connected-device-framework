@@ -15,8 +15,8 @@
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/index.js"
   },
   "dependencies": {
-    "@awssolutions/cdf-errors": "^2.3.0",
-    "@awssolutions/cdf-config-inject": "^2.3.0",
+    "@awssolutions/cdf-errors": "workspace:^2.3.0",
+    "@awssolutions/cdf-config-inject": "workspace:^2.3.0",
     "axios": "0.21.2",
     "js-yaml": "4.1.0",
     "jsonwebtoken": "9.0.0",
@@ -31,7 +31,7 @@
     "dotenv-flow": "~3.2.0"
   },
   "devDependencies": {
-    "@awssolutions/eslint-config-custom": "~0.0.0",
+    "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
     "@types/aws-lambda": "8.10.65",
     "@types/jsonwebtoken": "9.0.1",
     "@types/jwk-to-pem": "2.0.0",
