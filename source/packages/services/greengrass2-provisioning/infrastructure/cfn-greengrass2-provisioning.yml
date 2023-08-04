@@ -344,7 +344,7 @@ Resources:
       CodeUri: ../bundle.zip
       Handler: lambda_apigw_proxy.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs18.x
       Timeout: 29
@@ -406,7 +406,7 @@ Resources:
       CodeUri: ../bundle.zip
       Handler: lambda_sqs_proxy.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs18.x
       Timeout: 900
@@ -469,7 +469,7 @@ Resources:
       CodeUri: ../bundle.zip
       Handler: lambda_job_execution_proxy.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs18.x
       Timeout: 30
@@ -508,7 +508,7 @@ Resources:
       CodeUri: ../bundle.zip
       Handler: lambda_ddbstream_proxy.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs18.x
       Timeout: 30

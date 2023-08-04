@@ -428,7 +428,7 @@ Resources:
       FunctionName: !Sub 'cdf-eventsprocessor-rest-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_proxy_restapi.handler
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt RESTLambdaExecutionRole.Arn
       Runtime: nodejs18.x
       Timeout: 30

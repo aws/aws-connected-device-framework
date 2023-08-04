@@ -309,7 +309,7 @@ Resources:
       FunctionName: !Sub 'cdf-device-patcher-rest-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_apigw_proxy.handler
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt RESTLambdaExecutionRole.Arn
       Runtime: nodejs18.x
       Timeout: 30
@@ -353,7 +353,7 @@ Resources:
       FunctionName: !Sub 'cdf-device-patcher-sqs-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_sqs_proxy.handler
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt SQSLambdaExecutionRole.Arn
       Runtime: nodejs18.x
       AutoPublishAlias: live
@@ -385,7 +385,7 @@ Resources:
       FunctionName: !Sub 'cdf-device-patcher-ssm-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_sqs_ssm_proxy.handler
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt SSMEventsLambdaExecutionRole.Arn
       Runtime: nodejs18.x
       AutoPublishAlias: live
