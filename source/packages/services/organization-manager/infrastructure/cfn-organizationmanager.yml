@@ -259,7 +259,7 @@ Resources:
       FunctionName: !Sub 'cdf-organizationmanager-rest-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_proxy.handler
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt RESTLambdaExecutionRole.Arn
       Runtime: nodejs18.x
       Timeout: 30

@@ -135,7 +135,7 @@ Resources:
       Handler: certificateactivator.handler
       Layers:
         - !Ref OpenSslLambdaLayerArn
-      MemorySize: 128
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs18.x
       AutoPublishAlias: live

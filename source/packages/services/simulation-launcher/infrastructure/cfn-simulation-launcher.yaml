@@ -295,7 +295,7 @@ Resources:
       FunctionName: !Sub 'cdf-simulation-launcher-${Environment}'
       CodeUri: ../bundle.zip
       Handler: sns_proxy.handler
-      MemorySize: 128
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs18.x
       Timeout: 300

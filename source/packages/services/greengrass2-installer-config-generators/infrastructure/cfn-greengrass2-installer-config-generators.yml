@@ -105,7 +105,7 @@ Resources:
       FunctionName: !Sub 'cdf-greengrass2-manual-config-generator-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_manual_handler.handler
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs18.x
       Timeout: 30
@@ -127,7 +127,7 @@ Resources:
       FunctionName: !Sub 'cdf-greengrass2-fleet-config-generator-${Environment}'
       CodeUri: ../bundle.zip
       Handler: lambda_fleetProvisioning_handler.handler
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs18.x
       Timeout: 30
