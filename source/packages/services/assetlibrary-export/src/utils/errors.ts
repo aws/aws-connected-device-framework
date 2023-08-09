@@ -38,3 +38,10 @@ export function handleError(e: Error, res: Response): void {
 
     logger.error(`handleError: res.status: ${res.statusCode} ${res.statusMessage}`);
 }
+
+export class ArgumentError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'ArgumentError';
+    }
+}

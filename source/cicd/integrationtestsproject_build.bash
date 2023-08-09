@@ -174,7 +174,6 @@ export CONFIG_LOCATION=$CONFIG_LOCATION
 echo running integration tests...
 
 cd source/packages/integration-tests
-npm config set @awssolutions/cdf-integration-tests:environment $ENVIRONMENT
 npm run clean
 npm run build
 npm run integration-test -- "features/assetlibrary/full/*.feature"

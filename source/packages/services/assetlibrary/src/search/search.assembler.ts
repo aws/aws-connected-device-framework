@@ -107,8 +107,12 @@ export class SearchAssembler {
             }
         }
 
-        req.offset = this.typeUtils.parseInt(offset);
-        req.count = this.typeUtils.parseInt(count);
+        const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+            offset,
+            count
+        );
+        req.offset = offsetAsInt;
+        req.count = countAsInt;
         req.sort = assembleSortKeys(sort);
 
         return req;

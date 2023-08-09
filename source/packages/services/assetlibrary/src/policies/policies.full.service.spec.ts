@@ -16,6 +16,7 @@ import { createMockInstance } from 'jest-create-mock-instance';
 
 import { EventEmitter } from '../events/eventEmitter.service';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
+import { TypeUtils } from '../utils/typeUtils';
 import { PoliciesAssembler } from './policies.assembler';
 import { PoliciesDaoFull } from './policies.full.dao';
 import { PoliciesServiceFull } from './policies.full.service';
@@ -27,6 +28,7 @@ describe('PoliciesService', () => {
     let mockedSchemaValidatorService: jest.Mocked<SchemaValidatorService>;
     let mockedAssembler: jest.Mocked<PoliciesAssembler>;
     let mockedEventEmitter: jest.Mocked<EventEmitter>;
+    let mockedTypeUtils: jest.Mocked<TypeUtils>;
     let instance: PoliciesService;
 
     beforeEach(() => {
@@ -34,11 +36,13 @@ describe('PoliciesService', () => {
         mockedSchemaValidatorService = createMockInstance(SchemaValidatorService);
         mockedAssembler = createMockInstance(PoliciesAssembler);
         mockedEventEmitter = createMockInstance(EventEmitter);
+        mockedTypeUtils = createMockInstance(TypeUtils);
         instance = new PoliciesServiceFull(
             mockedEventEmitter,
             mockedAssembler,
             mockedDao,
-            mockedSchemaValidatorService
+            mockedSchemaValidatorService,
+            mockedTypeUtils
         );
     });
 

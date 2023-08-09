@@ -69,6 +69,7 @@ export const owCheckOversizeString = (inputStr: string, size: number, label: str
     );
 };
 
+// TOOD: remove this, see typeUtils
 export const owCheckOptionalNumber = (
     num: any,
     minSize: number,

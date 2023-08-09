@@ -103,14 +103,12 @@ export class CommonDaoFull extends BaseDaoFull {
             });
         }
 
-        // apply pagination to the related (if requested)
-        if (offset !== undefined && count !== undefined) {
-            // note: workaround for weird typescript issue. even though offset/count are declared as numbers
-            // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
-            const offsetAsInt = this.typeUtils.parseInt(offset);
-            const countAsInt = this.typeUtils.parseInt(count);
-            relatedUnion.range(offsetAsInt, offsetAsInt + countAsInt);
-        }
+        // TODO: this should be done from any service that calls this, so we should replace this with a simple number/range validation
+        const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+            offset,
+            count
+        );
+        relatedUnion.range(offsetAsInt, offsetAsInt + countAsInt);
 
         // build the main part of the query, unioning the related traversers with the main entity we want to return
         let results;
