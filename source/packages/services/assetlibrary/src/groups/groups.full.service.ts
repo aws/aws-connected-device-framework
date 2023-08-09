@@ -34,7 +34,6 @@ import {
     SchemaValidationError,
     TemplateNotFoundError,
 } from '../utils/errors';
-import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 import { TypeUtils } from '../utils/typeUtils';
 import { GroupsAssembler } from './groups.assembler';
 import { GroupsDaoFull } from './groups.full.dao';
@@ -43,8 +42,6 @@ import { GroupsService } from './groups.service';
 
 @injectable()
 export class GroupsServiceFull implements GroupsService {
-    private readonly DEFAULT_PAGINATION_COUNT = 500;
-
     constructor(
         @inject('authorization.enabled') private isAuthzEnabled: boolean,
         @inject('defaults.groups.validateAllowedParentPaths')
@@ -470,18 +467,13 @@ export class GroupsServiceFull implements GroupsService {
             )}`
         );
 
+        const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+            offset,
+            count
+        );
+
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(category, 'category', ow.string.nonEmpty);
-        owCheckOptionalNumber(count, 1, 10000, 'count');
-        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
-
-        // default pagination
-        if (count === undefined) {
-            count = this.DEFAULT_PAGINATION_COUNT;
-        }
-        if (offset === undefined) {
-            offset = 0;
-        }
 
         // any ids need to be lowercase
         groupPath = groupPath.toLowerCase();
@@ -490,11 +482,6 @@ export class GroupsServiceFull implements GroupsService {
         } else {
             type = category;
         }
-
-        // note: workaround for weird typescript issue. even though offset/count are declared as numbers
-        // throughout, they are being interpreted as strings, therefore need to force to int beforehand
-        const offsetAsInt = this.typeUtils.parseInt(offset);
-        const countAsInt = this.typeUtils.parseInt(count);
 
         await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
 
@@ -743,10 +730,13 @@ export class GroupsServiceFull implements GroupsService {
             )}`
         );
 
+        const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+            offset,
+            count
+        );
+
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
-        owCheckOptionalNumber(count, 1, 10000, 'count');
-        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
 
         // defaults
         if (direction === undefined || direction === null) {
@@ -763,11 +753,6 @@ export class GroupsServiceFull implements GroupsService {
             template = template.toLowerCase();
         }
         direction = direction.toLowerCase();
-
-        // note: workaround for weird typescript issue. even though offset/count are declared as numbers
-        // throughout, they are being interpreted as strings, therefore need to force to int beforehand
-        const offsetAsInt = this.typeUtils.parseInt(offset);
-        const countAsInt = this.typeUtils.parseInt(count);
 
         await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
 
@@ -805,18 +790,13 @@ export class GroupsServiceFull implements GroupsService {
             )}`
         );
 
+        const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+            offset,
+            count
+        );
+
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
-        owCheckOptionalNumber(count, 1, 10000, 'count');
-        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
-
-        // default pagination
-        if (count === undefined) {
-            count = this.DEFAULT_PAGINATION_COUNT;
-        }
-        if (offset === undefined) {
-            offset = 0;
-        }
 
         // defaults
         if (direction === undefined || direction === null) {
@@ -839,11 +819,6 @@ export class GroupsServiceFull implements GroupsService {
             state = state.toLowerCase();
         }
         direction = direction.toLowerCase();
-
-        // note: workaround for weird typescript issue. even though offset/count are declared as numbers
-        // throughout, they are being interpreted as strings, therefore need to force to int beforehand
-        const offsetAsInt = this.typeUtils.parseInt(offset);
-        const countAsInt = this.typeUtils.parseInt(count);
 
         await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
 

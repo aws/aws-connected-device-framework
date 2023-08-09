@@ -23,8 +23,6 @@ describe('SearchServiceAssembler', () => {
     let mockedDeviceAssembler: jest.Mocked<DevicesAssembler>;
     let mockedGroupAssembler: jest.Mocked<GroupsAssembler>;
 
-    let mockedTypeUtils: jest.Mocked<TypeUtils>;
-
     let mockedSearchRequest: {
         types: string | string[] | undefined;
         ntypes: string | string[] | undefined;
@@ -46,11 +44,10 @@ describe('SearchServiceAssembler', () => {
     beforeEach(() => {
         mockedDeviceAssembler = createMockInstance(DevicesAssembler);
         mockedGroupAssembler = createMockInstance(GroupsAssembler);
-        mockedTypeUtils = createMockInstance(TypeUtils);
         instance = new SearchAssembler(
             mockedDeviceAssembler,
             mockedGroupAssembler,
-            mockedTypeUtils
+            new TypeUtils()
         );
     });
 

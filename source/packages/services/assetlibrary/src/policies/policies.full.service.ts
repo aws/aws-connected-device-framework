@@ -18,7 +18,7 @@ import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
 import { Operation, TypeCategory } from '../types/constants';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { NotFoundError, SchemaValidationError } from '../utils/errors';
-import { owCheckOptionalNumber } from '../utils/inputValidation.util';
+import { TypeUtils } from '../utils/typeUtils';
 import { PoliciesAssembler } from './policies.assembler';
 import { PoliciesDaoFull } from './policies.full.dao';
 import { AttachedPolicy, PolicyModel } from './policies.models';
@@ -30,7 +30,8 @@ export class PoliciesServiceFull implements PoliciesService {
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
         @inject(TYPES.PoliciesAssembler) private policiesAssembler: PoliciesAssembler,
         @inject(TYPES.PoliciesDao) private policiesDao: PoliciesDaoFull,
-        @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService
+        @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,
+        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils
     ) {}
 
     private setIdsToLowercase(model: PolicyModel) {
@@ -185,15 +186,17 @@ export class PoliciesServiceFull implements PoliciesService {
             `policies.full.service listPolicies: in: type:${type}, offset:${offset}, count:${count}`
         );
 
-        owCheckOptionalNumber(count, 1, 10000, 'count');
-        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
+        const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+            offset,
+            count
+        );
 
         // any ids need to be lowercase
         if (type !== undefined) {
             type = type.toLowerCase();
         }
 
-        const policies = await this.policiesDao.listPolicies(type, offset, count);
+        const policies = await this.policiesDao.listPolicies(type, offsetAsInt, countAsInt);
         return this.policiesAssembler.toModelFromPolicies(policies);
     }
 

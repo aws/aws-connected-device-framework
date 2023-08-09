@@ -17,7 +17,7 @@ import { SortKeys } from '../data/model';
 import { TYPES } from '../di/types';
 import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
 import { InvalidCategoryError, TemplateInUseError, TemplateNotFoundError } from '../utils/errors';
-import { owCheckOptionalNumber } from '../utils/inputValidation.util';
+import { TypeUtils } from '../utils/typeUtils';
 import { Operation, TypeCategory } from './constants';
 import { SchemaValidationResult, SchemaValidatorService } from './schemaValidator.full.service';
 import { TypesDaoFull } from './types.full.dao';
@@ -35,7 +35,8 @@ export class TypesServiceFull implements TypesService {
     constructor(
         @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,
         @inject(TYPES.TypesDao) private typesDao: TypesDaoFull,
-        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter
+        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
+        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils
     ) {}
 
     public async get(
@@ -90,14 +91,16 @@ export class TypesServiceFull implements TypesService {
         );
 
         ow(category, 'category', ow.string.nonEmpty);
-        owCheckOptionalNumber(count, 1, 10000, 'count');
-        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
+        const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+            offset,
+            count
+        );
 
         if (status === undefined) {
             status = TypeDefinitionStatus.published;
         }
 
-        const results = await this.typesDao.list(category, status, offset, count, sort);
+        const results = await this.typesDao.list(category, status, offsetAsInt, countAsInt, sort);
         if (results !== undefined && results.length >= 0) {
             for (const r of results) {
                 r.schema.definition.relations = r.schema.relations;

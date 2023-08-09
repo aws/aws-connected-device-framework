@@ -17,7 +17,6 @@ import { NodeAssembler } from '../data/assembler';
 import { BaseDaoFull, NeptuneConnection } from '../data/base.full.dao';
 import { Node } from '../data/node';
 import { TYPES } from '../di/types';
-import { ArgumentError } from '../utils/errors';
 import { TypeUtils } from '../utils/typeUtils';
 import {
     FacetResults,
@@ -257,15 +256,11 @@ export class SearchDaoFull extends BaseDaoFull {
                 });
             }
 
-            // note: workaround for weird typescript issue. even though offset/count are declared as numbers
-            // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
-            const offsetAsInt = this.typeUtils.parseInt(request.offset);
-            const countAsInt = this.typeUtils.parseInt(request.count);
-            if (typeof offsetAsInt !== 'number' || typeof countAsInt !== 'number') {
-                throw new ArgumentError(
-                    `Invalid offset or count, offset ${request.offset}, count ${request.count}`
-                );
-            }
+            // TODO: this should be done from any service that calls this, so we should replace this with a simple number/range validation
+            const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+                request.offset,
+                request.count
+            );
             traverser
                 .range(offsetAsInt, offsetAsInt + countAsInt)
                 .valueMap()

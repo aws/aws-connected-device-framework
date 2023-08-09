@@ -19,20 +19,19 @@ import { TYPES } from '../di/types';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { GroupItem } from '../groups/groups.models';
 import { TypeCategory } from '../types/constants';
-import { owCheckOptionalNumber } from '../utils/inputValidation.util';
+import { TypeUtils } from '../utils/typeUtils';
 import { SearchDaoFull } from './search.full.dao';
 import { FacetResults, SearchRequestModel } from './search.models';
 import { SearchService } from './search.service';
 
 @injectable()
 export class SearchServiceFull implements SearchService {
-    private readonly DEFAULT_SEARCH_COUNT = 200;
-
     constructor(
         @inject(TYPES.SearchDao) private searchDao: SearchDaoFull,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
-        @inject('authorization.enabled') private isAuthzEnabled: boolean
+        @inject('authorization.enabled') private isAuthzEnabled: boolean,
+        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils
     ) {}
 
     public async search(
@@ -40,20 +39,15 @@ export class SearchServiceFull implements SearchService {
     ): Promise<[(GroupItem | DeviceItem)[], number, number]> {
         logger.debug(`search.full.service search: in: model: ${JSON.stringify(model)}`);
 
-        // TODO: more validation
-        owCheckOptionalNumber(model.count, 1, 10000, 'count');
-        owCheckOptionalNumber(model.offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
+        const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+            model.offset,
+            model.count
+        );
+        model.offset = offsetAsInt;
+        model.count = countAsInt;
 
         // all ids must be lowercase
         this.setIdsToLowercase(model);
-
-        // default pagination
-        if (model.count === undefined) {
-            model.count = this.DEFAULT_SEARCH_COUNT;
-        }
-        if (model.offset === undefined) {
-            model.offset = 0;
-        }
 
         const authorizedPaths = this.getAuthorizedPaths();
 

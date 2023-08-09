@@ -45,7 +45,6 @@ import {
     SchemaValidationError,
     TemplateNotFoundError,
 } from '../utils/errors';
-import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 import { TypeUtils } from '../utils/typeUtils';
 import { DevicesAssembler } from './devices.assembler';
 import { DevicesDaoFull } from './devices.full.dao';
@@ -54,8 +53,6 @@ import { DevicesService } from './devices.service';
 
 @injectable()
 export class DevicesServiceFull implements DevicesService {
-    private readonly DEFAULT_PAGINATION_COUNT = 500;
-
     constructor(
         @inject('authorization.enabled') private isAuthzEnabled: boolean,
         @inject('defaults.devices.parent.groupPath') public defaultDeviceParentGroup: string,
@@ -89,18 +86,13 @@ export class DevicesServiceFull implements DevicesService {
             )}`
         );
 
+        const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+            offset,
+            count
+        );
+
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
-        owCheckOptionalNumber(count, 1, 10000, 'count');
-        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
-
-        // default pagination
-        if (count === undefined) {
-            count = this.DEFAULT_PAGINATION_COUNT;
-        }
-        if (offset === undefined) {
-            offset = 0;
-        }
 
         // defaults
         if (direction === undefined || direction === null) {
@@ -118,11 +110,6 @@ export class DevicesServiceFull implements DevicesService {
         direction = direction.toLowerCase() as OmniRelationDirection;
 
         await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.R);
-
-        // note: workaround for weird typescript issue. even though offset/count are declared as numbers
-        // throughout, they are being interpreted as strings, therefore need to force to int beforehand
-        const offsetAsInt = this.typeUtils.parseInt(offset);
-        const countAsInt = this.typeUtils.parseInt(count);
 
         const filteredBy = {};
         if (state) {
@@ -165,18 +152,13 @@ export class DevicesServiceFull implements DevicesService {
             )}`
         );
 
+        const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+            offset,
+            count
+        );
+
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
-        owCheckOptionalNumber(count, 1, 10000, 'count');
-        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
-
-        // default pagination
-        if (count === undefined) {
-            count = this.DEFAULT_PAGINATION_COUNT;
-        }
-        if (offset === undefined) {
-            offset = 0;
-        }
 
         // defaults
         if (direction === undefined || direction === null) {
@@ -191,11 +173,6 @@ export class DevicesServiceFull implements DevicesService {
         relationship = relationship.toLowerCase();
         template = template.toLowerCase();
         direction = direction.toLowerCase() as OmniRelationDirection;
-
-        // note: workaround for weird typescript issue. even though offset/count are declared as numbers
-        // throughout, they are being interpreted as strings, therefore need to force to int beforehand
-        const offsetAsInt = this.typeUtils.parseInt(offset);
-        const countAsInt = this.typeUtils.parseInt(count);
 
         await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.R);
 

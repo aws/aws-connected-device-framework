@@ -59,6 +59,7 @@ describe('GroupsService', () => {
         mockedEventEmitter = createMockInstance(EventEmitter);
         mockedAuthzServiceFull = createMockInstance(AuthzServiceFull);
         mockedSchemaValidatorService = createMockInstance(SchemaValidatorService);
+        mockedTypeUtils = createMockInstance(TypeUtils);
         instance = new GroupsServiceFull(
             isAuthzEnabled,
             validateAllowedParentPaths,
@@ -70,7 +71,7 @@ describe('GroupsService', () => {
             mockedProfilesService,
             mockedSchemaValidatorService,
             mockedTypesService,
-            mockedTypeUtils
+            new TypeUtils()
         );
     });
 
@@ -398,5 +399,142 @@ describe('GroupsService', () => {
         );
         expect(mockedDao.get).toBeCalledWith(['/aparent'], false);
         expect(mockedDao.create).toBeCalledWith(mockedNode, group.groups);
+    });
+
+    it('validate getMembers handles offset and count values correctly', async () => {
+        // mocks
+        const mockedTemplate: TypeModel = {
+            templateId: 'testTemplate',
+            category: TypeCategory.Group,
+            schema: {
+                definition: {
+                    // the method under test only uses the template properties when running in fgac and instead passes
+                    // the template to other (mocked) methods for processing
+                },
+            },
+        };
+        mockedTypesService.get = jest.fn().mockResolvedValueOnce(mockedTemplate);
+        mockedSchemaValidatorService.validateSubType = jest
+            .fn()
+            .mockResolvedValueOnce({ isValid: true });
+        const mockedGroupLabels: EntityTypeMap = {
+            '/patha1': ['templatea1'],
+            '/patha2': ['templatea2'],
+            '/patha3': ['templatea3'],
+        };
+        mockedSchemaValidatorService.validateRelationshipsByIds = jest
+            .fn()
+            .mockResolvedValueOnce({ groupLabels: mockedGroupLabels, isValid: true });
+        const mockedParentNode = new Node();
+        mockedParentNode.id = '/aparent';
+        mockedParentNode.types = ['group', 'root'];
+        mockedParentNode.category = TypeCategory.Group;
+        mockedDao.get = jest.fn().mockResolvedValueOnce([mockedParentNode]);
+        const mockedParent = new GroupItem({
+            name: 'aParent',
+            templateId: 'root',
+            parentPath: '/',
+        });
+        mockedGroupsAssembler.toGroupItem = jest.fn().mockReturnValueOnce(mockedParent);
+        const mockedNode = new Node();
+        mockedNode.id = '/aparent/group001';
+        mockedNode.types = ['group', 'testtemplate'];
+        mockedNode.category = TypeCategory.Group;
+        mockedGroupsAssembler.toNode = jest.fn().mockReturnValueOnce(mockedNode);
+        mockedDao.create = jest.fn().mockImplementationOnce(undefined);
+
+        // validate no input
+        await instance.getMembers('agrouppath', TypeCategory.Group, 'testtemplate', 'active');
+        expect(mockedDao.listRelated).toBeCalledTimes(1);
+
+        // validate undefined
+        await instance.getMembers(
+            'agrouppath',
+            TypeCategory.Group,
+            'testtemplate',
+            'active',
+            undefined
+        );
+        expect(mockedDao.listRelated).toBeCalledTimes(2);
+
+        // validate string of number
+        await instance.getMembers(
+            'agrouppath',
+            TypeCategory.Group,
+            'testtemplate',
+            'active',
+            '1' as any
+        );
+        expect(mockedDao.listRelated).toBeCalledTimes(3);
+
+        // validate valid number
+        await instance.getMembers('agrouppath', TypeCategory.Group, 'testtemplate', 'active', 1);
+        expect(mockedDao.listRelated).toBeCalledTimes(4);
+
+        // validate errors with non-number string
+        try {
+            const result = await instance.getMembers(
+                'agrouppath',
+                TypeCategory.Group,
+                'testtemplate',
+                'active',
+                'something' as any
+            );
+            fail(`Call should trigger an error. Got ${result}`);
+        } catch (err) {
+            expect(err.name).toEqual('ArgumentError');
+            expect(err.message).toMatch('Invalid offset = something');
+        }
+        expect(mockedDao.listRelated).toBeCalledTimes(4);
+
+        // validate errors with undefined string
+        try {
+            const result = await instance.getMembers(
+                'agrouppath',
+                TypeCategory.Group,
+                'testtemplate',
+                'active',
+                'undefined' as any
+            );
+            fail(`Call should trigger an error. Got ${result}`);
+        } catch (err) {
+            expect(err.name).toEqual('ArgumentError');
+            expect(err.message).toMatch('Invalid offset = undefined');
+        }
+        expect(mockedDao.listRelated).toBeCalledTimes(4);
+
+        // validate errors with NaN
+        try {
+            const result = await instance.getMembers(
+                'agrouppath',
+                TypeCategory.Group,
+                'testtemplate',
+                'active',
+                NaN
+            );
+            fail(`Call should trigger an error. Got ${result}`);
+        } catch (err) {
+            expect(err.name).toEqual('ArgumentError');
+            expect(err.message).toMatch('Invalid offset = NaN');
+        }
+        expect(mockedDao.listRelated).toBeCalledTimes(4);
+
+        // validate errors with -1
+        try {
+            const result = await instance.getMembers(
+                'agrouppath',
+                TypeCategory.Group,
+                'testtemplate',
+                'active',
+                -1
+            );
+            fail(`Call should trigger an error. Got ${result}`);
+        } catch (err) {
+            expect(err.name).toEqual('ArgumentError');
+            expect(err.message).toMatch(
+                'Expected number `offset` to be greater than or equal to 0, got -1'
+            );
+        }
+        expect(mockedDao.listRelated).toBeCalledTimes(4);
     });
 });
