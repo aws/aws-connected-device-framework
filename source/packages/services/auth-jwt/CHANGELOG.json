@@ -1,6 +1,21 @@
 {
-  "name": "@awssolutions/auth-jwt",
+  "name": "@awssolutions/cdf-auth-jwt",
   "entries": [
+    {
+      "version": "0.0.0",
+      "tag": "@awssolutions/cdf-auth-jwt_v0.0.0",
+      "date": "Tue, 15 Aug 2023 18:35:38 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from workspace:^2.3.0 to workspace:^2.4.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from workspace:^2.3.0 to workspace:^2.4.0."
+          }
+        ]
+      }
+    },
     {
       "version": "3.0.1",
       "tag": "@awssolutions/auth-jwt_v3.0.1",

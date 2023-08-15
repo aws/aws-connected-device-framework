@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-lambda-invoke",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Lambda Invoker Service",
   "author": "Hassan Khokhar",
   "main": "dist/index.js",
@@ -13,7 +13,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/simple-cdf-logger": "workspace:^2.3.0",
+    "@awssolutions/simple-cdf-logger": "workspace:^2.4.0",
     "aws-sdk": "2.1386.0",
     "http-errors": "1.8.0",
     "inversify": "6.0.1",

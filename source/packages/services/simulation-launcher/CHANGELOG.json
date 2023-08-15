@@ -1,6 +1,12 @@
 {
-  "name": "@awssolutions/simulation-launcher",
+  "name": "@awssolutions/cdf-simulation-launcher",
   "entries": [
+    {
+      "version": "2.4.0",
+      "tag": "@awssolutions/cdf-simulation-launcher_v2.4.0",
+      "date": "Tue, 15 Aug 2023 18:35:38 GMT",
+      "comments": {}
+    },
     {
       "version": "3.1.1",
       "tag": "@awssolutions/simulation-launcher_v3.1.1",

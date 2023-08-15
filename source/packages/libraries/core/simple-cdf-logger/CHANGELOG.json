@@ -2,6 +2,12 @@
   "name": "@awssolutions/simple-cdf-logger",
   "entries": [
     {
+      "version": "2.4.0",
+      "tag": "@awssolutions/simple-cdf-logger_v2.4.0",
+      "date": "Tue, 15 Aug 2023 18:35:38 GMT",
+      "comments": {}
+    },
+    {
       "version": "2.2.0",
       "tag": "@awssolutions/simple-cdf-logger_v2.2.0",
       "date": "Mon, 05 Jun 2023 16:56:40 GMT",

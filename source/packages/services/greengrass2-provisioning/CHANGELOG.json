@@ -2,6 +2,12 @@
   "name": "@awssolutions/cdf-greengrass2-provisioning",
   "entries": [
     {
+      "version": "2.4.0",
+      "tag": "@awssolutions/cdf-greengrass2-provisioning_v2.4.0",
+      "date": "Tue, 15 Aug 2023 18:35:38 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.0.0",
       "tag": "@awssolutions/cdf-greengrass2-provisioning_v0.0.0",
       "date": "Thu, 09 Mar 2023 22:35:00 GMT",

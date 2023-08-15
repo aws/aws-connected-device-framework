@@ -1,6 +1,12 @@
 {
-  "name": "@awssolutions/commands-client",
+  "name": "@awssolutions/cdf-commands-client",
   "entries": [
+    {
+      "version": "2.4.0",
+      "tag": "@awssolutions/cdf-commands-client_v2.4.0",
+      "date": "Tue, 15 Aug 2023 18:35:38 GMT",
+      "comments": {}
+    },
     {
       "version": "5.0.5",
       "tag": "@awssolutions/commands-client_v5.0.5",
