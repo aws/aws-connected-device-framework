@@ -1,6 +1,11 @@
 # Change Log - @awssolutions/cdf-integration-tests
 
-This log was last generated on Thu, 09 Mar 2023 22:35:00 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Aug 2023 18:35:38 GMT and should not be manually modified.
+
+## 2.4.0
+Tue, 15 Aug 2023 18:35:38 GMT
+
+_Version update only_
 
 ## 0.0.0
 Thu, 09 Mar 2023 22:35:00 GMT

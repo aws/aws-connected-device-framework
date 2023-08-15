@@ -1,6 +1,21 @@
 {
-  "name": "@awssolutions/auth-devicecert",
+  "name": "@awssolutions/cdf-auth-devicecert",
   "entries": [
+    {
+      "version": "0.0.0",
+      "tag": "@awssolutions/cdf-auth-devicecert_v0.0.0",
+      "date": "Tue, 15 Aug 2023 18:35:38 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from workspace:^2.3.0 to workspace:^2.4.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from workspace:^2.3.0 to workspace:^2.4.0."
+          }
+        ]
+      }
+    },
     {
       "version": "5.0.2",
       "tag": "@awssolutions/auth-devicecert_v5.0.2",

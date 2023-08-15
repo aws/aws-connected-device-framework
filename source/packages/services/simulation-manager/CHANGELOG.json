@@ -1,6 +1,12 @@
 {
-  "name": "@awssolutions/simulation-manager",
+  "name": "@awssolutions/cdf-simulation-manager",
   "entries": [
+    {
+      "version": "2.4.0",
+      "tag": "@awssolutions/cdf-simulation-manager_v2.4.0",
+      "date": "Tue, 15 Aug 2023 18:35:38 GMT",
+      "comments": {}
+    },
     {
       "version": "3.0.2",
       "tag": "@awssolutions/simulation-manager_v3.0.2",

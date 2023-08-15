@@ -1,6 +1,18 @@
 {
-  "name": "@awssolutions/installer",
+  "name": "@awssolutions/cdf-installer",
   "entries": [
+    {
+      "version": "0.0.0",
+      "tag": "@awssolutions/cdf-installer_v0.0.0",
+      "date": "Tue, 15 Aug 2023 18:35:38 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from workspace:^2.3.0 to workspace:^2.4.0."
+          }
+        ]
+      }
+    },
     {
       "version": "1.3.1",
       "tag": "@awssolutions/installer_v1.3.1",
