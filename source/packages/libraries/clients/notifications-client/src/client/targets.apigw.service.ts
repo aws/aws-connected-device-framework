@@ -11,45 +11,72 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-
-import { logger } from '../utils/logger';
 import { RequestHeaders } from './common.model';
 import { TargetResource } from './targets.model';
 import { TargetsService, TargetsServiceBase } from './targets.service';
 
 @injectable()
 export class TargetsApigwService extends TargetsServiceBase implements TargetsService {
-
-    private readonly baseUrl:string;
+    private readonly baseUrl: string;
 
     public constructor() {
         super();
         this.baseUrl = process.env.NOTIFICATIONS_BASE_URL;
     }
 
-    async createTarget(subscriptionId: string, targetType:string, target: TargetResource, additionalHeaders?: RequestHeaders): Promise<void> {
+    async createTarget(
+        subscriptionId: string,
+        targetType: string,
+        target: TargetResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(subscriptionId, ow.string.nonEmpty);
         ow(targetType, ow.string.nonEmpty);
         ow(target, ow.object.nonEmpty);
 
         const url = `${this.baseUrl}${super.targetsRelativeUrl(subscriptionId, targetType)}`;
-        await request.post(url)
+        await request
+            .post(url)
+            .send(target)
             .set(this.buildHeaders(additionalHeaders))
-            .send(target);
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async deleteTarget(subscriptionId: string, targetType:string, targetId:string, additionalHeaders?: RequestHeaders): Promise<void> {
+    async deleteTarget(
+        subscriptionId: string,
+        targetType: string,
+        targetId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(subscriptionId, ow.string.nonEmpty);
         ow(targetType, ow.string.nonEmpty);
         ow(targetId, ow.string.nonEmpty);
 
-        const url = `${this.baseUrl}${super.targetRelativeUrl(subscriptionId, targetType, targetId)}`;
-        logger.debug(`>>>>> url: ${url}`);
-        await request.delete(url)
-            .set(this.buildHeaders(additionalHeaders));
+        const url = `${this.baseUrl}${super.targetRelativeUrl(
+            subscriptionId,
+            targetType,
+            targetId
+        )}`;
+        return await request
+            .delete(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
-
 }

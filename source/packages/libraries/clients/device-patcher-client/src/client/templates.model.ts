@@ -11,51 +11,55 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface PatchSource {
-	bucket: string;
-	key: string;
+    bucket: string;
+    key: string;
 }
 
 export enum PatchType {
-	AGENTLESS='agentless',
-	AGENTBASED='agentbased',
+    AGENTLESS = 'agentless',
+    AGENTBASED = 'agentbased',
 }
 
 export interface CreatePatchTemplateParams {
-	description?: string;
-	enabled?: boolean;
-	extraVars?: { [key: string]: string};
-	name: string;
-	playbookFileLocation: string;
-	patchType: PatchType;
+    description?: string;
+    enabled?: boolean;
+    extraVars?: { [key: string]: string };
+    name: string;
+    playbookFileLocation: string;
+    patchType: PatchType;
+    playbookName?: string;
+    playbookFileContents?: string;
 }
 
 export interface UpdatePatchTemplateParams {
-	description?: string;
-	enabled?: boolean;
-	extraVars?: { [key: string]: string};
-	name: string;
-	playbookFileLocation?: string;
-	patchType?: PatchType;
+    description?: string;
+    enabled?: boolean;
+    extraVars?: { [key: string]: string };
+    name: string;
+    playbookFileLocation?: string;
+    patchType?: PatchType;
+    playbookName?: string;
+    playbookFileContents?: string;
 }
 
 export class PatchTemplate {
-	description?: string;
-	enabled?: boolean;
-	extraVars?: { [key: string]: string}
-	name: string;
-	playbookName: string;
-	playbookSource?: PatchSource;
-	playbookFileLocation?: string;
-	patchType: PatchType;
-	updatedAt: Date;
-	createdAt: Date;
-	versionNo: number;
+    description?: string;
+    enabled?: boolean;
+    extraVars?: { [key: string]: string };
+    name: string;
+    playbookName: string;
+    playbookSource?: PatchSource;
+    playbookFileLocation?: string;
+    patchType: PatchType;
+    updatedAt: Date;
+    createdAt: Date;
+    versionNo: number;
 }
 
 export class PatchTemplateList {
-	templates: PatchTemplate[] = [];
-	pagination?: {
-		offset:number|string;
-		count: number;
-	};
+    templates: PatchTemplate[] = [];
+    pagination?: {
+        offset: number | string;
+        count: number;
+    };
 }

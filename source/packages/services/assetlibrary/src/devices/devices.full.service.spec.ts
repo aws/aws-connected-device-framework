@@ -10,29 +10,29 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-
 import 'reflect-metadata';
+
 import { createMockInstance } from 'jest-create-mock-instance';
 
-import { DevicesServiceFull } from './devices.full.service';
-import { DevicesAssembler } from './devices.assembler';
-import { TypesService } from '../types/types.service';
-import { TypesServiceFull } from '../types/types.full.service';
-import { GroupsService } from '../groups/groups.service';
-import { DevicesDaoFull } from './devices.full.dao';
-import { Node} from '../data/node';
-import { DeviceItem } from './devices.models';
-import {EventEmitter} from '../events/eventEmitter.service';
-import { ProfilesService } from '../profiles/profiles.service';
-import { DeviceProfileItem } from '../profiles/profiles.models';
-import { TypeCategory } from '../types/constants';
-import { DevicesService } from './devices.service';
-import { GroupsServiceFull } from '../groups/groups.full.service';
-import { ProfilesServiceFull } from '../profiles/profiles.full.service';
-import { GroupsAssembler } from '../groups/groups.assembler';
 import { AuthzServiceFull } from '../authz/authz.full.service';
-import { TypeUtils } from '../utils/typeUtils';
+import { Node } from '../data/node';
+import { EventEmitter } from '../events/eventEmitter.service';
+import { GroupsAssembler } from '../groups/groups.assembler';
+import { GroupsServiceFull } from '../groups/groups.full.service';
+import { GroupsService } from '../groups/groups.service';
+import { ProfilesServiceFull } from '../profiles/profiles.full.service';
+import { DeviceProfileItem } from '../profiles/profiles.models';
+import { ProfilesService } from '../profiles/profiles.service';
+import { TypeCategory } from '../types/constants';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
+import { TypesServiceFull } from '../types/types.full.service';
+import { TypesService } from '../types/types.service';
+import { TypeUtils } from '../utils/typeUtils';
+import { DevicesAssembler } from './devices.assembler';
+import { DevicesDaoFull } from './devices.full.dao';
+import { DevicesServiceFull } from './devices.full.service';
+import { DeviceItem } from './devices.models';
+import { DevicesService } from './devices.service';
 
 const validDeviceId1 = 'ABC123';
 const validDeviceId2 = 'XYZ890';
@@ -65,20 +65,33 @@ describe('DevicesService', () => {
         mockedEventEmitter = createMockInstance(EventEmitter);
         mockedTypeUtils = createMockInstance(TypeUtils);
         mockedSchemaValidatorService = createMockInstance(SchemaValidatorService);
-        instance = new DevicesServiceFull(isAuthzEnabled, defaultDeviceParentGroup, defaultDeviceParentRelation, defaultDeviceState,
-            mockedAuthzServiceFull, mockedDeviceAssembler, mockedDao, mockedEventEmitter, mockedGroupsAssembler, mockedGroupsService,
-            mockedProfilesService, mockedSchemaValidatorService, mockedTypesService, mockedTypeUtils);
+        instance = new DevicesServiceFull(
+            isAuthzEnabled,
+            defaultDeviceParentGroup,
+            defaultDeviceParentRelation,
+            defaultDeviceState,
+            mockedAuthzServiceFull,
+            mockedDeviceAssembler,
+            mockedDao,
+            mockedEventEmitter,
+            mockedGroupsAssembler,
+            mockedGroupsService,
+            mockedProfilesService,
+            mockedSchemaValidatorService,
+            mockedTypesService,
+            mockedTypeUtils
+        );
     });
 
-    it('applying profile with attributes and groups to empty device', async() => {
+    it('applying profile with attributes and groups to empty device', async () => {
         // stubs
-        const model = new DeviceItem ({
+        const model = new DeviceItem({
             deviceId: 'device001',
             category: TypeCategory.Device,
-            templateId: 'testTemplate'
+            templateId: 'testTemplate',
         });
         const profileId = 'testPofileId';
-        const profile:DeviceProfileItem = new DeviceProfileItem ({
+        const profile: DeviceProfileItem = new DeviceProfileItem({
             deviceId: null,
             category: null,
             profileId,
@@ -86,62 +99,64 @@ describe('DevicesService', () => {
             attributes: {
                 a: 1,
                 b: '2',
-                c: true
+                c: true,
             },
             groups: {
                 out: {
-                    linked_to: [{id:'path1'}, {id:'path2'}]
-                }
-            }
+                    linked_to: [{ id: 'path1' }, { id: 'path2' }],
+                },
+            },
         });
 
-        const expected:DeviceItem = new DeviceItem({
+        const expected: DeviceItem = new DeviceItem({
             deviceId: 'device001',
             category: TypeCategory.Device,
             templateId: 'testTemplate',
             attributes: {
                 a: 1,
                 b: '2',
-                c: true
+                c: true,
             },
             groups: {
                 out: {
-                    linked_to: [{id:'path1'}, {id:'path2'}]
-                }
-            }
+                    linked_to: [{ id: 'path1' }, { id: 'path2' }],
+                },
+            },
         });
 
         // mocks
-        mockedProfilesService.get = jest.fn().mockImplementation(()=> profile);
+        mockedProfilesService.get = jest.fn().mockImplementation(() => profile);
 
         // execute
-        const actual = await (<DevicesServiceFull>instance).___test___applyProfile(model, profileId);
+        const actual = await (<DevicesServiceFull>instance).___test___applyProfile(
+            model,
+            profileId
+        );
 
         // verify
         expect(actual).toBeDefined();
         expect(actual).toEqual(expected);
-
     });
 
-    it('applying profile with attributes and groups to device with attributes and groups', async() => {
+    it('applying profile with attributes and groups to device with attributes and groups', async () => {
         // stubs
-        const original:DeviceItem = new DeviceItem({
+        const original: DeviceItem = new DeviceItem({
             deviceId: 'device001',
             category: TypeCategory.Device,
             templateId: 'testTemplate',
             attributes: {
                 a: 5,
-                d: false
+                d: false,
             },
             groups: {
                 out: {
-                    linked_to_a: [{id:'pathA1'}, {id:'pathA2'}],
-                    linked_to_b: [{id:'pathA3'}]
-                }
-            }
+                    linked_to_a: [{ id: 'pathA1' }, { id: 'pathA2' }],
+                    linked_to_b: [{ id: 'pathA3' }],
+                },
+            },
         });
         const profileId = 'testPofileId';
-        const profile:DeviceProfileItem = new DeviceProfileItem({
+        const profile: DeviceProfileItem = new DeviceProfileItem({
             deviceId: null,
             category: null,
             profileId,
@@ -149,17 +164,17 @@ describe('DevicesService', () => {
             attributes: {
                 a: 1,
                 b: '2',
-                c: true
+                c: true,
             },
             groups: {
                 out: {
-                    linked_to_a: [{id:'pathB1'}],
-                    linked_to_c: [{id:'pathB2'}]
-                }
-            }
+                    linked_to_a: [{ id: 'pathB1' }],
+                    linked_to_c: [{ id: 'pathB2' }],
+                },
+            },
         });
 
-        const expected:DeviceItem = new DeviceItem({
+        const expected: DeviceItem = new DeviceItem({
             deviceId: 'device001',
             category: TypeCategory.Device,
             templateId: 'testTemplate',
@@ -167,38 +182,39 @@ describe('DevicesService', () => {
                 a: 5,
                 b: '2',
                 c: true,
-                d: false
+                d: false,
             },
             groups: {
                 out: {
-                    linked_to_a: [{id:'pathA1'}, {id:'pathA2'}],
-                    linked_to_b: [{id:'pathA3'}],
-                    linked_to_c: [{id:'pathB2'}]
-                }
-            }
+                    linked_to_a: [{ id: 'pathA1' }, { id: 'pathA2' }],
+                    linked_to_b: [{ id: 'pathA3' }],
+                    linked_to_c: [{ id: 'pathB2' }],
+                },
+            },
         });
 
         // mocks
-        mockedProfilesService.get = jest.fn().mockImplementation(()=> profile);
+        mockedProfilesService.get = jest.fn().mockImplementation(() => profile);
 
         // execute
-        const actual = await (<DevicesServiceFull>instance).___test___applyProfile(original, profileId);
+        const actual = await (<DevicesServiceFull>instance).___test___applyProfile(
+            original,
+            profileId
+        );
 
         // verify
         expect(actual).toBeDefined();
         expect(actual).toEqual(expected);
-
     });
 
     it('should return device if found', async () => {
-
         // set up the stubs
         const n = new Node();
         n.types = ['device', 'mote'];
-        n.attributes['deviceId']=[validDeviceId1];
-        n.attributes['stringArrayAttribute']= ['string'];
-        n.attributes['']= [123];
-        n.attributes['booleanArrayAttribute']= [true];
+        n.attributes['deviceId'] = [validDeviceId1];
+        n.attributes['stringArrayAttribute'] = ['string'];
+        n.attributes[''] = [123];
+        n.attributes['booleanArrayAttribute'] = [true];
 
         const dm = new DeviceItem();
         dm.templateId = 'mote';
@@ -208,9 +224,9 @@ describe('DevicesService', () => {
         dm.attributes['booleanArrayAttribute'] = true;
 
         // Set the mocks on the dependent classes
-        mockedDao.get = jest.fn().mockImplementation(()=> [n]);
+        mockedDao.get = jest.fn().mockImplementation(() => [n]);
 
-        mockedDeviceAssembler.toDeviceItem = jest.fn().mockImplementation(()=> dm);
+        mockedDeviceAssembler.toDeviceItem = jest.fn().mockImplementation(() => dm);
 
         // Make the call
         const device = await instance.get(validDeviceId1, false, [], true);
@@ -222,24 +238,22 @@ describe('DevicesService', () => {
         expect(device.attributes['stringArrayAttribute']).toEqual('string');
         expect(device.attributes['numberArrayAttribute']).toEqual(123);
         expect(device.attributes['booleanArrayAttribute']).toEqual(true);
-
     });
 
     it('should return bulk devices if found', async () => {
-
         // set up the stubs
         const n1 = new Node();
         n1.types = ['device', 'mote'];
-        n1.attributes['deviceId']=[validDeviceId1];
-        n1.attributes['stringArrayAttribute']= ['string1'];
-        n1.attributes['']= [123];
-        n1.attributes['booleanArrayAttribute']= [true];
+        n1.attributes['deviceId'] = [validDeviceId1];
+        n1.attributes['stringArrayAttribute'] = ['string1'];
+        n1.attributes[''] = [123];
+        n1.attributes['booleanArrayAttribute'] = [true];
         const n2 = new Node();
         n2.types = ['device', 'mote'];
-        n2.attributes['deviceId']=[validDeviceId2];
-        n2.attributes['stringArrayAttribute']= ['string2'];
-        n2.attributes['']= [456];
-        n2.attributes['booleanArrayAttribute']= [false];
+        n2.attributes['deviceId'] = [validDeviceId2];
+        n2.attributes['stringArrayAttribute'] = ['string2'];
+        n2.attributes[''] = [456];
+        n2.attributes['booleanArrayAttribute'] = [false];
 
         const dm1 = new DeviceItem();
         dm1.templateId = 'mote';
@@ -255,9 +269,9 @@ describe('DevicesService', () => {
         dm2.attributes['booleanArrayAttribute'] = false;
 
         // Set the mocks on the dependent classes
-        mockedDao.get = jest.fn().mockImplementation(()=> [n1, n2]);
+        mockedDao.get = jest.fn().mockImplementation(() => [n1, n2]);
 
-        mockedDeviceAssembler.toDeviceItems = jest.fn().mockImplementation(()=> [dm1, dm2]);
+        mockedDeviceAssembler.toDeviceItems = jest.fn().mockImplementation(() => [dm1, dm2]);
 
         // Make the call
         const devices = await instance.getBulk([validDeviceId1, validDeviceId2], false, [], true);
@@ -278,9 +292,8 @@ describe('DevicesService', () => {
     });
 
     it('should return empty bulk devices if none found', async () => {
-
         // Set the mocks on the dependent classes
-        mockedDao.get = jest.fn().mockImplementation(()=> undefined);
+        mockedDao.get = jest.fn().mockImplementation(() => undefined);
 
         // Make the call
         const devices = await instance.getBulk([validDeviceId1, validDeviceId2], false, [], true);

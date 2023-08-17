@@ -10,29 +10,28 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
+import { Engine, EngineResult, Rule, TopLevelCondition } from 'json-rules-engine';
 import ow from 'ow';
-import { CommonEvent } from '../transformers/transformers.model';
-import { SubscriptionItem } from '../api/subscriptions/subscription.models';
-import { TYPES } from '../di/types';
-import { logger } from '../utils/logger.util';
-import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
-import { Rule, Engine, TopLevelCondition, EngineResult } from 'json-rules-engine';
 import { AlertDao } from '../alerts/alert.dao';
 import { AlertItem } from '../alerts/alert.models';
-import { EventConditionsUtils, TemplatePropertiesData } from '../api/events/event.models';
 import { EventDao } from '../api/events/event.dao';
+import { EventConditionsUtils, TemplatePropertiesData } from '../api/events/event.models';
 import { TemplateCache } from '../api/messages/messageTemplates.model';
+import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
+import { SubscriptionItem } from '../api/subscriptions/subscription.models';
+import { TYPES } from '../di/types';
+import { CommonEvent } from '../transformers/transformers.model';
 
 @injectable()
 export class FilterService {
-
     constructor(
         @inject(TYPES.SubscriptionDao) private subscriptionDao: SubscriptionDao,
         @inject(TYPES.AlertDao) private alertDao: AlertDao,
         @inject(TYPES.EventConditionsUtils) private eventConditionsUtils: EventConditionsUtils,
-        @inject(TYPES.EventDao) private eventDao: EventDao) {
-    }
+        @inject(TYPES.EventDao) private eventDao: EventDao
+    ) {}
 
     public async filter(events: CommonEvent[]): Promise<void> {
         logger.debug(`filter.service filter: in: model:${JSON.stringify(events)}`);
@@ -49,15 +48,14 @@ export class FilterService {
         const changedSubAlerts: { [key: string]: SubscriptionItem } = {};
 
         for (const ev of events) {
-
             // perform lookup to see if any subscriptions are configured for the event source/principal/principalValue (cached for the duration of the method call)
-            const subscriptions = (await this.listSubscriptionsForEvent(ev, subscriptionMap)).filter(o => o.enabled);
+            const subscriptions = (
+                await this.listSubscriptionsForEvent(ev, subscriptionMap)
+            ).filter((o) => o.enabled);
 
             // if we have subscriptions, lets evaluate them against the datasource
             if (subscriptions !== undefined) {
-
                 for (const sub of subscriptions) {
-
                     // initializing an empty cache
                     const templateCache: TemplateCache = {};
 
@@ -67,8 +65,8 @@ export class FilterService {
                         rule = new Rule({
                             conditions: sub.event.conditions as TopLevelCondition,
                             event: {
-                                type: sub.event.name
-                            }
+                                type: sub.event.name,
+                            },
                         });
                         ruleMap[sub.event.id] = rule;
                     }
@@ -77,13 +75,16 @@ export class FilterService {
 
                     // add all root elements with '__' prefix, except attributes
                     Object.keys(ev)
-                        .filter(key => key !== 'attributes')
-                        .forEach(key => engine.addFact('__' + key, ev[key]));
+                        .filter((key) => key !== 'attributes')
+                        .forEach((key) => engine.addFact('__' + key, ev[key]));
 
                     // add all the known facts
                     Object.keys(ev.attributes)
-                        .filter(key => ev.attributes[key] !== undefined && ev.attributes[key] !== null)
-                        .forEach(key => engine.addFact(key, ev.attributes[key]));
+                        .filter(
+                            (key) =>
+                                ev.attributes[key] !== undefined && ev.attributes[key] !== null
+                        )
+                        .forEach((key) => engine.addFact(key, ev.attributes[key]));
 
                     // evaluate the rules
                     let results: EngineResult;
@@ -97,17 +98,21 @@ export class FilterService {
                     if (results?.events?.length > 0) {
                         if (!sub.alerted || sub.event.disableAlertThreshold) {
                             // a new alert...
-                            const attributes = await this.getTemplatePropertiesData(sub, ev, templateCache);
+                            const attributes = await this.getTemplatePropertiesData(
+                                sub,
+                                ev,
+                                templateCache
+                            );
                             alerts.push(this.buildAlert(sub, attributes));
                             if (!sub.alerted) {
                                 changedSubAlerts[sub.id] = {
                                     id: sub.id,
                                     eventSource: {
                                         id: sub.eventSource.id,
-                                        principal: sub.eventSource.principal
+                                        principal: sub.eventSource.principal,
                                     },
                                     principalValue: sub.principalValue,
-                                    alerted: true
+                                    alerted: true,
                                 };
                             }
                             sub.alerted = true;
@@ -119,15 +124,15 @@ export class FilterService {
                             id: sub.id,
                             eventSource: {
                                 id: sub.eventSource.id,
-                                principal: sub.eventSource.principal
+                                principal: sub.eventSource.principal,
                             },
                             principalValue: sub.principalValue,
-                            alerted: false
+                            alerted: false,
                         };
                     }
 
                     // clear the engine state ready for the next run
-                    Object.keys(ev.attributes).forEach(key => engine.removeFact(key));
+                    Object.keys(ev.attributes).forEach((key) => engine.removeFact(key));
                     engine.removeRule(rule);
                 }
 
@@ -146,31 +151,33 @@ export class FilterService {
         }
 
         logger.debug(`filter.service filter: exit:`);
-
     }
 
-    private buildAlert(sub: SubscriptionItem, templatePropertiesData: TemplatePropertiesData): AlertItem {
+    private buildAlert(
+        sub: SubscriptionItem,
+        templatePropertiesData: TemplatePropertiesData
+    ): AlertItem {
         logger.debug(`filter.service buildAlert: in: sub:${JSON.stringify(sub)}`);
         const alert: AlertItem = {
             version: 2.0,
             time: new Date().toISOString(),
             subscription: {
                 id: sub.id,
-                principalValue: sub.principalValue
+                principalValue: sub.principalValue,
             },
             event: {
                 id: sub.event.id,
-                name: sub.event.name
+                name: sub.event.name,
             },
             eventSource: {
-                principal: sub.eventSource.principal
+                principal: sub.eventSource.principal,
             },
             user: {
-                id: sub.user.id
+                id: sub.user.id,
             },
             targets: sub.targets,
             sns: sub.sns,
-            templatePropertiesData
+            templatePropertiesData,
         };
         logger.debug(`filter.service buildAlert: exit: ${JSON.stringify(alert)}`);
         return alert;
@@ -180,27 +187,53 @@ export class FilterService {
         return `${ev.eventSourceId}:${ev.principal}:${ev.principalValue}`;
     }
 
-    private async listSubscriptionsForEvent(ev: CommonEvent, subscriptionMap: { [key: string]: SubscriptionItem[] }) {
-        logger.debug(`filter.service listSubscriptionsForEvent: in: ev:${JSON.stringify(ev)}, subscriptionMap:${JSON.stringify(subscriptionMap)}`);
+    private async listSubscriptionsForEvent(
+        ev: CommonEvent,
+        subscriptionMap: { [key: string]: SubscriptionItem[] }
+    ) {
+        logger.debug(
+            `filter.service listSubscriptionsForEvent: in: ev:${JSON.stringify(
+                ev
+            )}, subscriptionMap:${JSON.stringify(subscriptionMap)}`
+        );
 
         const mapKey = this.subscriptionMapKey(ev);
         let subscriptions = subscriptionMap[mapKey];
         if (subscriptions === undefined) {
-            subscriptions = await this.subscriptionDao.listSubscriptionsForEventMessage(ev.eventSourceId, ev.principal, ev.principalValue);
+            subscriptions = await this.subscriptionDao.listSubscriptionsForEventMessage(
+                ev.eventSourceId,
+                ev.principal,
+                ev.principalValue
+            );
             if (subscriptions !== undefined && subscriptions.length > 0) {
                 for (const sub of subscriptions) {
-                    this.eventConditionsUtils.populateParameters(sub.event.conditions, sub.ruleParameterValues);
+                    this.eventConditionsUtils.populateParameters(
+                        sub.event.conditions,
+                        sub.ruleParameterValues
+                    );
                 }
                 subscriptionMap[mapKey] = subscriptions;
             }
         }
 
-        logger.debug(`filter.service listSubscriptionsForEvent: exit: subscriptions:${JSON.stringify(subscriptions)}`);
+        logger.debug(
+            `filter.service listSubscriptionsForEvent: exit: subscriptions:${JSON.stringify(
+                subscriptions
+            )}`
+        );
         return subscriptions;
     }
 
-    private async getTemplatePropertiesData(sub: SubscriptionItem, event: CommonEvent, templateCache: TemplateCache): Promise<TemplatePropertiesData> {
-        logger.debug(`filter.service getEventAttributes: in: ev:${JSON.stringify(sub)}, subscriptionMap:${JSON.stringify(event)}`);
+    private async getTemplatePropertiesData(
+        sub: SubscriptionItem,
+        event: CommonEvent,
+        templateCache: TemplateCache
+    ): Promise<TemplatePropertiesData> {
+        logger.debug(
+            `filter.service getEventAttributes: in: ev:${JSON.stringify(
+                sub
+            )}, subscriptionMap:${JSON.stringify(event)}`
+        );
         const templatePropertiesData = {};
 
         // check if there are any attributes and actually has an event to lookup
@@ -221,13 +254,17 @@ export class FilterService {
         const templateProperties = eventConfig.templateProperties;
 
         if (templateProperties) {
-            templateProperties.forEach(k => {
+            templateProperties.forEach((k) => {
                 templatePropertiesData[k] = event.attributes[k];
             });
-            templatePropertiesData['principalValue'] = event.principalValue
+            templatePropertiesData['principalValue'] = event.principalValue;
         }
 
-        logger.debug(`filter.service getEventAttributes: exit: attributeMap:${JSON.stringify(templatePropertiesData)}`);
+        logger.debug(
+            `filter.service getEventAttributes: exit: attributeMap:${JSON.stringify(
+                templatePropertiesData
+            )}`
+        );
         // Return an object of referenced template properties and their values
         return templatePropertiesData;
     }

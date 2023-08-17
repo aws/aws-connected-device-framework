@@ -10,22 +10,41 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { GroupItem, GroupMemberItemList, determineIfGroup20Resource, Group10Resource, Group20Resource, GroupBaseResource, GroupItemList, GroupResourceList, GroupMemberResourceList, determineIfGroupItem, BulkGroupsResource} from './groups.models';
-import {logger} from '../utils/logger';
-import {Node} from '../data/node';
-import { DevicesAssembler } from '../devices/devices.assembler';
-import { TYPES } from '../di/types';
-import {TypeCategory} from '../types/constants';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
 import { FullAssembler } from '../data/full.assembler';
+import {
+    DirectionToRelatedEntityArrayMap,
+    RelatedEntityArrayMap,
+    RelationDirection,
+    StringArrayMap,
+} from '../data/model';
+import { Node } from '../data/node';
+import { DevicesAssembler } from '../devices/devices.assembler';
 import { determineIfDeviceItem } from '../devices/devices.models';
-import { DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap, RelationDirection, StringArrayMap } from '../data/model';
+import { TYPES } from '../di/types';
+import { TypeCategory } from '../types/constants';
+import {
+    BulkGroupsResource,
+    Group10Resource,
+    Group20Resource,
+    GroupBaseResource,
+    GroupItem,
+    GroupItemList,
+    GroupMemberItemList,
+    GroupMemberResourceList,
+    GroupResourceList,
+    determineIfGroup20Resource,
+    determineIfGroupItem,
+} from './groups.models';
 
 @injectable()
 export class GroupsAssembler {
-
-    constructor( @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
-    @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler  ) {}
+    constructor(
+        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+        @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler
+    ) {}
 
     public toNode(model: GroupItem): Node {
         logger.debug(`groups.assembler toNode: in: model: ${JSON.stringify(model)}`);
@@ -39,7 +58,7 @@ export class GroupsAssembler {
         node.attributes['description'] = model.description;
         node.version = model.version;
 
-        for(const p in model.attributes) {
+        for (const p in model.attributes) {
             if (model.attributes.hasOwnProperty(p)) {
                 node.attributes[p] = model.attributes[p];
             }
@@ -49,11 +68,11 @@ export class GroupsAssembler {
         return node;
     }
 
-    public toGroupItems(nodes:Node[]): GroupItem[] {
+    public toGroupItems(nodes: Node[]): GroupItem[] {
         logger.debug(`groups.assembler toGroupItems: in: nodes: ${JSON.stringify(nodes)}`);
 
-        const groups: GroupItem[]=[];
-        for(const node of nodes) {
+        const groups: GroupItem[] = [];
+        for (const node of nodes) {
             groups.push(this.toGroupItem(node));
         }
 
@@ -62,7 +81,7 @@ export class GroupsAssembler {
     public toGroupItem(node: Node): GroupItem {
         logger.debug(`groups.assembler toGroupItem: in: node: ${JSON.stringify(node)}`);
 
-        if (node===undefined) {
+        if (node === undefined) {
             logger.debug(`groups.assembler toGroupItem: exit: model: undefined`);
             return undefined;
         }
@@ -72,97 +91,109 @@ export class GroupsAssembler {
         model.version = node.version;
 
         try {
-            model.templateId = node.types.filter(t => t !== TypeCategory.Group)[0];
+            model.templateId = node.types.filter((t) => t !== TypeCategory.Group)[0];
         } catch (err) {
             // do nothing, as templates don't exist in 'lite' mode
         }
 
-        Object.keys(node.attributes).forEach( key => {
-            switch(key) {
+        Object.keys(node.attributes).forEach((key) => {
+            switch (key) {
                 case 'name':
-                    model.name = <string> this.fullAssembler.extractPropertyValue(node.attributes[key]);
+                    model.name = <string>(
+                        this.fullAssembler.extractPropertyValue(node.attributes[key])
+                    );
                     break;
                 case 'groupPath':
-                    model.groupPath = <string> this.fullAssembler.extractPropertyValue(node.attributes[key]);
+                    model.groupPath = <string>(
+                        this.fullAssembler.extractPropertyValue(node.attributes[key])
+                    );
                     break;
                 case 'parentPath':
-                    model.parentPath = <string> this.fullAssembler.extractPropertyValue(node.attributes[key]);
+                    model.parentPath = <string>(
+                        this.fullAssembler.extractPropertyValue(node.attributes[key])
+                    );
                     break;
                 case 'description':
-                    model.description = <string> this.fullAssembler.extractPropertyValue(node.attributes[key]);
+                    model.description = <string>(
+                        this.fullAssembler.extractPropertyValue(node.attributes[key])
+                    );
                     break;
                 default:
-                    model.attributes[key] = this.fullAssembler.extractPropertyValue(node.attributes[key]);
+                    model.attributes[key] = this.fullAssembler.extractPropertyValue(
+                        node.attributes[key]
+                    );
             }
         });
 
-        if (model.name===undefined) {
-            model.name=model.groupPath;
+        if (model.name === undefined) {
+            model.name = model.groupPath;
         }
 
-        Object.keys(node.in).forEach( key => {
+        Object.keys(node.in).forEach((key) => {
             const others = node.in[key];
-            if (others!==undefined) {
-                if (model.groups===undefined) {
-                    model.groups= {};
+            if (others !== undefined) {
+                if (model.groups === undefined) {
+                    model.groups = {};
                 }
-                if (model.groups.in===undefined) {
-                    model.groups.in= {};
+                if (model.groups.in === undefined) {
+                    model.groups.in = {};
                 }
-                others.forEach(other=> {
-                    if (other.category===TypeCategory.Group) {
-                        if (model.groups.in[key]===undefined) {
-                            model.groups.in[key]=[];
+                others.forEach((other) => {
+                    if (other.category === TypeCategory.Group) {
+                        if (model.groups.in[key] === undefined) {
+                            model.groups.in[key] = [];
                         }
-                        model.groups.in[key].push({id:(other.attributes['groupPath'] as string[])[0]});
+                        model.groups.in[key].push({
+                            id: (other.attributes['groupPath'] as string[])[0],
+                        });
                     }
                 });
             }
         });
 
-        Object.keys(node.out).forEach( key => {
+        Object.keys(node.out).forEach((key) => {
             const others = node.out[key];
-            if (others!==undefined) {
-                if (model.groups===undefined) {
-                    model.groups= {};
+            if (others !== undefined) {
+                if (model.groups === undefined) {
+                    model.groups = {};
                 }
-                if (model.groups.out===undefined) {
-                    model.groups.out= {};
+                if (model.groups.out === undefined) {
+                    model.groups.out = {};
                 }
-                others.forEach(other=> {
-                    if (other.category===TypeCategory.Group) {
-                        if (model.groups.out[key]===undefined) {
-                            model.groups.out[key]=[];
+                others.forEach((other) => {
+                    if (other.category === TypeCategory.Group) {
+                        if (model.groups.out[key] === undefined) {
+                            model.groups.out[key] = [];
                         }
-                        model.groups.out[key].push({id:(other.attributes['groupPath'] as string[])[0]});
+                        model.groups.out[key].push({
+                            id: (other.attributes['groupPath'] as string[])[0],
+                        });
                     }
                 });
-
             }
         });
 
         // remove any empty collection attributes
         if (model.groups) {
-            if (model.groups.in && Object.keys(model.groups.in).length===0) {
+            if (model.groups.in && Object.keys(model.groups.in).length === 0) {
                 delete model.groups.in;
             }
-            if (model.groups.out && Object.keys(model.groups.out).length===0) {
+            if (model.groups.out && Object.keys(model.groups.out).length === 0) {
                 delete model.groups.out;
             }
-            if (Object.keys(model.groups).length===0) {
+            if (Object.keys(model.groups).length === 0) {
                 delete model.groups;
             }
         }
 
         logger.debug(`groups.assembler toGroupItem: exit: model: ${JSON.stringify(model)}`);
         return model;
-
     }
 
     public fromGroupResource(res: GroupBaseResource): GroupItem {
         logger.debug(`group.assembler fromGroupResource: in: res: ${JSON.stringify(res)}`);
 
-        if (res===undefined) {
+        if (res === undefined) {
             logger.debug(`group.assembler fromGroupResource: exit: res: undefined`);
             return undefined;
         }
@@ -170,20 +201,24 @@ export class GroupsAssembler {
         const item = new GroupItem();
 
         // common properties
-        Object.keys(res).forEach(key=> {
-            if (key!=='groups') {
+        Object.keys(res).forEach((key) => {
+            if (key !== 'groups') {
                 item[key] = res[key];
             }
         });
 
-        const assembleRelated = (from:StringArrayMap, rels:DirectionToRelatedEntityArrayMap, direction:RelationDirection)=> {
+        const assembleRelated = (
+            from: StringArrayMap,
+            rels: DirectionToRelatedEntityArrayMap,
+            direction: RelationDirection
+        ) => {
             if (from) {
-                if (rels[direction] ===undefined) rels[direction] = {};
-                for(const [relation,ids] of Object.entries(from)) {
-                    rels[direction][relation] = ids.map(id=>({id}));
+                if (rels[direction] === undefined) rels[direction] = {};
+                for (const [relation, ids] of Object.entries(from)) {
+                    rels[direction][relation] = ids.map((id) => ({ id }));
                 }
             }
-        }
+        };
 
         // populate version specific device info
         if (determineIfGroup20Resource(res)) {
@@ -201,50 +236,56 @@ export class GroupsAssembler {
 
         logger.debug(`group.assembler fromGroupResource: exit: item: ${JSON.stringify(item)}`);
         return item;
-
     }
 
     public fromBulkGroupsResource(res: BulkGroupsResource): GroupItem[] {
         logger.debug(`group.assembler fromBulkGroupsResource: in: res: ${JSON.stringify(res)}`);
 
-        if (res===undefined) {
+        ow(res, ow.object.hasKeys('groups').message('Missing required field `groups`.'));
+
+        if (res === undefined) {
             logger.debug(`group.assembler fromBulkGroupsResource: exit: res: undefined`);
             return undefined;
         }
 
-        const items:GroupItem[] = [];
+        const items: GroupItem[] = [];
 
-        res.groups.forEach(resource=> items.push(this.fromGroupResource(resource)));
+        res.groups.forEach((resource) => items.push(this.fromGroupResource(resource)));
 
-        logger.debug(`group.assembler fromBulkGroupsResource: exit: items: ${JSON.stringify(items)}`);
+        logger.debug(
+            `group.assembler fromBulkGroupsResource: exit: items: ${JSON.stringify(items)}`
+        );
         return items;
-
     }
 
-    public toGroupResource(item: GroupItem, version:string): (GroupBaseResource) {
-        logger.debug(`group.assembler toGroupResource: in: item: ${JSON.stringify(item)}, version:${version}`);
+    public toGroupResource(item: GroupItem, version: string): GroupBaseResource {
+        logger.debug(
+            `group.assembler toGroupResource: in: item: ${JSON.stringify(
+                item
+            )}, version:${version}`
+        );
 
-        if (item===undefined) {
+        if (item === undefined) {
             logger.debug(`group.assembler toGroupResource: exit: item: undefined`);
             return undefined;
         }
 
-        const assembleRelated = (from:RelatedEntityArrayMap, to:StringArrayMap)=> {
+        const assembleRelated = (from: RelatedEntityArrayMap, to: StringArrayMap) => {
             if (from) {
-                for(const [relation,entities] of Object.entries(from)) {
-                    if (to[relation]===undefined) {
-                        to[relation]= [];
+                for (const [relation, entities] of Object.entries(from)) {
+                    if (to[relation] === undefined) {
+                        to[relation] = [];
                     }
-                    to[relation].push(...entities.map(entity=>entity.id));
+                    to[relation].push(...entities.map((entity) => entity.id));
                 }
             }
-        }
+        };
 
-        let resource:GroupBaseResource;
+        let resource: GroupBaseResource;
         if (version.startsWith('1.')) {
             // v1 specific...
             resource = new Group10Resource();
-            const typedResource:Group10Resource = resource;
+            const typedResource: Group10Resource = resource;
 
             // populate version specific device info
             if (item.groups) {
@@ -256,36 +297,41 @@ export class GroupsAssembler {
         } else {
             // v2 specific...
             resource = new Group20Resource();
-            const typedResource:Group20Resource = resource;
+            const typedResource: Group20Resource = resource;
 
             // populate version specific device info
             typedResource.groups = {};
             if (item.groups?.in) {
-                typedResource.groups.in = {}
+                typedResource.groups.in = {};
             }
             assembleRelated(item.groups?.in, typedResource.groups.in);
             if (item.groups?.out) {
-                typedResource.groups.out = {}
+                typedResource.groups.out = {};
             }
             assembleRelated(item.groups?.out, typedResource.groups.out);
         }
 
         // common properties
-        Object.keys(item).forEach(key=> {
-            if (key!=='groups' && key!=='devices') {
+        Object.keys(item).forEach((key) => {
+            if (key !== 'groups' && key !== 'devices') {
                 resource[key] = item[key];
             }
         });
 
-        logger.debug(`group.assembler toGroupResource: exit: resource: ${JSON.stringify(resource)}`);
+        logger.debug(
+            `group.assembler toGroupResource: exit: resource: ${JSON.stringify(resource)}`
+        );
         return resource;
-
     }
 
-    public toGroupResourceList(items: GroupItemList, version:string): (GroupResourceList) {
-        logger.debug(`group.assembler toGroupResourceList: in: items: ${JSON.stringify(items)}, version:${version}`);
+    public toGroupResourceList(items: GroupItemList, version: string): GroupResourceList {
+        logger.debug(
+            `group.assembler toGroupResourceList: in: items: ${JSON.stringify(
+                items
+            )}, version:${version}`
+        );
 
-        if (items===undefined) {
+        if (items === undefined) {
             logger.debug(`group.assembler toGroupResourceList: exit: items: undefined`);
             return undefined;
         }
@@ -294,27 +340,37 @@ export class GroupsAssembler {
         resources.pagination = items.pagination;
         resources.results = [];
 
-        items.results.forEach(item=> resources.results.push(this.toGroupResource(item, version)));
+        items.results.forEach((item) =>
+            resources.results.push(this.toGroupResource(item, version))
+        );
 
-        logger.debug(`group.assembler toGroupResourceList: exit: resources: ${JSON.stringify(resources)}`);
+        logger.debug(
+            `group.assembler toGroupResourceList: exit: resources: ${JSON.stringify(resources)}`
+        );
         return resources;
-
     }
 
-    public toGroupMemberResourceList(items: GroupMemberItemList, version:string): (GroupMemberResourceList) {
-        logger.debug(`group.assembler toGroupMemberResourceList: in: items: ${JSON.stringify(items)}, version:${version}`);
+    public toGroupMemberResourceList(
+        items: GroupMemberItemList,
+        version: string
+    ): GroupMemberResourceList {
+        logger.debug(
+            `group.assembler toGroupMemberResourceList: in: items: ${JSON.stringify(
+                items
+            )}, version:${version}`
+        );
 
-        if (items===undefined) {
+        if (items === undefined) {
             logger.debug(`group.assembler toGroupMemberResourceList: exit: items: undefined`);
             return undefined;
         }
 
-        const resources:GroupMemberResourceList = {
-            results:[],
-            pagination: items.pagination
+        const resources: GroupMemberResourceList = {
+            results: [],
+            pagination: items.pagination,
         };
 
-        items.results.forEach(item=> {
+        items.results.forEach((item) => {
             if (determineIfDeviceItem(item)) {
                 resources.results.push(this.devicesAssembler.toDeviceResource(item, version));
             } else if (determineIfGroupItem(item)) {
@@ -322,52 +378,57 @@ export class GroupsAssembler {
             }
         });
 
-        logger.debug(`group.assembler toGroupMemberResourceList: exit: resources: ${JSON.stringify(resources)}`);
+        logger.debug(
+            `group.assembler toGroupMemberResourceList: exit: resources: ${JSON.stringify(
+                resources
+            )}`
+        );
         return resources;
-
     }
 
     public toGroupItemList(nodes: Node[]): GroupItem[] {
         logger.debug(`groups.assembler toGroupItemList: in: nodes: ${JSON.stringify(nodes)}`);
 
-        if (nodes===undefined) {
+        if (nodes === undefined) {
             return [];
         }
 
         const models: GroupItem[] = [];
 
-        for(const node of nodes) {
+        for (const node of nodes) {
             models.push(this.toGroupItem(node));
         }
 
         logger.debug(`groups.assembler toGroupItemList: exit: models: ${JSON.stringify(models)}`);
         return models;
-
     }
 
-    public toRelatedGroupItemList(node: Node, offset?:number|string, count?:number): GroupItemList {
+    public toRelatedGroupItemList(
+        node: Node,
+        offset?: number | string,
+        count?: number
+    ): GroupItemList {
         logger.debug(`groups.assembler toRelatedGroupItemList: in: node: ${JSON.stringify(node)}`);
 
-        const r:GroupItemList = {
-            results:[]
+        const r: GroupItemList = {
+            results: [],
         };
 
-        if (node===undefined) {
+        if (node === undefined) {
             return r;
         }
 
-        if (offset!==undefined || count!==undefined) {
+        if (offset !== undefined || count !== undefined) {
             r.pagination = {
                 offset,
-                count
+                count,
             };
-
         }
 
-        Object.keys(node.in).forEach( relationship => {
+        Object.keys(node.in).forEach((relationship) => {
             const others = node.in[relationship];
-            if (others!==undefined) {
-                others.forEach(other=> {
+            if (others !== undefined) {
+                others.forEach((other) => {
                     const group: GroupItem = this.toGroupItem(other) as GroupItem;
                     group.relation = relationship;
                     group.direction = 'in';
@@ -376,10 +437,10 @@ export class GroupsAssembler {
             }
         });
 
-        Object.keys(node.out).forEach( relationship => {
+        Object.keys(node.out).forEach((relationship) => {
             const others = node.out[relationship];
-            if (others!==undefined) {
-                others.forEach(other=> {
+            if (others !== undefined) {
+                others.forEach((other) => {
                     const group: GroupItem = this.toGroupItem(other) as GroupItem;
                     group.relation = relationship;
                     group.direction = 'out';
@@ -390,41 +451,43 @@ export class GroupsAssembler {
 
         logger.debug(`groups.assembler toRelatedGroupItemList: exit: r: ${JSON.stringify(r)}`);
         return r;
-
     }
 
-    public toGroupMembersList(nodes: Node[], offset?:number|string, count?:number): GroupMemberItemList {
+    public toGroupMembersList(
+        nodes: Node[],
+        offset?: number | string,
+        count?: number
+    ): GroupMemberItemList {
         logger.debug(`groups.assembler toGroupMembersList: in: nodes: ${JSON.stringify(nodes)}`);
 
-        const r:GroupMemberItemList = {
-            results:[]
+        const r: GroupMemberItemList = {
+            results: [],
         };
 
-        if (nodes===undefined) {
+        if (nodes === undefined) {
             return r;
         }
 
-        if (offset!==undefined || count!==undefined) {
+        if (offset !== undefined || count !== undefined) {
             r.pagination = {
                 offset,
-                count
+                count,
             };
-
         }
 
-        for(const node of nodes) {
-            if (node.types.indexOf(TypeCategory.Device)>=0) {
+        for (const node of nodes) {
+            if (node.types.indexOf(TypeCategory.Device) >= 0) {
                 r.results.push(this.devicesAssembler.toDeviceItem(node));
-            } else if (node.types.indexOf(TypeCategory.Group)>=0) {
+            } else if (node.types.indexOf(TypeCategory.Group) >= 0) {
                 r.results.push(this.toGroupItem(node));
             } else {
-                logger.warn(`groups.assembler toGroupMembersList: unsupported template: ${node.types}`);
+                logger.warn(
+                    `groups.assembler toGroupMembersList: unsupported template: ${node.types}`
+                );
             }
         }
 
         logger.debug(`groups.assembler toGroupModelList: exit: r: ${JSON.stringify(r)}`);
         return r;
-
     }
-
 }

@@ -8,7 +8,7 @@ export interface InstallerConfig {
         rootCaPath: string;
         rootpath: string;
         thingName: string;
-    }
+    };
 
     services: {
         'aws.greengrass.Nucleus'?: {
@@ -19,5 +19,5 @@ export interface InstallerConfig {
         'aws.greengrass.FleetProvisioningByClaim'?: {
             configuration: FleetProvisioningByClaimConfig;
         };
-    }
+    };
 }

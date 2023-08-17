@@ -12,23 +12,20 @@
  *********************************************************************************************************************/
 
 export class ConfigBuilder {
-  public config: string;
+    public config: string;
 
-  constructor() {
-    this.config = '';
-    return this;
-  }
+    constructor() {
+        this.config = '';
+        return this;
+    }
 
-  public add(key: string, value: string | boolean | number | undefined): ConfigBuilder {
-    // if there is no value specified, we will not set the environment variables
-    if (value === undefined)
-      return this;
+    public add(key: string, value: string | boolean | number | undefined): ConfigBuilder {
+        // if there is no value specified, we will not set the environment variables
+        if (value === undefined) return this;
 
-    if (this.config === '')
-      this.config = `${key}=${value}`;
-    else
-      this.config = `${this.config}\r\n${key}=${value}`;
+        if (this.config === '') this.config = `${key}=${value}`;
+        else this.config = `${this.config}\r\n${key}=${value}`;
 
-    return this;
-  }
+        return this;
+    }
 }

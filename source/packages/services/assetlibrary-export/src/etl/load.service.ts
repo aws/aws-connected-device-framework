@@ -10,17 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../di/types';
 
+import ow from 'ow';
 import { S3Loader } from './loaders/s3.loader';
 import { Transformed } from './transform.service';
-import ow from 'ow';
 
 @injectable()
 export class LoadService {
-
     private readonly loaders: Loaders = {};
 
     constructor(

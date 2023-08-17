@@ -29,7 +29,7 @@ Here we define the `reboot` command operation which we can use to send a `reboot
 ```json
 POST /commands
 
-Headers: 
+Headers:
   Accept: application/vnd.aws-cdf-v1.0+json
   Content-Type: application/vnd.aws-cdf-v1.0+json
 
@@ -80,7 +80,7 @@ Headers:
   x-messageid: nbq0rfylz
 ```
 
-The combination of provided things, thing groups, Asset Library devices, Asset Library groups, and Asset Library search queries that make up the provided message `targets` are expanded to obtain a list of thing names. An MQTT message is sent to each thing of that list as follows. 
+The combination of provided things, thing groups, Asset Library devices, Asset Library groups, and Asset Library search queries that make up the provided message `targets` are expanded to obtain a list of thing names. An MQTT message is sent to each thing of that list as follows.
 
 ```mqtt
 Topic: cmd/cdf/cac/<thingName>/<correlationId>/+
@@ -93,13 +93,14 @@ Payload:
     "accepted": "cmd/cdf/cac/<thingName>/<correlationId>/accepted",
     "rejected": "cmd/cdf/cac/<thingName>/<correlationId>/rejected",
   }
-  "payload": { 
+  "payload": {
     // optional payload
   }
 }
 ```
 
 Notes about the above MQTT message:
+
 - Each device intended to listen to MQTT topic based commands should subscribe to `cmd/cdf/cac/<thingName>/+` to receive the messages
 - The value of `operation` is set to what was provided as the `operation` when creating the command. Devices should key off this attribute to determine what to do
 - The provided `<correlationId>` is unique to each device and message, and is what correlates all responses back to the original message
@@ -114,13 +115,12 @@ Topic: cmd/cdf/cac/<thingName>/<correlationId>/reply
 
 Payload:
 {
-  "payload": { 
+  "payload": {
     "status": "success"
   },
   "timestamp": 1646674865
 }
 ```
-
 
 ### Example 2: Request all devices that are a member of a group to publish stats via their Device Shadow
 
@@ -131,7 +131,7 @@ Here we define the `stats` command operation which we can use to send a `stats` 
 ```json
 POST /commands
 
-Headers: 
+Headers:
   Accept: application/vnd.aws-cdf-v1.0+json
   Content-Type: application/vnd.aws-cdf-v1.0+json
 
@@ -172,7 +172,7 @@ Body:
         "awsIoT": {
             "thingGroupNames": [ "my-group-1" ]
         }
-    }, 
+    },
     "payloadParamValues": {
         "level": "high"
     }
@@ -203,15 +203,17 @@ As in example 1, the message targets are expanded to obtain a list of thing name
 ```
 
 Notes about the above device shadow:
+
 - The `command.operation` is added as a new field to `state.desired`, with its value being a stringified version of the expanded `command.payload`
 - Devices should key off the `state.desired.[operation]` field as to determine how to process the command
 - The `clientToken` is set to the correlationId that is unique to this message and device
 
 When replying via a shadow, the device should perform the following steps when updating the shadow:
-  - Removing the operation from the `state.desired` section by setting its values to `null`
-  - Adding the operation name as a key to the `state.reported` section
-  - The `state.reported.[operation]` field should be set to a json object containing `timestamp`, `action` (`accepted`, `rejected`, or `reply`), and `payload`
-  - Setting the `clientId` to that what was originally provided so that the changes to the device shadow are correlated to the original message
+
+- Removing the operation from the `state.desired` section by setting its values to `null`
+- Adding the operation name as a key to the `state.reported` section
+- The `state.reported.[operation]` field should be set to a json object containing `timestamp`, `action` (`accepted`, `rejected`, or `reply`), and `payload`
+- Setting the `clientId` to that what was originally provided so that the changes to the device shadow are correlated to the original message
 
 An example of sending a reply from the device via the device shadow is as follows:
 
@@ -244,7 +246,7 @@ As the command targets comprised a thing group, we can use the following REST en
 ```json
 GET /messages/nbq0rfylz/recipients
 
-Headers: 
+Headers:
   Accept: application/vnd.aws-cdf-v1.0+json
   Content-Type: application/vnd.aws-cdf-v1.0+json
 
@@ -276,7 +278,7 @@ We can go one step further and retrieve all replies associated ith a specific re
 ```json
 GET /messages/nbq0rfylz/recipients/my-thing-1/replies
 
-Headers: 
+Headers:
   Accept: application/vnd.aws-cdf-v1.0+json
   Content-Type: application/vnd.aws-cdf-v1.0+json
 
@@ -311,7 +313,6 @@ Body:
 }
 ```
 
-
 ### Example 3: Target devices via an Asset Library query to rotate and publish logs, using AWS IoT Jobs so that rollout of the command can be controlled
 
 Here we define the `update_firmware` command operation which we can use to send a `update_firmware` message to a device. Its payload has a presigned s3 url to the firmware image to be downloaded. Note that in this example we are setting all the optional `deliveryMethod.jobExecutionRolloutConfig`, `deliveryMethod.abortConfig`, and `deliveryMethod.timeoutConfig` settings to further customize the rollout of the command via AWS IoT Jobs.
@@ -321,7 +322,7 @@ Here we define the `update_firmware` command operation which we can use to send 
 ```json
 POST /commands
 
-Headers: 
+Headers:
   Accept: application/vnd.aws-cdf-v1.0+json
   Content-Type: application/vnd.aws-cdf-v1.0+json
 

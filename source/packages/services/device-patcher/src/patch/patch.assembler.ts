@@ -10,18 +10,17 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { injectable } from 'inversify';
-import {logger} from '../utils/logger.util';
-import {PatchResource, PatchItem, PatchListResource} from './patch.model';
-import {PatchListPaginationKey} from './patchTask.dao';
+import { PatchItem, PatchListResource, PatchResource } from './patch.model';
+import { PatchListPaginationKey } from './patchTask.dao';
 
 @injectable()
 export class PatchAssembler {
-
     public toItem(res: PatchResource): PatchItem {
         logger.debug(`patch.assembler fromResource: in: res: ${JSON.stringify(res)}`);
 
-        if (res===undefined) {
+        if (res === undefined) {
             logger.debug(`patch.assembler fromResource: exit: res: undefined`);
             return undefined;
         }
@@ -29,19 +28,18 @@ export class PatchAssembler {
         const item = new PatchItem();
 
         // common properties
-        Object.keys(res).forEach(key=> {
+        Object.keys(res).forEach((key) => {
             item[key] = res[key];
         });
 
         logger.debug(`patch.assembler fromResource: exit: item: ${JSON.stringify(item)}`);
         return item;
-
     }
 
-    public toResource(item: PatchItem): (PatchResource) {
+    public toResource(item: PatchItem): PatchResource {
         logger.debug(`patch.assembler toResource: in: item: ${JSON.stringify(item)}`);
 
-        if (item===undefined) {
+        if (item === undefined) {
             logger.debug(`patch.assembler toResource: exit: item: undefined`);
             return undefined;
         }
@@ -49,38 +47,45 @@ export class PatchAssembler {
         const resource = new PatchResource();
 
         // common properties
-        Object.keys(item).forEach(key=> {
+        Object.keys(item).forEach((key) => {
             resource[key] = item[key];
         });
 
         logger.debug(`patch.assembler toResource: exit: resource: ${JSON.stringify(resource)}`);
         return resource;
-
     }
 
-    public toListResource(items: PatchItem[], count?:number, paginateFrom?:PatchListPaginationKey): PatchListResource {
-        logger.debug(`patch.assembler toListResource: in: items:${JSON.stringify(items)}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`);
+    public toListResource(
+        items: PatchItem[],
+        count?: number,
+        paginateFrom?: PatchListPaginationKey
+    ): PatchListResource {
+        logger.debug(
+            `patch.assembler toListResource: in: items:${JSON.stringify(
+                items
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
+        );
 
-        const list:PatchListResource= {
-            patches:[]
+        const list: PatchListResource = {
+            patches: [],
         };
 
-        if (count!==undefined || paginateFrom!==undefined) {
+        if (count !== undefined || paginateFrom !== undefined) {
             list.pagination = {};
         }
 
-        if (count!==undefined) {
-            list.pagination.count=count;
+        if (count !== undefined) {
+            list.pagination.count = count;
         }
 
-        if (paginateFrom!==undefined) {
+        if (paginateFrom !== undefined) {
             list.pagination.lastEvaluated = {
-                nextToken: paginateFrom?.nextToken
+                nextToken: paginateFrom?.nextToken,
             };
         }
 
-        if ((items?.length??0)>0) {
-            list.patches = items.map(i=> this.toResource(i))
+        if ((items?.length ?? 0) > 0) {
+            list.patches = items.map((i) => this.toResource(i));
         }
 
         logger.debug(`patch.assembler toListResource: exit: ${JSON.stringify(list)}`);

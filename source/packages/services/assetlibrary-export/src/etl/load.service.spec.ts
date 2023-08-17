@@ -11,12 +11,12 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import { createMockInstance } from 'jest-create-mock-instance';
-import { S3Loader } from './loaders/s3.loader';
 import { LoadService } from './load.service';
+import { S3Loader } from './loaders/s3.loader';
 
 describe('LoadService', () => {
-
     let mockedS3Loader: S3Loader;
     let instance: LoadService;
 
@@ -26,22 +26,18 @@ describe('LoadService', () => {
     });
 
     it('should load batch to S3', async () => {
-
         const batch = {
             id: 'some-uuid',
             category: 'device',
             type: 'type1',
-            items: [
-                'deviceId-1',
-                'deviceId-2'
-            ],
-            timestamp: 1643230032656
+            items: ['deviceId-1', 'deviceId-2'],
+            timestamp: 1643230032656,
         };
 
         const mockedS3LoaderResponse = {
             batchId: 'some-uuid',
             exportBucket: 'myBucket',
-            exportKey: 'assetlibrary-export/device/type1/dt=YYYY-MM-DD-HH-MM/some-uuid.json'
+            exportKey: 'assetlibrary-export/device/type1/dt=YYYY-MM-DD-HH-MM/some-uuid.json',
         };
 
         mockedS3Loader.load = jest.fn().mockReturnValueOnce(mockedS3LoaderResponse);

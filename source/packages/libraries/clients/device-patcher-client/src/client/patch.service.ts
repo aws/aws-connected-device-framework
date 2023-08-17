@@ -10,38 +10,48 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
 
-import {PathHelper} from '../utils/path.helper';
-import {ClientServiceBase} from './common.service';
+import { PathHelper } from '../utils/path.helper';
 import { RequestHeaders } from './common.model';
+import { ClientServiceBase } from './common.service';
 
 import {
+    ListPatchResponse,
     PatchResponse,
-    ListPatchResponse, PatchTaskRequest, PatchTaskResponse, UpdatePatchRequest
-} from './patch.model'
+    PatchTaskRequest,
+    PatchTaskResponse,
+    UpdatePatchRequest,
+} from './patch.model';
 
 export interface PatchService {
+    createPatchTask(
+        patchRequest: PatchTaskRequest,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string>;
 
-    createPatchTask(patchRequest: PatchTaskRequest, additionalHeaders?:RequestHeaders): Promise<string>;
+    getPatchTask(taskId: string, additionalHeaders?: RequestHeaders): Promise<PatchTaskResponse>;
 
-    getPatchTask(taskId: string, additionalHeaders?:RequestHeaders): Promise<PatchTaskResponse>;
+    getPatch(patchId: string, additionalHeaders?: RequestHeaders): Promise<PatchResponse>;
 
-    getPatch(patchId: string, additionalHeaders?:RequestHeaders): Promise<PatchResponse>;
+    listPatchesByTaskId(
+        taskId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ListPatchResponse>;
 
-    listPatchesByTaskId(taskId:string, additionalHeaders?:RequestHeaders): Promise<ListPatchResponse>;
+    listPatchesByDeviceId(
+        deviceId: string,
+        status?: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ListPatchResponse>;
 
-    listPatchesByDeviceId(deviceId: string, status?: string, additionalHeaders?:RequestHeaders): Promise<ListPatchResponse>;
+    updatePatch(patch: UpdatePatchRequest, additionalHeaders?: RequestHeaders): Promise<void>;
 
-    updatePatch(patch: UpdatePatchRequest, additionalHeaders?:RequestHeaders): Promise<void>;
-
-    deletePatch(patchId: string, additionalHeaders?:RequestHeaders): Promise<void>;
-
+    deletePatch(patchId: string, additionalHeaders?: RequestHeaders): Promise<void>;
 }
 
 @injectable()
 export class PatchServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }
@@ -58,12 +68,11 @@ export class PatchServiceBase extends ClientServiceBase {
         return PathHelper.encodeUrl('patchTasks', taskId, 'patches');
     }
 
-    protected patchesRelativeUrl(patchId: string) : string {
-        return PathHelper.encodeUrl( 'patches', patchId);
+    protected patchesRelativeUrl(patchId: string): string {
+        return PathHelper.encodeUrl('patches', patchId);
     }
 
-    protected patchByDeviceRelativeUrl(deviceId: string) : string {
+    protected patchByDeviceRelativeUrl(deviceId: string): string {
         return PathHelper.encodeUrl('devices', deviceId, 'patches');
     }
-
 }

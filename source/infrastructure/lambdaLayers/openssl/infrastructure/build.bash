@@ -37,7 +37,7 @@ echo '
 **********************************************************
 '
 
-docker image build -t cdf-openssl-lambda-layer .
+docker image build --platform linux/amd64 -t cdf-openssl-lambda-layer .
 
 local_build_dir=$(pwd)/build
 

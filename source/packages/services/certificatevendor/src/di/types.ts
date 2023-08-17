@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const TYPES = {
-
     CertificateService: Symbol.for('CertificateService'),
 
     RegistryManager: Symbol.for('RegistryManager'),

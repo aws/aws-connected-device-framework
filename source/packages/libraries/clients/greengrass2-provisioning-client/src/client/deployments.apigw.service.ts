@@ -12,47 +12,63 @@
  *********************************************************************************************************************/
 
 /* tslint:disable:no-unused-variable member-ordering */
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-
 import { RequestHeaders } from './common.model';
 import { DeploymentTask, NewDeploymentTask } from './deployments.model';
 import { DeploymentsService, DeploymentsServiceBase } from './deployments.service';
 
 @injectable()
 export class DeploymentsApigwService extends DeploymentsServiceBase implements DeploymentsService {
-
-    private readonly baseUrl:string;
+    private readonly baseUrl: string;
 
     public constructor() {
         super();
         this.baseUrl = process.env.GREENGRASS2PROVISIONING_BASE_URL;
     }
 
-    async createDeploymentTask(task:NewDeploymentTask, additionalHeaders?:RequestHeaders) : Promise<string> {
+    async createDeploymentTask(
+        task: NewDeploymentTask,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
         ow(task?.template?.name, 'template name', ow.string.nonEmpty);
         ow(task.targets, 'targets', ow.object.nonEmpty);
 
         const url = `${this.baseUrl}${super.deploymentTasksRelativeUrl()}`;
 
-        const r = await request.post(url)
+        return await request
+            .post(url)
             .send(task)
-            .set(this.buildHeaders(additionalHeaders));
-        return r.headers['x-taskid'];
-
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.headers['x-taskid'];
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async getDeploymentTask(taskId: string, additionalHeaders?:RequestHeaders) : Promise<DeploymentTask> {
-
+    async getDeploymentTask(
+        taskId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<DeploymentTask> {
         ow(taskId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deploymentTaskRelativeUrl(taskId)}`;
 
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-        return res.body;
-
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
-
 }

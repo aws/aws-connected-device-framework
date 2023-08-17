@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,7 +11,7 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Asset Library Service
@@ -25,7 +26,7 @@ Parameters:
     Type: String
 
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
 
@@ -113,11 +114,10 @@ Parameters:
     Description: Specifies the identifier for an existing DB cluster snapshot to restore. Refer to Neptune documentation on its use.
 
 Conditions:
-  DeployFullMode: !Equals [ !Ref Mode, 'full' ]
-  UsingVPCForAuth: !Equals [ !Ref AuthType, 'Private' ]
+  DeployFullMode: !Equals [!Ref Mode, 'full']
+  UsingVPCForAuth: !Equals [!Ref AuthType, 'Private']
 
 Resources:
-
   Neptune:
     Condition: DeployFullMode
     Type: AWS::CloudFormation::Stack
@@ -139,7 +139,8 @@ Resources:
       TemplateURL: ./cfn-assetLibrary.yaml
       Parameters:
         ApplicationConfigurationOverride: !Ref ApplicationConfigurationOverride
-        PrivateApiGatewayVPCEndpoint: !If [ UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, 'N/A' ]
+        PrivateApiGatewayVPCEndpoint:
+          !If [UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, 'N/A']
         Environment: !Ref Environment
         VpcId: !Ref VpcId
         CDFSecurityGroupId: !Ref CDFSecurityGroupId
@@ -150,7 +151,7 @@ Resources:
         CognitoUserPoolArn: !Ref CognitoUserPoolArn
         AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
         AuthType: !Ref AuthType
-        NeptuneURL:  !If [DeployFullMode, !GetAtt Neptune.Outputs.GremlinEndpoint, '']
+        NeptuneURL: !If [DeployFullMode, !GetAtt Neptune.Outputs.GremlinEndpoint, '']
         CustomResourceVPCLambdaArn: !Ref CustomResourceVPCLambdaArn
         EnableApiGatewayAccessLogs: !Ref EnableApiGatewayAccessLogs
       TimeoutInMinutes: 60
@@ -168,4 +169,3 @@ Outputs:
   NeptuneURL:
     Description: Neptune Url
     Value: !GetAtt Neptune.Outputs.GremlinEndpoint
-    

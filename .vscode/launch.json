@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest: current file",
+      //"env": { "NODE_ENV": "test" },
+      "program": "${workspaceFolder}source/common/temp/node_modules/.pnpm/jest",
+      "args": ["${fileBasenameNoExtension}", "--config", "jest.config.js"],
+      "console": "integratedTerminal",
+      "disableOptimisticBPs": true
+    }
+  ]
+}

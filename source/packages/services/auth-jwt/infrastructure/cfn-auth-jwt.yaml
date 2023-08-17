@@ -11,14 +11,14 @@
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
 ---
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: API Gateway Lambda Authorizer to verify JWT tokens.
 
 Parameters:
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
 
@@ -42,7 +42,7 @@ Resources:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
@@ -60,38 +60,38 @@ Resources:
           Principal:
             Service: lambda.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSLambdaExecute
-        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess   
-  
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+
   ApiGwAuthInvokeRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
-        - Effect: Allow
-          Principal:
-            Service: 
-            - lambda.amazonaws.com
-            - apigateway.amazonaws.com
-          Action: sts:AssumeRole
-      Policies:
-      - PolicyName: apiGwLambdaInvoke
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
           - Effect: Allow
-            Action: lambda:invokeFunction
-            Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*'
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: apiGwLambdaInvoke
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: lambda:invokeFunction
+                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*'
 
 Outputs:
   CustomAuthLambdaArn:
     Description: Custom Auth Lambda Arn
-    Value: !Sub "${CustAuthLambdaFunction.Arn}"
-    Export: 
-      Name: !Sub "${AWS::StackName}-CustAuthLambdaArn"
+    Value: !Sub '${CustAuthLambdaFunction.Arn}'
+    Export:
+      Name: !Sub '${AWS::StackName}-CustAuthLambdaArn'
   StackName:
     Description: Custom Auth Stack Name
-    Value: !Sub "${AWS::StackName}"
+    Value: !Sub '${AWS::StackName}'

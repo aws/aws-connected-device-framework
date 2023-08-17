@@ -10,15 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import {inject, injectable} from 'inversify';
 
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
+import { owCheckOversizeString, owCheckUnprintableChar } from '../utils/inputValidation.util';
 import { S3Utils } from '../utils/s3.util';
 
-import { PatchTemplateItem } from './template.model';
 import { PatchTemplatesDao, TemplateListPaginationKey } from './template.dao';
+import { PatchTemplateItem } from './template.model';
 
 @injectable()
 export class PatchTemplatesService {
@@ -34,14 +35,18 @@ export class PatchTemplatesService {
 
         ow(template, 'Template Information', ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
+        owCheckUnprintableChar(template.name, 'template.name');
+        owCheckOversizeString(template.name, 2048, 'template.name');
         ow(template.patchType, ow.string.nonEmpty);
         ow(template.playbookName, ow.string.nonEmpty);
+        owCheckUnprintableChar(template.playbookName, 'template.playbookName');
+        owCheckOversizeString(template.playbookName, 2048, 'template.playbookName');
         ow(template.playbookFile, ow.object.hasKeys('buffer'));
 
         const existingTemplate = await this.patchTemplatesDao.get(template.name);
 
         if (existingTemplate) {
-            throw new Error("CONFLICT");
+            throw new Error('CONFLICT');
         }
 
         template.versionNo = 1;
@@ -54,11 +59,10 @@ export class PatchTemplatesService {
 
         template.playbookSource = {
             bucket: this.s3Bucket,
-            key: uploadPath
+            key: uploadPath,
         };
 
         await this.patchTemplatesDao.save(template);
-
     }
 
     public async update(template: PatchTemplateItem): Promise<void> {
@@ -66,37 +70,39 @@ export class PatchTemplatesService {
 
         ow(template, 'Template Information', ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
+        owCheckUnprintableChar(template.name, 'template.name');
+        owCheckOversizeString(template.name, 2048, 'template.name');
 
         const existingTemplate = await this.patchTemplatesDao.get(template.name);
 
         if (!existingTemplate) {
-            throw new Error("NOT_FOUND");
+            throw new Error('NOT_FOUND');
         }
 
         template.updatedAt = new Date();
-        template.versionNo = existingTemplate.versionNo+1;
+        template.versionNo = existingTemplate.versionNo + 1;
         template.createdAt = existingTemplate.createdAt;
         template.enabled = existingTemplate.enabled ?? existingTemplate.enabled;
 
-        if (template.extraVars){
+        if (template.extraVars) {
             template.extraVars = {
                 ...existingTemplate.extraVars,
-                ...template.extraVars
+                ...template.extraVars,
             };
         }
 
         template = {
             ...existingTemplate,
-            ...template
+            ...template,
         };
 
-        if(template.playbookFile) {
+        if (template.playbookFile) {
             const uploadPath = `${this.s3Prefix}playbooks/${template.name}___${template.playbookName}`;
             await this.s3Utils.uploadFile(this.s3Bucket, uploadPath, template.playbookFile);
 
             template.playbookSource = {
                 bucket: this.s3Bucket,
-                key: uploadPath
+                key: uploadPath,
             };
         }
 
@@ -110,7 +116,7 @@ export class PatchTemplatesService {
 
         const template = await this.patchTemplatesDao.get(name);
 
-        if(!template) {
+        if (!template) {
             throw new Error('NOT_FOUND');
         }
 
@@ -118,8 +124,13 @@ export class PatchTemplatesService {
         return template;
     }
 
-    public async list(count?: number, lastEvaluated?: TemplateListPaginationKey): Promise<[PatchTemplateItem[], TemplateListPaginationKey]> {
-       logger.debug(`templates.service count:${count}, lastEvaluated:${JSON.stringify(lastEvaluated)}:`);
+    public async list(
+        count?: number,
+        lastEvaluated?: TemplateListPaginationKey
+    ): Promise<[PatchTemplateItem[], TemplateListPaginationKey]> {
+        logger.debug(
+            `templates.service count:${count}, lastEvaluated:${JSON.stringify(lastEvaluated)}:`
+        );
 
         if (count) {
             count = Number(count);
@@ -130,21 +141,22 @@ export class PatchTemplatesService {
 
         logger.debug(`templates.service get: exit: items: ${JSON.stringify(result)}`);
         return result;
-
     }
 
-    public async delete(name:string) : Promise<void> {
+    public async delete(name: string): Promise<void> {
         logger.debug(`templates.service delete: in: name:${name}`);
 
         ow(name, ow.string.nonEmpty);
 
         const template = await this.get(name);
 
-        if(template){
+        if (template) {
             await this.patchTemplatesDao.delete(name);
-            await this.s3Utils.deleteObject(template.playbookSource.bucket, template.playbookSource.key);
+            await this.s3Utils.deleteObject(
+                template.playbookSource.bucket,
+                template.playbookSource.key
+            );
         }
-
 
         logger.debug(`templates.service get: delete:`);
     }

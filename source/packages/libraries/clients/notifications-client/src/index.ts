@@ -23,5 +23,5 @@ export * from './client/messages.model';
 export * from './client/subscriptions.model';
 export * from './client/targets.model';
 
-export {NOTIFICATIONS_CLIENT_TYPES} from './di/types';
-export {notificationsContainerModule} from './di/inversify.config';
+export { NOTIFICATIONS_CLIENT_TYPES } from './di/types';
+export { notificationsContainerModule } from './di/inversify.config';

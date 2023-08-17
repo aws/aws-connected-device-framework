@@ -12,23 +12,25 @@
  *********************************************************************************************************************/
 import { Response } from 'express';
 import { inject } from 'inversify';
-import { interfaces, controller, response, requestBody, httpPost } from 'inversify-express-utils';
+import { controller, httpPost, interfaces, requestBody, response } from 'inversify-express-utils';
 
+import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { CreateSimulationRequest } from './simulations.model';
 import { SimulationsService } from './simulations.service';
-import { TYPES } from '../di/types';
 
 @controller('/simulations')
 export class SimulationsController implements interfaces.Controller {
-
     public constructor(
-        @inject(TYPES.SimulationsService) private simulationService: SimulationsService) { }
+        @inject(TYPES.SimulationsService) private simulationService: SimulationsService
+    ) {}
 
     @httpPost('/')
-    public async createSimulation(@requestBody() request: CreateSimulationRequest, @response() res: Response): Promise<void> {
-
+    public async createSimulation(
+        @requestBody() request: CreateSimulationRequest,
+        @response() res: Response
+    ): Promise<void> {
         logger.info(`simulations.controller createSimulation: request:${JSON.stringify(request)}`);
 
         try {
@@ -43,5 +45,4 @@ export class SimulationsController implements interfaces.Controller {
 
         logger.debug(`simulations.controller createSimulation: exit:`);
     }
-
 }

@@ -10,33 +10,37 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@awssolutions/cdf-lambda-invoke';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { injectable, inject } from 'inversify';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
 
 import {
-    ProvisionThingResponse,
-    ProvisionThingRequest,
-    Thing,
     BulkProvisionThingsRequest,
     BulkProvisionThingsResponse,
     CertificateStatus,
+    ProvisionThingRequest,
+    ProvisionThingResponse,
     RequestHeaders,
+    Thing,
 } from './things.model';
 
 import { ThingsService, ThingsServiceBase } from './things.service';
 
 @injectable()
 export class ThingsLambdaService extends ThingsServiceBase implements ThingsService {
-    
     private functionName: string;
 
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
-        this.functionName = process.env.PROVISIONING_API_FUNCTION_NAME
+        this.functionName = process.env.PROVISIONING_API_FUNCTION_NAME;
     }
 
     /**
@@ -44,7 +48,10 @@ export class ThingsLambdaService extends ThingsServiceBase implements ThingsServ
      *
      * @param provisioningRequest
      */
-    public async provisionThing(provisioningRequest: ProvisionThingRequest, additionalHeaders?: RequestHeaders): Promise<ProvisionThingResponse> {
+    public async provisionThing(
+        provisioningRequest: ProvisionThingRequest,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ProvisionThingResponse> {
         ow(provisioningRequest.provisioningTemplateId, ow.string.nonEmpty);
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.thingsRelativeUrl())
@@ -68,7 +75,10 @@ export class ThingsLambdaService extends ThingsServiceBase implements ThingsServ
         return res.body;
     }
 
-    public async deleteThing(thingName: string, additionalHeaders?: RequestHeaders): Promise<void> {
+    public async deleteThing(
+        thingName: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(thingName, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -79,7 +89,10 @@ export class ThingsLambdaService extends ThingsServiceBase implements ThingsServ
         await this.lambdaInvoker.invoke(this.functionName, event);
     }
 
-    public async bulkProvisionThings(req: BulkProvisionThingsRequest, additionalHeaders?: RequestHeaders): Promise<BulkProvisionThingsResponse> {
+    public async bulkProvisionThings(
+        req: BulkProvisionThingsRequest,
+        additionalHeaders?: RequestHeaders
+    ): Promise<BulkProvisionThingsResponse> {
         ow(req, ow.object.nonEmpty);
         ow(req.provisioningTemplateId, ow.string.nonEmpty);
         ow(req.parameters, ow.array.nonEmpty.minLength(1));
@@ -94,7 +107,10 @@ export class ThingsLambdaService extends ThingsServiceBase implements ThingsServ
         return res.body;
     }
 
-    public async getBulkProvisionTask(taskId: string, additionalHeaders?: RequestHeaders): Promise<BulkProvisionThingsResponse> {
+    public async getBulkProvisionTask(
+        taskId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<BulkProvisionThingsResponse> {
         ow(taskId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -106,12 +122,16 @@ export class ThingsLambdaService extends ThingsServiceBase implements ThingsServ
         return res.body;
     }
 
-    public async updateThingCertificates(thingName: string, certificateStatus: CertificateStatus, additionalHeaders?: RequestHeaders): Promise<void> {
+    public async updateThingCertificates(
+        thingName: string,
+        certificateStatus: CertificateStatus,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(thingName, ow.string.nonEmpty);
         ow(certificateStatus, ow.string.nonEmpty);
 
         const body = {
-            certificateStatus
+            certificateStatus,
         };
 
         const event = new LambdaApiGatewayEventBuilder()

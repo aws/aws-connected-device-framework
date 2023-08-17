@@ -10,23 +10,27 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { WorkflowAction } from './workflow.interfaces';
+import { inject, injectable } from 'inversify';
 import { TYPES } from '../../di/types';
-import { CommandModel } from '../commands.models';
-import { CommandsDao } from '../commands.dao';
 import { logger } from '../../utils/logger';
-import { injectable, inject } from 'inversify';
+import { CommandsDao } from '../commands.dao';
+import { CommandModel } from '../commands.models';
 import { CommandsValidator } from '../commands.validator';
+import { WorkflowAction } from './workflow.interfaces';
 
 @injectable()
 export class SaveAction implements WorkflowAction {
-
     constructor(
         @inject(TYPES.CommandsValidator) private commandsValidator: CommandsValidator,
-        @inject(TYPES.CommandsDao) private commandsDao: CommandsDao) {}
+        @inject(TYPES.CommandsDao) private commandsDao: CommandsDao
+    ) {}
 
-    async execute(existing:CommandModel, updated:CommandModel): Promise<boolean> {
-        logger.debug(`workflow.save execute: existing:${JSON.stringify(existing)}, updated:${JSON.stringify(updated)}`);
+    async execute(existing: CommandModel, updated: CommandModel): Promise<boolean> {
+        logger.debug(
+            `workflow.save execute: existing:${JSON.stringify(existing)}, updated:${JSON.stringify(
+                updated
+            )}`
+        );
 
         this.commandsValidator.validate(updated);
 
@@ -35,7 +39,5 @@ export class SaveAction implements WorkflowAction {
 
         logger.debug('workflow.save execute: exit:true');
         return true;
-
     }
-
 }

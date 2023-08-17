@@ -11,71 +11,71 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface CertificateBatchRequest {
-  quantity:number;
-  register?:boolean;
-  certInfo?:CertificateInfo;
+    quantity: number;
+    register?: boolean;
+    certInfo?: CertificateInfo;
 }
 
 export interface CertificateBatchTask {
-	taskId:string;
-	status:TaskStatus;
+    taskId: string;
+    status: TaskStatus;
 }
 export interface CertificateBatchTaskWithDate extends CertificateBatchTask {
-	batchDate:number;
+    batchDate: number;
 }
 
 export interface CertificateBatchTaskWithChunks extends CertificateBatchTaskWithDate {
-	chunksPending: number;
-	chunksTotal: number;
+    chunksPending: number;
+    chunksTotal: number;
 }
 
 export enum TaskStatus {
-	PENDING = 'pending',
-	IN_PROGRESS = 'in_progress',
-	COMPLETE = 'complete'
+    PENDING = 'pending',
+    IN_PROGRESS = 'in_progress',
+    COMPLETE = 'complete',
 }
 
 export interface CertificateBatchTaskStatusList {
-	tasks:CertificateBatchTaskWithDate[];
+    tasks: CertificateBatchTaskWithDate[];
 }
 
 export interface CertificateBatchChunkCompleteRequest {
-	taskId:string;
-	chunkId:number;
-	quantity:number;
-	location:string;
+    taskId: string;
+    chunkId: number;
+    quantity: number;
+    location: string;
 }
 
 export interface CertificateInfo {
-	commonName?:CommonName|string;
-	commonNameList?:string[];
-	organization?:string;
-	organizationalUnit?:string;
-	locality?:string;
-	stateName?:string;
-	country?:string;
-	emailAddress?:string;
-	distinguishedNameQualifier?:string;
-	includeCA?:boolean;
-	daysExpiry?:number;
+    commonName?: CommonName | string;
+    commonNameList?: string[];
+    organization?: string;
+    organizationalUnit?: string;
+    locality?: string;
+    stateName?: string;
+    country?: string;
+    emailAddress?: string;
+    distinguishedNameQualifier?: string;
+    includeCA?: boolean;
+    daysExpiry?: number;
 }
 
 export interface CommonName {
-	generator?:CommonNameGenerator;
-	prefix?:string;
-	commonNameStart?:string;
-	commonNameList?:string[];
-	commonNameStatic?:string;
-	quantity?:number;
+    generator?: CommonNameGenerator;
+    prefix?: string;
+    commonNameStart?: string;
+    commonNameList?: string[];
+    commonNameStatic?: string;
+    quantity?: number;
 }
 
 export enum CommonNameGenerator {
     increment = 'increment',
     list = 'list',
-    static = 'static'
+    static = 'static',
 }
 
 export class CertInfoValidationResult {
     isValid: boolean;
-	errors?: { [dataPath: string] : string} = {};
+    errors?: { [dataPath: string]: string } = {};
 }

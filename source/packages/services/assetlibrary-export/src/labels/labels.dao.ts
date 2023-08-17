@@ -10,19 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {process, structure} from 'gremlin';
-import {inject, injectable} from 'inversify';
+import { process, structure } from 'gremlin';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
-import {logger} from '../utils/logger';
-import {TYPES} from '../di/types';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { TYPES } from '../di/types';
 
-import {BaseDaoFull} from '../data/base.full.dao';
-import {isVertexDto, VertexDto} from '../data/full.model';
+import { BaseDaoFull } from '../data/base.full.dao';
+import { VertexDto, isVertexDto } from '../data/full.model';
 
 @injectable()
 export class LabelsDao extends BaseDaoFull {
-
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
@@ -31,7 +30,7 @@ export class LabelsDao extends BaseDaoFull {
     }
 
     public async getObjectCountByLabel(label: string): Promise<{
-        total: number
+        total: number;
     }> {
         logger.debug(`labels.dao getCountByLabel: in: ${label}`);
 
@@ -49,18 +48,20 @@ export class LabelsDao extends BaseDaoFull {
             await conn.close();
         }
 
-        if (result===undefined || result.length===0) {
+        if (result === undefined || result.length === 0) {
             logger.debug(`labels.dao get: exit: node: undefined`);
             return undefined;
         }
 
         return {
-            total: <number><unknown>result[0]
+            total: <number>(<unknown>result[0]),
         };
-
     }
 
-    public async listIdObjectsByLabel(label: string, range: [number, number]): Promise<IdObject[]> {
+    public async listIdObjectsByLabel(
+        label: string,
+        range: [number, number]
+    ): Promise<IdObject[]> {
         logger.debug(`labels.dao getDeviceIds: in: ${label}, range: ${range}`);
 
         ow(label, 'label', ow.string.nonEmpty);
@@ -78,19 +79,18 @@ export class LabelsDao extends BaseDaoFull {
             await conn.close();
         }
 
-        if (results===undefined || results.length===0) {
+        if (results === undefined || results.length === 0) {
             logger.debug(`labels.dao get: exit: node: undefined`);
             return undefined;
         }
         logger.silly(`labels.dao get: results: ${JSON.stringify(results)}`);
 
-        const vertices = results.filter(r=> isVertexDto(r)) as VertexDto[];
+        const vertices = results.filter((r) => isVertexDto(r)) as VertexDto[];
 
-        return vertices.map(v => {
+        return vertices.map((v) => {
             return new IdObject(v);
         });
     }
-
 }
 
 export class IdObject {

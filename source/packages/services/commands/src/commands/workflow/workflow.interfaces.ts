@@ -13,5 +13,5 @@
 import { CommandModel } from '../commands.models';
 
 export interface WorkflowAction {
-    execute(existing:CommandModel, updated:CommandModel):Promise<boolean>;
+    execute(existing: CommandModel, updated: CommandModel): Promise<boolean>;
 }

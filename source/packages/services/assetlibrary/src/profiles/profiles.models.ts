@@ -10,10 +10,20 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Node } from '../data/node';
 import { DirectionToStringArrayMap } from '../data/model';
-import { Device10Resource, Device20Resource, DeviceBaseResource, DeviceItem } from '../devices/devices.models';
-import { Group10Resource, Group20Resource, GroupBaseResource, GroupItem } from '../groups/groups.models';
+import { Node } from '../data/node';
+import {
+    Device10Resource,
+    Device20Resource,
+    DeviceBaseResource,
+    DeviceItem,
+} from '../devices/devices.models';
+import {
+    Group10Resource,
+    Group20Resource,
+    GroupBaseResource,
+    GroupItem,
+} from '../groups/groups.models';
 
 export class DeviceProfileResource extends DeviceBaseResource {
     profileId: string;
@@ -26,7 +36,7 @@ export class DeviceProfile20Resource extends Device20Resource {
 }
 
 export class DeviceProfileItem extends DeviceItem {
-    public constructor(init?:Partial<DeviceProfileItem>) {
+    public constructor(init?: Partial<DeviceProfileItem>) {
         super(init);
     }
     profileId: string;
@@ -43,28 +53,28 @@ export class GroupProfile20Resource extends Group20Resource {
 }
 
 export class GroupProfileItem extends GroupItem {
-    public constructor(init?:Partial<GroupProfileItem>) {
+    public constructor(init?: Partial<GroupProfileItem>) {
         super(init);
     }
     profileId: string;
 }
 
 export class ProfileNode extends Node {
-	templateId?: string;
-	groups?: DirectionToStringArrayMap;
+    templateId?: string;
+    groups?: DirectionToStringArrayMap;
 }
 
 export class ProfileResourceList {
-    results: (DeviceProfileResource|GroupProfileResource)[]=[];
+    results: (DeviceProfileResource | GroupProfileResource)[] = [];
     pagination?: {
-        offset:number;
-        count:number;
+        offset: number;
+        count: number;
     };
 }
 export class ProfileItemList {
-    results: (DeviceProfileItem|GroupProfileItem)[]=[];
+    results: (DeviceProfileItem | GroupProfileItem)[] = [];
     pagination?: {
-        offset:number;
-        count:number;
+        offset: number;
+        count: number;
     };
 }

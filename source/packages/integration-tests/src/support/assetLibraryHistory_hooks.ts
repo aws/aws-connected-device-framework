@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Before, setDefaultTimeout} from '@cucumber/cucumber';
+import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import {
     GroupsService,
     DevicesService,
@@ -19,10 +19,11 @@ import {
     TypeResource,
     Group10Resource,
     ASSETLIBRARY_CLIENT_TYPES,
-} from '@cdf/assetlibrary-client/dist';
-import {container} from '../di/inversify.config';
-import {sign} from 'jsonwebtoken';
-import {Dictionary} from '../../../libraries/core/lambda-invoke/src';
+} from '@awssolutions/cdf-assetlibrary-client/dist';
+import { container } from '../di/inversify.config';
+import { sign } from 'jsonwebtoken';
+import { Dictionary } from '../../../libraries/core/lambda-invoke/src';
+import { create_root_authorized_group_template } from './assetLibrary_hooks';
 
 setDefaultTimeout(30 * 1000);
 
@@ -39,87 +40,91 @@ const DEVICEHISTORY_FEATURE_DEVICE_IDS = ['test-devicehistory-device001'];
 // tslint:disable:no-invalid-this
 // tslint:disable:only-arrow-functions
 
-const devicesService:DevicesService = container.get(ASSETLIBRARY_CLIENT_TYPES.DevicesService);
-const groupsService:GroupsService = container.get(ASSETLIBRARY_CLIENT_TYPES.GroupsService);
-const templatesService:TemplatesService = container.get(ASSETLIBRARY_CLIENT_TYPES.TemplatesService);
+const devicesService: DevicesService = container.get(ASSETLIBRARY_CLIENT_TYPES.DevicesService);
+const groupsService: GroupsService = container.get(ASSETLIBRARY_CLIENT_TYPES.GroupsService);
+const templatesService: TemplatesService = container.get(
+    ASSETLIBRARY_CLIENT_TYPES.TemplatesService
+);
 
-const adminClaims:{[key:string]: string[]}= {
-    cdf_al: ['/:*']
+const adminClaims: { [key: string]: string[] } = {
+    cdf_al: ['/:*'],
 };
 const authToken = sign(adminClaims, 'shared-secret');
 const additionalHeaders: Dictionary = {
-    Authorization: authToken
+    authz: authToken,
 };
 
-async function deleteAssetLibraryTemplates(category:CategoryEnum, ids:string[]) {
-    for(const id of ids) {
+async function deleteAssetLibraryTemplates(category: CategoryEnum, ids: string[]) {
+    for (const id of ids) {
         await templatesService.deleteTemplate(category, id, additionalHeaders);
     }
 }
 
-async function deleteAssetLibraryDevices(ids:string[]) {
-    for(const id of ids) {
-        await devicesService.deleteDevice(id, additionalHeaders)
-            .catch(_err=> {
-                // ignore error in case it did not already exist
-            });
+async function deleteAssetLibraryDevices(ids: string[]) {
+    for (const id of ids) {
+        await devicesService.deleteDevice(id, additionalHeaders).catch((_err) => {
+            // ignore error in case it did not already exist
+        });
     }
 }
 
-async function deleteAssetLibraryGroups(paths:string[]) {
-    for(const path of paths) {
-        await groupsService.deleteGroup(path, additionalHeaders)
-            .catch(_err=> {
-                // ignore error in case it did not already exist
-            });
+async function deleteAssetLibraryGroups(paths: string[]) {
+    for (const path of paths) {
+        await groupsService.deleteGroup(path, additionalHeaders).catch((_err) => {
+            // ignore error in case it did not already exist
+        });
     }
 }
 
 async function teardown_deviceHistory_feature() {
     await deleteAssetLibraryDevices(DEVICEHISTORY_FEATURE_DEVICE_IDS);
     await deleteAssetLibraryGroups([DEVICEHISTORY_FEATURE_GROUP_PATH]);
-    await deleteAssetLibraryTemplates(CategoryEnum.device, [DEVICEHISTORY_FEATURE_DEVICE_TEMPLATE_ID]);
-    await deleteAssetLibraryTemplates(CategoryEnum.group, [DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID]);
+    await deleteAssetLibraryTemplates(CategoryEnum.device, [
+        DEVICEHISTORY_FEATURE_DEVICE_TEMPLATE_ID,
+    ]);
+    await deleteAssetLibraryTemplates(CategoryEnum.group, [
+        DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID,
+    ]);
 }
 
-Before({tags: '@setup_deviceHistory_feature'}, async function () {
+Before({ tags: '@setup_deviceHistory_feature' }, async function () {
     await teardown_deviceHistory_feature();
 
     // create group template
-    const groupType:TypeResource = {
-        templateId: DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID,
-        category: 'group'
-    };
-    await templatesService.createTemplate(groupType, additionalHeaders);
-    await templatesService.publishTemplate(CategoryEnum.group, DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID, additionalHeaders);
+    await create_root_authorized_group_template(DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID);
 
     // create group
-    const group:Group10Resource = {
+    const group: Group10Resource = {
         templateId: DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID,
         parentPath: '/',
         name: DEVICEHISTORY_FEATURE_GROUP_PATH.substring(1),
-        attributes: {}
+        attributes: {},
     };
     await groupsService.createGroup(group, undefined, additionalHeaders);
 
     // create device type
-    const deviceType:TypeResource = {
+    const deviceType: TypeResource = {
         templateId: DEVICEHISTORY_FEATURE_DEVICE_TEMPLATE_ID,
         category: 'device',
         properties: {
-            firmwareVersion: { type: 'string'}
+            firmwareVersion: { type: 'string' },
         },
         relations: {
             out: {
-                linked_to: [DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID]
-            }
-        }
+                linked_to: [
+                    { name: DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID, includeInAuth: true },
+                ],
+            },
+        },
     };
     await templatesService.createTemplate(deviceType, additionalHeaders);
-    await templatesService.publishTemplate(CategoryEnum.device, DEVICEHISTORY_FEATURE_DEVICE_TEMPLATE_ID, additionalHeaders);
-
+    await templatesService.publishTemplate(
+        CategoryEnum.device,
+        DEVICEHISTORY_FEATURE_DEVICE_TEMPLATE_ID,
+        additionalHeaders
+    );
 });
 
-Before({tags: '@teardown_deviceHistory_feature'}, async function () {
+Before({ tags: '@teardown_deviceHistory_feature' }, async function () {
     await teardown_deviceHistory_feature();
 });

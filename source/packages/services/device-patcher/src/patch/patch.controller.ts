@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {Response} from 'express';
-import {inject} from 'inversify';
+import { Response } from 'express';
+import { inject } from 'inversify';
 import {
     controller,
     httpDelete,
@@ -21,37 +21,35 @@ import {
     queryParam,
     requestBody,
     requestParam,
-    response
+    response,
 } from 'inversify-express-utils';
 
-import {handleError} from '../utils/errors';
-import {logger} from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { handleError } from '../utils/errors';
 
-import {TYPES} from '../di/types';
-import {PatchService} from './patch.service';
-import {PatchAssembler} from './patch.assembler';
-import {PatchResource} from './patch.model';
-
+import { TYPES } from '../di/types';
+import { PatchAssembler } from './patch.assembler';
+import { PatchResource } from './patch.model';
+import { PatchService } from './patch.service';
 
 @controller('')
 export class PatchController implements interfaces.Controller {
-
     public constructor(
         @inject(TYPES.PatchService) private patchService: PatchService,
-        @inject(TYPES.PatchAssembler) private patchAssembler: PatchAssembler,
+        @inject(TYPES.PatchAssembler) private patchAssembler: PatchAssembler
     ) {}
 
     @httpGet('/patches/:patchId')
     public async getPatch(
         @response() res: Response,
-        @requestParam('patchId') patchId: string,
+        @requestParam('patchId') patchId: string
     ): Promise<PatchResource> {
         logger.debug(`Patch.controller getPatch: in: patchId: ${patchId}`);
 
         let patchResource: PatchResource;
 
         try {
-           patchResource = await this.patchService.get(patchId);
+            patchResource = await this.patchService.get(patchId);
         } catch (err) {
             handleError(err, res);
         }
@@ -59,7 +57,6 @@ export class PatchController implements interfaces.Controller {
         logger.debug(`Patch.controller getPatch: exit: ${JSON.stringify(patchResource)}`);
 
         return patchResource;
-
     }
 
     @httpGet('/devices/:deviceId/patches')
@@ -68,12 +65,17 @@ export class PatchController implements interfaces.Controller {
         @requestParam('deviceId') deviceId: string,
         @queryParam('patchStatus') patchStatus: string,
         @queryParam('count') count: number,
-        @queryParam('exclusiveStartToken') exclusiveStartToken: string,
+        @queryParam('exclusiveStartToken') exclusiveStartToken: string
     ): Promise<void> {
         logger.debug(`Patch.controller getPatch: in: deviceId: ${deviceId}`);
 
         try {
-            const [items, paginationKey] = await this.patchService.listPatchesByDeviceId(deviceId, patchStatus, count, {nextToken: exclusiveStartToken});
+            const [items, paginationKey] = await this.patchService.listPatchesByDeviceId(
+                deviceId,
+                patchStatus,
+                count,
+                { nextToken: exclusiveStartToken }
+            );
             const resources = this.patchAssembler.toListResource(items, count, paginationKey);
             logger.debug(`Patch.controller getPatch: exit: ${JSON.stringify(resources)}`);
 
@@ -88,7 +90,6 @@ export class PatchController implements interfaces.Controller {
         @requestParam('patchId') patchId: string,
         @response() res: Response
     ): Promise<void> {
-
         logger.debug(`Patch.controller deletePatch: in: patchId: ${patchId}`);
 
         try {
@@ -116,5 +117,4 @@ export class PatchController implements interfaces.Controller {
 
         logger.debug(`Patch.controller patch: exit:}`);
     }
-
 }

@@ -11,13 +11,13 @@ There are two options for CSR case. One option is to use ACM PCA to issue the ce
 
 The following represents the architecture of Certificate Vendor.
 
-![Architecture](<docs/images/cdf-core-hla-CertificateVendor.png>)
+![Architecture](docs/images/cdf-core-hla-CertificateVendor.png)
 
 ## Pre-requisites
 
 ### Pre-created certificates
 
-A certificate package comprising of the certificate, public key and private key is to be created and registered with AWS IoT.  This certificate package is to be zipped, and stored in S3 with the name of the zip matching the thing name of the intended device.  The `certificateId` is associated with the certificate package by setting the `x-amz-meta-certificateid` S3 user metadata attribute of the uploaded zip file.
+A certificate package comprising of the certificate, public key and private key is to be created and registered with AWS IoT. This certificate package is to be zipped, and stored in S3 with the name of the zip matching the thing name of the intended device. The `certificateId` is associated with the certificate package by setting the `x-amz-meta-certificateid` S3 user metadata attribute of the uploaded zip file.
 
 ### Certificate Creation with a device CSR
 #### Certiicate Creation with CA private key
@@ -54,11 +54,12 @@ in the in the inquiry prompt in the installer, or request body as parameters.
 
 The following resources are automatically created as part of the deployment and utilized by this flow:
 
-A _thing group_ (default named `cdfRotateCertificates`).  Add devices to this thing group that require certificates rotating.
+A _thing group_ (default named `cdfRotateCertificates`). Add devices to this thing group that require certificates rotating.
 
-Using the CDF **Command and Control** module (an optional dependency), a command template is created to define the structure of an AWS IoT Job to request devices to rotate certificates.  Again using the CDF Command and Control module a message is created of that command template to create a continuous AWS IoT Job targeting the _cdfRotateCertificates_ thing group.  Both the template and command creation is taken care of as part of the initial deployment.
+Using the CDF **Command and Control** module (an optional dependency), a command template is created to define the structure of an AWS IoT Job to request devices to rotate certificates. Again using the CDF Command and Control module a message is created of that command template to create a continuous AWS IoT Job targeting the _cdfRotateCertificates_ thing group. Both the template and command creation is taken care of as part of the initial deployment.
 
 Example CDF Command and Control module template:
+
 ```json
 {
   "operation": "RotateCertificates",
@@ -72,66 +73,66 @@ Example CDF Command and Control module template:
   },
   "payloadTemplate": "{\"get\":{\"subscribe\":\"${getSubscribeTopic}\",\"publish\":\"${getPublishTopic}\"},\"ack\":{\"subscribe\":\"${ackSubscribeTopic}\",\"publish\":\"${ackPublishTopic}\"}}",
   "payloadParams": [
-      "getSubscribeTopic",
-      "getPublishTopic",
-      "ackSubscribeTopic",
-      "ackPublishTopic"
+    "getSubscribeTopic",
+    "getPublishTopic",
+    "ackSubscribeTopic",
+    "ackPublishTopic"
   ],
   "tags": {
-      "templateId": "RotateCertificates"
+    "templateId": "RotateCertificates"
   }
 }
 ```
 
 Example CDF Command and Control module command:
 
-* `{thingGroupArn}` is injected by the deployment script
-* `{thingName}` is to be replaced on the device side by the device itself
-* `{commandId}` is to be replaced by the id for `RotateCertificates` command template.
+- `{thingGroupArn}` is injected by the deployment script
+- `{thingName}` is to be replaced on the device side by the device itself
+- `{commandId}` is to be replaced by the id for `RotateCertificates` command template.
 
 ```json
 {
   "commandId": "<commandId>",
   "targets": {
-      "awsIoT": {
-          "thingGroups": [{ "name": "<thingGroupName>", "expand": false }]
-      }
+    "awsIoT": {
+      "thingGroups": [{ "name": "<thingGroupName>", "expand": false }]
+    }
   },
   "documentParameters": {
-         "getSubscribeTopic": "cdf/certificates/{thingName}/get/+",
-         "getPublishTopic": "cdf/certificates/{thingName}/get",
-         "ackSubscribeTopic": "cdf/certificates/{thingName}/ack/+",
-         "ackPublishTopic": "cdf/certificates/{thingName}/ack"
-     }
- }
+    "getSubscribeTopic": "cdf/certificates/{thingName}/get/+",
+    "getPublishTopic": "cdf/certificates/{thingName}/get",
+    "ackSubscribeTopic": "cdf/certificates/{thingName}/ack/+",
+    "ackPublishTopic": "cdf/certificates/{thingName}/ack"
+  }
+}
 ```
 
 ## Certificate rotation flow
 
 As part of the device startup sequence it should subscribe to AWS IoT jobs.
 
-Add the device to the `cdfRotateCertificates` thing group.  This will send a job to the targetted device which instructs the device to start the certificate rotation process.  The Job document contains the publish and subscribe topics for certificate rotation.
+Add the device to the `cdfRotateCertificates` thing group. This will send a job to the targetted device which instructs the device to start the certificate rotation process. The Job document contains the publish and subscribe topics for certificate rotation.
 
 Example job document (the device to replace the {thingName} token):
 
 ```json
 {
-    "operation": "RotateCertificates",
-    "get":{
-        "subscribe":"cdf/certificates/{thingName}/get/+",
-        "publish":"cdf/certificates/{thingName}/get"
-    },
-    "ack":{
-        "subscribe":"cdf/certificates/{thingName}/ack/+",
-        "publish":"cdf/certificates/{thingName}/ack"
-    }
+  "operation": "RotateCertificates",
+  "get": {
+    "subscribe": "cdf/certificates/{thingName}/get/+",
+    "publish": "cdf/certificates/{thingName}/get"
+  },
+  "ack": {
+    "subscribe": "cdf/certificates/{thingName}/ack/+",
+    "publish": "cdf/certificates/{thingName}/ack"
+  }
 }
 ```
 
 Certificate Vendor supports two methods of requesting certificates:
 
-* pre-created certificates which are stored in a secure S3 location and returned via a presigned URL when the device sends a `get` message
-* a device sends a `get` message and provides a CSR in the request - certificate vendor signs the certificate with an IoT registered CA and returns the new certificate to the device as the MQTT response
+- pre-created certificates which are stored in a secure S3 location and returned via a presigned URL when the device sends a `get` message
+- a device sends a `get` message and provides a CSR in the request - certificate vendor signs the certificate with an IoT registered CA and returns the new certificate to the device as the MQTT response
 
 The device sends a request to the CDF Certificate Vendor module via the above publish topic.
 
@@ -202,7 +203,7 @@ MQTT PUBLISH BODY:
 
 Upon receiving the request, the CDF Certificate Vendor module validates that the device is approved to received a new certificate. The registry to be used, whether the AWS IoT Device Registry or the CDF Asset Library module, is configured as part of the initial deployment. This reference implementation determines whether something is approved by checking its existence. If these behavior needs to be enhanced, refer to `src/registry/assetlibrary.service.ts` / `src/registry/deviceregistry.service.ts`
 
-If approved, the CDF Certificate Vendor module checks for the presence of a CSR in the request. If provided, the CSR is used to create a new device certificate and returned to the device. If not present, teh CDF Certificate Vendor module proceeds to download the S3 Object Metadata associated with the certificate package to retrieve the `certificateId`, activates the certificate within AWS IoT, then constructs and returns a pre-signed url to the device for secure downloading of the certificate package.  Finally the device status is updated to activated.
+If approved, the CDF Certificate Vendor module checks for the presence of a CSR in the request. If provided, the CSR is used to create a new device certificate and returned to the device. If not present, teh CDF Certificate Vendor module proceeds to download the S3 Object Metadata associated with the certificate package to retrieve the `certificateId`, activates the certificate within AWS IoT, then constructs and returns a pre-signed url to the device for secure downloading of the certificate package. Finally the device status is updated to activated.
 
 Below are example success responses sent from the CDF Certificate Vendor module to the device, published to the `cdf/certificates/{thingName}/get/accepted` MQTT topic:
 
@@ -210,9 +211,9 @@ Pre-created certificate to be retrieved from S3:
 
 ```json
 {
-    "deviceId": "device123",
-    "action": "get",
-    "location": "https://cdf-xxxxxxxxxxxx-us-west-2.s3.amazonaws.com/certificates/device123.zip?AWSAccessKeyId=XXXXXXXXXXXXXXXXXX&Expires=1542129538&Signature=XXXXXXXXXXXXXXX"
+  "deviceId": "device123",
+  "action": "get",
+  "location": "https://cdf-xxxxxxxxxxxx-us-west-2.s3.amazonaws.com/certificates/device123.zip?AWSAccessKeyId=XXXXXXXXXXXXXXXXXX&Expires=1542129538&Signature=XXXXXXXXXXXXXXX"
 }
 ```
 
@@ -220,14 +221,14 @@ Certificate requested by the device with a CSR:
 
 ```json
 {
-    "deviceId": "device123",
-    "action": "get",
-    "certificateId" : "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "certificate": "-----BEGIN CERTIFICATE-----\nCERTIFICATE CONTENT\n-----END CERTIFICATE-----"
+  "deviceId": "device123",
+  "action": "get",
+  "certificateId": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  "certificate": "-----BEGIN CERTIFICATE-----\nCERTIFICATE CONTENT\n-----END CERTIFICATE-----"
 }
 ```
 
-Upon receiving the _get_ response, the device downloads the certificate package (if delivered via presigned URL) and replaces its existing certificates. At this stage the device needs to connect to AWS IoT using the new certificate. Once connected, the device shoud send an acknowledgement to the CDF Certificate Vendor module.  Upon receiving the acknowledgement the CDF Certificate Vendor module optionally diassociates and deletes the old certificate, followed by removing the device from the `cdfRotateCertificates` thing group.
+Upon receiving the _get_ response, the device downloads the certificate package (if delivered via presigned URL) and replaces its existing certificates. At this stage the device needs to connect to AWS IoT using the new certificate. Once connected, the device shoud send an acknowledgement to the CDF Certificate Vendor module. Upon receiving the acknowledgement the CDF Certificate Vendor module optionally diassociates and deletes the old certificate, followed by removing the device from the `cdfRotateCertificates` thing group.
 
 Example acknowledgement message:
 
@@ -237,12 +238,12 @@ MQTT PUBLISH TOPIC:       cdf/certificates/thing001/ack
 MQTT PUBLISH BODY:        empty
 ```
 
-If any failures occur during this flow, a rejected message is sent to the device, published to the `cdf/certificates/{thingName}/get/rejected` or  `cdf/certificates/{thingName}/ack/rejected` MQTT topics.  Example message:
+If any failures occur during this flow, a rejected message is sent to the device, published to the `cdf/certificates/{thingName}/get/rejected` or `cdf/certificates/{thingName}/ack/rejected` MQTT topics. Example message:
 
 ```json
 {
-    "deviceId": "device123",
-    "message": "DEVICE_NOT_WHITELISTED"
+  "deviceId": "device123",
+  "message": "DEVICE_NOT_WHITELISTED"
 }
 ```
 
@@ -258,45 +259,39 @@ An example AWS IoT policy:
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": ["iot:Connect"],
-            "Resource": ["*"],
-            "Condition":{
-                "Bool":{
-                    "iot:Connection.Thing.IsAttached":["true"]
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iot:Publish",
-                "iot:Receive"
-            ],
-            "Resource": [
-                "arn:aws:iot:${cdf:region}:${cdf:accountId}:topic/cdf/certificates/${iot:ClientId}/*",
-                "arn:aws:iot:${cdf:region}:${cdf:accountId}:topic/$aws/things/${iot:ClientId}/*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iot:Subscribe"
-            ],
-            "Resource": [
-                "arn:aws:iot:${cdf:region}:${cdf:accountId}:topicfilter/cdf/certificates/${iot:ClientId}/*",
-                "arn:aws:iot:${cdf:region}:${cdf:accountId}:topicfilter/$aws/things/${iot:ClientId}/*"
-            ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["iot:Connect"],
+      "Resource": ["*"],
+      "Condition": {
+        "Bool": {
+          "iot:Connection.Thing.IsAttached": ["true"]
         }
-    ]
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["iot:Publish", "iot:Receive"],
+      "Resource": [
+        "arn:aws:iot:${cdf:region}:${cdf:accountId}:topic/cdf/certificates/${iot:ClientId}/*",
+        "arn:aws:iot:${cdf:region}:${cdf:accountId}:topic/$aws/things/${iot:ClientId}/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["iot:Subscribe"],
+      "Resource": [
+        "arn:aws:iot:${cdf:region}:${cdf:accountId}:topicfilter/cdf/certificates/${iot:ClientId}/*",
+        "arn:aws:iot:${cdf:region}:${cdf:accountId}:topicfilter/$aws/things/${iot:ClientId}/*"
+      ]
+    }
+  ]
 }
-
 ```
 
 ## Useful Links
 
-* [Application configuration](docs/configuration.md)
-* [High-level architecture diagram](docs/images/certificatevendor-hla.png)
+- [Application configuration](docs/configuration.md)
+- [High-level architecture diagram](docs/images/certificatevendor-hla.png)

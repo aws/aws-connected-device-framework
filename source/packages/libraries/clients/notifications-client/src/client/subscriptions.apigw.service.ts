@@ -11,90 +11,150 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-
 import { QSHelper } from '../utils/qs.helper';
 import { RequestHeaders } from './common.model';
 import { SubscriptionResource, SubscriptionResourceList } from './subscriptions.model';
 import { SubscriptionsService, SubscriptionsServiceBase } from './subscriptions.service';
 
 @injectable()
-export class SubscriptionsApigwService extends SubscriptionsServiceBase implements SubscriptionsService {
-
-    private readonly baseUrl:string;
+export class SubscriptionsApigwService
+    extends SubscriptionsServiceBase
+    implements SubscriptionsService
+{
+    private readonly baseUrl: string;
 
     public constructor() {
         super();
         this.baseUrl = process.env.NOTIFICATIONS_BASE_URL;
     }
 
-    async createSubscription(eventId: string, subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<string> {
+    async createSubscription(
+        eventId: string,
+        subscription: SubscriptionResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
         ow(eventId, ow.string.nonEmpty);
         ow(subscription, ow.object.nonEmpty);
 
         const url = `${this.baseUrl}${super.eventSubscriptionsRelativeUrl(eventId)}`;
-        const res = await request.post(url)
+        return await request
+            .post(url)
             .set(this.buildHeaders(additionalHeaders))
-            .send(subscription);
-
-        const location = res.get('location');
-        return location?.split('/')[2];
+            .send(subscription)
+            .use(await signClientRequest())
+            .then((res) => {
+                const location = res.get('location');
+                return location?.split('/')[2];
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async getSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResource> {
+    async getSubscription(
+        subscriptionId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<SubscriptionResource> {
         ow(subscriptionId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.subscriptionRelativeUrl(subscriptionId)}`;
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async updateSubscription(subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<void> {
+    async updateSubscription(
+        subscription: SubscriptionResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(subscription, ow.object.nonEmpty);
 
         const url = `${this.baseUrl}${super.subscriptionRelativeUrl(subscription.id)}`;
-        const res = await request.patch(url)
-        .set(this.buildHeaders(additionalHeaders))
-        .send(subscription);
-
-        return res.body;
+        return await request
+            .patch(url)
+            .send(subscription)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async deleteSubscription(subscriptionId:string , additionalHeaders?: RequestHeaders): Promise<void> {
+    async deleteSubscription(
+        subscriptionId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(subscriptionId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.subscriptionRelativeUrl(subscriptionId)}`;
-        await request.delete(url)
-            .set(this.buildHeaders(additionalHeaders));
+        return await request
+            .delete(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async listSubscriptionsForUser(userId: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResourceList> {
+    async listSubscriptionsForUser(
+        userId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<SubscriptionResourceList> {
         ow(userId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.userSubscriptionsRelativeUrl(userId)}`;
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async listSubscriptionsForEvent(eventId: string, fromSubscriptionId?: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResourceList> {
+    async listSubscriptionsForEvent(
+        eventId: string,
+        fromSubscriptionId?: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<SubscriptionResourceList> {
         ow(eventId, ow.string.nonEmpty);
 
         let url = `${this.baseUrl}${super.eventSubscriptionsRelativeUrl(eventId)}`;
-        const queryString = QSHelper.getQueryString({fromSubscriptionId});
+        const queryString = QSHelper.getQueryString({ fromSubscriptionId });
         if (queryString) {
             url += `?${queryString}`;
         }
 
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
-
 }

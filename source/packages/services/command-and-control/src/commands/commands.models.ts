@@ -11,97 +11,97 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface EditableCommandResource {
-	operation?: string;
-	deliveryMethod: TopicDeliveryMethod | ShadowDeliveryMethod | JobDeliveryMethod;
-	payloadTemplate?: string;
-	payloadParams?: string[];
-	enabled?: boolean;
-	tags?: Tags;
+    operation?: string;
+    deliveryMethod: TopicDeliveryMethod | ShadowDeliveryMethod | JobDeliveryMethod;
+    payloadTemplate?: string;
+    payloadParams?: string[];
+    enabled?: boolean;
+    tags?: Tags;
 }
 
 export type Tags = { [key: string]: Tag };
 export type Tag = string;
 export interface CommandResource extends EditableCommandResource {
-	id: string;
-	createdAt: Date;
-	updatedAt: Date;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface CommandItem {
-	id?: string;
-	operation?: string;
-	deliveryMethod?: TopicDeliveryMethod | ShadowDeliveryMethod | JobDeliveryMethod;
-	payloadTemplate?: string;
-	payloadParams?: string[];
-	enabled?: boolean;
-	createdAt?: Date;
-	updatedAt?: Date;
-	tags?: Tags;
+    id?: string;
+    operation?: string;
+    deliveryMethod?: TopicDeliveryMethod | ShadowDeliveryMethod | JobDeliveryMethod;
+    payloadTemplate?: string;
+    payloadParams?: string[];
+    enabled?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+    tags?: Tags;
 }
 
 export interface AbstractDeliveryMethod {
-	type: DeliveryMethod;
-	expectReply: boolean;
+    type: DeliveryMethod;
+    expectReply: boolean;
 }
 
 export interface TopicDeliveryMethod extends AbstractDeliveryMethod {
-	type: 'TOPIC';
-	onlineOnly: boolean;
+    type: 'TOPIC';
+    onlineOnly: boolean;
 }
 
 export interface ShadowDeliveryMethod extends AbstractDeliveryMethod {
-	type: 'SHADOW';
+    type: 'SHADOW';
 }
 
 export interface JobDeliveryMethod extends AbstractDeliveryMethod {
-	type: 'JOB';
-	targetSelection: 'SNAPSHOT' | 'CONTINUOUS';
-	presignedUrlConfig?: {
-		expiresInSec?: number;
-	};
+    type: 'JOB';
+    targetSelection: 'SNAPSHOT' | 'CONTINUOUS';
+    presignedUrlConfig?: {
+        expiresInSec?: number;
+    };
 
-	jobExecutionsRolloutConfig?: {
-		maximumPerMinute?: number;
-		exponentialRate?: {
-			baseRatePerMinute: number;
-			incrementFactor: number;
-			rateIncreaseCriteria: {
-				numberOfNotifiedThings?: number;
-				numberOfSucceededThings?: number;
-			};
-		};
-	};
-	abortConfig?: {
-		criteriaList: {
-			failureType: string;
-			action: string;
-			thresholdPercentage: number;
-			minNumberOfExecutedThings: number;
-		}[];
-	};
-	timeoutConfig?: {
-		inProgressTimeoutInMinutes: number;
-	};
+    jobExecutionsRolloutConfig?: {
+        maximumPerMinute?: number;
+        exponentialRate?: {
+            baseRatePerMinute: number;
+            incrementFactor: number;
+            rateIncreaseCriteria: {
+                numberOfNotifiedThings?: number;
+                numberOfSucceededThings?: number;
+            };
+        };
+    };
+    abortConfig?: {
+        criteriaList: {
+            failureType: string;
+            action: string;
+            thresholdPercentage: number;
+            minNumberOfExecutedThings: number;
+        }[];
+    };
+    timeoutConfig?: {
+        inProgressTimeoutInMinutes: number;
+    };
 }
 
 export type DeliveryMethod = 'JOB' | 'TOPIC' | 'SHADOW';
 
 export interface CommandResourceList {
-	commands: CommandResource[];
-	pagination?: {
-		lastEvaluated?: {
-			commandId: string
-		},
-		count?: number,
-	};
+    commands: CommandResource[];
+    pagination?: {
+        lastEvaluated?: {
+            commandId: string;
+        };
+        count?: number;
+    };
 }
 
 export type CommandListPaginationKey = {
-	commandId: string;
-}
+    commandId: string;
+};
 
 export type CommandListIdsByTagPaginationKey = {
-	tagKey: string;
-	tagValue: string;
-	commandId: string;
-}
+    tagKey: string;
+    tagValue: string;
+    commandId: string;
+};

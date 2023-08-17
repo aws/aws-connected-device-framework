@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Artifact, CdfProvisioningParameters } from "../cores/cores.models";
-import { DeviceTaskStatus } from "../deviceTasks/deviceTasks.model";
+import { Artifact, CdfProvisioningParameters } from '../cores/cores.models';
+import { DeviceTaskStatus } from '../deviceTasks/deviceTasks.model';
 
 export interface DeviceResource {
     name: string;
@@ -24,7 +24,7 @@ export interface DeviceResource {
     provisioningParameters: { [key: string]: string };
     cdfProvisioningParameters: CdfProvisioningParameters;
     artifacts?: {
-        [key: string]: Artifact
+        [key: string]: Artifact;
     };
 }
 
@@ -40,26 +40,26 @@ export interface DeviceItem {
     statusMessage?: string;
 
     artifacts?: {
-        [key: string]: Artifact
+        [key: string]: Artifact;
     };
 
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-export const DeviceCreatedEvent = 'Device Created Event'
+export const DeviceCreatedEvent = 'Device Created Event';
 
-export const DeviceDeletedEvent = 'Device Deleted Event'
+export const DeviceDeletedEvent = 'Device Deleted Event';
 
-export type DeviceTaskId = string
+export type DeviceTaskId = string;
 
 export type BaseDevicePayload = {
-    taskId: DeviceTaskId,
-    deviceName: string,
-    status: 'success' | 'failed'
-    message?: string
-}
+    taskId: DeviceTaskId;
+    deviceName: string;
+    status: 'success' | 'failed';
+    message?: string;
+};
 
-export type DeviceCreatedPayload = BaseDevicePayload
+export type DeviceCreatedPayload = BaseDevicePayload;
 
-export type DeviceDeletedPayload = BaseDevicePayload
+export type DeviceDeletedPayload = BaseDevicePayload;

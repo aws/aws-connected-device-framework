@@ -12,7 +12,7 @@
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
 
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Organization Manager Service
@@ -39,7 +39,7 @@ Parameters:
 
   ControlPlaneBusName:
     Description: Event Bus to subscribe events
-    Type: String  
+    Type: String
 
   Environment:
     Description: Name of environment.  Used to name the created resources.
@@ -75,143 +75,140 @@ Parameters:
   CognitoUserPoolArn:
     Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
     Type: String
-    Default: "N/A"
+    Default: 'N/A'
 
   AuthorizerFunctionArn:
     Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
     Type: String
-    Default: "N/A"
+    Default: 'N/A'
 
   EnableApiGatewayAccessLogs:
     Description: Enales API gateway Access Logging, defaults to false if not specified.
     Type: String
-    Default: "false"
+    Default: 'false'
     AllowedValues:
-      - "true"
-      - "false"
+      - 'true'
+      - 'false'
     MinLength: 1
 
 Conditions:
-  KmsKeyIdProvided: !Not [!Equals [!Ref KmsKeyId, ""]]
-  EventBusSpecified: !Not [!Equals [!Ref ControlPlaneBusName, ""]]
+  KmsKeyIdProvided: !Not [!Equals [!Ref KmsKeyId, '']]
+  EventBusSpecified: !Not [!Equals [!Ref ControlPlaneBusName, '']]
   DeployWithLambdaAuth:
-    !Or [
-      !Equals [!Ref AuthType, "LambdaRequest"],
-      !Equals [!Ref AuthType, "LambdaToken"],
-    ]
-  EnableApiGatewayAccessLogs: !Equals [!Ref EnableApiGatewayAccessLogs, "true"]
+    !Or [!Equals [!Ref AuthType, 'LambdaRequest'], !Equals [!Ref AuthType, 'LambdaToken']]
+  EnableApiGatewayAccessLogs: !Equals [!Ref EnableApiGatewayAccessLogs, 'true']
 
 Resources:
   ApiGatewayApi:
-    "Fn::Transform":
-      Name: "AWS::Include"
+    'Fn::Transform':
+      Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+        Location: !Sub '${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}'
     DependsOn:
       - RESTLambdaFunction
 
   ApiGatewayAuthorizerInvokeRole:
     Condition: DeployWithLambdaAuth
-    "Fn::Transform":
-      Name: "AWS::Include"
+    'Fn::Transform':
+      Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+        Location: !Sub '${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml'
     DependsOn:
       - RESTLambdaFunction
 
   ApiGatewayAccessLogGroup:
     Condition: EnableApiGatewayAccessLogs
-    Type: "AWS::Logs::LogGroup"
+    Type: 'AWS::Logs::LogGroup'
     Properties:
-      LogGroupName: !Sub "cdf-organizationmanager-apigatewayaccesslogs-${Environment}"
+      LogGroupName: !Sub 'cdf-organizationmanager-apigatewayaccesslogs-${Environment}'
 
   ApplicationPolicies:
-    Type: "AWS::IAM::ManagedPolicy"
+    Type: 'AWS::IAM::ManagedPolicy'
     Metadata:
       cfn_nag:
         rules_to_suppress:
           - id: W13
-            reason: "Lambda provided permissions to manage resources in iot core"
+            reason: 'Lambda provided permissions to manage resources in iot core'
     Properties:
-      Description: "cdf-organizationmanager application policies"
-      Path: "/"
+      Description: 'cdf-organizationmanager application policies'
+      Path: '/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Sid: "dynamodb"
+          - Sid: 'dynamodb'
             Action:
-              - "dynamodb:BatchGetItem"
-              - "dynamodb:GetItem"
-              - "dynamodb:Query"
-              - "dynamodb:Scan"
-              - "dynamodb:BatchWriteItem"
-              - "dynamodb:PutItem"
-              - "dynamodb:UpdateItem"
-              - "dynamodb:DeleteItem"
+              - 'dynamodb:BatchGetItem'
+              - 'dynamodb:GetItem'
+              - 'dynamodb:Query'
+              - 'dynamodb:Scan'
+              - 'dynamodb:BatchWriteItem'
+              - 'dynamodb:PutItem'
+              - 'dynamodb:UpdateItem'
+              - 'dynamodb:DeleteItem'
             Effect: Allow
             Resource:
               - !GetAtt OrganizationManagerTable.Arn
-              - "Fn::Join":
-                  - "/"
+              - 'Fn::Join':
+                  - '/'
                   - - !GetAtt OrganizationManagerTable.Arn
-                    - "index/*"
-          - Sid: "stsassume"
+                    - 'index/*'
+          - Sid: 'stsassume'
             Action:
-              - "sts:AssumeRole"
+              - 'sts:AssumeRole'
             Effect: Allow
-            Resource: "*"
-          - Sid: "iampassrole"
+            Resource: '*'
+          - Sid: 'iampassrole'
             Action:
-              - "iam:PassRole"
+              - 'iam:PassRole'
             Effect: Allow
-            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-organizationmanager-*"
-          - Sid: "s3bucket"
+            Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/cdf-organizationmanager-*'
+          - Sid: 's3bucket'
             Action:
-              - "s3:ListBucket"
-            Effect: Allow
-            Resource:
-              - !Sub "arn:aws:s3:::${BucketName}"
-          - Sid: "s3objects"
-            Action:
-              - "s3:Get*"
-              - "s3:Put*"
+              - 's3:ListBucket'
             Effect: Allow
             Resource:
-              - !Sub "arn:aws:s3:::${BucketName}/*"
+              - !Sub 'arn:aws:s3:::${BucketName}'
+          - Sid: 's3objects'
+            Action:
+              - 's3:Get*'
+              - 's3:Put*'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:s3:::${BucketName}/*'
 
   KmsPolicy:
     Type: AWS::IAM::ManagedPolicy
     Condition: KmsKeyIdProvided
     Properties:
-      Description: "cdf-organizationmanager policy for accessing KMS"
-      Path: "/cdf/organizationmanager/"
+      Description: 'cdf-organizationmanager policy for accessing KMS'
+      Path: '/cdf/organizationmanager/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
-              - "kms:Decrypt"
-              - "kms:Encrypt"
-              - "kms:ReEncrypt*"
-              - "kms:GenerateDataKey*"
-              - "kms:DescribeKey"
+              - 'kms:Decrypt'
+              - 'kms:Encrypt'
+              - 'kms:ReEncrypt*'
+              - 'kms:GenerateDataKey*'
+              - 'kms:DescribeKey'
             Effect: Allow
-            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*"
+            Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
 
   EventBridgeLambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           Effect: Allow
           Principal:
             Service:
               - lambda.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
-        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue"]
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref 'AWS::NoValue']
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
@@ -222,17 +219,17 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           Effect: Allow
           Principal:
             Service:
               - lambda.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
-        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue"]
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref 'AWS::NoValue']
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
@@ -242,34 +239,34 @@ Resources:
   EventBridgeLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "cdf-organization-manager-eventBridge-${Environment}"
+      FunctionName: !Sub 'cdf-organization-manager-eventBridge-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/organization-manager/dist/lambda_proxy_eventbridge.handler
+      Handler: lambda_proxy_eventbridge.handler
       MemorySize: 512
       Role: !GetAtt EventBridgeLambdaExecutionRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
-          APP_CONFIG_DIR: 'packages/services/organization-manager/dist/config'
+          APP_CONFIG_DIR: 'config'
           AWS_DYNAMODB_ORGANIZATION_TABLE: !Ref OrganizationManagerTable
       Tracing: Active
 
   RESTLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "cdf-organizationmanager-rest-${Environment}"
+      FunctionName: !Sub 'cdf-organizationmanager-rest-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/organization-manager/dist/lambda_proxy.handler
-      MemorySize: 256
+      Handler: lambda_proxy.handler
+      MemorySize: 512
       Role: !GetAtt RESTLambdaExecutionRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
-          APP_CONFIG_DIR: 'packages/services/organization-manager/dist/config'
+          APP_CONFIG_DIR: 'config'
           AWS_ACCOUNT_ID: !Ref AWS::AccountId
           CONTROL_TOWER_MANIFEST_BUCKET: !Ref BucketName
           AWS_DYNAMODB_ORGANIZATION_TABLE: !Ref OrganizationManagerTable
@@ -288,68 +285,67 @@ Resources:
             Path: /{proxy+}
             Method: ANY
 
-  PermissionForControlTowerEventsToInvokeLambda: 
+  PermissionForControlTowerEventsToInvokeLambda:
     Type: AWS::Lambda::Permission
-    Properties: 
+    Properties:
       FunctionName: !Ref EventBridgeLambdaFunction
-      Action: "lambda:InvokeFunction"
-      Principal: "events.amazonaws.com"
+      Action: 'lambda:InvokeFunction'
+      Principal: 'events.amazonaws.com'
       SourceArn: !GetAtt ControlTowerMasterAccountRule.Arn
 
-  PermissionForCdfEventsToInvokeLambda: 
+  PermissionForCdfEventsToInvokeLambda:
     Type: AWS::Lambda::Permission
-    Properties: 
+    Properties:
       FunctionName: !Ref EventBridgeLambdaFunction
-      Action: "lambda:InvokeFunction"
-      Principal: "events.amazonaws.com"
-      SourceArn: !GetAtt CdfDeploymentRule.Arn    
+      Action: 'lambda:InvokeFunction'
+      Principal: 'events.amazonaws.com'
+      SourceArn: !GetAtt CdfDeploymentRule.Arn
 
   ControlTowerMasterAccountRule:
     Type: AWS::Events::Rule
     Properties:
-      Description: "Control Tower Step Functions Rule"
-      EventBusName: 
-        Fn::If:
-            - EventBusSpecified
-            - Ref: ControlPlaneBusName
-            - Ref: AWS::NoValue
-      EventPattern:
-        source:
-          - "aws.controltower"
-        detail-type:
-          - "AWS Service Event via CloudTrail"
-        detail:
-          eventName:
-            - "CreateManagedAccount"
-            - "UpdateManagedAccount"
-      State: "ENABLED"
-      Targets:
-        - Arn: !GetAtt EventBridgeLambdaFunction.Arn
-          Id: "TargetLambda"
-
-  CdfDeploymentRule:
-    Type: AWS::Events::Rule
-    Properties:
-      Description: "CDF Deployments in multiple account Rule"
-      EventBusName: 
+      Description: 'Control Tower Step Functions Rule'
+      EventBusName:
         Fn::If:
           - EventBusSpecified
           - Ref: ControlPlaneBusName
           - Ref: AWS::NoValue
       EventPattern:
         source:
-          - "com.aws.cdf.customresource"
+          - 'aws.controltower'
         detail-type:
-          - "CDF Deployment Events via CloudFormation Custom Resource"
+          - 'AWS Service Event via CloudTrail'
         detail:
           eventName:
-            - "CDFStackCreated"
-            - "CDFStackUpdated"
-      State: "ENABLED"
+            - 'CreateManagedAccount'
+            - 'UpdateManagedAccount'
+      State: 'ENABLED'
       Targets:
         - Arn: !GetAtt EventBridgeLambdaFunction.Arn
-          Id: "TargetLambda"
+          Id: 'TargetLambda'
 
+  CdfDeploymentRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: 'CDF Deployments in multiple account Rule'
+      EventBusName:
+        Fn::If:
+          - EventBusSpecified
+          - Ref: ControlPlaneBusName
+          - Ref: AWS::NoValue
+      EventPattern:
+        source:
+          - 'com.aws.cdf.customresource'
+        detail-type:
+          - 'CDF Deployment Events via CloudFormation Custom Resource'
+        detail:
+          eventName:
+            - 'CDFStackCreated'
+            - 'CDFStackUpdated'
+      State: 'ENABLED'
+      Targets:
+        - Arn: !GetAtt EventBridgeLambdaFunction.Arn
+          Id: 'TargetLambda'
 
   OrganizationManagerTable:
     Type: AWS::DynamoDB::Table
@@ -357,11 +353,11 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W28
-            reason: "safely naming this resources to be unique by environment"
+            reason: 'safely naming this resources to be unique by environment'
           - id: W73
-            reason: "Can be decided by the customer, to specify the billing mode"
+            reason: 'Can be decided by the customer, to specify the billing mode'
     Properties:
-      TableName: !Sub "cdf-organizationmanager-${Environment}"
+      TableName: !Sub 'cdf-organizationmanager-${Environment}'
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       SSESpecification:
@@ -372,57 +368,57 @@ Resources:
             SSEType: KMS
           - Ref: AWS::NoValue
       GlobalSecondaryIndexes:
-        - IndexName: "sk-pk-index"
+        - IndexName: 'sk-pk-index'
           KeySchema:
-            - AttributeName: "sk"
-              KeyType: "HASH"
-            - AttributeName: "pk"
-              KeyType: "RANGE"
+            - AttributeName: 'sk'
+              KeyType: 'HASH'
+            - AttributeName: 'pk'
+              KeyType: 'RANGE'
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
-        - IndexName: "gsi2Key-sk-index"
+            ReadCapacityUnits: '5'
+            WriteCapacityUnits: '5'
+        - IndexName: 'gsi2Key-sk-index'
           KeySchema:
-            - AttributeName: "gsi2Key"
-              KeyType: "HASH"
-            - AttributeName: "sk"
-              KeyType: "RANGE"
+            - AttributeName: 'gsi2Key'
+              KeyType: 'HASH'
+            - AttributeName: 'sk'
+              KeyType: 'RANGE'
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: '5'
+            WriteCapacityUnits: '5'
       AttributeDefinitions:
-        - AttributeName: "pk"
-          AttributeType: "S"
-        - AttributeName: "gsi2Key"
-          AttributeType: "S"
-        - AttributeName: "sk"
-          AttributeType: "S"
+        - AttributeName: 'pk'
+          AttributeType: 'S'
+        - AttributeName: 'gsi2Key'
+          AttributeType: 'S'
+        - AttributeName: 'sk'
+          AttributeType: 'S'
       KeySchema:
-        - AttributeName: "pk"
-          KeyType: "HASH"
-        - AttributeName: "sk"
-          KeyType: "RANGE"
+        - AttributeName: 'pk'
+          KeyType: 'HASH'
+        - AttributeName: 'sk'
+          KeyType: 'RANGE'
       ProvisionedThroughput:
-        ReadCapacityUnits: "5"
-        WriteCapacityUnits: "5"
+        ReadCapacityUnits: '5'
+        WriteCapacityUnits: '5'
 
 Outputs:
   RESTLambdaArn:
     Description: REST API Lambda Arn
-    Value: !Sub "${RESTLambdaFunction.Arn}"
+    Value: !Sub '${RESTLambdaFunction.Arn}'
     Export:
-      Name: !Sub "cdf-organizationmanager-${Environment}-RESTLambdaArn"
+      Name: !Sub 'cdf-organizationmanager-${Environment}-RESTLambdaArn'
   RestApiFunctionName:
     Description: Events REST API lambda function name
     Value: !Ref RESTLambdaFunction
     Export:
-      Name: !Sub "cdf-organizationmanager-${Environment}-restApiFunctionName"
+      Name: !Sub 'cdf-organizationmanager-${Environment}-restApiFunctionName'
   ApiGatewayUrl:
     Description: Commands REST API URL
-    Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+    Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
     Export:
-      Name: !Sub "cdf-organizationmanager-${Environment}-apigatewayurl"
+      Name: !Sub 'cdf-organizationmanager-${Environment}-apigatewayurl'

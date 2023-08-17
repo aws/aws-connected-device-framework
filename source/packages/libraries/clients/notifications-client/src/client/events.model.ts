@@ -31,28 +31,28 @@ export interface EventResourceList {
     results: EventResource[];
     pagination?: {
         offset: {
-            eventSourceId: string,
-            eventId: string
-        },
-        count: number
+            eventSourceId: string;
+            eventId: string;
+        };
+        count: number;
     };
 }
 
 export interface EventConditions {
-    all?:EventConditions|EventCondition[];
-    any?:EventConditions|EventCondition[];
+    all?: EventConditions | EventCondition[];
+    any?: EventConditions | EventCondition[];
 }
 export interface EventCondition {
-    fact:string;
-    operator:string;
-    value:number|string|boolean;
+    fact: string;
+    operator: string;
+    value: number | string | boolean;
 }
 
 export enum EventTargetType {
     EMAIL = 'email',
     SMS = 'sms',
-    MQTT = 'mqtt'
+    MQTT = 'mqtt',
 }
 
-export type TemplateMap = { [key: string] : string};
-export type TargetTemplateMap = { [key in EventTargetType]? : string};
+export type TemplateMap = { [key: string]: string };
+export type TargetTemplateMap = { [key in EventTargetType]?: string };

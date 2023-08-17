@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -12,18 +13,17 @@
 #-----------------------------------------------------------------------------------------------------------------------
 openapi: '3.0.0'
 info:
-  title: "AWS Connected Device Framework: Notifications"
+  title: 'AWS Connected Device Framework: Notifications'
   description: |
     The CDF Notifications umbrella of services receives input from a number of different sources (e.g. IoT Core, DynamoDB Streams, API Gateway), and filters based on a subscriber's notification settings.  Any filtered messages are then sent on to a number of pre-configured targets (e.g. AppSync, SNS, or republished to IoT Core).
 
     The CDF Notifications is comprised of 2 micro-services:  the CDF Events Processor, and the CDF Notification Dispatcher.  
-    
+
     **Releases**
     - Version 1 (`application/vnd.aws-cdf-v1.0+json`) supported a single target per target type per subscription, e.g. a single email and/or single mobile push device per subscription.
     - Version 2 (`application/vnd.aws-cdf-v2.0+json`) was enhanced to allow multiple targets per target type per subscription, e.g. multiple emails and/or multiple mobile push devices per subscription. A new set of endpoints to allow for adding and deleting of individual targets was added too.
-    
-  version: 2.0.0
 
+  version: 2.0.0
 
 tags:
   - name: EventSources
@@ -31,27 +31,25 @@ tags:
       An `EventSource` must be congifured per source of events to allow the event processor to consume events.  The following types of event sources are supported:
       - DynamoDB
       - IoT Core
-      
+
       All incoming events must contain an `id` that can be used to match against a configured `EventSource` `eventSourceId`.  If a matching `EventSource` configuration cannot be found, the event is dropped.
-      
+
       Events that are sourced via API Gateway or IoT Core are to be provided in the common message format, whereas events sourced from DynamoDB are converted to the common message format by the Event Processor.
-      
+
   - name: Events
     description: |
       An `Event` represents a message consumed from an event source that has had a rule evaluated against it (its `conditions`). Each event also specifies the available subscription targets (its `supportedTargets`) such as email and/or sms, as well as custom message `templates` to notify of the alert.
-    
+
   - name: Subscriptions
     description: A 'Subscription' allows a user to subscribe to an event, optionally configuring which supported targets to retrieve the alert by.
-    
-    
-paths:
 
+paths:
   /eventsources:
     post:
       tags:
-      - EventSources
+        - EventSources
       summary: Creates a new EventSource
-      operationId: "createEventSource"
+      operationId: 'createEventSource'
       requestBody:
         required: true
         content:
@@ -76,12 +74,12 @@ paths:
           $ref: '#/components/responses/Created'
         '400':
           $ref: '#/components/responses/BadRequest'
-      
+
     get:
       tags:
-      - EventSources
+        - EventSources
       summary: Returns all configured event sources
-      operationId: "listEventSources"
+      operationId: 'listEventSources'
       responses:
         '200':
           $ref: '#/components/schemas/EventSourceList'
@@ -107,7 +105,7 @@ paths:
           $ref: '#/components/responses/NotFound'
     delete:
       tags:
-      - EventSources
+        - EventSources
       summary: Deletes an event source
       operationId: deleteEventSource
       responses:
@@ -121,7 +119,7 @@ paths:
       - $ref: '#/components/parameters/eventSourceId'
     post:
       tags:
-      - Events
+        - Events
       summary: Creates a new Event
       operationId: createEvent
       requestBody:
@@ -164,7 +162,7 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-  
+
   /events/{eventId}:
     parameters:
       - $ref: '#/components/parameters/eventId'
@@ -194,7 +192,7 @@ paths:
           $ref: '#/components/responses/NotFound'
     delete:
       tags:
-      - Events
+        - Events
       summary: Deletes an event
       operationId: deleteEvent
       responses:
@@ -202,13 +200,13 @@ paths:
           $ref: '#/components/responses/NoBody'
         '404':
           $ref: '#/components/responses/NotFound'
-     
+
   /events/{eventId}/subscriptions:
     parameters:
       - $ref: '#/components/parameters/eventId'
     post:
       tags:
-      - Subscriptions
+        - Subscriptions
       summary: Creates a new subscription of an event
       operationId: createSubscription
       requestBody:
@@ -230,8 +228,8 @@ paths:
         '201':
           $ref: '#/components/responses/Created'
         '400':
-          $ref: '#/components/responses/BadRequest' 
-    get:  
+          $ref: '#/components/responses/BadRequest'
+    get:
       parameters:
         - $ref: '#/components/parameters/fromSubscriptionId'
       tags:
@@ -244,8 +242,8 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/responses/NotFound'    
-  
+          $ref: '#/components/responses/NotFound'
+
   /subscriptions/{subscriptionId}:
     parameters:
       - $ref: '#/components/parameters/subscriptionId'
@@ -270,7 +268,7 @@ paths:
           $ref: '#/components/responses/NotFound'
     patch:
       tags:
-      - Subscriptions
+        - Subscriptions
       summary: Modify existing subscription
       operationId: updateSubscription
       requestBody:
@@ -278,28 +276,27 @@ paths:
         content:
           application/vnd.aws-cdf-v2.0+json:
             schema:
-                $ref: '#/components/schemas/UpdateSubscription'
+              $ref: '#/components/schemas/UpdateSubscription'
             examples:
               disableSubscription:
                 $ref: '#/components/examples/DisableSubscription'
       responses:
-      responses:
         '204':
-          $ref: '#/components/responses/Modified
+          $ref: '#/components/responses/Modified'
         '404':
-          $ref: '#/components/responses/NotFound'       
-  
+          $ref: '#/components/responses/NotFound'
+
     delete:
       tags:
-      - Subscriptions
+        - Subscriptions
       summary: Deletes a subscription
       operationId: deleteSubscription
       responses:
         '204':
           $ref: '#/components/responses/Deleted'
         '404':
-          $ref: '#/components/responses/NotFound'       
-  
+          $ref: '#/components/responses/NotFound'
+
   /user/{userId}/subscriptions:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -316,8 +313,8 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/responses/NotFound'           
-    delete:  
+          $ref: '#/components/responses/NotFound'
+    delete:
       tags:
         - Subscriptions
       summary: Delete subscriptions for a given user
@@ -328,15 +325,15 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/responses/NotFound'          
-          
+          $ref: '#/components/responses/NotFound'
+
   /subscriptions/{subscriptionId}/targets/{targetType}:
     parameters:
       - $ref: '#/components/parameters/subscriptionId'
       - $ref: '#/components/parameters/targetType'
     post:
       tags:
-      - Targets
+        - Targets
       summary: Adds a new target to an existing subscription
       operationId: createTarget
       requestBody:
@@ -362,14 +359,14 @@ paths:
         '201':
           $ref: '#/components/responses/Created'
         '400':
-          $ref: '#/components/responses/BadRequest' 
-          
+          $ref: '#/components/responses/BadRequest'
+
   /subscriptions/{subscriptionId}/targets/{targetType}/{targetId}:
     parameters:
       - $ref: '#/components/parameters/subscriptionId'
       - $ref: '#/components/parameters/targetType'
       - $ref: '#/components/parameters/targetId'
-    delete:  
+    delete:
       tags:
         - Targets
       summary: Delete a specific target from an existing subscription
@@ -380,9 +377,8 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/responses/NotFound'   
-  
-          
+          $ref: '#/components/responses/NotFound'
+
 components:
   schemas:
     EventSourceSummary:
@@ -390,7 +386,7 @@ components:
         id:
           description: |
             For DynamoDB event sources, this must be provided and represents the DynamoDB table Arn.
-            
+
             For IoTCore event sources, this is a automatically generated unique id, and will be added to all messages originating from this event source.
           type: string
         name:
@@ -398,7 +394,7 @@ components:
           type: string
       required:
         - name
-          
+
     EventSourceDetail:
       allOf:
         - $ref: '#/components/schemas/EventSourceSummary'
@@ -413,7 +409,7 @@ components:
                 The attribute within the event message that represents the principal (e.g. deviceId, thingName, or username).
               type: string
             dynamoDb:
-              description:  DynamoDB event source specific configuration.
+              description: DynamoDB event source specific configuration.
               type: object
               properties:
                 tableName:
@@ -422,7 +418,7 @@ components:
               required:
                 - tableName
             iotCore:
-              description:  IoTCore event source configuration.
+              description: IoTCore event source configuration.
               type: object
               properties:
                 mqttTopic:
@@ -439,7 +435,7 @@ components:
           required:
             - sourceType
             - principal
-  
+
     EventSourceList:
       properties:
         results:
@@ -447,7 +443,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EventSourceSummary'
-      
+
     Event:
       properties:
         name:
@@ -502,7 +498,7 @@ components:
         - name
         - conditions
         - templates
-    
+
     EventConditions:
       properties:
         all:
@@ -519,7 +515,7 @@ components:
             - type: array
               items:
                 $ref: '#/components/schemas/EventCondition'
-              
+
     EventCondition:
       properties:
         fact:
@@ -528,14 +524,26 @@ components:
         operator:
           description: The type of operator to evaluate the fact with
           type: string
-          enum: [equal,notEqual,lessThan,lessThanExclusive,greaterThan,greaterThanExclusive,in,notIn,contains,doesNotContain]
+          enum:
+            [
+              equal,
+              notEqual,
+              lessThan,
+              lessThanExclusive,
+              greaterThan,
+              greaterThanExclusive,
+              in,
+              notIn,
+              contains,
+              doesNotContain,
+            ]
         value:
           description: The value of the fact to evaluate
           oneOf:
             - type: string
             - type: number
             - type: boolean
-     
+
     EventList:
       properties:
         results:
@@ -550,7 +558,7 @@ components:
             offset:
               type: object
               properties:
-                eventSourceId: 
+                eventSourceId:
                   description: The event source ID to paginate from
                   type: string
                 eventId:
@@ -559,7 +567,7 @@ components:
             count:
               type: number
 
-    UpdateSubscription :
+    UpdateSubscription:
       properties:
         ruleParameterValues:
           description: The values of any required rule parameters of the event
@@ -574,7 +582,7 @@ components:
           type: boolean
       required:
         - id
-    
+
     SubscriptionBase:
       properties:
         id:
@@ -626,7 +634,7 @@ components:
       required:
         - user
         - principalValue
-        
+
     EmailTargetV1:
       type: object
       properties:
@@ -635,16 +643,16 @@ components:
           type: string
       required:
         - address
-        
+
     EmailTargetV2:
       allOf:
-        - $ref: "#/components/schemas/EmailTargetV1"
+        - $ref: '#/components/schemas/EmailTargetV1'
         - type: object
           properties:
             subscriptionArn:
               description: SNS subscription ARN
               type: string
-        
+
     SMSTargetV1:
       type: object
       properties:
@@ -653,16 +661,16 @@ components:
           type: string
       required:
         - phoneNumber
-        
+
     SMSTargetV2:
       allOf:
-        - $ref: "#/components/schemas/SMSTargetV1"
+        - $ref: '#/components/schemas/SMSTargetV1'
         - type: object
           properties:
             subscriptionArn:
               description: SNS subscription ARN
               type: string
-        
+
     PushTargetV1:
       type: object
       properties:
@@ -675,10 +683,10 @@ components:
       required:
         - platformApplicationArn
         - token
-        
+
     PushTargetV2:
       allOf:
-        - $ref: "#/components/schemas/PushTargetV1"
+        - $ref: '#/components/schemas/PushTargetV1'
         - type: object
           properties:
             platformEndpointArn:
@@ -686,7 +694,7 @@ components:
             subscriptionArn:
               description: SNS subscription ARN
               type: string
-        
+
     DynamoDbTargetV1:
       type: object
       properties:
@@ -701,14 +709,14 @@ components:
       required:
         - tableName
         - attributeMapping
-        
+
     DynamoDbTargetV2:
       allOf:
-        - $ref: "#/components/schemas/DynamoDbTargetV1"
-        
+        - $ref: '#/components/schemas/DynamoDbTargetV1'
+
     SubscriptionV1:
       allOf:
-        - $ref: "#/components/schemas/SubscriptionBase"
+        - $ref: '#/components/schemas/SubscriptionBase'
         - type: object
           properties:
             targets:
@@ -722,10 +730,10 @@ components:
                   $ref: '#/components/schemas/PushTargetV1'
                 dynamoDb:
                   $ref: '#/components/schemas/DynamoDbTargetV1'
-        
+
     SubscriptionV2:
       allOf:
-        - $ref: "#/components/schemas/SubscriptionBase"
+        - $ref: '#/components/schemas/SubscriptionBase'
         - type: object
           properties:
             targets:
@@ -747,7 +755,7 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/DynamoDbTargetV1'
-    
+
     SubscriptionList:
       type: object
       properties:
@@ -764,7 +772,7 @@ components:
             offset:
               type: object
               properties:
-                eventId: 
+                eventId:
                   description: The event ID to paginate from
                   type: string
                 subscriptionId:
@@ -772,14 +780,14 @@ components:
                   type: string
             count:
               type: number
-           
+
     Error:
       type: object
       properties:
         message:
           description: Error message
           type: string
-   
+
   parameters:
     eventSourceId:
       name: eventSourceId
@@ -788,7 +796,7 @@ components:
       required: true
       schema:
         type: string
-        
+
     eventId:
       name: eventId
       in: path
@@ -796,7 +804,7 @@ components:
       required: true
       schema:
         type: string
-        
+
     subscriptionId:
       name: subscriptionId
       in: path
@@ -804,7 +812,7 @@ components:
       required: true
       schema:
         type: string
-        
+
     userId:
       name: userId
       in: path
@@ -812,14 +820,14 @@ components:
       required: true
       schema:
         type: string
-        
+
     fromSubscriptionId:
       name: fromSubscriptionId
       in: query
       description: Subscription ID to use as the start of paginated results
       schema:
         type: string
-        
+
     targetType:
       name: targetType
       in: path
@@ -828,11 +836,11 @@ components:
       schema:
         type: string
         enum:
-         - email
-         - sms
-         - dynamodb
-         - push_gcm
-        
+          - email
+          - sms
+          - dynamodb
+          - push_gcm
+
     targetId:
       name: targetId
       in: path
@@ -847,7 +855,7 @@ components:
       description: A principal to filter by.
       schema:
         type: string
-        
+
     principalValueFilter:
       name: principalValue
       in: query
@@ -856,9 +864,6 @@ components:
         type: string
 
   examples:
-
-    
-
     NewDynamoDBEventSource:
       summary: Creating a new DynamoDB event source
       value:
@@ -868,7 +873,7 @@ components:
         principal: thingName
         dynamoDb:
           tableName: myTable
-          
+
     NewIoTCoreEventSource:
       summary: Creating a new IoT Core event source
       value:
@@ -879,12 +884,12 @@ components:
           mqttTopic: 'telemetry/+'
           attribtues:
             - batteryLevel: bl
-          
+
     NewEvent1:
       summary: Creating an event to represent a low battery alert
       value:
         name: Low Battery Alert
-        conditions: 
+        conditions:
           all:
             - fact: batteryLevel
               operator: lessThanInclusive
@@ -896,12 +901,12 @@ components:
         templates:
           default: 'The battery for bowl {{=it.principalValue}} is low.'
           small: '{{=it.principalValue}} battery low'
-          
+
     NewEvent2:
       summary: Creating an event to represent a low battery alert based on a parameter value to be provided at the time of creating a subscription
       value:
         name: Low Battery Alert
-        conditions: 
+        conditions:
           all:
             - fact: batteryLevel
               operator: lessThanInclusive
@@ -913,18 +918,16 @@ components:
         templates:
           default: 'The battery for bowl {{=it.principalValue}} is low.'
           small: '{{=it.principalValue}} battery low'
-          
+
     NewEvent3:
       summary: Creating an event to represent a low battery alert based on a threshold value present in the same event
       value:
         name: Low Battery Alert
-        conditions: 
+        conditions:
           all:
             - fact: batteryLevel
               operator: lessThanInclusive
-              value: {
-                fact: batteryLevelThreshold
-              }
+              value: { fact: batteryLevelThreshold }
         supportedTargets:
           email: default
           sms: small
@@ -932,14 +935,14 @@ components:
         templates:
           default: 'The battery for bowl {{=it.principalValue}} is low.'
           small: '{{=it.principalValue}} battery low'
-    
+
     ExistingEvent:
       summary: An existing event
       value:
         eventId: 'af6b6890-6dde-11e9-addb-23bea6189627'
         eventSourceId: 'a2f05ee0-6dde-11e9-addb-23bea6189627'
         name: Low Battery Alert
-        conditions: 
+        conditions:
           all:
             - fact: batteryLevel
               operator: lessThanInclusive
@@ -953,7 +956,7 @@ components:
           small: '{{=it.principalValue}} battery low'
         enabled: true
         principal: thingName
-          
+
     NewSubscriptionV1:
       summary: A new subscription
       value:
@@ -968,7 +971,7 @@ components:
           push_gcm:
             platformApplicationArn: arn:aws:sns:us-west-2:xxxxxxxxxxxx:app/GCM/MyApplication
             token: EXAMPLE12345
-          
+
     NewSubscriptionV2:
       summary: A new subscription
       value:
@@ -995,18 +998,18 @@ components:
       summary: A new email target
       value:
         address: someone@somewhere.com
-              
+
     NewSMSTarget:
       summary: A new SMS target
       value:
         phoneNumber: 5551231234
-              
+
     NewPushTarget:
       summary: A new mobile push target
       value:
         platformApplicationArn: 5551231234
         token: AH866S755AAS5
-              
+
     NewDynamoDbTarget:
       summary: A new DynamoDB target
       value:
@@ -1015,23 +1018,24 @@ components:
           id: thingName
           bl: batteryLevel
 
-
-  responses:    
-  
+  responses:
     Created:
       description: Created successfully
       headers:
         location:
-          description:  URI of the created resource
+          description: URI of the created resource
           schema:
-            type: string 
-            
+            type: string
+
     Deleted:
-      description: Deleted successfully 
-            
+      description: Deleted successfully
+
     NoBody:
       description: Success.
-      
+
+    Modified:
+      description: Modified
+
     BadRequest:
       description: Invalid input
       content:
@@ -1041,7 +1045,7 @@ components:
         application/vnd.aws-cdf-v1.0+json:
           schema:
             $ref: '#/components/schemas/Error'
-            
+
     NotFound:
       description: Not found
       content:
@@ -1051,7 +1055,7 @@ components:
         application/vnd.aws-cdf-v1.0+json:
           schema:
             $ref: '#/components/schemas/Error'
-            
+
     Unauthorized:
       description: Unauthorized
       content:

@@ -10,81 +10,99 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-export enum TargetType {'email', 'sms', 'mqtt', 'dynamodb', 'push_gcm', 'push_adm', 'push_apns'}
+export enum TargetType {
+    'email',
+    'sms',
+    'mqtt',
+    'dynamodb',
+    'push_gcm',
+    'push_adm',
+    'push_apns',
+}
 export type TargetTypeStrings = keyof typeof TargetType;
 
 export type TargetResource =
-    EmailTargetResource |
-    SMSTargetResource |
-    PushTargetResource |
-    MQTTTargetResource |
-    DynamodDBTargetResource;
+    | EmailTargetResource
+    | SMSTargetResource
+    | PushTargetResource
+    | MQTTTargetResource
+    | DynamodDBTargetResource;
 
 export class EmailTargetResource {
-    address:string;
-    subscriptionArn?:string;
+    address: string;
+    subscriptionArn?: string;
 }
 
-export function determineIfEmailTargetResource(toBeDetermined: unknown): toBeDetermined is EmailTargetResource {
+export function determineIfEmailTargetResource(
+    toBeDetermined: unknown,
+): toBeDetermined is EmailTargetResource {
     const as = toBeDetermined as EmailTargetResource;
-    return as.address!==undefined;
+    return as.address !== undefined;
 }
 
 export class SMSTargetResource {
-    phoneNumber:string;
-    subscriptionArn?:string;
+    phoneNumber: string;
+    subscriptionArn?: string;
 }
 
-export function determineIfSMSTargetResource(toBeDetermined: unknown): toBeDetermined is SMSTargetResource {
+export function determineIfSMSTargetResource(
+    toBeDetermined: unknown,
+): toBeDetermined is SMSTargetResource {
     const as = toBeDetermined as SMSTargetResource;
-    return as.phoneNumber!==undefined;
+    return as.phoneNumber !== undefined;
 }
 
 export class MQTTTargetResource {
-    topic:string;
+    topic: string;
 }
 
-export function determineIfMQTTTargetResource(toBeDetermined: unknown): toBeDetermined is MQTTTargetResource {
+export function determineIfMQTTTargetResource(
+    toBeDetermined: unknown,
+): toBeDetermined is MQTTTargetResource {
     const as = toBeDetermined as MQTTTargetResource;
-    return as.topic!==undefined;
+    return as.topic !== undefined;
 }
 
-export type AttributeMapping = { [key: string] : string};
+export type AttributeMapping = { [key: string]: string };
 
 export class DynamodDBTargetResource {
-    tableName:string;
+    tableName: string;
     attributeMapping: AttributeMapping;
 }
 
-export function determineIfDynamodDBTargetResource(toBeDetermined: unknown): toBeDetermined is DynamodDBTargetResource {
+export function determineIfDynamodDBTargetResource(
+    toBeDetermined: unknown,
+): toBeDetermined is DynamodDBTargetResource {
     const as = toBeDetermined as DynamodDBTargetResource;
-    return as.tableName!==undefined;
+    return as.tableName !== undefined;
 }
 
 export class PushTargetResource {
-    platformApplicationArn:string;
-    token:string;
-    subscriptionArn?:string;
-    platformEndpointArn? : string;
+    platformApplicationArn: string;
+    token: string;
+    subscriptionArn?: string;
+    platformEndpointArn?: string;
 }
 
-export function determineIfPushTargetResource(toBeDetermined: unknown): toBeDetermined is PushTargetResource {
+export function determineIfPushTargetResource(
+    toBeDetermined: unknown,
+): toBeDetermined is PushTargetResource {
     const as = toBeDetermined as PushTargetResource;
-    return as.platformApplicationArn!==undefined;
+    return as.platformApplicationArn !== undefined;
 }
 
 export type TargetItem =
-    EmailTargetItem |
-    SMSTargetItem |
-    PushTargetItem |
-    MQTTTargetItem |
-    DynamodDBTargetItem;
+    | EmailTargetItem
+    | SMSTargetItem
+    | PushTargetItem
+    | MQTTTargetItem
+    | DynamodDBTargetItem;
 
 export abstract class TargetItemBase {
     targetType: TargetTypeStrings;
     subscriptionId: string;
 
-    abstract getId() : string;
+    abstract getId(): string;
 }
 
 export class EmailTargetItem extends TargetItemBase {
@@ -106,35 +124,34 @@ export class SMSTargetItem extends TargetItemBase {
 }
 
 export class MQTTTargetItem extends TargetItemBase {
-    readonly targetType:TargetTypeStrings = 'mqtt';
-    topic:string;
+    readonly targetType: TargetTypeStrings = 'mqtt';
+    topic: string;
     getId(): string {
         return this.topic;
     }
 }
 
 export class DynamodDBTargetItem extends TargetItemBase {
-    readonly targetType:TargetTypeStrings = 'dynamodb';
-    tableName:string;
+    readonly targetType: TargetTypeStrings = 'dynamodb';
+    tableName: string;
     attributeMapping: AttributeMapping;
     getId(): string {
         return this.tableName;
     }
-
 }
 
 export class PushTargetItem extends TargetItemBase {
-    platformApplicationArn:string;
-    token:string;
-    subscriptionArn?:string;
-    platformEndpointArn? : string;
+    platformApplicationArn: string;
+    token: string;
+    subscriptionArn?: string;
+    platformEndpointArn?: string;
     getId(): string {
         return this.platformEndpointArn;
     }
 }
 
 export abstract class TargetItemFactory {
-    public static getTargetItem(type:TargetTypeStrings) : TargetItem {
+    public static getTargetItem(type: TargetTypeStrings): TargetItem {
         switch (type) {
             case 'dynamodb':
                 return new DynamodDBTargetItem();
@@ -158,7 +175,7 @@ export abstract class TargetItemFactory {
 }
 
 export abstract class TargetResourceFactory {
-    public static getTargetResource(type:TargetTypeStrings) : TargetResource {
+    public static getTargetResource(type: TargetTypeStrings): TargetResource {
         switch (type) {
             case 'dynamodb':
                 return new DynamodDBTargetResource();

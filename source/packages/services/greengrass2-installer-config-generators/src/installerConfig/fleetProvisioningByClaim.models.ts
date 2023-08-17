@@ -1,5 +1,4 @@
 export interface FleetProvisioningByClaimConfig {
-
     /**
      * The path to the folder to use as the root for the AWS IoT Greengrass Core software.
      */
@@ -89,5 +88,4 @@ export interface FleetProvisioningByClaimConfig {
      * (Optional) The user name that authenticates the proxy server.
      */
     proxyPassword?: string;
-
 }

@@ -12,17 +12,17 @@
  *********************************************************************************************************************/
 /* tslint:disable:no-unused-variable member-ordering */
 
-import {injectable} from 'inversify';
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
+import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-
-import {RequestHeaders} from './common.model';
-import {NewTemplate, Template} from './templates.model';
-import {TemplatesService, TemplatesServiceBase} from './templates.service';
+import { RequestHeaders } from './common.model';
+import { NewTemplate, Template } from './templates.model';
+import { TemplatesService, TemplatesServiceBase } from './templates.service';
 
 @injectable()
 export class TemplatesApigwService extends TemplatesServiceBase implements TemplatesService {
-
     private readonly baseUrl: string;
 
     public constructor() {
@@ -30,7 +30,10 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         this.baseUrl = process.env.GREENGRASS2PROVISIONING_BASE_URL;
     }
 
-    async createTemplate(template: NewTemplate, additionalHeaders?: RequestHeaders): Promise<void> {
+    async createTemplate(
+        template: NewTemplate,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
         ow(template.components, 'components', ow.array.nonEmpty);
@@ -41,12 +44,23 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
         const url = `${this.baseUrl}${super.templatesRelativeUrl()}`;
 
-        await request.post(url)
+        return await request
+            .post(url)
             .send(template)
-            .set(this.buildHeaders(additionalHeaders));
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async updateTemplate(template: NewTemplate, additionalHeaders?: RequestHeaders): Promise<void> {
+    async updateTemplate(
+        template: NewTemplate,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
         ow(template.components, 'components', ow.array.nonEmpty);
@@ -57,33 +71,50 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(template.name)}`;
 
-        await request.put(url)
+        return await request
+            .put(url)
             .send(template)
-            .set(this.buildHeaders(additionalHeaders));
-
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
     async getLatestTemplate(name: string, additionalHeaders?: RequestHeaders): Promise<Template> {
-
         ow(name, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(name)}`;
 
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-        return res.body;
-
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
     async deleteTemplate(name: string, additionalHeaders?: RequestHeaders): Promise<void> {
-
         ow(name, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(name)}`;
 
-        await request.delete(url)
-            .set(this.buildHeaders(additionalHeaders));
-
+        return await request
+            .delete(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
-
 }

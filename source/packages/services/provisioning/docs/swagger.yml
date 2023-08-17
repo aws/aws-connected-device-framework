@@ -19,11 +19,10 @@ tags:
       The Provisioning module provides the capability to register a number things in a bulk operation. This service uses AWS IoT Device Management's bulk registration capability to create an asyncronous registration task.
 
 paths:
-
   /things:
     post:
       tags:
-      - Things
+        - Things
       summary: Provision a new thing within the AWS IoT Device Registry
       operationId: provisionThing
       requestBody:
@@ -99,7 +98,7 @@ paths:
                     csr: -----BEGIN CERTIFICATE REQUEST-----\nMIICvDCCAaQCAQAwdzELMAkGA1UEBhMCVVMxDTALBgNVBAgMBFV0YWgxDzANBgNV\nBAcMBkxpbmRvbjEWMBQGA1UECgwNRGlnaUNlcnQgSW5jLjERMA8GA1UECwwIRGln\naUNlcnQxHTAbBgNVBAMMFGV4YW1wbGUuZGlnaWNlcnQuY29tMIIBIjANBgkqhkiG\n9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8+To7d+2kPWeBv/orU3LVbJwDrSQbeKamCmo\nwp5bqDxIwV20zqRb7APUOKYoVEFFOEQs6T6gImnIolhbiH6m4zgZ/CPvWBOkZc+c\n1Po2EmvBz+AD5sBdT5kzGQA6NbWyZGldxRthNLOs1efOhdnWFuhI162qmcflgpiI\nWDuwq4C9f+YkeJhNn9dF5+owm8cOQmDrV8NNdiTqin8q3qYAHHJRW28glJUCZkTZ\nwIaSR6crBQ8TbYNE0dc+Caa3DOIkz1EOsHWzTx+n0zKfqcbgXi4DJx+C1bjptYPR\nBPZL8DAeWuA8ebudVT44yEp82G96/Ggcf7F33xMxe0yc+Xa6owIDAQABoAAwDQYJ\nKoZIhvcNAQEFBQADggEBAB0kcrFccSmFDmxox0Ne01UIqSsDqHgL+XmHTXJwre6D\nhJSZwbvEtOK0G3+dr4Fs11WuUNt5qcLsx5a8uk4G6AKHMzuhLsJ7XZjgmQXGECpY\nQ4mC3yT3ZoCGpIXbw+iP3lmEEXgaQL0Tx5LFl/okKbKYwIqNiyKWOMj7ZR/wxWg/\nZDGRs55xuoeLDJ/ZRFf9bI+IaCUd1YrfYcHIl3G87Av+r49YVwqRDT0VDV7uLgqn\n29XI1PpVUNCPQGn9p/eX6Qo7vpDaPybRtA2R7XLKjQaF9oXWeCUqy1hvJac9QFO2\n97Ob1alpHPoZ7mWiEuJwjBPii6a9M9G30nUo39lBi1w=\n-----END CERTIFICATE REQUEST-----\n
                     certInfo:
                       country: US
-                    
+
       responses:
         201:
           description: OK
@@ -117,7 +116,7 @@ paths:
       - $ref: '#/components/parameters/thingName'
     get:
       tags:
-      - Things
+        - Things
       summary: Retrieve details of a provisioned thing from the AWS IoT Device Registry
       operationId: getThing
       responses:
@@ -126,14 +125,14 @@ paths:
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Thing"
+                $ref: '#/components/schemas/Thing'
         400:
           $ref: '#/components/responses/BadRequest'
         404:
           $ref: '#/components/responses/NotFound'
     delete:
       tags:
-      - Things
+        - Things
       summary: Delete a thing from the AWS IoT Device Registry.
       operationId: deleteThing
       responses:
@@ -143,13 +142,13 @@ paths:
           $ref: '#/components/responses/BadRequest'
         404:
           $ref: '#/components/responses/NotFound'
-          
+
   /things/{thingName}/certificates:
     parameters:
       - $ref: '#/components/parameters/thingName'
     patch:
       tags:
-      - Things
+        - Things
       summary: Sets the status of all attached certificates.
       operationId: updateCertificateStatus
       requestBody:
@@ -164,13 +163,13 @@ paths:
           $ref: '#/components/responses/BadRequest'
         404:
           $ref: '#/components/responses/NotFound'
-          
+
   /bulkthings/{taskId}:
     parameters:
       - $ref: '#/components/parameters/taskId'
     get:
       tags:
-      - Bulk Registrations
+        - Bulk Registrations
       summary: Retrieve details about a bulk registration task
       operationId: getBulkProvisionTask
       responses:
@@ -179,16 +178,16 @@ paths:
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/BulkRegistrationTask"
+                $ref: '#/components/schemas/BulkRegistrationTask'
         400:
           $ref: '#/components/responses/BadRequest'
         404:
           $ref: '#/components/responses/NotFound'
 
-  /bulkthings:          
+  /bulkthings:
     post:
       tags:
-      - Bulkr Registrations
+        - Bulk Registrations
       summary: Bulk provision a set of new things within the AWS IoT Device Registry
       operationId: bulkProvisionThings
       requestBody:
@@ -210,9 +209,7 @@ paths:
           $ref: '#/components/responses/NotFound'
 
 components:
-
   parameters:
-
     thingName:
       name: thingName
       in: path
@@ -228,9 +225,8 @@ components:
       required: true
       schema:
         type: string
-      
-  schemas:
 
+  schemas:
     Thing:
       type: object
       properties:
@@ -245,7 +241,7 @@ components:
           additionalProperties: true
         certificates:
           type: array
-          items: 
+          items:
             $ref: '#/components/schemas/Certificate'
         policies:
           type: array
@@ -255,7 +251,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/IotGroup'
-  
+
     Certificate:
       type: object
       properties:
@@ -266,13 +262,13 @@ components:
         certificateStatus:
           type: string
           enum:
-          - PENDING_ACTIVATION
-          - ACTIVE
-          - INACTIVE
-          - REVOKED
+            - PENDING_ACTIVATION
+            - ACTIVE
+            - INACTIVE
+            - REVOKED
         certificatePem:
           type: string
-  
+
     IotPolicy:
       type: object
       properties:
@@ -282,7 +278,7 @@ components:
           type: string
         policyDocument:
           type: string
-  
+
     IotGroup:
       type: object
       properties:
@@ -293,7 +289,7 @@ components:
         attributes:
           type: object
           additionalProperties: true
-          
+
     CertInfo:
       type: object
       properties:
@@ -323,7 +319,7 @@ components:
           description: Days expiry of the generated certificate.
       required:
         - country
-          
+
     CreateDeviceCertificateParameters:
       type: object
       properties:
@@ -331,8 +327,8 @@ components:
           type: string
           description: ID of registered CA certificate.
         certInfo:
-          $ref: "#/components/schemas/CertInfo"
-          
+          $ref: '#/components/schemas/CertInfo'
+
     RegisterDeviceCertificateWithoutCAParameters:
       type: object
       properties:
@@ -344,7 +340,7 @@ components:
           enum:
             - ACTIVE
             - INACTIVE
-            
+
     UseACMPCAParameters:
       type: object
       properties:
@@ -364,8 +360,8 @@ components:
           type: string
           description: Certificate signing request.
         certInfo:
-          $ref: "#/components/schemas/CertInfo"
-  
+          $ref: '#/components/schemas/CertInfo'
+
     ProvisionRequest:
       description: Provision a new thing request
       type: object
@@ -382,13 +378,13 @@ components:
           type: object
           description: Optional parameters used by CDF in provisioning process.
           oneOf:
-            - $ref: "#/components/schemas/CreateDeviceCertificateParameters"
-            - $ref: "#/components/schemas/RegisterDeviceCertificateWithoutCAParameters"
-            - $ref: "#/components/schemas/UseACMPCAParameters"
+            - $ref: '#/components/schemas/CreateDeviceCertificateParameters'
+            - $ref: '#/components/schemas/RegisterDeviceCertificateWithoutCAParameters'
+            - $ref: '#/components/schemas/UseACMPCAParameters'
       required:
         - provisioningTemplateId
         - parameters
-          
+
     ProvisionResponse:
       type: object
       properties:
@@ -407,7 +403,7 @@ components:
               type: string
             thing:
               type: string
-      
+
     BulkRegistrationTask:
       type: object
       properties:
@@ -452,7 +448,7 @@ components:
             type: object
             additionalProperties:
               type: string
-              
+
     PatchCertificateRequest:
       type: object
       properties:
@@ -463,14 +459,13 @@ components:
             - ACTIVE
             - IN_ACTIVE
 
-      
     Error:
       type: object
       properties:
         message:
           type: string
 
-  responses:          
+  responses:
     Created:
       description: Created successfully
       headers:
@@ -483,11 +478,11 @@ components:
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
     NotFound:
       description: Not found
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'

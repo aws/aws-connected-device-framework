@@ -11,88 +11,109 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import {inject, injectable} from 'inversify';
-import {TYPES} from "../di/types";
-import {logger} from "../utils/logger";
-import ow from "ow";
-import {OrganizationalUnitResource} from "./organizationalUnits.model";
-import {Tag, Tags} from "aws-sdk/clients/organizations";
-import {OrganizationalUnitsDao} from "./organizationalUnits.dao";
-import {OrganizationalUnitsAssembler} from './organizationalUnits.assembler';
-import {AccountsDao} from '../accounts/accounts.dao';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { Tag, Tags } from 'aws-sdk/clients/organizations';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import { AccountsDao } from '../accounts/accounts.dao';
+import { TYPES } from '../di/types';
+import { owCheckOversizeString, owCheckUnprintableChar } from '../utils/inputValidation.util';
+import { OrganizationalUnitsAssembler } from './organizationalUnits.assembler';
+import { OrganizationalUnitsDao } from './organizationalUnits.dao';
+import { OrganizationalUnitResource } from './organizationalUnits.model';
 
 const convertAWSTagsToCDFTags = (tagResult: { [key: string]: string }, currentTag: Tag) => {
-    tagResult[currentTag.Key] = currentTag.Value
-    return tagResult
+    tagResult[currentTag.Key] = currentTag.Value;
+    return tagResult;
 };
 
 @injectable()
 export class OrganizationalUnitsService {
-
     private _organizations: AWS.Organizations;
 
     constructor(
         @inject('featureToggle.ous.create') private createOuInOrganizations: boolean,
         @inject('featureToggle.ous.delete') private deleteOuInOrganizations: boolean,
-        @inject(TYPES.OrganizationalUnitsDao) private organizationalUnitsDao: OrganizationalUnitsDao,
-        @inject(TYPES.OrganizationalUnitsAssembler) private organizationalUnitsAssembler: OrganizationalUnitsAssembler,
+        @inject(TYPES.OrganizationalUnitsDao)
+        private organizationalUnitsDao: OrganizationalUnitsDao,
+        @inject(TYPES.OrganizationalUnitsAssembler)
+        private organizationalUnitsAssembler: OrganizationalUnitsAssembler,
         @inject(TYPES.AccountsDao) private accountsDao: AccountsDao,
-        @inject(TYPES.OrganizationsFactory) organizationsFactory: () => AWS.Organizations,
+        @inject(TYPES.OrganizationsFactory) organizationsFactory: () => AWS.Organizations
     ) {
         this._organizations = organizationsFactory();
     }
 
     private async getRootId(): Promise<string> {
-        const listRootsResponse = await this._organizations.listRoots().promise()
+        const listRootsResponse = await this._organizations.listRoots().promise();
         return listRootsResponse?.Roots[0]?.Id;
     }
 
-    private async createOrganizationalUnitInMaster(ouName: string, tags: { [key: string]: string }): Promise<string> {
+    private async createOrganizationalUnitInMaster(
+        ouName: string,
+        tags: { [key: string]: string }
+    ): Promise<string> {
         const rootId = await this.getRootId();
 
         if (rootId === undefined) {
-            throw new Error('root cannot be found in current organizations')
+            throw new Error('root cannot be found in current organizations');
         }
 
-        const createTagsRequest: Tags = []
+        const createTagsRequest: Tags = [];
 
         for (const [key, value] of Object.entries(tags)) {
             createTagsRequest.push({
                 Key: key,
-                Value: value
-            })
+                Value: value,
+            });
         }
 
-        const createOrganizationalUnitResponse = await this._organizations.createOrganizationalUnit(
-            {
+        const createOrganizationalUnitResponse = await this._organizations
+            .createOrganizationalUnit({
                 ParentId: rootId,
                 Name: ouName,
-                Tags: createTagsRequest
-            }
-        ).promise();
+                Tags: createTagsRequest,
+            })
+            .promise();
 
-        return createOrganizationalUnitResponse?.OrganizationalUnit?.Id
+        return createOrganizationalUnitResponse?.OrganizationalUnit?.Id;
     }
 
     public async createOrganizationalUnit(request: OrganizationalUnitResource): Promise<string> {
-        logger.debug(`organizationmanager.service createOrganizationalUnit: in: request: ${JSON.stringify(request)}`);
+        logger.debug(
+            `organizationmanager.service createOrganizationalUnit: in: request: ${JSON.stringify(
+                request
+            )}`
+        );
 
-        ow(request, ow.object.nonEmpty)
-        ow(request.name, ow.string.nonEmpty)
-        ow(request.tags, ow.object.nonEmpty)
+        ow(request, ow.object.nonEmpty);
+        ow(request.name, ow.string.nonEmpty);
+        owCheckUnprintableChar(request.name, 'request.name');
+        owCheckOversizeString(request.name, 2048, 'request.name');
+        ow(request.tags, ow.object.nonEmpty);
 
-        request.createdAt = new Date()
-        const {name, tags} = request
+        request.createdAt = new Date();
+        const { name, tags } = request;
 
         if (this.createOuInOrganizations) {
-            logger.debug(`organizationmanager.service createOrganizationalUnit: creating new ou`)
-            request.id = await this.createOrganizationalUnitInMaster(name, tags)
+            logger.debug(`organizationmanager.service createOrganizationalUnit: creating new ou`);
+            request.id = await this.createOrganizationalUnitInMaster(name, tags);
         } else {
-            ow(request.id, ow.string.nonEmpty)
-            logger.debug(`organizationmanager.service createOrganizationalUnit: registering existing ou:${request.id}`)
+            ow(request.id, ow.string.nonEmpty);
+            owCheckUnprintableChar(request.id, 'request.id');
+            owCheckOversizeString(request.id, 2048, 'request.id');
+            logger.debug(
+                `organizationmanager.service createOrganizationalUnit: registering existing ou:${request.id}`
+            );
         }
-        await this.organizationalUnitsDao.createOrganizationalUnit(this.organizationalUnitsAssembler.toItem(request))
-        logger.debug(`organizationmanager.service: createOrganizationalUnit: out: ${JSON.stringify(request)}`);
+        await this.organizationalUnitsDao.createOrganizationalUnit(
+            this.organizationalUnitsAssembler.toItem(request)
+        );
+        logger.debug(
+            `organizationmanager.service: createOrganizationalUnit: out: ${JSON.stringify(
+                request
+            )}`
+        );
         return request.id;
     }
 
@@ -100,80 +121,97 @@ export class OrganizationalUnitsService {
         logger.debug(`organizationmanager.service listOrganizationalUnits:`);
 
         if (!this.createOuInOrganizations) {
-            const organizationalUnitItems = await this.organizationalUnitsDao.getOrganizationalUnits()
-            const organizationalUnitResourceList = this.organizationalUnitsAssembler.toResourceList(organizationalUnitItems)
-            return organizationalUnitResourceList
+            const organizationalUnitItems =
+                await this.organizationalUnitsDao.getOrganizationalUnits();
+            const organizationalUnitResourceList =
+                this.organizationalUnitsAssembler.toResourceList(organizationalUnitItems);
+            return organizationalUnitResourceList;
         }
 
         const rootId = await this.getRootId();
 
-        const listOrganizationalUnitsForParentResponse = await this._organizations.listOrganizationalUnitsForParent({
-            ParentId: rootId,
-        }).promise();
+        const listOrganizationalUnitsForParentResponse = await this._organizations
+            .listOrganizationalUnitsForParent({
+                ParentId: rootId,
+            })
+            .promise();
 
         const organizationalUnits: OrganizationalUnitResource[] = [];
 
+        // eslint-disable-next-line no-unsafe-optional-chaining
         for (const ou of listOrganizationalUnitsForParentResponse?.OrganizationalUnits) {
+            const listTagsForResourceResponse = await this._organizations
+                .listTagsForResource({ ResourceId: ou.Id })
+                .promise();
 
-            const listTagsForResourceResponse = await this._organizations.listTagsForResource({ResourceId: ou.Id}).promise();
-
-            const tags = listTagsForResourceResponse?.Tags?.reduce(convertAWSTagsToCDFTags, {})
+            const tags = listTagsForResourceResponse?.Tags?.reduce(convertAWSTagsToCDFTags, {});
 
             organizationalUnits.push({
                 name: ou.Name,
                 id: ou.Id,
-                tags
-            })
+                tags,
+            });
         }
 
-        logger.debug(`organizationmanager.service: listOrganizationalUnits: out: ${JSON.stringify(organizationalUnits)}`);
-        return organizationalUnits
+        logger.debug(
+            `organizationmanager.service: listOrganizationalUnits: out: ${JSON.stringify(
+                organizationalUnits
+            )}`
+        );
+        return organizationalUnits;
     }
 
     public async deleteOrganizationalUnit(id: string): Promise<void> {
-
         logger.debug(`organizationmanager.service deletOrganizationalUnit: in: id: ${id}`);
 
         const [accounts, _] = await this.accountsDao.getAccountsInOu(id);
 
         if (accounts.length > 0) {
-            throw new Error(`FAILED_VALIDATION`)
+            throw new Error(`FAILED_VALIDATION`);
         }
 
         if (this.deleteOuInOrganizations) {
-            await this._organizations.deleteOrganizationalUnit({
-                OrganizationalUnitId: id
-            }).promise()
+            await this._organizations
+                .deleteOrganizationalUnit({
+                    OrganizationalUnitId: id,
+                })
+                .promise();
         }
 
-        await this.organizationalUnitsDao.deleteOrganizationalUnit(id)
+        await this.organizationalUnitsDao.deleteOrganizationalUnit(id);
 
         logger.debug(`organizationmanager.service: deletOrganizationalUnit: out:`);
     }
 
     public async getOrganizationalUnit(id: string): Promise<OrganizationalUnitResource> {
-
         logger.debug(`organizationmanager.service getOrganizationalUnit: in: id: ${id}`);
 
-        ow(id, ow.string.nonEmpty)
+        ow(id, ow.string.nonEmpty);
 
         const organizationalUnitItem = await this.organizationalUnitsDao.getOrganizationalUnit(id);
 
         if (organizationalUnitItem === undefined) {
-            return undefined
+            return undefined;
         }
 
-        const organizationalUnitResource = this.organizationalUnitsAssembler.toResource(organizationalUnitItem)
+        const organizationalUnitResource =
+            this.organizationalUnitsAssembler.toResource(organizationalUnitItem);
 
         let tags;
 
         if (this.createOuInOrganizations) {
-            const listTagsForResourceResponse = await this._organizations.listTagsForResource({ResourceId: organizationalUnitItem.id}).promise();
-            tags = listTagsForResourceResponse?.Tags?.reduce(convertAWSTagsToCDFTags, {})
+            const listTagsForResourceResponse = await this._organizations
+                .listTagsForResource({ ResourceId: organizationalUnitItem.id })
+                .promise();
+            tags = listTagsForResourceResponse?.Tags?.reduce(convertAWSTagsToCDFTags, {});
             organizationalUnitResource.tags = tags;
         }
 
-        logger.debug(`organizationmanager.service: getOrganizationalUnit: out: ${JSON.stringify(organizationalUnitResource)}`);
+        logger.debug(
+            `organizationmanager.service: getOrganizationalUnit: out: ${JSON.stringify(
+                organizationalUnitResource
+            )}`
+        );
 
         return organizationalUnitResource;
     }

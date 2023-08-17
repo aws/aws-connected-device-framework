@@ -11,52 +11,50 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { SubscriptionService } from './api/subscriptions/subscription.service';
 import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
-import { logger } from './utils/logger.util';
 
-let subscriptionService:SubscriptionService;
+let subscriptionService: SubscriptionService;
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 exports.handler = async (event: any, _context: any) => {
-  logger.debug(`lambda_sqs_proxy handler: event: ${JSON.stringify(event)}`);
+    logger.debug(`lambda_sqs_proxy handler: event: ${JSON.stringify(event)}`);
 
-  // lazy init
-  if (subscriptionService===undefined) {
-    subscriptionService = container.get(TYPES.SubscriptionService);
-  }
-
-  if (event.Records) {
-    for (const r of event.Records) {
-
-      if (r.eventSource === 'aws:sqs') {
-        const messageType = r.messageAttributes?.messageType?.stringValue;
-        const body = JSON.parse(r.body);
-
-        if (messageType==='DeleteSubscription') {
-          try {
-            await subscriptionService.delete(body['subscriptionId']);
-          } catch (err) {
-            if (err.message==='NOT_FOUND') {
-              // swallow, treat as a success if not found
-            } else {
-              // return the batch to sqs for retrys. if too many retries, sqs moves to dlq
-              throw err;
-            }
-          }
-
-        } else {
-          logger.warn(`lambda_sqs_proxy handler: ignoring un-recognized sqs event`);
-        }
-
-      } else {
-        logger.warn(`lambda_sqs_proxy handler: ignoring non-sqs events: ${JSON.stringify(r)}`);
-        continue;
-      }
+    // lazy init
+    if (subscriptionService === undefined) {
+        subscriptionService = container.get(TYPES.SubscriptionService);
     }
-  }
 
-  logger.debug(`lambda_sqs_proxy handler: exit:`);
+    if (event.Records) {
+        for (const r of event.Records) {
+            if (r.eventSource === 'aws:sqs') {
+                const messageType = r.messageAttributes?.messageType?.stringValue;
+                const body = JSON.parse(r.body);
 
+                if (messageType === 'DeleteSubscription') {
+                    try {
+                        await subscriptionService.delete(body['subscriptionId']);
+                    } catch (err) {
+                        if (err.message === 'NOT_FOUND') {
+                            // swallow, treat as a success if not found
+                        } else {
+                            // return the batch to sqs for retrys. if too many retries, sqs moves to dlq
+                            throw err;
+                        }
+                    }
+                } else {
+                    logger.warn(`lambda_sqs_proxy handler: ignoring un-recognized sqs event`);
+                }
+            } else {
+                logger.warn(
+                    `lambda_sqs_proxy handler: ignoring non-sqs events: ${JSON.stringify(r)}`
+                );
+                continue;
+            }
+        }
+    }
+
+    logger.debug(`lambda_sqs_proxy handler: exit:`);
 };

@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,7 +11,7 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Commands Service
@@ -20,13 +21,12 @@ Globals:
     OpenApiVersion: 3.0.1
 
 Parameters:
-  
   ApplicationConfigurationOverride:
     Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
 
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
 
@@ -119,21 +119,19 @@ Parameters:
       - 'false'
     MinLength: 1
 
-
 Conditions:
-
-  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
-  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
-  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
-  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
+  DeployInVPC: !Not [!Equals [!Ref VpcId, 'N/A']]
+  DeployWithLambdaAuth:
+    !Or [!Equals [!Ref AuthType, 'LambdaRequest'], !Equals [!Ref AuthType, 'LambdaToken']]
+  KmsKeyIdProvided: !Not [!Equals [!Ref KmsKeyId, '']]
+  EnableApiGatewayAccessLogs: !Equals [!Ref EnableApiGatewayAccessLogs, 'true']
 
 Resources:
-
   ApiGatewayApi:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+        Location: !Sub '${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}'
     DependsOn:
       - RESTLambdaFunction
 
@@ -142,7 +140,7 @@ Resources:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+        Location: !Sub '${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml'
     DependsOn:
       - RESTLambdaFunction
 
@@ -153,17 +151,16 @@ Resources:
       LogGroupName: !Sub 'cdf-commands-apigatewayaccesslogs-${Environment}'
 
   PresignedUrlMQTTRule:
-    Type: "AWS::IoT::TopicRule"
+    Type: 'AWS::IoT::TopicRule'
     Properties:
-      TopicRulePayload: 
+      TopicRulePayload:
         Actions:
-          -
-            Lambda:
+          - Lambda:
               FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${PresignedUrlLambdaFunction}'
-        Description: "Pre-signed url requests (CDF Commands service)"
-        AwsIotSqlVersion: "2016-03-23"
-        RuleDisabled: "false" 
-        Sql: !Sub "SELECT topic(4) as commandId, topic(5) as thingName, * FROM '${PresignedUrlMQTTTopic}'"   
+        Description: 'Pre-signed url requests (CDF Commands service)'
+        AwsIotSqlVersion: '2016-03-23'
+        RuleDisabled: 'false'
+        Sql: !Sub "SELECT topic(4) as commandId, topic(5) as thingName, * FROM '${PresignedUrlMQTTTopic}'"
 
   PresignedUrlLambdaFunctionInvocationPermission:
     Type: AWS::Lambda::Permission
@@ -172,20 +169,19 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: iot.amazonaws.com
       FunctionName: !GetAtt PresignedUrlLambdaFunction.Arn
-      SourceAccount: !Ref AWS::AccountId   
+      SourceAccount: !Ref AWS::AccountId
 
   JobLifecycleMQTTRule:
-    Type: "AWS::IoT::TopicRule"
+    Type: 'AWS::IoT::TopicRule'
     Properties:
-      TopicRulePayload: 
+      TopicRulePayload:
         Actions:
-          -
-            Lambda:
+          - Lambda:
               FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${JobLifecycleLambdaFunction}'
-        Description: "Job lifecycle rule (CDF Commands service)"
-        AwsIotSqlVersion: "2016-03-23"
-        RuleDisabled: "false" 
-        Sql: !Sub "SELECT topic(4) as jobId, topic(5) as jobEvent, * FROM '$aws/events/job/+/+'" 
+        Description: 'Job lifecycle rule (CDF Commands service)'
+        AwsIotSqlVersion: '2016-03-23'
+        RuleDisabled: 'false'
+        Sql: !Sub "SELECT topic(4) as jobId, topic(5) as jobEvent, * FROM '$aws/events/job/+/+'"
 
   JobLifecycleMQTTRuleInvocationPermission:
     Type: AWS::Lambda::Permission
@@ -194,21 +190,21 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: iot.amazonaws.com
       FunctionName: !GetAtt JobLifecycleLambdaFunction.Arn
-      SourceAccount: !Ref AWS::AccountId   
+      SourceAccount: !Ref AWS::AccountId
 
   KmsPolicy:
     Type: AWS::IAM::ManagedPolicy
     Condition: KmsKeyIdProvided
     Properties:
-      Description: "cdf-provisioning policy for accessing KMS"
-      Path: "/cdf/commands/"
+      Description: 'cdf-provisioning policy for accessing KMS'
+      Path: '/cdf/commands/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
               - 'kms:Decrypt'
             Effect: Allow
-            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+            Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}'
 
   ApplicationPolicies:
     Type: 'AWS::IAM::ManagedPolicy'
@@ -216,59 +212,59 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W13
-            reason: "Lambda provided permissions to manage resources in iot core"
+            reason: 'Lambda provided permissions to manage resources in iot core'
     Properties:
       Description: 'cdf-commands application policies'
-      Path: "/"
+      Path: '/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Sid: "iotjobs"
+          - Sid: 'iotjobs'
             Action:
-              - "iot:CreateJob"
-              - "iot:CreateThingGroup"
-              - "iot:DescribeJob"
-              - "iot:GetJobDocument"
-              - "iot:ListJobExecutionsForJob"
-              - "iot:ListJobExecutionsForThing"
-              - "iot:DescribeJobExecution"
-              - "iot:AssociateTargetsWithJob"
+              - 'iot:CreateJob'
+              - 'iot:CreateThingGroup'
+              - 'iot:DescribeJob'
+              - 'iot:GetJobDocument'
+              - 'iot:ListJobExecutionsForJob'
+              - 'iot:ListJobExecutionsForThing'
+              - 'iot:DescribeJobExecution'
+              - 'iot:AssociateTargetsWithJob'
             Effect: Allow
-            Resource: 
-                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:job/*"
-                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
-                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*"
-          - Sid: "dynamodb"
+            Resource:
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:job/*'
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*'
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*'
+          - Sid: 'dynamodb'
             Action:
-              - "dynamodb:BatchGetItem"
-              - "dynamodb:GetItem"
-              - "dynamodb:Query"
-              - "dynamodb:Scan"
-              - "dynamodb:BatchWriteItem"
-              - "dynamodb:PutItem"
-              - "dynamodb:UpdateItem"
-              - "dynamodb:DeleteItem"
+              - 'dynamodb:BatchGetItem'
+              - 'dynamodb:GetItem'
+              - 'dynamodb:Query'
+              - 'dynamodb:Scan'
+              - 'dynamodb:BatchWriteItem'
+              - 'dynamodb:PutItem'
+              - 'dynamodb:UpdateItem'
+              - 'dynamodb:DeleteItem'
             Effect: Allow
-            Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/cdf-commands-*"
-          - Sid: "iampassrole"
+            Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/cdf-commands-*'
+          - Sid: 'iampassrole'
             Action:
-              - "iam:PassRole"
+              - 'iam:PassRole'
             Effect: Allow
-            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-commands-*"
-          - Sid: "s3bucket"
+            Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/cdf-commands-*'
+          - Sid: 's3bucket'
             Action:
               - 's3:ListBucket'
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:s3:::${BucketName}'
-          - Sid: "s3objects"
+          - Sid: 's3objects'
             Action:
               - 's3:Get*'
               - 's3:Put*'
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:s3:::${BucketName}/*'
-          - Sid: "mqtt"
+          - Sid: 'mqtt'
             Action:
               - 'iot:Publish'
             Effect: Allow
@@ -294,10 +290,10 @@ Resources:
               - lambda.amazonaws.com
               - iot.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
-        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref 'AWS::NoValue']
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
@@ -316,10 +312,10 @@ Resources:
               - lambda.amazonaws.com
               - iot.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
-        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref 'AWS::NoValue']
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
@@ -338,10 +334,10 @@ Resources:
               - lambda.amazonaws.com
               - iot.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
-        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref 'AWS::NoValue']
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
@@ -354,9 +350,9 @@ Resources:
       FunctionName: !Sub 'cdf-commands-presignedUrls-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/commands/dist/presignedurl_iot_rule.presignedurl_rule_handler
-      MemorySize: 128
+      MemorySize: 512
       Role: !GetAtt PresignedUrlLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
@@ -376,9 +372,9 @@ Resources:
       FunctionName: !Sub 'cdf-commands-jobLifecycle-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/commands/dist/job_lifecycle_iot_rule.job_lifecycle_rule_handler
-      MemorySize: 128
+      MemorySize: 512
       Role: !GetAtt JobLifecycleLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
@@ -398,9 +394,9 @@ Resources:
       FunctionName: !Sub 'cdf-commands-rest-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/commands/dist/lambda_proxy.handler
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt RESTLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
@@ -442,9 +438,9 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W28
-            reason: "safely naming this resources to be unique by environment"
+            reason: 'safely naming this resources to be unique by environment'
           - id: W73
-            reason: "Can be decided by the customer, to specify the billing mode"
+            reason: 'Can be decided by the customer, to specify the billing mode'
     Properties:
       TableName: !Sub 'cdf-commands-templates-${Environment}'
       PointInTimeRecoverySpecification:
@@ -456,18 +452,15 @@ Resources:
             SSEEnabled: true
             SSEType: KMS
           - Ref: AWS::NoValue
-      AttributeDefinitions: 
-        - 
-          AttributeName: "templateId"
-          AttributeType: "S"
-      KeySchema: 
-        - 
-          AttributeName: "templateId"
-          KeyType: "HASH"
-      ProvisionedThroughput: 
-        ReadCapacityUnits: "5"
-        WriteCapacityUnits: "5"
-
+      AttributeDefinitions:
+        - AttributeName: 'templateId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'templateId'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: '5'
+        WriteCapacityUnits: '5'
 
   JobsTable:
     Type: AWS::DynamoDB::Table
@@ -475,9 +468,9 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W28
-            reason: "safely naming this resources to be unique by environment"
+            reason: 'safely naming this resources to be unique by environment'
           - id: W73
-            reason: "Can be decided by the customer, to specify the billing mode"
+            reason: 'Can be decided by the customer, to specify the billing mode'
     Properties:
       TableName: !Sub 'cdf-commands-jobs-${Environment}'
       PointInTimeRecoverySpecification:
@@ -490,55 +483,47 @@ Resources:
             SSEType: KMS
           - Ref: AWS::NoValue
       AttributeDefinitions:
-        - 
-          AttributeName: "commandId"
-          AttributeType: "S"
-        - 
-          AttributeName: "jobId"
-          AttributeType: "S"
-      KeySchema: 
-        - 
-          AttributeName: "commandId"
-          KeyType: "HASH"
-      ProvisionedThroughput: 
-        ReadCapacityUnits: "5"
-        WriteCapacityUnits: "5"
+        - AttributeName: 'commandId'
+          AttributeType: 'S'
+        - AttributeName: 'jobId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'commandId'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: '5'
+        WriteCapacityUnits: '5'
       GlobalSecondaryIndexes:
-        -
-          IndexName: !Sub 'cdf-commands-jobs-byJobId'
-          KeySchema: 
-            - 
-              AttributeName: "jobId"
-              KeyType: "HASH"
+        - IndexName: !Sub 'cdf-commands-jobs-byJobId'
+          KeySchema:
+            - AttributeName: 'jobId'
+              KeyType: 'HASH'
           Projection:
             ProjectionType: INCLUDE
             NonKeyAttributes:
-              - "commandId"
+              - 'commandId'
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: '5'
+            WriteCapacityUnits: '5'
 
   IotEndpoint:
     Type: Custom::IotEndpoint
     Version: 1.0
     Properties:
-      ServiceToken:
-        !Ref CustomResourceLambdaArn
+      ServiceToken: !Ref CustomResourceLambdaArn
 
   IotEvents:
     Type: Custom::IotEvents
     Version: 1.0
     Properties:
-      ServiceToken:
-        !Ref CustomResourceLambdaArn
-
+      ServiceToken: !Ref CustomResourceLambdaArn
 
 Outputs:
   RESTLambdaArn:
     Description: REST API Lambda Arn
-    Value: !Sub "${RESTLambdaFunction.Arn}"
+    Value: !Sub '${RESTLambdaFunction.Arn}'
     Export:
-      Name: !Sub "cdf-commands-${Environment}-RESTLambdaArn"
+      Name: !Sub 'cdf-commands-${Environment}-RESTLambdaArn'
   RestApiFunctionName:
     Description: Commands REST API lambda function name
     Value: !Ref RESTLambdaFunction
@@ -554,4 +539,3 @@ Outputs:
     Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
     Export:
       Name: !Sub 'cdf-commands-${Environment}-apigatewayhost'
-

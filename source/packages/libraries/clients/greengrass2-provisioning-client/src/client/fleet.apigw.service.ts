@@ -11,7 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 /* tslint:disable:no-unused-variable member-ordering */
-
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import * as request from 'superagent';
 import { RequestHeaders } from './common.model';
@@ -20,7 +21,6 @@ import { FleetService, FleetServiceBase } from './fleet.service';
 
 @injectable()
 export class FleetApigwService extends FleetServiceBase implements FleetService {
-
     private readonly baseUrl: string;
 
     public constructor() {
@@ -31,9 +31,15 @@ export class FleetApigwService extends FleetServiceBase implements FleetService 
     async getFleetSummary(additionalHeaders?: RequestHeaders): Promise<TemplateUsage> {
         const url = `${this.baseUrl}${super.fleetRelativeUrl('summary')}`;
 
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-        return res.body;
-
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 }

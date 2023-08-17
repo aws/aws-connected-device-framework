@@ -10,7 +10,7 @@
 #  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: CDF Deployment Helper (AWS Connected Device Framework)
 
@@ -27,10 +27,10 @@ Parameters:
       ID of an existing VPC to deploy CDF (if using AuthType = 'Private') and/or AssetLibrary (if AssetLibraryMode = 'full') into.
       A new VPC will be created if not provided.
     Type: String
-    Default: "N/A"
+    Default: 'N/A'
 
 Conditions:
-  UseExistingVpc: !Not [!Equals [!Ref VpcId, "N/A"]]
+  UseExistingVpc: !Not [!Equals [!Ref VpcId, 'N/A']]
 
 Resources:
   CheckS3VpcEndpoint:
@@ -40,8 +40,8 @@ Resources:
     Properties:
       ServiceToken: !GetAtt CustomResourceLambda.Arn
       VpcId: !Ref VpcId
-      Region: !Sub "${AWS::Region}"
-      ServiceName: "s3"
+      Region: !Sub '${AWS::Region}'
+      ServiceName: 's3'
 
   CheckDynamoDBVpcEndpoint:
     Condition: UseExistingVpc
@@ -50,8 +50,8 @@ Resources:
     Properties:
       ServiceToken: !GetAtt CustomResourceLambda.Arn
       VpcId: !Ref VpcId
-      Region: !Sub "${AWS::Region}"
-      ServiceName: "dynamodb"
+      Region: !Sub '${AWS::Region}'
+      ServiceName: 'dynamodb'
 
   CheckPrivateApiGatewayVPCEndpoint:
     Condition: UseExistingVpc
@@ -60,38 +60,38 @@ Resources:
     Properties:
       ServiceToken: !GetAtt CustomResourceLambda.Arn
       VpcId: !Ref VpcId
-      Region: !Sub "${AWS::Region}"
-      ServiceName: "execute-api"
+      Region: !Sub '${AWS::Region}'
+      ServiceName: 'execute-api'
 
   CustomResourceLambda:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "cdf-cfnCustomResources-${Environment}"
+      FunctionName: !Sub 'cdf-cfnCustomResources-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/libraries/core/deployment-helper/dist/lambda_custom_resource_proxy.handler
-      MemorySize: 128
+      Handler: lambda_custom_resource_proxy.handler
+      MemorySize: 512
       Role: !GetAtt CustomResourceLambdaRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 60
       Tracing: Active
       Environment:
         Variables:
-          APP_CONFIG_DIR: "packages/libraries/core/deployment-helper/dist/config"
-          COMMANDANDCONTROL_API_FUNCTION_NAME: !Sub "cdf-commandandcontrol-rest-${Environment}"
+          APP_CONFIG_DIR: 'config'
+          COMMANDANDCONTROL_API_FUNCTION_NAME: !Sub 'cdf-commandandcontrol-rest-${Environment}'
           COMMANDANDCONTROL_MODE: lambda
 
   CustomResourceLambdaRole:
     Type: AWS::IAM::Role
     Properties:
-      Description: "CDF Core application configuration override"
+      Description: 'CDF Core application configuration override'
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           Effect: Allow
           Principal:
             Service: lambda.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
@@ -100,100 +100,100 @@ Resources:
         - !Ref CustomResourceLambdaPolicies
 
   CustomResourceLambdaPolicies:
-    Type: "AWS::IAM::ManagedPolicy"
+    Type: 'AWS::IAM::ManagedPolicy'
     Metadata:
       cfn_nag:
         rules_to_suppress:
           - id: W13
-            reason: "EC2 full access on resources is to manage unnamed resources"
+            reason: 'EC2 full access on resources is to manage unnamed resources'
     Properties:
-      Description: "CDF Core application configuration override"
-      Path: "/"
+      Description: 'CDF Core application configuration override'
+      Path: '/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Sid: "iot"
+          - Sid: 'iot'
             Action:
-              - "iot:*"
+              - 'iot:*'
             Effect: Allow
-            Resource: "*"
-          - Sid: "sts"
+            Resource: '*'
+          - Sid: 'sts'
             Action:
-              - "sts:*"
+              - 'sts:*'
             Effect: Allow
-            Resource: "*"
-          - Sid: "eventbridge"
+            Resource: '*'
+          - Sid: 'eventbridge'
             Action:
-              - "events:PutEvents"
+              - 'events:PutEvents'
             Effect: Allow
-            Resource: "*"
-          - Sid: "iampassrole"
+            Resource: '*'
+          - Sid: 'iampassrole'
             Action:
-              - "iam:PassRole"
+              - 'iam:PassRole'
             Effect: Allow
-            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-*"
+            Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/cdf-*'
           - Effect: Allow
             Action:
-              - "s3:ListBucket"
-              - "s3:GetObject"
+              - 's3:ListBucket'
+              - 's3:GetObject'
             Resource:
-              - !Sub "arn:aws:s3:::${ArtifactsBucket}"
+              - !Sub 'arn:aws:s3:::${ArtifactsBucket}'
           - Action:
-              - "ec2:DescribeVpcEndpoints"
+              - 'ec2:DescribeVpcEndpoints'
             Effect: Allow
-            Resource: "*"
-          - Sid: "lambda"
+            Resource: '*'
+          - Sid: 'lambda'
             Action:
-              - "lambda:AddPermission"
-              - "lambda:CreateEventSourceMapping"
-              - "lambda:DeleteEventSourceMapping"
-              - "lambda:ListEventSourceMappings"
+              - 'lambda:AddPermission'
+              - 'lambda:CreateEventSourceMapping'
+              - 'lambda:DeleteEventSourceMapping'
+              - 'lambda:ListEventSourceMappings'
             Effect: Allow
-            Resource: "*"
+            Resource: '*'
           - Action:
-              - "lambda:Invoke*"
+              - 'lambda:Invoke*'
             Effect: Allow
             Resource:
-              - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-*"
+              - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-*'
           - Action:
-              - "ec2:CreateVpcEndpoint"
-              - "ec2:DescribeVpcEndpoints"
+              - 'ec2:CreateVpcEndpoint'
+              - 'ec2:DescribeVpcEndpoints'
             Effect: Allow
-            Resource: "*"
+            Resource: '*'
 
   CustomResourceLambdaArnSsmParameter:
-    Type: "AWS::SSM::Parameter"
+    Type: 'AWS::SSM::Parameter'
     Properties:
       Description: Custom Resource Lambda ARN
-      Name: !Sub "/cdf/deployment-helper/${Environment}/CustomResourceLambdaArn"
+      Name: !Sub '/cdf/deployment-helper/${Environment}/CustomResourceLambdaArn'
       Type: String
       Value: !GetAtt CustomResourceLambda.Arn
 
   NotAvailableSsmParameter:
-    Type: "AWS::SSM::Parameter"
+    Type: 'AWS::SSM::Parameter'
     Properties:
       Description: Store Emptry string in SSM parameter to be used for optional parameter
-      Name: !Sub "/cdf/deployment-helper/${Environment}/NotAvailable"
+      Name: !Sub '/cdf/deployment-helper/${Environment}/NotAvailable'
       Type: String
-      Value: "N/A"
+      Value: 'N/A'
 
 Outputs:
   CustomResourceLambdaArn:
     Value: !GetAtt CustomResourceLambda.Arn
     Export:
-      Name: !Sub "cdf-deployment-helper-${Environment}-customResourceLambdaArn"
+      Name: !Sub 'cdf-deployment-helper-${Environment}-customResourceLambdaArn'
   IsS3VpcEndpointEnabled:
     Condition: UseExistingVpc
     Value: !GetAtt CheckS3VpcEndpoint.isNotEnabled
     Export:
-      Name: !Sub "cdf-deployment-helper-${Environment}-isS3VpcEndpointEnabled"
+      Name: !Sub 'cdf-deployment-helper-${Environment}-isS3VpcEndpointEnabled'
   IsDynamoDBVpcEndpointEnabled:
     Condition: UseExistingVpc
     Value: !GetAtt CheckDynamoDBVpcEndpoint.isNotEnabled
     Export:
-      Name: !Sub "cdf-deployment-helper-${Environment}-isDynamoDBVpcEndpointEnabled"
+      Name: !Sub 'cdf-deployment-helper-${Environment}-isDynamoDBVpcEndpointEnabled'
   IsPrivateApiGatewayVPCEndpointEnabled:
     Condition: UseExistingVpc
     Value: !GetAtt CheckPrivateApiGatewayVPCEndpoint.isNotEnabled
     Export:
-      Name: !Sub "cdf-deployment-helper-${Environment}-isPrivateApiGatewayVPCEndpointEnabled"
+      Name: !Sub 'cdf-deployment-helper-${Environment}-isPrivateApiGatewayVPCEndpointEnabled'

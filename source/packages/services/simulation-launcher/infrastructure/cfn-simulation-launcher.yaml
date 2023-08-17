@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,18 +11,17 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: CDF Simulation Launcher 
+Description: CDF Simulation Launcher
 
 Parameters:
-
   ApplicationConfigurationOverride:
     Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
 
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
 
@@ -65,10 +65,9 @@ Parameters:
       - silly
 
 Conditions:
-  LoggingLevelProvided: !Not [ !Equals [ !Ref LoggingLevel, "" ] ]
+  LoggingLevelProvided: !Not [!Equals [!Ref LoggingLevel, '']]
 
 Resources:
-
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
@@ -82,28 +81,28 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W40
-            reason: "Default protocol"
+            reason: 'Default protocol'
           - id: W5
-            reason: "Allow Access to anywhere to the SG"
+            reason: 'Allow Access to anywhere to the SG'
           - id: W9
-            reason: "Allow Access to anywhere to the SG"
+            reason: 'Allow Access to anywhere to the SG'
           - id: W2
-            reason: "Only Allow inbound Access to the SG"
+            reason: 'Only Allow inbound Access to the SG'
           - id: W36
-            reason: "Group Description Provided"
+            reason: 'Group Description Provided'
     Properties:
       GroupDescription: Access to the Fargate containers
       VpcId: !Ref VpcId
       SecurityGroupIngress:
-      - IpProtocol: tcp
-        CidrIp: 0.0.0.0/0
-        FromPort: 22
-        ToPort: 22
+        - IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+          FromPort: 22
+          ToPort: 22
       SecurityGroupEgress:
-      - IpProtocol: -1
-        CidrIp: 0.0.0.0/0
-        FromPort: -1
-        ToPort: -1
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+          FromPort: -1
+          ToPort: -1
 
   ECSRole:
     Type: AWS::IAM::Role
@@ -111,31 +110,31 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W11
-            reason: "Allow ECS to manage Network interfaces"
+            reason: 'Allow ECS to manage Network interfaces'
           - id: W28
-            reason: "static name reference is by environment"
+            reason: 'static name reference is by environment'
     Properties:
       AssumeRolePolicyDocument:
         Statement:
-        - Effect: Allow
-          Principal:
-            Service: [ecs.amazonaws.com]
-          Action: ['sts:AssumeRole']
-      Path: "/"
-      Policies:
-      - PolicyName: !Sub "ecs-service-${Environment}"
-        PolicyDocument:
-          Statement:
           - Effect: Allow
-            Action:
-              - 'ec2:AttachNetworkInterface'
-              - 'ec2:CreateNetworkInterface'
-              - 'ec2:CreateNetworkInterfacePermission'
-              - 'ec2:DeleteNetworkInterface'
-              - 'ec2:DeleteNetworkInterfacePermission'
-              - 'ec2:Describe*'
-              - 'ec2:DetachNetworkInterface'
-            Resource: '*'
+            Principal:
+              Service: [ecs.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      Path: '/'
+      Policies:
+        - PolicyName: !Sub 'ecs-service-${Environment}'
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'ec2:AttachNetworkInterface'
+                  - 'ec2:CreateNetworkInterface'
+                  - 'ec2:CreateNetworkInterfacePermission'
+                  - 'ec2:DeleteNetworkInterface'
+                  - 'ec2:DeleteNetworkInterfacePermission'
+                  - 'ec2:Describe*'
+                  - 'ec2:DetachNetworkInterface'
+                Resource: '*'
 
   ECSTaskExecutionRole:
     Type: AWS::IAM::Role
@@ -143,31 +142,31 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W11
-            reason: "Allow ECS Task to Manage ECR"
+            reason: 'Allow ECS Task to Manage ECR'
           - id: W28
-            reason: "static name reference is by environment"
+            reason: 'static name reference is by environment'
     Properties:
       AssumeRolePolicyDocument:
         Statement:
-        - Effect: Allow
-          Principal:
-            Service: [ecs-tasks.amazonaws.com]
-          Action: ['sts:AssumeRole']
-      Path: "/"
+          - Effect: Allow
+            Principal:
+              Service: [ecs-tasks.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      Path: '/'
       Policies:
-        - PolicyName: !Sub "AmazonECSTaskExecutionRolePolicy-${Environment}"
+        - PolicyName: !Sub 'AmazonECSTaskExecutionRolePolicy-${Environment}'
           PolicyDocument:
             Statement:
-            - Effect: Allow
-              Action:
-                - 'ecr:GetAuthorizationToken'
-                - 'ecr:BatchCheckLayerAvailability'
-                - 'ecr:GetDownloadUrlForLayer'
-                - 'ecr:BatchGetImage'
-                - 'logs:CreateLogStream'
-                - 'logs:PutLogEvents'
-                - 'logs:CreateLogGroup'
-              Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'ecr:GetAuthorizationToken'
+                  - 'ecr:BatchCheckLayerAvailability'
+                  - 'ecr:GetDownloadUrlForLayer'
+                  - 'ecr:BatchGetImage'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                  - 'logs:CreateLogGroup'
+                Resource: '*'
 
   ECSTaskRole:
     Type: AWS::IAM::Role
@@ -175,23 +174,23 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W11
-            reason: "Allow ECS Task to perform GET, LIST on S3"
+            reason: 'Allow ECS Task to perform GET, LIST on S3'
           - id: W28
-            reason: "static name reference is by environment"
+            reason: 'static name reference is by environment'
     Properties:
       AssumeRolePolicyDocument:
         Statement:
-        - Effect: Allow
-          Principal:
-            Service: [ecs-tasks.amazonaws.com]
-          Action: ['sts:AssumeRole']
-      Path: "/"
+          - Effect: Allow
+            Principal:
+              Service: [ecs-tasks.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      Path: '/'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
       Policies:
-        - PolicyName: !Sub "TaskRolePolicy-${Environment}"
+        - PolicyName: !Sub 'TaskRolePolicy-${Environment}'
           PolicyDocument:
             Statement:
               - Effect: Allow
@@ -199,7 +198,7 @@ Resources:
                   - 's3:Get*'
                   - 's3:List*'
                   - 's3:Put*'
-                Resource: "arn:aws:s3:::${BucketName}/*"
+                Resource: 'arn:aws:s3:::${BucketName}/*'
               - Sid: lambda
                 Action:
                   - lambda:InvokeFunction
@@ -211,18 +210,17 @@ Resources:
 
   JMeterTaskDefinition:
     Type: AWS::ECS::TaskDefinition
-    Properties: 
+    Properties:
       Cpu: 1024
       ExecutionRoleArn: !Ref ECSTaskExecutionRole
       TaskRoleArn: !Ref ECSTaskRole
       Memory: 2048
       NetworkMode: awsvpc
-      RequiresCompatibilities: 
+      RequiresCompatibilities:
         - FARGATE
-      ContainerDefinitions: 
-        - 
-          Name: jmeter
-          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${JmeterRepoName}:latest"
+      ContainerDefinitions:
+        - Name: jmeter
+          Image: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${JmeterRepoName}:latest'
           Cpu: 1024
           Memory: 2048
           Essential: true
@@ -236,10 +234,10 @@ Resources:
 
   LogGroup:
     Type: AWS::Logs::LogGroup
-    Properties: 
-      LogGroupName: !Sub "cdf-simulation-launcher-${Environment}"
+    Properties:
+      LogGroupName: !Sub 'cdf-simulation-launcher-${Environment}'
       RetentionInDays: 14
-      
+
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -250,7 +248,7 @@ Resources:
           Principal:
             Service: lambda.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref LambdaPolicy
         - arn:aws:iam::aws:policy/AWSLambdaExecute
@@ -265,52 +263,52 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W13
-            reason: "Lambda Permission to run ECS Tasks"
+            reason: 'Lambda Permission to run ECS Tasks'
     Properties:
-      Description: "cdf-simulation-launcher policy"
-      Path: "/"
+      Description: 'cdf-simulation-launcher policy'
+      Path: '/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
               - 'sns:Publish'
             Effect: Allow
-            Resource: 
+            Resource:
               - !Ref SnsTopic
           - Action:
               - 'ecs:RunTask'
             Effect: Allow
             Resource:
-              - '*'         
+              - '*'
           - Action:
-              - "iam:PassRole"
+              - 'iam:PassRole'
             Effect: Allow
             Resource:
               - !GetAtt ECSTaskRole.Arn
               - !GetAtt ECSTaskExecutionRole.Arn
               - !GetAtt ECSRole.Arn
-              - !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-simulation-launcher-*"
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/cdf-simulation-launcher-*'
 
   LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub 'cdf-simulation-launcher-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/simulation-launcher/dist/sns_proxy.handler
-      MemorySize: 128
+      Handler: sns_proxy.handler
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 300
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/simulation-launcher/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_S3_BUCKET: !Ref BucketName
           AWS_ECS_SUBNETIDS: !Ref PublicSubNetIds
           AWS_ECS_CLUSTERID: !Ref ECSCluster
           AWS_ECS_SECURITYGROUPID: !Ref FargateContainerSecurityGroup
           AWS_ECS_TASKDEFINITIONARN: !Ref JMeterTaskDefinition
-          LOGGING_LEVEL: !If [ LoggingLevelProvided, !Ref LoggingLevel, !Ref AWS::NoValue ]
+          LOGGING_LEVEL: !If [LoggingLevelProvided, !Ref LoggingLevel, !Ref AWS::NoValue]
       Tracing: Active
     DependsOn:
       - LambdaExecutionRole
@@ -321,11 +319,11 @@ Resources:
       KmsMasterKeyId: !Ref KmsKeyId
 
   SnsTopicSubscription:
-    Type: AWS::SNS::Subscription   
+    Type: AWS::SNS::Subscription
     Properties:
       TopicArn: !Ref SnsTopic
       Endpoint: !GetAtt LambdaFunction.Arn
-      Protocol: "lambda"
+      Protocol: 'lambda'
     DependsOn:
       - LambdaFunction
 
@@ -337,30 +335,27 @@ Resources:
       Principal: sns.amazonaws.com
       SourceArn: !Ref SnsTopic
 
-
 Outputs:
   FargateContainerSecurityGroup:
     Description: Fargate Container security group
-    Value:
-      !Ref FargateContainerSecurityGroup
-    Export: 
-      Name: !Sub "cdf-simulation-launcher-${Environment}-FargateContainerSecurityGroup"
+    Value: !Ref FargateContainerSecurityGroup
+    Export:
+      Name: !Sub 'cdf-simulation-launcher-${Environment}-FargateContainerSecurityGroup'
   ECSCluster:
     Description: ECS Cluster
     Value:
       Ref: ECSCluster
-    Export: 
-      Name: !Sub "cdf-simulation-launcher-${Environment}-ECSCluster"
+    Export:
+      Name: !Sub 'cdf-simulation-launcher-${Environment}-ECSCluster'
   JMeterTaskDefinition:
     Description: ECS JMeter Task Definition
     Value:
       Ref: JMeterTaskDefinition
-    Export: 
-      Name: !Sub "cdf-simulation-launcher-${Environment}-JMeterTaskDefinition"
+    Export:
+      Name: !Sub 'cdf-simulation-launcher-${Environment}-JMeterTaskDefinition'
   SnsTopic:
     Description: SNS Topic for launching simulation
     Value:
       Ref: SnsTopic
-    Export: 
-      Name: !Sub "cdf-simulation-launcher-${Environment}-SnsTopic"
-
+    Export:
+      Name: !Sub 'cdf-simulation-launcher-${Environment}-SnsTopic'

@@ -17,7 +17,7 @@ function help_message {
     cat << EOF
 
 NAME
-    deploy.bash    
+    deploy.bash
 
 DESCRIPTION
     Builds and deploys the CDF Jmeter container.
@@ -27,7 +27,7 @@ MANDATORY ARGUMENTS:
     -n (string)  Repository Name
 
 OPTIONAL ARGUMENTS
-    -b (flag)     Build Image before publishing   
+    -b (flag)     Build Image before publishing
     -R (string)   AWS region.
     -P (string)   AWS profile.
 
@@ -64,7 +64,7 @@ Running with:
   REPOSITORY_NAME:                  $REPOSITORY_NAME
   BUILD_IMAGE:                      $BUILD
   AWS_REGION:                       $AWS_REGION
-  AWS_PROFILE:                      $AWS_PROFILE                
+  AWS_PROFILE:                      $AWS_PROFILE
 "
 
 cwd=$(dirname "$0")

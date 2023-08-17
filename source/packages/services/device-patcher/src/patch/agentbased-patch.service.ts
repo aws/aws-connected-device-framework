@@ -10,23 +10,21 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import ow from 'ow';
 import { inject, injectable } from 'inversify';
+import ow from 'ow';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger.util';
 
-import { AssociationModel, PatchItem, PatchSource } from './patch.model';
-import { ActivationDao } from '../activation/activation.dao';
-import { AgentbasedPatchDao } from './agentbased-patch.dao';
-import { ExpressionParser } from '../utils/expression.util';
 import { DescribeInstanceInformationRequest } from 'aws-sdk/clients/ssm';
+import { ActivationDao } from '../activation/activation.dao';
 import { PatchTemplatesService } from '../templates/template.service';
-
+import { ExpressionParser } from '../utils/expression.util';
+import { AgentbasedPatchDao } from './agentbased-patch.dao';
+import { AssociationModel, PatchItem, PatchSource } from './patch.model';
 
 @injectable()
 export class AgentbasedPatchService {
-
     private readonly ssm: AWS.SSM;
     private readonly sqs: AWS.SQS;
 
@@ -59,18 +57,21 @@ export class AgentbasedPatchService {
 
         const sqsRequest: AWS.SQS.SendMessageRequest = {
             QueueUrl: this.queueUrl,
-            MessageBody: JSON.stringify(patch)
+            MessageBody: JSON.stringify(patch),
         };
 
         try {
             await this.sqs.sendMessage(sqsRequest).promise();
         } catch (err) {
-            logger.error(`agentbasedPatch.service sqs.sendMessage: in: ${sqsRequest} : error: ${JSON.stringify(err)}`);
+            logger.error(
+                `agentbasedPatch.service sqs.sendMessage: in: ${sqsRequest} : error: ${JSON.stringify(
+                    err
+                )}`
+            );
             throw err;
         }
 
         logger.debug(`agentbasedPatch.service: create: exit`);
-
     }
 
     public async deploy(patch: PatchItem): Promise<void> {
@@ -101,13 +102,12 @@ export class AgentbasedPatchService {
             throw new Error('TARGET_INSTANCE_NOT_FOUND');
         }
 
-
         let association;
         try {
             const extraVars = {
                 ...template?.extraVars,
-                ...patch.extraVars
-            }
+                ...patch.extraVars,
+            };
 
             await this.transformExtraVars(extraVars);
 
@@ -121,21 +121,21 @@ export class AgentbasedPatchService {
                     SourceInfo: [playbook],
                     InstallDependencies: ['False'],
                     ExtraVariables: this.convertExtraVarsToString(extraVars),
-                    PlaybookFile: [`${template.name}___${template.playbookName}`]
+                    PlaybookFile: [`${template.name}___${template.playbookName}`],
                 },
                 OutputLocation: {
-                    'S3Location': {
-                        'OutputS3BucketName': this.artifactsBucket,
-                        'OutputS3KeyPrefix': `${this.artifactsBucketPrefix}logs/`
-                    }
+                    S3Location: {
+                        OutputS3BucketName: this.artifactsBucket,
+                        OutputS3KeyPrefix: `${this.artifactsBucketPrefix}logs/`,
+                    },
                 },
                 ComplianceSeverity: 'UNSPECIFIED',
                 Targets: [
                     {
                         Values: [instanceId],
-                        Key: 'InstanceIds'
-                    }
-                ]
+                        Key: 'InstanceIds',
+                    },
+                ],
             };
             association = await this.ssm.createAssociation(associationParams).promise();
         } catch (err) {
@@ -145,12 +145,14 @@ export class AgentbasedPatchService {
 
         const patchAssociation: AssociationModel = {
             patchId: patch.patchId,
-            associationId: association.AssociationDescription.AssociationId
+            associationId: association.AssociationDescription.AssociationId,
         };
 
         await this.agentbasedPatchDao.save(patchAssociation);
 
-        logger.debug(`agentbasedPatchService: deploy: out: result: ${JSON.stringify(association)}`);
+        logger.debug(
+            `agentbasedPatchService: deploy: out: result: ${JSON.stringify(association)}`
+        );
     }
 
     public async delete(patch: PatchItem): Promise<void> {
@@ -170,7 +172,7 @@ export class AgentbasedPatchService {
         }
 
         const params: AWS.SSM.DeleteAssociationRequest = {
-            AssociationId: association.associationId
+            AssociationId: association.associationId,
         };
 
         let result;
@@ -187,7 +189,7 @@ export class AgentbasedPatchService {
     }
 
     public async update(patch: PatchItem): Promise<void> {
-        logger.debug(`agentbasedPatchService: update in: patch: ${patch}`)
+        logger.debug(`agentbasedPatchService: update in: patch: ${patch}`);
 
         ow(patch, 'Patch Information', ow.object.nonEmpty);
         ow(patch.patchId, 'Patch Id', ow.string.nonEmpty);
@@ -213,15 +215,14 @@ export class AgentbasedPatchService {
 
         // If an association is found, then update the association
         try {
-
             const playbook = await this.getAssociationSourceParameter(template.playbookSource);
 
             const extraVars = {
                 ...template?.extraVars,
-                ...patch.extraVars
-            }
+                ...patch.extraVars,
+            };
 
-            await this.transformExtraVars(extraVars)
+            await this.transformExtraVars(extraVars);
 
             const associationUpdateParams: AWS.SSM.UpdateAssociationRequest = {
                 Name: this.ssmAnsiblePatchDocument,
@@ -232,14 +233,14 @@ export class AgentbasedPatchService {
                     SourceType: ['S3'],
                     SourceInfo: [playbook],
                     ExtraVariables: this.convertExtraVarsToString(extraVars),
-                    PlaybookFile: [`${template.name}___${template.playbookName}`]
+                    PlaybookFile: [`${template.name}___${template.playbookName}`],
                 },
                 OutputLocation: {
-                    'S3Location': {
-                        'OutputS3BucketName': this.artifactsBucket,
-                        'OutputS3KeyPrefix': `${this.artifactsBucketPrefix}logs/`
-                    }
-                }
+                    S3Location: {
+                        OutputS3BucketName: this.artifactsBucket,
+                        OutputS3KeyPrefix: `${this.artifactsBucketPrefix}logs/`,
+                    },
+                },
             };
             await this.ssm.updateAssociation(associationUpdateParams).promise();
         } catch (err) {
@@ -249,15 +250,19 @@ export class AgentbasedPatchService {
     }
 
     private async getInstanceByActivationId(activationId: string) {
-        logger.debug(`agentbasedPatchService: getInstanceByActivationId: in: activation: ${activationId}`);
+        logger.debug(
+            `agentbasedPatchService: getInstanceByActivationId: in: activation: ${activationId}`
+        );
 
         ow(activationId, 'Activation Id', ow.string.nonEmpty);
 
         const params: DescribeInstanceInformationRequest = {
-            Filters: [{
-                Key: 'ActivationIds',
-                Values: [activationId]
-            }]
+            Filters: [
+                {
+                    Key: 'ActivationIds',
+                    Values: [activationId],
+                },
+            ],
         };
         let result;
         try {
@@ -268,11 +273,14 @@ export class AgentbasedPatchService {
         }
 
         if (!result || result.InstanceInformationList.length === 0) {
-            throw new Error('TARGET_INSTANCE_NOT_FOUND')
+            throw new Error('TARGET_INSTANCE_NOT_FOUND');
         }
 
-
-        logger.debug(`agentbasedPatchService: getInstanceByActivationId: exit: instance: ${JSON.stringify(result)}`);
+        logger.debug(
+            `agentbasedPatchService: getInstanceByActivationId: exit: instance: ${JSON.stringify(
+                result
+            )}`
+        );
 
         return result.InstanceInformationList[0].InstanceId;
     }
@@ -283,10 +291,12 @@ export class AgentbasedPatchService {
         ow(instanceId, 'Instance Id', ow.string.nonEmpty);
 
         const params = {
-            InstanceInformationFilterList: [{
-                key: 'InstanceIds',
-                valueSet: [instanceId]
-            }]
+            InstanceInformationFilterList: [
+                {
+                    key: 'InstanceIds',
+                    valueSet: [instanceId],
+                },
+            ],
         };
         let result;
         try {
@@ -296,17 +306,21 @@ export class AgentbasedPatchService {
             throw err;
         }
 
-        if(!result.InstanceInformationList || result.InstanceInformationList.length === 0) {
-            throw new Error("TARGET_INSTANCE_NOT_FOUND")
+        if (!result.InstanceInformationList || result.InstanceInformationList.length === 0) {
+            throw new Error('TARGET_INSTANCE_NOT_FOUND');
         }
 
-        logger.debug(`agentbasedPatchService: getInstance: exit: instance: ${JSON.stringify(result)}`);
+        logger.debug(
+            `agentbasedPatchService: getInstance: exit: instance: ${JSON.stringify(result)}`
+        );
 
         return result.InstanceInformationList[0];
     }
 
     public async getPatchByAssociationId(associationId: string): Promise<AssociationModel> {
-        logger.debug(`agentbasedPatchDao: getPatchByAssociationId in: associationId: ${associationId}`);
+        logger.debug(
+            `agentbasedPatchDao: getPatchByAssociationId in: associationId: ${associationId}`
+        );
 
         ow(associationId, 'Association Id', ow.string.nonEmpty);
 
@@ -318,10 +332,13 @@ export class AgentbasedPatchService {
             throw err;
         }
 
-        logger.debug(`agentbasedPatchService: getPatchByInstanceId: exit: association: ${JSON.stringify(result)}`);
+        logger.debug(
+            `agentbasedPatchService: getPatchByInstanceId: exit: association: ${JSON.stringify(
+                result
+            )}`
+        );
 
         return result;
-
     }
 
     private getAssociationSourceParameter(source: PatchSource): string {
@@ -342,23 +359,27 @@ export class AgentbasedPatchService {
 
     private convertExtraVarsToString(extraVars: { [key: string]: string }): [string] {
         const vars: string[] = [];
-        Object.keys(extraVars).forEach(key => {
-            vars.push(`${key}=${extraVars[key]}`)
+        Object.keys(extraVars).forEach((key) => {
+            vars.push(`${key}=${extraVars[key]}`);
         });
-        return [vars.length > 0 ? vars.join(" ") : ""];
+        return [vars.length > 0 ? vars.join(' ') : ''];
     }
 
     /*
     This Function analysis extraVars object and evaluates any expressions, if an expression is evaled
     it will transform the property to be evaled expression
      */
-    private async transformExtraVars(extraVars: { [key: string]: string }): Promise<{ [key: string]: string }> {
+    private async transformExtraVars(extraVars: {
+        [key: string]: string;
+    }): Promise<{ [key: string]: string }> {
         const vars = Object.keys(extraVars);
 
         for (const v of vars) {
-            extraVars[v] = Buffer.from(await this.expressionParser.eval(extraVars[v])).toString('base64');
+            extraVars[v] = Buffer.from(await this.expressionParser.eval(extraVars[v])).toString(
+                'base64'
+            );
         }
 
-        return extraVars
+        return extraVars;
     }
 }

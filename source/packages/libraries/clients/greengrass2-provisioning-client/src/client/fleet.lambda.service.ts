@@ -10,19 +10,23 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@awssolutions/cdf-lambda-invoke';
 import { inject, injectable } from 'inversify';
 import { RequestHeaders } from './common.model';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
-import { FleetService, FleetServiceBase } from './fleet.service';
 import { TemplateUsage } from './fleet.model';
+import { FleetService, FleetServiceBase } from './fleet.service';
 
 @injectable()
 export class FleetLambdaService extends FleetServiceBase implements FleetService {
-
     private functionName: string;
 
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -30,7 +34,6 @@ export class FleetLambdaService extends FleetServiceBase implements FleetService
     }
 
     async getFleetSummary(additionalHeaders?: RequestHeaders): Promise<TemplateUsage> {
-
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.fleetRelativeUrl('summary'))
             .setMethod('GET')
@@ -39,5 +42,4 @@ export class FleetLambdaService extends FleetServiceBase implements FleetService
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
     }
-
 }

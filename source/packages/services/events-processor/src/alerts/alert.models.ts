@@ -13,7 +13,6 @@
 import { TargetsItem } from '../api/subscriptions/subscription.models';
 
 export class AlertItem {
-
     readonly version: 2.0;
 
     time: string;
@@ -43,6 +42,6 @@ export class AlertItem {
     };
 
     templatePropertiesData: {
-        [key: string]: string | number | boolean
+        [key: string]: string | number | boolean;
     };
 }

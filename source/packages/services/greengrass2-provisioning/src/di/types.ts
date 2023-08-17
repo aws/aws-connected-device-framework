@@ -10,8 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
- export const TYPES = {
-
+export const TYPES = {
     Controller: Symbol.for('Controller'),
     HttpHeaderUtils: Symbol.for('HttpHeaderUtils'),
 
@@ -48,22 +47,22 @@
 
     DynamoDB: Symbol.for('DynamoDBV3'),
     DynamoDBFactory: Symbol.for('Factory<DynamoDBV3>'),
-    
+
     DynamoDBDocument: Symbol.for('DynamoDBDocumentV3'),
     DynamoDBDocumentFactory: Symbol.for('Factory<DynamoDBDocumentV3>'),
-    
+
     Greengrassv2: Symbol.for('Greengrassv2V3'),
     Greengrassv2Factory: Symbol.for('Factory<Greengrassv2V3>'),
-    
+
     Iot: Symbol.for('IotV3'),
     IotFactory: Symbol.for('Factory<IotV3>'),
-    
+
     Lambda: Symbol.for('LambdaV3'),
     LambdaFactory: Symbol.for('Factory<LambdaV3>'),
-    
+
     S3: Symbol.for('S3V3'),
     S3Factory: Symbol.for('Factory<S3V3>'),
-    
+
     SQS: Symbol.for('SQSV3'),
     SQSFactory: Symbol.for('Factory<SQSV3>'),
-}
+};

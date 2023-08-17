@@ -1,6 +1,7 @@
 # CERTIFICATE VENDOR CONFIGURATION
 
 The recommended way to create a local configuration file for the Certificate Vendor service is through CDF's [installer](../../installer/README.md#deployment-using-wizard).
+
 # Configuration for Running Locally
 
 Once you had deployed cdf to your AWS account, you can generate `.env` file to be used for your local development
@@ -33,7 +34,7 @@ MQTT_TOPICS_ACK_ROOT=cdf/certificates/+/ack
 FEATURES_DELETEPREVIOUSCERTIFICATE=false
 
 # When a certficate has been vended and activated, if the following values are set then the device registry
-# or Asset Library (depending on which mode the app is running in) is updated by setting the key defined in 
+# or Asset Library (depending on which mode the app is running in) is updated by setting the key defined in
 # `defaults.device.state.success.key` to the value defined in `defaults.device.state.success.value`.
 DEFAULTS_DEVICE_STATUS_SUCCESS_KEY=status
 DEFAULTS_DEVICE_STATUS_SUCCESS_VALUE=active

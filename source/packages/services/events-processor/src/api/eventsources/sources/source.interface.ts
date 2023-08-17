@@ -12,9 +12,7 @@
  *********************************************************************************************************************/
 import { EventSourceDetailResource } from '../eventsource.models';
 
-export interface EventSource  {
-
-    create(model:EventSourceDetailResource) : Promise<void>;
-    delete(eventSourceId:string) : Promise<void>;
-
+export interface EventSource {
+    create(model: EventSourceDetailResource): Promise<void>;
+    delete(eventSourceId: string): Promise<void>;
 }

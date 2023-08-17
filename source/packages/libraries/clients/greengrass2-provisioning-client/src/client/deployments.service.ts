@@ -10,31 +10,32 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {PathHelper} from '../utils/path.helper';
-import {ClientServiceBase} from './common.service';
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
 import { RequestHeaders } from './common.model';
-import { NewDeploymentTask, DeploymentTask } from './deployments.model';
+import { ClientServiceBase } from './common.service';
+import { DeploymentTask, NewDeploymentTask } from './deployments.model';
 
 export interface DeploymentsService {
+    createDeploymentTask(
+        task: NewDeploymentTask,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string>;
 
-    createDeploymentTask(task:NewDeploymentTask, additionalHeaders?:RequestHeaders) : Promise<string>;
-
-    getDeploymentTask(taskId: string, additionalHeaders?:RequestHeaders) : Promise<DeploymentTask>;
+    getDeploymentTask(taskId: string, additionalHeaders?: RequestHeaders): Promise<DeploymentTask>;
 }
 
 @injectable()
 export class DeploymentsServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }
 
-    protected deploymentTasksRelativeUrl() : string {
+    protected deploymentTasksRelativeUrl(): string {
         return '/deploymentTasks';
     }
 
-    protected deploymentTaskRelativeUrl(name:string) : string {
+    protected deploymentTaskRelativeUrl(name: string): string {
         return PathHelper.encodeUrl('deploymentTasks', name);
     }
 }

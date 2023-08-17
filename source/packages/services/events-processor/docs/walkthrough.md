@@ -4,11 +4,11 @@
 
 The following describes how to create an event source, define an event, then subcribe to receive alerts of processed events.
 
-**Note**:  review the [swagger definition](./swagger.yml) for a full list of available endpoints.
+**Note**: review the [swagger definition](./swagger.yml) for a full list of available endpoints.
 
-## Step 1:  Define an event source.
+## Step 1: Define an event source.
 
-There are 2 types of event source defined:  DynamoDB, and IoT Core:
+There are 2 types of event source defined: DynamoDB, and IoT Core:
 
 **Note**: When defining an event source, ensure no attributes or properties of the source's data attirbutes collides with the CDF internal
 properties. The following keywords should be considered as reserved keywords.
@@ -27,6 +27,7 @@ If such properties needs to used, they can be prefixed to be differentiated from
 - `dynamoDb.tableName`: the DynamoDB table name
 
 #### Request
+
 ```
 POST /eventsources
 Accept: application/vnd.aws-cdf-v2.0+json
@@ -43,6 +44,7 @@ Content-Type: application/vnd.aws-cdf-v2.0+json
 ```
 
 #### Response
+
 `204 No Content`
 
 ### An IOT Core event source
@@ -51,10 +53,10 @@ Content-Type: application/vnd.aws-cdf-v2.0+json
 - `sourceType`: must set to `IoTCore`
 - `principal`: the attribute witin the table that uniquely represents the item in context
 - `iotCore.mqttTopic`: the MQTT topic to subscribe to
-- `iotCore.attributes`: A mapping of attributes from the incoming event to transform to the common event format.  In the example below, the incoming attribue `bl` will be transformed to `attributes.batteryLevel`, and `sensor.1.value` will be transformed to `attributes.temperature`.
-
+- `iotCore.attributes`: A mapping of attributes from the incoming event to transform to the common event format. In the example below, the incoming attribue `bl` will be transformed to `attributes.batteryLevel`, and `sensor.1.value` will be transformed to `attributes.temperature`.
 
 #### Request
+
 ```
 POST /eventsources
 Accept: application/vnd.aws-cdf-v2.0+json
@@ -74,11 +76,13 @@ Content-Type: application/vnd.aws-cdf-v2.0+json
 ```
 
 #### Response
+
 `204 No Content`
 
-## Step 2:  View the available event sources
+## Step 2: View the available event sources
 
 #### Request
+
 ```
 GET /eventsources
 Accept: application/vnd.aws-cdf-v2.0+json
@@ -86,6 +90,7 @@ Content-Type: application/vnd.aws-cdf-v2.0+json
 ```
 
 #### Response
+
 ```
 {
     "results": [
@@ -97,15 +102,15 @@ Content-Type: application/vnd.aws-cdf-v2.0+json
 }
 ```
 
-## Step 3:  Define an event
+## Step 3: Define an event
 
 - `name`: a name to identify the event
 - `conditions`: the example below evalutes the `batteryLevel` attribute of the incoming common event format message, and raises an alert if its value is less then or equals to a value that will be provided at the time of creating the subscription (represented by the $bl parameter)
-- `supportedTargets`: the example below supported 2 targets: email and sms.  Email will use the default template, and sms using the small template
+- `supportedTargets`: the example below supported 2 targets: email and sms. Email will use the default template, and sms using the small template
 - `templates`: a definition of the templates (written in VTL) that are referenced by the supported targets
 
-
 #### Request
+
 ```
 POST /eventsources/arn%3Aaws%3Adynamodb%3Aus-west-2%3AXXXXXXXXXX%3Atable%2FTelemetry/events
 Accept: application/vnd.aws-cdf-v2.0+json
@@ -131,11 +136,13 @@ Content-Type: application/vnd.aws-cdf-v2.0+json
 ```
 
 #### Response
+
 `204 No Content`
 
-## Step 4:  View the available events for an event source
+## Step 4: View the available events for an event source
 
 #### Request
+
 ```
 GET /eventsources/arn%3Aaws%3Adynamodb%3Aus-west-2%3AXXXXXXXXXX%3Atable%2FdeansTest/events
 Accept: application/vnd.aws-cdf-v2.0+json
@@ -143,6 +150,7 @@ Content-Type: application/vnd.aws-cdf-v2.0+json
 ```
 
 #### Response
+
 ```
 {
     "results": [
@@ -177,7 +185,7 @@ Content-Type: application/vnd.aws-cdf-v2.0+json
 }
 ```
 
-## Step 5:  Subscribe to an event
+## Step 5: Subscribe to an event
 
 - `user.id`: unique ID of the user
 - `principalValue`: for an incoming rule to be evaluated for this user, the value of principalValue must represent the value of the principal attribute defined for the event
@@ -185,6 +193,7 @@ Content-Type: application/vnd.aws-cdf-v2.0+json
 - `ruleParameterValues`: if the event conditions contain parameters as part of its value, they must be provided when creating the subscription
 
 #### Request
+
 ```
 POST /events/5fb570e0-71b0-11e9-b534-5d33aa3bde97/subscriptions
 Accept: application/vnd.aws-cdf-v2.0+json
@@ -208,6 +217,6 @@ Content-Type: application/vnd.aws-cdf-v2.0+json
 }
 ```
 
-
 #### Response
+
 `204 No Content`

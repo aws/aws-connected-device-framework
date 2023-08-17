@@ -24,48 +24,50 @@ const tagKeyPattern = /^[\p{L}\p{N}+\-=._:@]{1,128}$/u;
 const tagValuePattern = /^[\p{L}\p{N}\p{Zs}+\-=._:/@]{0,256}$/u;
 // const kvRegex = /^([\p{L}\p{N}+\-=._:/@]{1,128})=([\p{L}\p{Zs}\p{N}+\-=._:@]{1,256})*$/u;
 export function isValidTagKey(str: string): boolean {
-  // The aws: prefix is reserved for AWS use.
-  if (str.startsWith('aws:')) return false;
-  // [EC2] Instance tag keys can't comprise only . (one period), .. (two periods), or _index.
-  if (str === '.' || str === '..' || str === '_index') return false;
-  if (!str.match(tagKeyPattern)) return false;
-  return true;
+    // The aws: prefix is reserved for AWS use.
+    if (str.startsWith('aws:')) return false;
+    // [EC2] Instance tag keys can't comprise only . (one period), .. (two periods), or _index.
+    if (str === '.' || str === '..' || str === '_index') return false;
+    if (!str.match(tagKeyPattern)) return false;
+    return true;
 }
 
 export function isValidTagValue(str: string): boolean {
-  // values starting with, ending with, or consisting of only whitespace are discouraged
-  if (str.trim() !== str) return false;
-  if (!str.match(tagValuePattern)) return false;
-  else return true;
+    // values starting with, ending with, or consisting of only whitespace are discouraged
+    if (str.trim() !== str) return false;
+    if (!str.match(tagValuePattern)) return false;
+    else return true;
 }
 
 export class TagsList {
-  public tags: Tag[] = [];
+    public tags: Tag[] = [];
 
-  constructor(tagsString: string) {
-    ow(tagsString, ow.string);
-    if (tagsString.endsWith(';')) tagsString = tagsString.substring(0, tagsString.length - 1);
-    if (tagsString.length === 0) return;
+    constructor(tagsString: string) {
+        ow(tagsString, ow.string);
+        if (tagsString.endsWith(';')) tagsString = tagsString.substring(0, tagsString.length - 1);
+        if (tagsString.length === 0) return;
 
-    const keyvals = tagsString.split(';');
-    ow(keyvals.length % 2, ow.number.equal(0));
+        const keyvals = tagsString.split(';');
+        ow(keyvals.length % 2, ow.number.equal(0));
 
-    for (let idx = 0; idx < keyvals.length / 2; idx++) {
-      const key = keyvals[idx * 2];
-      const value = keyvals[idx * 2 + 1];
-      this.tags.push({ key, value });
+        for (let idx = 0; idx < keyvals.length / 2; idx++) {
+            const key = keyvals[idx * 2];
+            const value = keyvals[idx * 2 + 1];
+            this.tags.push({ key, value });
+        }
     }
-  }
 
-  public asCLIOptions(): string[] {
-    return this.tags.map(t => `${t.key}=${t.value}`);
-  }
+    public asCLIOptions(): string[] {
+        return this.tags.map((t) => `${t.key}=${t.value}`);
+    }
 
-  public asJSONFile(): { Key: string, Value: string }[] {
-    return this.tags.map(t => { return { Key: t.key, Value: t.value } });
-  }
+    public asJSONFile(): { Key: string; Value: string }[] {
+        return this.tags.map((t) => {
+            return { Key: t.key, Value: t.value };
+        });
+    }
 
-  public get length(): number {
-    return this.tags.length;
-  }
+    public get length(): number {
+        return this.tags.length;
+    }
 }

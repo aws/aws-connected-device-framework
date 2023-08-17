@@ -13,5 +13,5 @@
 import { EventModel } from '../events.models';
 
 export interface EventAction {
-    execute(event:EventModel):Promise<EventModel>;
+    execute(event: EventModel): Promise<EventModel>;
 }

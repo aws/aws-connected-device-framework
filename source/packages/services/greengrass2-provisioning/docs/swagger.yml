@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: "Connected Device Framework: Greengrass V2 Provisioning"
+  title: 'Connected Device Framework: Greengrass V2 Provisioning'
   description: >
     Allows for management and bulk provisioning of Greengrass V2 core devices.
 
@@ -35,9 +35,8 @@ tags:
     description: >
       Tasks are what manage the creation of Greengrass core deployments.
 
-
 paths:
-  "/templates":
+  '/templates':
     get:
       parameters:
         - $ref: '#/components/parameters/count'
@@ -47,14 +46,14 @@ paths:
       summary: List all available templates.
       operationId: listTemplates
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/TemplateList"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/TemplateList'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags:
         - Templates
@@ -77,7 +76,7 @@ paths:
                     - key: com.example.PythonRuntime
                       version: 1.0.0
                       configurationUpdate:
-                        merge: "{\"pythonVersion\":\"3.7\"}"
+                        merge: '{"pythonVersion":"3.7"}'
               IncludingReset:
                 description: The following example components object specifies to deploy this industrial dashboard component and configuration update.
                 value:
@@ -87,9 +86,9 @@ paths:
                       version: 1.0.0
                       configurationUpdate:
                         reset:
-                          - "/network/useHttps"
-                          - "/tags"
-                        merge: "{\"tags\":[\"/boiler/1/temperature\",\"/boiler/1/pressure\",\"/boiler/2/temperature\",\"/boiler/2/pressure\"]}"
+                          - '/network/useHttps'
+                          - '/tags'
+                        merge: '{"tags":["/boiler/1/temperature","/boiler/1/pressure","/boiler/2/temperature","/boiler/2/pressure"]}'
               JobConfig:
                 description: The following example request overrides any default job rollout config.
                 value:
@@ -98,7 +97,7 @@ paths:
                     - key: com.example.PythonRuntime
                       version: 1.0.0
                       configurationUpdate:
-                        merge: "{\"pythonVersion\":\"3.7\"}"
+                        merge: '{"pythonVersion":"3.7"}'
                   jobConfig:
                     jobExecutionsRolloutConfig:
                       exponentialRate:
@@ -124,7 +123,7 @@ paths:
                     - key: com.example.PythonRuntime
                       version: 1.0.0
                       configurationUpdate:
-                        merge: "{\"pythonVersion\":\"3.7\"}"
+                        merge: '{"pythonVersion":"3.7"}'
                   DeploymentPolicies:
                     failureHandlingPolicy: ROLLBACK
                     componentUpdatePolicy:
@@ -134,7 +133,7 @@ paths:
                       timeoutInSeconds: 60
 
       responses:
-        "201":
+        '201':
           description: Created
           headers:
             location:
@@ -149,12 +148,12 @@ paths:
               schema:
                 type: integer
               description: Version of template created.
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "409":
-          $ref: "#/components/responses/Conflict"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
 
-  "/templates/{templateName}":
+  '/templates/{templateName}':
     parameters:
       - $ref: '#/components/parameters/templateName'
     put:
@@ -171,7 +170,7 @@ paths:
             schema:
               $ref: '#/components/schemas/EditableTemplate'
       responses:
-        "204":
+        '204':
           description: Updated
           headers:
             location:
@@ -186,8 +185,8 @@ paths:
               schema:
                 type: integer
               description: New latest version of template.
-        "400":
-          $ref: "#/components/responses/BadRequest"
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
     get:
       tags:
@@ -197,14 +196,14 @@ paths:
         Returns a specific template by template name.
       operationId: getTemplate
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Template"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Template'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
     delete:
       tags:
@@ -214,12 +213,12 @@ paths:
         Deletes a template by template name.
       operationId: deleteTemplate
       responses:
-        "204":
+        '204':
           description: No Content
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/templates/{templateName}/versions":
+  '/templates/{templateName}/versions':
     parameters:
       - $ref: '#/components/parameters/templateName'
     get:
@@ -233,16 +232,16 @@ paths:
         List all versions for a specific template.
       operationId: listTemplateVersions
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/TemplateVersionList"
-        "404":
-          $ref: "#/components/responses/NotFound"
-    
-  "/templates/{templateName}/versions/{templateVersion}":
+                $ref: '#/components/schemas/TemplateVersionList'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  '/templates/{templateName}/versions/{templateVersion}':
     parameters:
       - $ref: '#/components/parameters/templateName'
       - $ref: '#/components/parameters/templateVersion'
@@ -254,16 +253,16 @@ paths:
         Retrieve a specific template version.
       operationId: getTemplateVersion
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Template"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Template'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/coreTasks":
+  '/coreTasks':
     post:
       tags:
         - Core Device Tasks
@@ -273,7 +272,7 @@ paths:
 
         When `Create`, if the referenced `thingName` does not exist, an AWS IoT Thing is provisioned using the provided `provisioningTemplate`, then configured as a Greengrass V2 Core device. If it exists, the AWS IoT Thing is not updated but the Greengrass V2 Core device configuration is.
 
-        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the cores are being created/deleted in the background. Use the `GET /coreTasks/:taskId` to retrieve the status of the task.
+        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the cores are being created/deleted in the background. Use the `GET /coreTasks/{taskId}` to retrieve the status of the task.
 
       operationId: createCoreTask
       requestBody:
@@ -303,7 +302,7 @@ paths:
                     - name: my-core-two
                     - name: my-core-three
       responses:
-        "202":
+        '202':
           description: Accepted
           headers:
             location:
@@ -317,7 +316,7 @@ paths:
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/CoreTask"
+                $ref: '#/components/schemas/CoreTask'
 
     get:
       parameters:
@@ -327,17 +326,17 @@ paths:
         - Core Device Tasks
       summary: Lists core tasks.
       description: >
-        Lists all core tasks executed to create Greengrass V2 cores managed by this service. 
+        Lists all core tasks executed to create Greengrass V2 cores managed by this service.
       operationId: listCoreTasks
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/CoreTaskList"
+                $ref: '#/components/schemas/CoreTaskList'
 
-  "/coreTasks/{taskId}":
+  '/coreTasks/{taskId}':
     parameters:
       - $ref: '#/components/parameters/taskId'
     get:
@@ -348,14 +347,14 @@ paths:
         Retrieves the definition and status of the Greengrass Core device task.
       operationId: getCoreTask
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/CoreTask"
+                $ref: '#/components/schemas/CoreTask'
 
-  "/cores":
+  '/cores':
     parameters:
       - $ref: '#/components/parameters/templateNameQuery'
       - $ref: '#/components/parameters/templateVersionQuery'
@@ -368,20 +367,20 @@ paths:
         - Core Devices
       summary: Lists Greengrass V2 cores managed by this service.
       description: >
-        Lists all Greengrass V2 cores managed by this service. 
+        Lists all Greengrass V2 cores managed by this service.
 
         May optionally filter by `templateName`, `templateVersion`, and `failedOnly`.
 
       operationId: listCores
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/CoreList"
+                $ref: '#/components/schemas/CoreList'
 
-  "/cores/{thingName}":
+  '/cores/{thingName}':
     parameters:
       - $ref: '#/components/parameters/thingName'
     get:
@@ -392,14 +391,14 @@ paths:
         Retrieves the definition of a specific Greengrass Core device.
       operationId: getCore
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Core"
+                $ref: '#/components/schemas/Core'
 
-  "/cores/:thingName/deviceTasks":
+  '/cores/{thingName}/deviceTasks':
     parameters:
       - $ref: '#/components/parameters/thingName'
     post:
@@ -413,7 +412,7 @@ paths:
 
         The AWS IoT thing is then associated with the Greengrass V2 core.
 
-        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the cores are being created in the background. Use the `GET /deviceTasks/:taskId` to retrieve the status of the task.
+        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the cores are being created in the background. Use the `GET /deviceTasks/{taskId}` to retrieve the status of the task.
 
       operationId: createDeviceTask
       requestBody:
@@ -423,18 +422,18 @@ paths:
               $ref: '#/components/schemas/DeviceTask'
 
       responses:
-        "202":
+        '202':
           description: Accepted
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceTask"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "409":
-          $ref: "#/components/responses/Conflict"
+                $ref: '#/components/schemas/DeviceTask'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
 
-  "/deviceTasks/:taskId":
+  '/deviceTasks/{taskId}':
     parameters:
       - $ref: '#/components/parameters/taskId'
     get:
@@ -445,16 +444,16 @@ paths:
         Retrieves the definition and status of the Greengrass client device task.
       operationId: getDeviceTask
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceTask"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/DeviceTask'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/devices/:thingName":
+  '/devices/{thingName}':
     parameters:
       - $ref: '#/components/parameters/thingName'
     get:
@@ -465,14 +464,14 @@ paths:
         Retrieves the definition of a specific Greengrass client device.
       operationId: getDevice
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Device"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Device'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
     delete:
       parameters:
@@ -487,10 +486,10 @@ paths:
 
       operationId: deleteDevice
       responses:
-        "204":
+        '204':
           description: No content
 
-  "/deploymentTasks":
+  '/deploymentTasks':
     post:
       tags:
         - Deployment Tasks
@@ -498,7 +497,7 @@ paths:
       description: >
         Deploy the components as configured per the template/version assigned to 1 or more Greengrass V2 cores.
 
-        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the deployments are being created in the background. Use the `GET /deployments/:taskId` to retrieve the status of the task.
+        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the deployments are being created in the background. Use the `GET /deployments/{taskId}` to retrieve the status of the task.
 
       operationId: createDeploymentTask
       requestBody:
@@ -508,7 +507,7 @@ paths:
               $ref: '#/components/schemas/NewDeploymentTask'
 
       responses:
-        "202":
+        '202':
           description: Accepted
           headers:
             location:
@@ -528,19 +527,19 @@ paths:
         - Deployment Tasks
       summary: Lists deployment tasks.
       description: >
-        Lists all deployment tasks managed by this service. 
+        Lists all deployment tasks managed by this service.
       operationId: listDeployments
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeploymentTaskList"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/DeploymentTaskList'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/deploymentTasks/:taskId":
+  '/deploymentTasks/{taskId}':
     parameters:
       - $ref: '#/components/parameters/taskId'
     get:
@@ -551,14 +550,14 @@ paths:
         Retrieves the definition and status of a deployment task.
       operationId: getDeploymentTask
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeploymentTask"
+                $ref: '#/components/schemas/DeploymentTask'
 
-  "/deploymentTasks/:taskId/cores":
+  '/deploymentTasks/{taskId}/cores':
     parameters:
       - $ref: '#/components/parameters/taskId'
     get:
@@ -572,14 +571,14 @@ paths:
         Retrieves the definition and status of a deployment task.
       operationId: listDeploymentTaskCores
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/CoreDeploymentList"
+                $ref: '#/components/schemas/CoreDeploymentList'
 
-  "/deploymentTasks/:taskId/cores/:thingName":
+  '/deploymentTasks/{taskId}/cores/{thingName}':
     parameters:
       - $ref: '#/components/parameters/taskId'
       - $ref: '#/components/parameters/thingName'
@@ -591,16 +590,16 @@ paths:
         Retrieves the status of a specific core of a specific deployment.
       operationId: getDeploymentTaskCore
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/CoreDeployment"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/CoreDeployment'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/cores/:thingName/deployments":
+  '/cores/{thingName}/deployments':
     parameters:
       - $ref: '#/components/parameters/thingName'
     get:
@@ -614,14 +613,14 @@ paths:
         Lists details of all deployments a core has been part of.
       operationId: listCoreDeployments
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeploymentTaskList"
+                $ref: '#/components/schemas/DeploymentTaskList'
 
-  "/fleet/summary":
+  '/fleet/summary':
     get:
       tags:
         - Summaries
@@ -630,18 +629,15 @@ paths:
         Provides a summary of the entire fleet managed by this module.
       operationId: getFleetSummary
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/FleetSummary"
-
+                $ref: '#/components/schemas/FleetSummary'
 
 components:
-
   parameters:
-
     templateName:
       name: templateName
       in: path
@@ -756,9 +752,7 @@ components:
       schema:
         type: string
 
-
   responses:
-
     Created:
       description: Created successfully
       headers:
@@ -781,25 +775,23 @@ components:
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
     NotFound:
       description: Not found
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
     Conflict:
       description: Conflict
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
-
+            $ref: '#/components/schemas/Error'
 
   schemas:
-
     EditableTemplate:
       type: object
       properties:
@@ -810,17 +802,17 @@ components:
           type: array
           description: A list of components
           items:
-            $ref: "#/components/schemas/Component"
+            $ref: '#/components/schemas/Component'
         jobConfig:
-          $ref: "#/components/schemas/JobConfig"
+          $ref: '#/components/schemas/JobConfig'
           description: Optional default job config to be applied to deployments created using this template. May be provided/overridden at time of creating the deployment.
         deploymentPolicies:
-          $ref: "#/components/schemas/DeploymentPolicy"
+          $ref: '#/components/schemas/DeploymentPolicy'
           description: Optional default policies to be applied to deployments created using this template. May be provided/overridden at time of creating the deployment.
 
     Template:
       allOf:
-        - $ref: "#/components/schemas/EditableTemplate"
+        - $ref: '#/components/schemas/EditableTemplate'
         - type: object
           properties:
             version:
@@ -847,7 +839,7 @@ components:
           type: array
           description: A list of templates
           items:
-            $ref: "#/components/schemas/Template"
+            $ref: '#/components/schemas/Template'
         pagination:
           type: object
           properties:
@@ -865,7 +857,7 @@ components:
           type: array
           description: A list of templates
           items:
-            $ref: "#/components/schemas/Template"
+            $ref: '#/components/schemas/Template'
         pagination:
           type: object
           properties:
@@ -949,10 +941,10 @@ components:
                   failureType:
                     type: string
                     enum:
-                    - FAILED
-                    - REJECTED
-                    - TIMED_OUT
-                    - ALL
+                      - FAILED
+                      - REJECTED
+                      - TIMED_OUT
+                      - ALL
                     description: The type of job deployment failure that can cancel a job.
                   action:
                     type: string
@@ -977,8 +969,8 @@ components:
         failureHandlingPolicy:
           type: string
           enum:
-          - ROLLBACK
-          - DO_NOTHING
+            - ROLLBACK
+            - DO_NOTHING
           description: The failure handling policy for the configuration deployment. This policy defines what to do if the deployment fails.
         componentUpdatePolicy:
           description: The component update policy for the configuration deployment. This policy defines when it’s safe to deploy the configuration to devices.
@@ -991,8 +983,8 @@ components:
             action:
               type: string
               enum:
-              - NOTIFY_COMPONENTS
-              - SKIP_NOTIFY_COMPONENTS
+                - NOTIFY_COMPONENTS
+                - SKIP_NOTIFY_COMPONENTS
               description: |
                 Whether or not to notify components and wait for components to become safe to update. Choose from the following options:
                 - `NOTIFY_COMPONENTS` – The deployment notifies each component before it stops and updates that component. Components can use the SubscribeToComponentUpdates IPC operation to receive these notifications. Then, components can respond with the DeferComponentUpdate IPC operation. For more information, see Create deployments in the AWS IoT Greengrass V2 Developer Guide .
@@ -1007,7 +999,7 @@ components:
               description: The amount of time in seconds that a component can validate its configuration updates. If the validation time exceeds this timeout, then the deployment proceeds for the device.
               default: 30
 
-    ProvisionCoresTask:    
+    ProvisionCoresTask:
       type: object
       properties:
         coreVersion:
@@ -1023,7 +1015,7 @@ components:
             $ref: '#/components/schemas/NewCore'
           description: Core devices managed via this task.
 
-    DeleteCoresTask:    
+    DeleteCoresTask:
       type: object
       properties:
         type:
@@ -1036,11 +1028,11 @@ components:
             $ref: '#/components/schemas/DeleteCore'
           description: Core devices managed via this task.
 
-    CoreTask:   
+    CoreTask:
       allOf:
-        - $ref: "#/components/schemas/ProvisionCoresTask"
+        - $ref: '#/components/schemas/ProvisionCoresTask'
         - type: object
-          properties: 
+          properties:
             taskId:
               type: string
               description: Unique ID of the task.
@@ -1081,7 +1073,7 @@ components:
           type: array
           description: A list of core tasks.
           items:
-            $ref: "#/components/schemas/CoreTask"
+            $ref: '#/components/schemas/CoreTask'
         pagination:
           type: object
           properties:
@@ -1147,10 +1139,10 @@ components:
 
     Core:
       allOf:
-        - $ref: "#/components/schemas/NewCore"
+        - $ref: '#/components/schemas/NewCore'
         - type: object
           properties:
-            template: 
+            template:
               type: object
               properties:
                 desired:
@@ -1280,7 +1272,7 @@ components:
           type: array
           description: A list of cores.
           items:
-            $ref: "#/components/schemas/Core"
+            $ref: '#/components/schemas/Core'
         pagination:
           type: object
           properties:
@@ -1292,7 +1284,7 @@ components:
             count:
               type: integer
 
-    DeviceTask:    
+    DeviceTask:
       type: object
       properties:
         taskId:
@@ -1396,7 +1388,7 @@ components:
           description: Date/time the client device was updated.
           readOnly: true
 
-    NewDeploymentTask:    
+    NewDeploymentTask:
       type: object
       properties:
         template:
@@ -1409,7 +1401,7 @@ components:
               type: number
               description: Version of template to deploy. If not provided, latest version will be deployed.
           required:
-          - name
+            - name
         targets:
           type: object
           description: The Greengrass V2 cores to deploy.
@@ -1418,12 +1410,12 @@ components:
               type: array
               items:
                 type: string
-              description: The Greengrass V2 core thing names to deploy. 
+              description: The Greengrass V2 core thing names to deploy.
             thingGroups:
               type: array
               items:
                 type: string
-              description: A list of thing groups that contain Greengrass V2 core thing names to deploy. Only cores belonging to these groups will be deployed - all other things will be ignored. 
+              description: A list of thing groups that contain Greengrass V2 core thing names to deploy. Only cores belonging to these groups will be deployed - all other things will be ignored.
             assetLibraryDeviceIds:
               type: array
               items:
@@ -1501,12 +1493,12 @@ components:
       required:
         - template
         - targets
-    
-    DeploymentTask: 
+
+    DeploymentTask:
       allOf:
-        - $ref: "#/components/schemas/NewDeploymentTask"
+        - $ref: '#/components/schemas/NewDeploymentTask'
         - type: object
-          properties: 
+          properties:
             taskId:
               type: string
               description: Unique ID of the task.
@@ -1537,7 +1529,7 @@ components:
           type: array
           description: A list of deployment tasks.
           items:
-            $ref: "#/components/schemas/DeploymentTask"
+            $ref: '#/components/schemas/DeploymentTask'
         pagination:
           type: object
           properties:
@@ -1552,7 +1544,7 @@ components:
     CoreDeployment:
       type: object
       properties:
-        core: 
+        core:
           type: string
           description: AWS IoT thing name of the Greengrass V2 core.
           readOnly: true
@@ -1560,12 +1552,12 @@ components:
           type: string
           description: The AWS IoT Job execution status.
           enum:
-          - SUCCEEDED
-          - FAILED
-          - REJECTED
-          - CANCELED
-          - REMOVED
-          - TIMED_OUT
+            - SUCCEEDED
+            - FAILED
+            - REJECTED
+            - CANCELED
+            - REMOVED
+            - TIMED_OUT
           readOnly: true
 
     CoreDeploymentList:
@@ -1574,7 +1566,7 @@ components:
           type: array
           description: A list of cores deployed.
           items:
-            $ref: "#/components/schemas/CoreDeployment"
+            $ref: '#/components/schemas/CoreDeployment'
         pagination:
           type: object
           properties:
@@ -1589,7 +1581,7 @@ components:
     FleetSummary:
       type: object
       properties:
-        templates: 
+        templates:
           type: object
           additionalProperties:
             type: object
@@ -1600,28 +1592,28 @@ components:
                 additionalProperties:
                   type: object
                   properties:
-                      desiredInUse:
-                        type: number
-                      reportedInUse:
-                        type: number
-                      lastDeploymentSuccess:
-                        type: number
-                      lastDeploymentFailed:
-                        type: number
-                      lastDeploymentInProgress:
-                        type: number
+                    desiredInUse:
+                      type: number
+                    reportedInUse:
+                      type: number
+                    lastDeploymentSuccess:
+                      type: number
+                    lastDeploymentFailed:
+                      type: number
+                    lastDeploymentInProgress:
+                      type: number
       example:
         templates:
           - name: my-template
             latestVersion: 2
             versions:
-              "1":
+              '1':
                 desiredInUse: 0
                 reportedInUse: 1
                 lastDeploymentSuccess: 0
                 lastDeploymentFailed: 1
                 lastDeploymentInProgress: 0
-              "2":
+              '2':
                 desiredInUse: 3
                 reportedInUse: 2
                 lastDeploymentSuccess: 2

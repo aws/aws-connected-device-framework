@@ -13,9 +13,8 @@
 import { Response } from 'express';
 
 export class HttpHeaderUtils {
-
-    public addLink(res:Response, rel:RelType, link:string): void {
-        const header = (res.getHeader('link')===undefined) ? '': `${res.getHeader('link')},`;
+    public addLink(res: Response, rel: RelType, link: string): void {
+        const header = res.getHeader('link') === undefined ? '' : `${res.getHeader('link')},`;
         res.setHeader('link', `${header}<${link}>; rel="${rel}"`);
     }
 }
@@ -24,5 +23,5 @@ export enum RelType {
     next,
     last,
     first,
-    prev
+    prev,
 }

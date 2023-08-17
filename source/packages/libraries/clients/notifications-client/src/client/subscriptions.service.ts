@@ -10,28 +10,44 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {SubscriptionResource, SubscriptionResourceList} from './subscriptions.model';
-import {RequestHeaders} from './common.model';
-import {injectable} from 'inversify';
-import {CommonServiceBase} from './common.service';
+import { injectable } from 'inversify';
+import { RequestHeaders } from './common.model';
+import { CommonServiceBase } from './common.service';
+import { SubscriptionResource, SubscriptionResourceList } from './subscriptions.model';
 
 export interface SubscriptionsService {
-    createSubscription(eventId: string, subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<string>;
+    createSubscription(
+        eventId: string,
+        subscription: SubscriptionResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string>;
 
-    getSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResource>;
+    getSubscription(
+        subscriptionId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<SubscriptionResource>;
 
-    updateSubscription(subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<void>;
+    updateSubscription(
+        subscription: SubscriptionResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void>;
 
     deleteSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<void>;
 
-    listSubscriptionsForUser(userId: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResourceList>;
+    listSubscriptionsForUser(
+        userId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<SubscriptionResourceList>;
 
-    listSubscriptionsForEvent(eventId: string, fromSubscriptionId?: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResourceList>;
+    listSubscriptionsForEvent(
+        eventId: string,
+        fromSubscriptionId?: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<SubscriptionResourceList>;
 }
 
 @injectable()
-export class SubscriptionsServiceBase extends CommonServiceBase  {
-
+export class SubscriptionsServiceBase extends CommonServiceBase {
     protected eventSubscriptionsRelativeUrl(eventId: string): string {
         return `/events/${eventId}/subscriptions`;
     }

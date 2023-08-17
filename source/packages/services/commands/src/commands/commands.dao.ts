@@ -10,36 +10,36 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger';
-import {TYPES} from '../di/types';
-import { CommandModel, CommandListModel, CommandSummaryModel } from './commands.models';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../di/types';
+import { logger } from '../utils/logger';
+import { CommandListModel, CommandModel, CommandSummaryModel } from './commands.models';
 
 @injectable()
 export class CommandsDao {
-
     private _dc: AWS.DynamoDB.DocumentClient;
 
     public constructor(
-        @inject('tables.jobs') private jobsTable:string,
-	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient
+        @inject('tables.jobs') private jobsTable: string,
+        @inject(TYPES.DocumentClientFactory)
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
     }
 
-    public async get(commandId:string): Promise<CommandModel> {
+    public async get(commandId: string): Promise<CommandModel> {
         logger.debug(`commands.dao get: in: commandId:${commandId}`);
 
         const params = {
-            TableName : this.jobsTable,
+            TableName: this.jobsTable,
             Key: {
-                commandId
-            }
+                commandId,
+            },
         };
 
         const response = await this._dc.get(params).promise();
-        if (response.Item===undefined) {
+        if (response.Item === undefined) {
             logger.debug('commands.dao get: exit: command:undefined');
             return undefined;
         }
@@ -50,18 +50,18 @@ export class CommandsDao {
         return command;
     }
 
-    public async getByJobId(jobId:string): Promise<CommandModel> {
+    public async getByJobId(jobId: string): Promise<CommandModel> {
         logger.debug(`commands.dao getByJobId: in: jobId:${jobId}`);
 
         const params = {
-            TableName : this.jobsTable,
+            TableName: this.jobsTable,
             IndexName: 'cdf-commands-jobs-byJobId',
             KeyConditionExpression: 'jobId = :jobId',
-            ExpressionAttributeValues: {':jobId': jobId}
+            ExpressionAttributeValues: { ':jobId': jobId },
         };
 
         const response = await this._dc.query(params).promise();
-        if (response.Items===undefined || response.Items.length===0) {
+        if (response.Items === undefined || response.Items.length === 0) {
             logger.debug('commands.dao getByJobId: exit: command:undefined');
             return undefined;
         }
@@ -73,7 +73,7 @@ export class CommandsDao {
         return command;
     }
 
-    private buildCommandModel(i: AWS.DynamoDB.DocumentClient.AttributeMap) : CommandModel {
+    private buildCommandModel(i: AWS.DynamoDB.DocumentClient.AttributeMap): CommandModel {
         const command: CommandModel = {
             commandId: i['commandId'],
             description: i['description'],
@@ -90,29 +90,29 @@ export class CommandsDao {
             rolloutMaximumPerMinute: i['rolloutMaximumPerMinute'],
             jobExecutionsRolloutConfig: i['jobExecutionsRolloutConfig'],
             abortConfig: i['abortConfig'],
-            timeoutConfig: i['timeoutConfig']
+            timeoutConfig: i['timeoutConfig'],
         };
         return command;
     }
 
-    public async create(model:CommandModel): Promise<void> {
+    public async create(model: CommandModel): Promise<void> {
         logger.debug(`commands.dao create: in: model:${JSON.stringify(model)}`);
 
         const params = {
             TableName: this.jobsTable,
             Item: {
                 commandId: model.commandId,
-                templateId:model.templateId,
-                commandStatus:model.commandStatus,
+                templateId: model.templateId,
+                commandStatus: model.commandStatus,
                 jobStatus: model.jobStatus,
                 jobId: model.jobId,
-                targets:model.targets,
-                targetQuery:model.targetQuery,
-                documentParameters:model.documentParameters,
-                jobParameters:model.jobParameters,
-                files:model.files,
-                type:model.type
-            }
+                targets: model.targets,
+                targetQuery: model.targetQuery,
+                documentParameters: model.documentParameters,
+                jobParameters: model.jobParameters,
+                files: model.files,
+                type: model.type,
+            },
         };
 
         if (model.rolloutMaximumPerMinute) {
@@ -131,25 +131,24 @@ export class CommandsDao {
         await this._dc.put(params).promise();
 
         logger.debug(`commands.dao create: exit:`);
-
     }
 
-    public async update(model:CommandModel): Promise<void> {
+    public async update(model: CommandModel): Promise<void> {
         logger.debug(`commands.dao update: in: n:${JSON.stringify(model)}`);
 
         const params = {
             TableName: this.jobsTable,
-            Key: { commandId: model.commandId},
+            Key: { commandId: model.commandId },
             UpdateExpression: '',
-            ExpressionAttributeValues: {}
+            ExpressionAttributeValues: {},
         };
 
-        Object.keys(model).forEach(k=> {
-            if (model.hasOwnProperty(k) && k !== 'commandId' ) {
-                if (params.UpdateExpression==='') {
-                    params.UpdateExpression+='set ';
+        Object.keys(model).forEach((k) => {
+            if (model.hasOwnProperty(k) && k !== 'commandId') {
+                if (params.UpdateExpression === '') {
+                    params.UpdateExpression += 'set ';
                 } else {
-                    params.UpdateExpression+=', ';
+                    params.UpdateExpression += ', ';
                 }
                 params.UpdateExpression += `${k} = :${k}`;
 
@@ -162,7 +161,6 @@ export class CommandsDao {
         await this._dc.update(params).promise();
 
         logger.debug(`commands.dao create: exit:`);
-
     }
 
     public async list(): Promise<CommandListModel> {
@@ -170,26 +168,26 @@ export class CommandsDao {
 
         const params = {
             TableName: this.jobsTable,
-            AttributesToGet: [ 'commandId', 'templateId', 'description', 'commandStatus']
+            AttributesToGet: ['commandId', 'templateId', 'description', 'commandStatus'],
         };
 
         const results = await this._dc.scan(params).promise();
-        if (results.Items===undefined) {
+        if (results.Items === undefined) {
             logger.debug('commands.dao list: exit: commands:undefined');
             return undefined;
         }
 
-        const commands:CommandSummaryModel[]=[];
-        const response:CommandListModel = {
-            results:commands
+        const commands: CommandSummaryModel[] = [];
+        const response: CommandListModel = {
+            results: commands,
         };
 
-        for(const item of results.Items) {
+        for (const item of results.Items) {
             const command = {
                 commandId: item['commandId'],
                 templateId: item['templateId'],
                 description: item['description'],
-                commandStatus: item['commandStatus']
+                commandStatus: item['commandStatus'],
             };
             response.results.push(command);
         }
@@ -197,5 +195,4 @@ export class CommandsDao {
         logger.debug(`commands.dao list: exit: response:${JSON.stringify(response)}`);
         return response;
     }
-
 }

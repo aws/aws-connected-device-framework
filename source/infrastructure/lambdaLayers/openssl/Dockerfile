@@ -26,5 +26,6 @@ WORKDIR $TEMP_WORK_DIR
 CMD mkdir -p bin lib && \
     cp /bin/openssl bin/ && \
     cp /usr/lib64/libbz2.so.1 lib/ && \
-    zip -r build.zip * && \
+    find . -exec touch -d @0 {} \; && \
+    zip -roX build.zip * && \
     rm -rf bin lib

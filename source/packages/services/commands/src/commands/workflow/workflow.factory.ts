@@ -10,37 +10,40 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { WorkflowAction } from './workflow.interfaces';
-import { CommandStatus } from '../commands.models';
-import { logger } from '../../utils/logger';
-import { InvalidTransitionAction } from './workflow.invalidTransition';
-import { StartJobAction } from './workflow.startjob';
-import { CreateAction } from './workflow.create';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../di/types';
+import { logger } from '../../utils/logger';
+import { CommandStatus } from '../commands.models';
+import { CreateAction } from './workflow.create';
+import { WorkflowAction } from './workflow.interfaces';
+import { InvalidTransitionAction } from './workflow.invalidTransition';
 import { SaveAction } from './workflow.save';
+import { StartJobAction } from './workflow.startjob';
 
 @injectable()
 export class WorkflowFactory {
-
     constructor(
-        @inject(TYPES.InvalidTransitionAction) private invalidTransitionAction: InvalidTransitionAction,
+        @inject(TYPES.InvalidTransitionAction)
+        private invalidTransitionAction: InvalidTransitionAction,
         @inject(TYPES.StartJobAction) private startJobAction: StartJobAction,
         @inject(TYPES.SaveAction) private saveAction: SaveAction,
-        @inject(TYPES.CreateAction) private createAction: CreateAction) {}
+        @inject(TYPES.CreateAction) private createAction: CreateAction
+    ) {}
 
-    getAction(existingStatus:CommandStatus, updatedStatus:CommandStatus): WorkflowAction[] {
-        logger.debug(`workflow.factory execute: existingStatus:${JSON.stringify(existingStatus)}, updatedStatus:${JSON.stringify(updatedStatus)}`);
+    getAction(existingStatus: CommandStatus, updatedStatus: CommandStatus): WorkflowAction[] {
+        logger.debug(
+            `workflow.factory execute: existingStatus:${JSON.stringify(
+                existingStatus
+            )}, updatedStatus:${JSON.stringify(updatedStatus)}`
+        );
 
         // if updated status is undefined, assume no change
-        if (updatedStatus===undefined) {
-            updatedStatus=existingStatus;
+        if (updatedStatus === undefined) {
+            updatedStatus = existingStatus;
         }
 
         switch (existingStatus) {
-
             case CommandStatus.DRAFT:
-
                 switch (updatedStatus) {
                     case CommandStatus.DRAFT:
                         return [this.saveAction];
@@ -54,7 +57,6 @@ export class WorkflowFactory {
                 }
 
             case CommandStatus.PUBLISHED:
-
                 switch (updatedStatus) {
                     case CommandStatus.CANCELLED:
                         // TODO cancel
@@ -76,7 +78,6 @@ export class WorkflowFactory {
 
             default:
                 return [this.invalidTransitionAction];
-
         }
     }
 }

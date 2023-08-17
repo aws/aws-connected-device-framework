@@ -10,22 +10,20 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { PolicyModel} from './policies.models';
+import { PolicyModel } from './policies.models';
 
 export interface PoliciesService {
+    get(policyId: string): Promise<PolicyModel>;
 
-    get(policyId:string): Promise<PolicyModel> ;
+    create(model: PolicyModel): Promise<string>;
 
-    create(model: PolicyModel) : Promise<string> ;
+    update(updated: PolicyModel): Promise<string>;
 
-    update(updated:PolicyModel) : Promise<string> ;
+    listInheritedByDevice(deviceId: string, type: string): Promise<PolicyModel[]>;
 
-    listInheritedByDevice(deviceId:string, type:string): Promise<PolicyModel[]> ;
+    listInheritedByGroup(groupPaths: string[], type?: string): Promise<PolicyModel[]>;
 
-    listInheritedByGroup(groupPaths:string[], type?:string): Promise<PolicyModel[]> ;
+    listPolicies(type?: string, offset?: number, count?: number): Promise<PolicyModel[]>;
 
-    listPolicies(type?:string, offset?:number, count?:number): Promise<PolicyModel[]> ;
-
-    delete(policyId: string) : Promise<void> ;
-
+    delete(policyId: string): Promise<void>;
 }

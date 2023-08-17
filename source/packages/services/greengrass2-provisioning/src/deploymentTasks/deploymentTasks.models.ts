@@ -11,90 +11,91 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { SearchRequestModel } from '@cdf/assetlibrary-client';
+import { SearchRequestModel } from '@awssolutions/cdf-assetlibrary-client';
 import { Deployment } from '../deployments/deployments.models';
 
 export interface NewDeploymentTask {
-	template: {
-		name: string
-		version?: number;
-	};
-	targets: {
-		thingNames?: string[];
-		thingGroupNames?: string[];
-		assetLibraryDeviceIds?: string[];
-		assetLibraryGroupPaths?: string[];
-		assetLibraryQuery?: SearchRequestModel;
-	};
-	iotJobConfig?: {
-		jobExecutionRolloutConfig?: {
-			maximumPerMinute: number;
-			exponentialRate?: {
-				baseRatePerMinute: number;
-				incrementFactor: number;
-				rateIncreaseCriteria: {
-					numberOfNotifiedTargets: number;
-					numberOfSucceededTargets: number;
-				};
-			};
-		};
-		abortConfig?: {
-			criteriaList: [{
-				failureType: string;
-				action: string;
-				thresholdPercentage: number;
-				minnumberOfExecutedThings: number;
-			}]
-		};
-		timeoutConfig?: {
-			inProgressTimeoutInMinutes: number;
-		};
-	};
+    template: {
+        name: string;
+        version?: number;
+    };
+    targets: {
+        thingNames?: string[];
+        thingGroupNames?: string[];
+        assetLibraryDeviceIds?: string[];
+        assetLibraryGroupPaths?: string[];
+        assetLibraryQuery?: SearchRequestModel;
+    };
+    iotJobConfig?: {
+        jobExecutionRolloutConfig?: {
+            maximumPerMinute: number;
+            exponentialRate?: {
+                baseRatePerMinute: number;
+                incrementFactor: number;
+                rateIncreaseCriteria: {
+                    numberOfNotifiedTargets: number;
+                    numberOfSucceededTargets: number;
+                };
+            };
+        };
+        abortConfig?: {
+            criteriaList: [
+                {
+                    failureType: string;
+                    action: string;
+                    thresholdPercentage: number;
+                    minnumberOfExecutedThings: number;
+                }
+            ];
+        };
+        timeoutConfig?: {
+            inProgressTimeoutInMinutes: number;
+        };
+    };
 }
 
 export interface DeploymentList {
-	deployments: Deployment[]
-	pagination?: {
-		lastEvaluated?: {
-			taskId: string
-		},
-		count?: number
-	};
+    deployments: Deployment[];
+    pagination?: {
+        lastEvaluated?: {
+            taskId: string;
+        };
+        count?: number;
+    };
 }
 
 export interface CoreDeploymentList {
-	cores: Deployment[]
-	pagination?: {
-		lastEvaluated?: {
-			thingName: string
-		},
-		count?: number
-	};
+    cores: Deployment[];
+    pagination?: {
+        lastEvaluated?: {
+            thingName: string;
+        };
+        count?: number;
+    };
 }
 
 export interface DeploymentTaskList {
-	deploymentTasks: DeploymentTask[];
-	pagination?: {
-		lastEvaluated?: {
-			taskId: string
-		},
-		count?: number
-	};
+    deploymentTasks: DeploymentTask[];
+    pagination?: {
+        lastEvaluated?: {
+            taskId: string;
+        };
+        count?: number;
+    };
 }
 export interface DeploymentTask extends NewDeploymentTask {
-	id: string;
-	taskStatus: DeploymentTaskStatus;
-	statusMessage?: string;
-	createdAt: Date;
-	updatedAt?: Date;
+    id: string;
+    taskStatus: DeploymentTaskStatus;
+    statusMessage?: string;
+    createdAt: Date;
+    updatedAt?: Date;
 
-	deployments?: Deployment[];
+    deployments?: Deployment[];
 
-	// no. of batches the task has been split into
-	batchesTotal?: number;
-	// no. of batches reporting as complete, regardless of whether success or not
-	batchesComplete?: number;
+    // no. of batches the task has been split into
+    batchesTotal?: number;
+    // no. of batches reporting as complete, regardless of whether success or not
+    batchesComplete?: number;
 }
 
 export type DeploymentTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';
-

@@ -11,13 +11,19 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { EventConditions } from './events.model';
-import { DynamodDBTargetResource, EmailTargetResource, MQTTTargetResource, PushTargetResource, SMSTargetResource } from './targets.model';
+import {
+    DynamodDBTargetResource,
+    EmailTargetResource,
+    MQTTTargetResource,
+    PushTargetResource,
+    SMSTargetResource,
+} from './targets.model';
 
 export interface SubscriptionBaseResource {
     id?: string;
 
     principalValue?: string;
-    ruleParameterValues?: { [key: string] : string};
+    ruleParameterValues?: { [key: string]: string };
     event?: {
         id: string;
         name?: string;
@@ -65,8 +71,8 @@ export interface SubscriptionResourceList {
     results: SubscriptionV1Resource[] | SubscriptionV2Resource[];
     pagination?: {
         offset: {
-            eventId: string,
-            subscriptionId: string
-        }
+            eventId: string;
+            subscriptionId: string;
+        };
     };
 }

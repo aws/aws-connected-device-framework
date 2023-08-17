@@ -10,75 +10,77 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
- import { SearchRequestModel } from '@cdf/assetlibrary-client';
- 
- export interface NewDeployment {
-	coreName: string;
+import { SearchRequestModel } from '@awssolutions/cdf-assetlibrary-client';
+
+export interface NewDeployment {
+    coreName: string;
 }
 
 export interface Deployment extends NewDeployment {
-	taskStatus?: DeploymentTaskStatus;
-	statusMessage?: string;
-	deploymentStatus?: string;
-	createdAt?: Date;
-	updatedAt?: Date;
+    taskStatus?: DeploymentTaskStatus;
+    statusMessage?: string;
+    deploymentStatus?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface DeploymentList {
-	deployments: Deployment[]
-	pagination?: {
-		lastEvaluated?: {
-			key: string
-		},
-		count?: number
-	};
+    deployments: Deployment[];
+    pagination?: {
+        lastEvaluated?: {
+            key: string;
+        };
+        count?: number;
+    };
 }
 export interface NewDeploymentTask {
-	template: {
-		name: string
-		version?: number;
-	};
-	targets: {
-		thingNames?	: string[];
-		thingGroupNames? : string[];
-		assetLibraryDeviceIds?: string[];
-		assetLibraryGroupPaths?: string[];
-		assetLibraryQuery?: SearchRequestModel;
-	};
-	iotJobConfig?: {
-		jobExecutionRolloutConfig?: {
-			maximumPerMinute: number;
-			exponentialRate?: {
-				baseRatePerMinute: number;
-				incrementFactor: number;
-				rateIncreaseCriteria: {
-					numberOfNotifiedTargets: number;
-					numberOfSucceededTargets: number;
-				};
-			};
-		};
-		abortConfig?: {
-			criteriaList: [{
-				failureType: string;
-				action: string;
-				thresholdPercentage: number;
-				minnumberOfExecutedThings: number;
-			}]
-		};
-		timeoutConfig?: {
-			inProgressTimeoutInMinutes: number;
-		};
-	};
+    template: {
+        name: string;
+        version?: number;
+    };
+    targets: {
+        thingNames?: string[];
+        thingGroupNames?: string[];
+        assetLibraryDeviceIds?: string[];
+        assetLibraryGroupPaths?: string[];
+        assetLibraryQuery?: SearchRequestModel;
+    };
+    iotJobConfig?: {
+        jobExecutionRolloutConfig?: {
+            maximumPerMinute: number;
+            exponentialRate?: {
+                baseRatePerMinute: number;
+                incrementFactor: number;
+                rateIncreaseCriteria: {
+                    numberOfNotifiedTargets: number;
+                    numberOfSucceededTargets: number;
+                };
+            };
+        };
+        abortConfig?: {
+            criteriaList: [
+                {
+                    failureType: string;
+                    action: string;
+                    thresholdPercentage: number;
+                    minnumberOfExecutedThings: number;
+                }
+            ];
+        };
+        timeoutConfig?: {
+            inProgressTimeoutInMinutes: number;
+        };
+    };
 }
 
 export interface DeploymentTask extends NewDeploymentTask {
-	id: string;
-	taskStatus: DeploymentTaskStatus;
-	statusMessage?: string;
-	createdAt: Date;
-	updatedAt?: Date;
+    id: string;
+    taskStatus: DeploymentTaskStatus;
+    statusMessage?: string;
+    createdAt: Date;
+    updatedAt?: Date;
 
-	deployments?: Deployment[];
+    deployments?: Deployment[];
 
     // no. of batches the task has been split into
     batchesTotal?: number;
@@ -86,4 +88,4 @@ export interface DeploymentTask extends NewDeploymentTask {
     batchesComplete?: number;
 }
 
-export type DeploymentTaskStatus = 'Waiting'|'InProgress'|'Success'|'Failure';
+export type DeploymentTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';

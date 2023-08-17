@@ -10,13 +10,13 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { Claims } from './claims';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import * as als from 'async-local-storage';
-import { logger } from '../utils/logger';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { decode } from 'jsonwebtoken';
+import { Claims } from './claims';
 
-const JWT_HEADER = 'authorization';
+const JWT_HEADER = 'authz';
 const JWT_CLAIMS = 'cdf_al';
 const CLAIMS_REQUEST_ATTRIBUTE = 'claims';
 
@@ -24,11 +24,10 @@ als.enable();
 
 export function setClaims(): RequestHandler {
     return (req: Request, res: Response, next: NextFunction) => {
-
         logger.debug(`authz.middleware setClaims in:`);
 
         if (req.method === 'OPTIONS') {
-            next()
+            next();
         } else {
             // decodes the JWT, extracts the claims, and serializes as an object in a ThreadLocal
             // to make it easier for the service/dao layers to obtain.
@@ -58,10 +57,13 @@ export function setClaims(): RequestHandler {
 
                     next();
                 } catch (ex) {
-                    logger.warn(`authz.middleware setClaims failed to parse claims:${JSON.stringify(header)}`);
+                    logger.warn(
+                        `authz.middleware setClaims failed to parse claims:${JSON.stringify(
+                            header
+                        )}`
+                    );
                     res.sendStatus(403);
                 }
-
             } else {
                 res.sendStatus(403);
             }

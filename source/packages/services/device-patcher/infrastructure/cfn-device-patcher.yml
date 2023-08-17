@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,7 +11,7 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Device Patching Module
@@ -20,11 +21,10 @@ Globals:
     OpenApiVersion: 3.0.1
 
 Parameters:
-  
   ApplicationConfigurationOverride:
     Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
-  
+
   ApiGatewayDefinitionTemplate:
     Description: |
       Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
@@ -81,7 +81,7 @@ Parameters:
     MinLength: 1
 
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
 
@@ -108,19 +108,18 @@ Parameters:
     Type: String
 
 Conditions:
-
-  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
-  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
-  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
-  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
+  DeployInVPC: !Not [!Equals [!Ref VpcId, 'N/A']]
+  DeployWithLambdaAuth:
+    !Or [!Equals [!Ref AuthType, 'LambdaRequest'], !Equals [!Ref AuthType, 'LambdaToken']]
+  KmsKeyIdProvided: !Not [!Equals [!Ref KmsKeyId, '']]
+  EnableApiGatewayAccessLogs: !Equals [!Ref EnableApiGatewayAccessLogs, 'true']
 
 Resources:
-
   ApiGatewayApi:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+        Location: !Sub '${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}'
     DependsOn:
       - RESTLambdaFunction
 
@@ -129,7 +128,7 @@ Resources:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+        Location: !Sub '${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml'
     DependsOn:
       - RESTLambdaFunction
 
@@ -143,24 +142,24 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Condition: KmsKeyIdProvided
     Properties:
-      Description: "cdf-device-patcher policy for accessing KMS"
-      Path: "/cdf/device-patcher/"
+      Description: 'cdf-device-patcher policy for accessing KMS'
+      Path: '/cdf/device-patcher/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
               - 'kms:Decrypt'
               - 'kms:GenerateDataKey'
             Effect: Allow
-            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+            Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}'
 
   ApplicationPolicies:
     Type: 'AWS::IAM::ManagedPolicy'
     Properties:
       Description: 'cdf-device-patcher application policies'
-      Path: "/"
+      Path: '/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Sid: sqs
             Action:
@@ -227,17 +226,16 @@ Resources:
             Effect: Allow
             Resource:
               - !GetAtt SSMManagedInstanceRole.Arn
-          - Sid: "ssm2"
+          - Sid: 'ssm2'
             Action:
-              - "ssm:DescribeActivations"
-              - "ssm:DeleteActivation"
-              - "ssm:CreateActivation"
-              - "ssm:DescribeInstanceInformation"
+              - 'ssm:DescribeActivations'
+              - 'ssm:DeleteActivation'
+              - 'ssm:CreateActivation'
+              - 'ssm:DescribeInstanceInformation'
             Effect: Allow
             Resource:
-              - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:*"
-              - !Sub "arn:aws:iam::${AWS::AccountId}:role/*"
-
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
 
   RESTLambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -251,10 +249,10 @@ Resources:
               - lambda.amazonaws.com
               - iot.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
-        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref 'AWS::NoValue']
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
@@ -273,10 +271,10 @@ Resources:
               - lambda.amazonaws.com
               - iot.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
-        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref 'AWS::NoValue']
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
@@ -295,10 +293,10 @@ Resources:
               - lambda.amazonaws.com
               - iot.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
-        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref 'AWS::NoValue']
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
@@ -310,14 +308,14 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-device-patcher-rest-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/device-patcher/dist/lambda_apigw_proxy.handler
-      MemorySize: 256
+      Handler: lambda_apigw_proxy.handler
+      MemorySize: 512
       Role: !GetAtt RESTLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/device-patcher/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNT_ID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLE_NAME: !Ref Table
@@ -354,10 +352,10 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-device-patcher-sqs-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/device-patcher/dist/lambda_sqs_proxy.handler
-      MemorySize: 128
+      Handler: lambda_sqs_proxy.handler
+      MemorySize: 512
       Role: !GetAtt SQSLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
@@ -365,7 +363,7 @@ Resources:
       Environment:
         Variables:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
-          APP_CONFIG_DIR: 'packages/services/device-patcher/dist/config'
+          APP_CONFIG_DIR: 'config'
           AWS_ACCOUNT_ID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLE_NAME: !Ref Table
           AWS_S3_ARTIFACTS_BUCKET: !Ref ArtifactsBucket
@@ -386,17 +384,17 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-device-patcher-ssm-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/device-patcher/dist/lambda_sqs_ssm_proxy.handler
-      MemorySize: 128
+      Handler: lambda_sqs_ssm_proxy.handler
+      MemorySize: 512
       Role: !GetAtt SSMEventsLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
       Timeout: 900
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/device-patcher/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNT_ID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLE_NAME: !Ref Table
@@ -417,9 +415,9 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W28
-            reason: "safely naming this resources to be unique by environment"
+            reason: 'safely naming this resources to be unique by environment'
           - id: W73
-            reason: "Can be decided by the customer, to specify the billing mode"
+            reason: 'Can be decided by the customer, to specify the billing mode'
     Properties:
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
@@ -432,45 +430,45 @@ Resources:
           - Ref: AWS::NoValue
       TableName: !Sub 'cdf-device-patcher-${Environment}'
       KeySchema:
-        - AttributeName: "pk"
-          KeyType: "HASH"
-        - AttributeName: "sk"
-          KeyType: "RANGE"
+        - AttributeName: 'pk'
+          KeyType: 'HASH'
+        - AttributeName: 'sk'
+          KeyType: 'RANGE'
       AttributeDefinitions:
-        - AttributeName: "pk"
-          AttributeType: "S"
-        - AttributeName: "sk"
-          AttributeType: "S"
-        - AttributeName: "si1Sort"
-          AttributeType: "S"
-        - AttributeName: "si2Hash"
-          AttributeType: "S"
+        - AttributeName: 'pk'
+          AttributeType: 'S'
+        - AttributeName: 'sk'
+          AttributeType: 'S'
+        - AttributeName: 'si1Sort'
+          AttributeType: 'S'
+        - AttributeName: 'si2Hash'
+          AttributeType: 'S'
       ProvisionedThroughput:
-        ReadCapacityUnits: "5"
-        WriteCapacityUnits: "5"
+        ReadCapacityUnits: '5'
+        WriteCapacityUnits: '5'
       GlobalSecondaryIndexes:
         - IndexName: 'sk-si1Sort-index'
           KeySchema:
-            - AttributeName: "sk"
-              KeyType: "HASH"
-            - AttributeName: "si1Sort"
-              KeyType: "RANGE"
+            - AttributeName: 'sk'
+              KeyType: 'HASH'
+            - AttributeName: 'si1Sort'
+              KeyType: 'RANGE'
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: '5'
+            WriteCapacityUnits: '5'
         - IndexName: 'si2Hash-sk-index'
           KeySchema:
-            - AttributeName: "si2Hash"
-              KeyType: "HASH"
-            - AttributeName: "sk"
-              KeyType: "RANGE"
+            - AttributeName: 'si2Hash'
+              KeyType: 'HASH'
+            - AttributeName: 'sk'
+              KeyType: 'RANGE'
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: '5'
+            WriteCapacityUnits: '5'
 
   SSMAssociationStateChangeRule:
     Type: AWS::Events::Rule
@@ -478,10 +476,10 @@ Resources:
       Description: 'Captures all SSM Association State Change events'
       EventPattern:
         source:
-          - "aws.ssm"
+          - 'aws.ssm'
         detail-type:
-          - "EC2 State Manager Instance Association State Change"
-          - "EC2 State Manager Association State Change"
+          - 'EC2 State Manager Instance Association State Change'
+          - 'EC2 State Manager Association State Change'
       State: ENABLED
       Targets:
         - Arn: !GetAtt SSMStateChangeEventsQueue.Arn
@@ -498,7 +496,7 @@ Resources:
             Service:
               - ssm.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
         - !Ref SSMManagedInstancePolicies
@@ -507,17 +505,17 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: 'cdf-device-patcher managed instance policy'
-      Path: "/"
+      Path: '/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Sid: "s3logs"
+          - Sid: 's3logs'
             Action:
               - 's3:Put*'
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:s3:::${ArtifactsBucket}/${ArtifactsKeyPrefix}logs/*'
-          - Sid: "s3playbooks"
+          - Sid: 's3playbooks'
             Action:
               - 's3:GetObject'
               - 's3:GetObjectVersion'
@@ -555,12 +553,12 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
-              - "SQS:SendMessage"
-            Effect: "Allow"
+              - 'SQS:SendMessage'
+            Effect: 'Allow'
             Resource: !GetAtt SSMStateChangeEventsQueue.Arn
             Principal:
               Service:
-                - "events.amazonaws.com"
+                - 'events.amazonaws.com'
             Condition:
               ArnEquals:
                 aws:SourceArn: !GetAtt SSMAssociationStateChangeRule.Arn

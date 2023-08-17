@@ -11,41 +11,55 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { injectable } from "inversify";
-import { AccountCreationRequest, AccountListPaginationKey, AccountResource, AccountResourceList, AccountsItem, AccountStatus } from "./accounts.models";
-import { logger } from "../utils/logger";
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { injectable } from 'inversify';
+import {
+    AccountCreationRequest,
+    AccountListPaginationKey,
+    AccountResource,
+    AccountResourceList,
+    AccountStatus,
+    AccountsItem,
+} from './accounts.models';
 
 @injectable()
 export class AccountsAssembler {
-    public toItem(resource: AccountResource | AccountCreationRequest, status: AccountStatus): AccountsItem {
+    public toItem(
+        resource: AccountResource | AccountCreationRequest,
+        status: AccountStatus
+    ): AccountsItem {
         logger.debug(`accounts.assembler toItem: in: resource:${JSON.stringify(resource)}`);
 
-        const {
-            name,
-            email,
-            ssoEmail,
-            regions,
-            ssoFirstName,
-            ssoLastName,
-            organizationalUnitId,
-        } = resource
+        const { name, email, ssoEmail, regions, ssoFirstName, ssoLastName, organizationalUnitId } =
+            resource;
 
         const accountId = resource['accountId'];
         const item: AccountsItem = {
             email,
-            ssoEmail, regions, ssoLastName, ssoFirstName, accountId, name, organizationalUnitId, status
-        }
+            ssoEmail,
+            regions,
+            ssoLastName,
+            ssoFirstName,
+            accountId,
+            name,
+            organizationalUnitId,
+            status,
+        };
 
-        logger.debug(`accounts.assembler toItem: out: ${JSON.stringify(item)}`)
+        logger.debug(`accounts.assembler toItem: out: ${JSON.stringify(item)}`);
         return item;
     }
 
-    public toListResource(items: AccountsItem[], count?: number, paginateFrom?: AccountListPaginationKey): AccountResourceList {
+    public toListResource(
+        items: AccountsItem[],
+        count?: number,
+        paginateFrom?: AccountListPaginationKey
+    ): AccountResourceList {
         logger.debug(`accounts.assembler toResources: in: items:${JSON.stringify(items)}`);
 
         const list: AccountResourceList = {
-            accounts: []
-        }
+            accounts: [],
+        };
 
         if (count !== undefined || paginateFrom !== undefined) {
             list.pagination = {};
@@ -62,12 +76,11 @@ export class AccountsAssembler {
             };
         }
 
-        list.accounts = items.map(o => this.toResource(o));
+        list.accounts = items.map((o) => this.toResource(o));
 
-        logger.debug(`accounts.assembler toResources: out: ${JSON.stringify(list)}`)
+        logger.debug(`accounts.assembler toResources: out: ${JSON.stringify(list)}`);
         return list;
     }
-
 
     public toResource(item: AccountsItem): AccountResource {
         logger.debug(`accounts.assembler toResource: in: item:${JSON.stringify(item)}`);
@@ -80,8 +93,8 @@ export class AccountsAssembler {
             ssoLastName,
             organizationalUnitId,
             accountId,
-            status
-        } = item
+            status,
+        } = item;
 
         const resource: AccountResource = {
             email,
@@ -92,10 +105,9 @@ export class AccountsAssembler {
             ssoFirstName,
             organizationalUnitId,
             status,
-            accountId
-        }
-        logger.debug(`accounts.assembler toResource: out: ${JSON.stringify(item)}`)
+            accountId,
+        };
+        logger.debug(`accounts.assembler toResource: out: ${JSON.stringify(item)}`);
         return resource;
     }
-
 }

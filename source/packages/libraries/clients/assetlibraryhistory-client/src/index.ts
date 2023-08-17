@@ -13,5 +13,5 @@
 export * from './client/events.model';
 export * from './client/events.service';
 
-export {ASSETLIBRARYHISTORY_CLIENT_TYPES} from './di/types';
-export {assetLibraryHistoryContainerModule} from './di/inversify.config';
+export { ASSETLIBRARYHISTORY_CLIENT_TYPES } from './di/types';
+export { assetLibraryHistoryContainerModule } from './di/inversify.config';

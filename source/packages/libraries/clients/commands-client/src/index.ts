@@ -15,5 +15,5 @@ export * from './client/commands.service';
 export * from './client/templates.models';
 export * from './client/templates.service';
 
-export {COMMANDS_CLIENT_TYPES} from './di/types';
-export {commandsContainerModule} from './di/inversify.config';
+export { COMMANDS_CLIENT_TYPES } from './di/types';
+export { commandsContainerModule } from './di/inversify.config';

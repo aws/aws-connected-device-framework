@@ -15,16 +15,14 @@ import 'reflect-metadata';
 import { fail } from 'assert';
 import { use } from 'chai';
 import { setDefaultTimeout, DataTable, Then } from '@cucumber/cucumber';
-import {
-    GREENGRASS2_PROVISIONING_CLIENT_TYPES
-} from '@cdf/greengrass2-provisioning-client';
+import { GREENGRASS2_PROVISIONING_CLIENT_TYPES } from '@awssolutions/cdf-greengrass2-provisioning-client';
 
 import { container } from '../../di/inversify.config';
 import { getAdditionalHeaders } from '../notifications/notifications.utils';
 import { world } from './greengrass2.world';
 
 import chai_string = require('chai-string');
-import { FleetService } from '@cdf/greengrass2-provisioning-client';
+import { FleetService } from '@awssolutions/cdf-greengrass2-provisioning-client';
 import { validateExpectedAttributes } from '../common/common.steps';
 use(chai_string);
 
@@ -38,16 +36,17 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-const fleetService: FleetService = container.get(GREENGRASS2_PROVISIONING_CLIENT_TYPES.FleetService);
+const fleetService: FleetService = container.get(
+    GREENGRASS2_PROVISIONING_CLIENT_TYPES.FleetService
+);
 
 Then('fleet summary should be updated with this attributes:', async function (data: DataTable) {
-    let summary
+    let summary;
     try {
-        summary = await fleetService.getFleetSummary(getAdditionalHeaders(world.authToken))
+        summary = await fleetService.getFleetSummary(getAdditionalHeaders(world.authToken));
     } catch (err) {
         world.errStatus = err.status;
         fail(`getFleetSummary failed, err: ${JSON.stringify(err)}`);
     }
     validateExpectedAttributes(summary, data);
 });
-

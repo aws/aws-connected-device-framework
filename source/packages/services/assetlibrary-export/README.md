@@ -1,13 +1,14 @@
 # ASSET LIBRARY EXPORT OVERVIEW
 
 ## Introduction
+
 Asset Library export module exports the Asset Library Data to a S3 Bucket.
 
 ## Architecture
 
 The following represents the architecture of the Asset Library Export module
 
-![Architecture](<docs/images/assetlibrary-export-design-hla.jpg>)
+![Architecture](docs/images/assetlibrary-export-design-hla.jpg)
 
 ## Description
 
@@ -26,6 +27,7 @@ The export process will rely on making a 2 step queries to the Neptune database,
 
 Example: s3://myexportbucket/assetlibrary-export/dt=2021-01-28/group/1c1fa080-611e-11eb-b2ad-bdf5c2fe0d72.json
 ```
+
 #### Exported Data File Structure
 
 ```json

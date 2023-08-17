@@ -17,30 +17,41 @@
 
 /* tslint:disable:no-unused-variable member-ordering */
 
-import {injectable, inject} from 'inversify';
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@awssolutions/cdf-lambda-invoke';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { RequestHeaders ,CertificateBatchTaskWithChunks } from './certificates.models';
-import {CertificatesService, CertificatesServiceBase} from './certificates.service';
-import {LAMBDAINVOKE_TYPES, LambdaInvokerService, LambdaApiGatewayEventBuilder} from '@cdf/lambda-invoke';
+import { CertificateBatchTaskWithChunks, RequestHeaders } from './certificates.models';
+import { CertificatesService, CertificatesServiceBase } from './certificates.service';
 
 @injectable()
-export class CertificatesLambdaService extends CertificatesServiceBase implements CertificatesService {
-
-    private functionName : string;
+export class CertificatesLambdaService
+    extends CertificatesServiceBase
+    implements CertificatesService
+{
+    private functionName: string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
         this.functionName = process.env.BULKCERTS_API_FUNCTION_NAME;
     }
 
-    async getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string[]|Buffer> {
+    async getCertificates(
+        taskId: string,
+        downloadType: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string[] | Buffer> {
         ow(taskId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(`${super.getCertificatesRelativeUrl(taskId)}`)
-            .setQueryStringParameters({'downloadType':downloadType})
+            .setQueryStringParameters({ downloadType: downloadType })
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -48,7 +59,10 @@ export class CertificatesLambdaService extends CertificatesServiceBase implement
         return res.body;
     }
 
-    async getCertificatesTask(taskId:string, additionalHeaders?: RequestHeaders): Promise<CertificateBatchTaskWithChunks> {
+    async getCertificatesTask(
+        taskId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<CertificateBatchTaskWithChunks> {
         ow(taskId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()

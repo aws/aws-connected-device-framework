@@ -53,6 +53,32 @@ Feature: Organization Manager Organizational Unit and Accounts Creation
             | $.regions.length     | 1             |
             | $.regions[0]         | us-west-2     |
 
+    Scenario: Creating An Account under existing Organizational Unit with null value for regions
+        Given account "44444" does not exists
+        When I create account with attributes
+            | accountId            | 44444         |
+            | name                 | test-account  |
+            | organizationalUnitId | ou-12345      |
+            | email                | test@test.com |
+            | ssoEmail             | test@test.com |
+            | ssoFirstName         | John          |
+            | ssoLastName          | Doe           |
+            | regions              | null          |
+        Then last account creation fails with a 400
+
+    Scenario: Creating An Account under existing Organizational Unit with empty regions
+        Given account "55555" does not exists
+        When I create account with attributes
+            | accountId            | 55555         |
+            | name                 | test-account  |
+            | organizationalUnitId | ou-12345      |
+            | email                | test@test.com |
+            | ssoEmail             | test@test.com |
+            | ssoFirstName         | John          |
+            | ssoLastName          | Doe           |
+            | regions              | []            |
+        Then last account creation fails with a 400
+
     Scenario: Deleting an Organizational Unit that has accounts
         Given organizational unit "ou-12345" exists
         And account "22222" associated with organizational unit "ou-12345"

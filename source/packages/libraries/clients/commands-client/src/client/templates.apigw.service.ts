@@ -21,47 +21,56 @@ import { TemplatesService, TemplatesServiceBase } from './templates.service';
 
 @injectable()
 export class TemplatesApigwService extends TemplatesServiceBase implements TemplatesService {
-
-    private readonly baseUrl:string;
+    private readonly baseUrl: string;
 
     public constructor() {
         super();
         this.baseUrl = process.env.COMMANDS_BASE_URL;
     }
 
-    async createTemplate(template: TemplateModel, additionalHeaders?: RequestHeaders): Promise<void> {
+    async createTemplate(
+        template: TemplateModel,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(template, ow.object.nonEmpty);
 
-        await request.post(`${this.baseUrl}${super.templatesRelativeUrl()}`)
+        await request
+            .post(`${this.baseUrl}${super.templatesRelativeUrl()}`)
             .send(template)
             .set(this.buildHeaders(additionalHeaders));
     }
 
-    async getTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<TemplateModel> {
-        ow(templateId,'templateId', ow.string.nonEmpty);
+    async getTemplate(
+        templateId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<TemplateModel> {
+        ow(templateId, 'templateId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(templateId)}`;
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
+        const res = await request.get(url).set(this.buildHeaders(additionalHeaders));
 
         return res.body;
     }
 
     async listTemplates(additionalHeaders?: RequestHeaders): Promise<TemplateModel> {
-
-        const res = await request.get(`${this.baseUrl}${super.templatesRelativeUrl()}`)
+        const res = await request
+            .get(`${this.baseUrl}${super.templatesRelativeUrl()}`)
             .set(this.buildHeaders(additionalHeaders));
 
         return res.body;
     }
 
-    async updateTemplate(template: TemplateModel, additionalHeaders?: RequestHeaders): Promise<void> {
+    async updateTemplate(
+        template: TemplateModel,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.templateId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(template.templateId)}`;
 
-        const res = await request.patch(url)
+        const res = await request
+            .patch(url)
             .send(template)
             .set(this.buildHeaders(additionalHeaders));
 
@@ -69,12 +78,10 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
     }
 
     async deleteTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(templateId)}`;
 
-        await request.delete(url)
-            .set(this.buildHeaders(additionalHeaders));
+        await request.delete(url).set(this.buildHeaders(additionalHeaders));
     }
-
 }

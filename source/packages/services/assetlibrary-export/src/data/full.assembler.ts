@@ -11,29 +11,29 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import { injectable } from 'inversify';
 
-import { logger } from '../utils/logger';
-import { Node, NodeAttributeValue } from './node';
-import { ModelAttributeValue, safeExtractLabels } from './model';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TypeCategory } from '../types/constants';
 import { RelatedEntityDto, VertexDto } from './full.model';
+import { ModelAttributeValue, safeExtractLabels } from './model';
+import { Node, NodeAttributeValue } from './node';
 
 @injectable()
 export class FullAssembler {
-
-    public assembleNode(entity:VertexDto):Node {
+    public assembleNode(entity: VertexDto): Node {
         logger.silly(`full.assembler assembleNode: in: entity: ${JSON.stringify(entity)}`);
 
         const labels = safeExtractLabels(entity['label']);
         const node = new Node();
-        Object.keys(entity).forEach( key => {
-            if (key==='id') {
-                node.id = <string> entity[key];
-            } else if (key==='label') {
+        Object.keys(entity).forEach((key) => {
+            if (key === 'id') {
+                node.id = <string>entity[key];
+            } else if (key === 'label') {
                 node.types = labels;
             } else {
-                node.attributes[key] = entity[key] ;
+                node.attributes[key] = entity[key];
             }
         });
 
@@ -41,7 +41,7 @@ export class FullAssembler {
         return node;
     }
 
-    public assembleAssociation(node:Node, r:RelatedEntityDto): void {
+    public assembleAssociation(node: Node, r: RelatedEntityDto): void {
         logger.silly(`full.assembler assembleAssociation: in: r:${JSON.stringify(r)}`);
 
         const l = safeExtractLabels(r.vProps.label);
@@ -64,13 +64,12 @@ export class FullAssembler {
             return v;
         }
     }
-
 }
 
 export interface NodeDto {
-    object: { [key:string]: NodeAttributeValue};
-    EsIn: { [key:string]: NodeAttributeValue} [];
-    EsOut: { [key:string]: NodeAttributeValue} [];
-    VsIn: { [key:string]: NodeAttributeValue} [];
-    VsOut: { [key:string]: NodeAttributeValue} [];
+    object: { [key: string]: NodeAttributeValue };
+    EsIn: { [key: string]: NodeAttributeValue }[];
+    EsOut: { [key: string]: NodeAttributeValue }[];
+    VsIn: { [key: string]: NodeAttributeValue }[];
+    VsOut: { [key: string]: NodeAttributeValue }[];
 }

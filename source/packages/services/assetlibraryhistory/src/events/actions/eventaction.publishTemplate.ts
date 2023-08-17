@@ -10,20 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger';
-import { injectable, inject } from 'inversify';
-import { EventAction } from './eventaction.interfaces';
 import { EventsDao } from '../events.dao';
 import { EventModel, StateHistoryModel } from '../events.models';
+import { EventAction } from './eventaction.interfaces';
 
 @injectable()
 export class PublishTemplateAction implements EventAction {
+    constructor(@inject(TYPES.EventsDao) private eventsDao: EventsDao) {}
 
-    constructor(
-        @inject(TYPES.EventsDao) private eventsDao: EventsDao) {}
-
-    async execute(event:EventModel): Promise<EventModel> {
+    async execute(event: EventModel): Promise<EventModel> {
         logger.debug(`eventaction.publishTemplate execute: event:${JSON.stringify(event)}}`);
 
         // TODO: validation
@@ -32,21 +30,21 @@ export class PublishTemplateAction implements EventAction {
         // retrieve the existing stored history
         const existingEvent = await this.eventsDao.getLatest(event.objectId);
 
-        let existingState= {};
-        if (existingEvent!==undefined) {
+        let existingState = {};
+        if (existingEvent !== undefined) {
             // we haev a latest, therefore augment with the change
             existingState = JSON.parse(existingEvent.state);
         }
         existingState['status'] = status;
 
         // finally, save the versions
-        const toSave:StateHistoryModel = {
+        const toSave: StateHistoryModel = {
             objectId: event.objectId,
             type: event.type,
             time: event.time,
             event: event.event,
             user: event.user,
-            state: JSON.stringify(existingState)
+            state: JSON.stringify(existingState),
         };
 
         await this.eventsDao.create(toSave);
@@ -54,7 +52,5 @@ export class PublishTemplateAction implements EventAction {
         await this.eventsDao.update(toSave);
 
         return event;
-
     }
-
 }

@@ -5,24 +5,32 @@
 #-------------------------------------------------------------------------------*/
 import { inject, injectable } from 'inversify';
 
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
-import {CustomResourceEvent} from './customResource.model';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
-import { CustomResource } from './customResource';
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@awssolutions/cdf-lambda-invoke';
 import ow from 'ow';
+import { CustomResource } from './customResource';
+import { CustomResourceEvent } from './customResource.model';
 
 @injectable()
 export class EventsCustomResource implements CustomResource {
-
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {}
 
-    protected headers:{[key:string]:string};
+    protected headers: { [key: string]: string };
 
-    public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`EventsCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `EventsCustomResource: create: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent
+            )}`
+        );
 
         const functionName = customResourceEvent?.ResourceProperties?.FunctionName;
         const contentType = customResourceEvent?.ResourceProperties?.ContentType;
@@ -36,48 +44,55 @@ export class EventsCustomResource implements CustomResource {
         const headers = this.getHeaders(contentType);
         const body = JSON.parse(rawBody);
 
-        const invocationPromises = body.map((singleEvent: unknown)  => {
+        const invocationPromises = body.map((singleEvent: unknown) => {
             logger.debug(`EventsCustomResource: create: event: ${JSON.stringify(singleEvent)}`);
-            
+
             // create the event
             const apiEvent = new LambdaApiGatewayEventBuilder()
                 .setMethod('POST')
                 .setPath(`/eventsources/${eventSourceId}/events`)
                 .setHeaders(headers)
                 .setBody(singleEvent);
-                
+
             return this.lambdaInvoker.invoke(functionName, apiEvent);
         });
 
         /* eslint @typescript-eslint/no-explicit-any: 0 */
         const responses = Promise.allSettled(invocationPromises).then((results: any) => {
             results.forEach((result: unknown) => {
-                logger.debug(`EventsCustomResource: create: result: ${JSON.stringify(result)}`);    
+                logger.debug(`EventsCustomResource: create: result: ${JSON.stringify(result)}`);
             });
         });
-        
-        return responses;
 
+        return responses;
     }
 
-    public async update(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`EventsCustomResource: update: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `EventsCustomResource: update: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent
+            )}`
+        );
         return await this.create(customResourceEvent);
     }
 
-    public async delete(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`EventsCustomResource: delete: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async delete(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `EventsCustomResource: delete: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent
+            )}`
+        );
         // no delete
-         return {};
+        return {};
     }
 
-    protected getHeaders(contentType:string): {[key:string]:string} {
-        if (this.headers===undefined) {
+    protected getHeaders(contentType: string): { [key: string]: string } {
+        if (this.headers === undefined) {
             const h = {
-                'Accept': contentType,
-                'Content-Type': contentType
+                Accept: contentType,
+                'Content-Type': contentType,
             };
-            this.headers = {...h};
+            this.headers = { ...h };
         }
         return this.headers;
     }

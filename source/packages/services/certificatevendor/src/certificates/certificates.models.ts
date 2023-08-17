@@ -1,4 +1,3 @@
-
 /*********************************************************************************************************************
  *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
  *                                                                                                                    *
@@ -39,21 +38,21 @@ export interface CertInfo {
 	country?: string;
 	emailAddress?: string;
 	daysExpiry?:number;	
+
 }
 
 export interface CertificateResponseModel {
-	certificateId?: string;
-	certificate?: string;
-	location?: string;
-	message?: string;
+    certificateId?: string;
+    certificate?: string;
+    location?: string;
+    message?: string;
 }
 
 export enum Action {
-	get = 'get',
-	ack = 'ack'
+    get = 'get',
+    ack = 'ack',
 }
 
-
-export interface Certificates{
-	[certificateId: string] : string
+export interface Certificates {
+    [certificateId: string]: string;
 }

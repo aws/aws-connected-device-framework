@@ -17,10 +17,11 @@ Feature: Provisioning things using ACM PCA template functionality
   Scenario: Setup
     Given thing "ACMPCAIntegrationTestThing" does not exist
 
-  Scenario: Provision a Thing
-    Given thing "ACMPCAIntegrationTestThing" does not exist
-    When I provision a thing "ACMPCAIntegrationTestThing" using acmpca
-    Then the thing "ACMPCAIntegrationTestThing" is provisioned
+##### Note: following commented out as the environment needs a real ACMPCA cert to test with:
+#  Scenario: Provision a Thing
+#    Given thing "ACMPCAIntegrationTestThing" does not exist
+#    When I provision a thing "ACMPCAIntegrationTestThing" using acmpca
+#    Then the thing "ACMPCAIntegrationTestThing" is provisioned
 
   @teardown_acmpca_provisioning
   Scenario: Teardown

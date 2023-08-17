@@ -25,7 +25,7 @@ describe('BatchBase', () => {
             [0, 5],
             [5, 10],
             [10, 15],
-            [15, 19]
+            [15, 19],
         ];
 
         instance = new BatcherBase();
@@ -34,7 +34,5 @@ describe('BatchBase', () => {
 
         expect(response.length).toEqual(4);
         expect(response).toEqual(expectedRanges);
-
     });
-
 });

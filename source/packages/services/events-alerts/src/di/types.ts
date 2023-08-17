@@ -11,12 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const TYPES = {
+    CachableDocumentClient: Symbol.for('CachableDocumentClient'),
+    CachableDocumentClientFactory: Symbol.for('Factory<CachableDocumentClient>'),
 
-    CachableDocumentClient:  Symbol.for('CachableDocumentClient'),
-    CachableDocumentClientFactory:  Symbol.for('Factory<CachableDocumentClient>'),
-
-    DocumentClient:  Symbol.for('DocumentClient'),
-    DocumentClientFactory:  Symbol.for('Factory<DocumentClient>'),
+    DocumentClient: Symbol.for('DocumentClient'),
+    DocumentClientFactory: Symbol.for('Factory<DocumentClient>'),
 
     MessageCompilerService: Symbol.for('MessageCompilerService'),
     MessageCompilerDao: Symbol.for('MessageCompilerDao'),
@@ -26,8 +25,8 @@ export const TYPES = {
     SNSTarget: Symbol.for('SNSTarget'),
     DynamoDBTarget: Symbol.for('DynamoDBTarget'),
 
-    SNS:  Symbol.for('SNS'),
-    SNSFactory:  Symbol.for('Factory<SNS>'),
+    SNS: Symbol.for('SNS'),
+    SNSFactory: Symbol.for('Factory<SNS>'),
 
-    DynamoDbTargetDao: Symbol.for('DynamoDbTargetDao')
+    DynamoDbTargetDao: Symbol.for('DynamoDbTargetDao'),
 };

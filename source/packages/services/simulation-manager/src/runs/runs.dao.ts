@@ -15,39 +15,38 @@ import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
-import { createDelimitedAttribute, PkType } from '../utils/pkUtils.util';
+import { PkType, createDelimitedAttribute } from '../utils/pkUtils.util';
 import { RunItem } from './runs.models';
 
 @injectable()
 export class RunsDao {
-
     private _dc: DocumentClient;
     private _simulationTable: string;
     private _deviceStateTable: string;
 
     public constructor(
-	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DocumentClient
+        @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DocumentClient
     ) {
         this._dc = documentClientFactory();
         this._simulationTable = process.env.AWS_DYNAMODB_TABLE_SIMULATIONS;
         this._deviceStateTable = process.env.AWS_DYNAMODB_TABLE_STATE;
     }
 
-    public async save(item:RunItem): Promise<void> {
+    public async save(item: RunItem): Promise<void> {
         logger.debug(`runs.dao save: in: item:${JSON.stringify(item)}`);
 
         const simulationId = createDelimitedAttribute(PkType.Simulation, item.simulationId);
         const runId = createDelimitedAttribute(PkType.Run, item.id);
 
-        const params : DocumentClient.PutItemInput = {
+        const params: DocumentClient.PutItemInput = {
             TableName: this._simulationTable,
             Item: {
                 pk: simulationId,
                 sk: runId,
                 simulationId: item.simulationId,
                 deviceCount: item.deviceCount,
-                status: item.status
-            }
+                status: item.status,
+            },
         };
 
         logger.debug(`runs.dao save: params:${JSON.stringify(params)}`);
@@ -55,38 +54,33 @@ export class RunsDao {
         await this._dc.put(params).promise();
 
         logger.debug(`runs.dao save: exit:`);
-
     }
 
-    public async listDeviceState(simulationId:string): Promise<{[key: string]: unknown}[]> {
+    public async listDeviceState(simulationId: string): Promise<{ [key: string]: unknown }[]> {
         logger.debug(`runs.dao listDeviceState: in: simulationId:${simulationId}`);
 
-        const params:DocumentClient.QueryInput = {
+        const params: DocumentClient.QueryInput = {
             TableName: this._deviceStateTable,
             KeyConditionExpression: `#key = :key`,
             ExpressionAttributeNames: {
-                '#key': 'simulationId'
+                '#key': 'simulationId',
             },
             ExpressionAttributeValues: {
-                ':key': simulationId
-            }
+                ':key': simulationId,
+            },
         };
 
-        const results:{[key: string]: unknown}[]= [];
-        while (true) {   // eslint-disable-line no-constant-condition
-            const response = await this._dc.query(params).promise();
-            if (response.Items!==undefined) {
+        const results: { [key: string]: unknown }[] = [];
+        let response;
+        do {
+            response = await this._dc.query(params).promise();
+            if (response.Items !== undefined) {
                 results.push(...response.Items);
             }
-            if (response.LastEvaluatedKey===undefined) {
-                break;
-            }
-            params.ExclusiveStartKey=response.LastEvaluatedKey;
-        }
+            params.ExclusiveStartKey = response.LastEvaluatedKey;
+        } while (response.LastEvaluatedKey !== undefined);
 
         logger.debug(`runs.dao listDeviceState: exit:${JSON.stringify(results)}`);
         return results;
-
     }
-
 }

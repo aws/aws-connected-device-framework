@@ -21,7 +21,6 @@ import { WorkflowAction } from './workflow.interfaces';
 
 @injectable()
 export abstract class WorkflowPublishAction implements WorkflowAction {
-
     protected readonly shortIdGenerator: ShortUniqueId;
 
     constructor() {
@@ -45,14 +44,15 @@ export abstract class WorkflowPublishAction implements WorkflowAction {
         if (command.payloadTemplate) {
             let payloadString = JSON.stringify(command.payloadTemplate);
             if (message.payloadParamValues !== undefined) {
-                Object.keys(message.payloadParamValues).forEach(k => {
+                Object.keys(message.payloadParamValues).forEach((k) => {
                     const token = '${' + k + '}';
-                    payloadString = payloadString.split(token).join(message.payloadParamValues[k] as string);
+                    payloadString = payloadString
+                        .split(token)
+                        .join(message.payloadParamValues[k] as string);
                 });
             }
             payload = JSON.parse(payloadString);
         }
         return payload;
     }
-
 }

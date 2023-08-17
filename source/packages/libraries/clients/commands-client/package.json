@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/commands-client",
-  "version": "5.0.5",
+  "name": "@awssolutions/cdf-commands-client",
+  "version": "2.4.0",
   "description": "CDF Commands Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -9,15 +9,16 @@
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b",
-    "test": "rushx lint && jest --silent --passWithNoTests"
+    "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@cdf/lambda-invoke": "^3.0.2",
-    "inversify": "5.1.1",
+    "@awssolutions/cdf-lambda-invoke": "workspace:^2.4.0",
+    "aws-sdk": "2.1386.0",
+    "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",
-    "inversify-express-utils": "6.3.2",
+    "inversify-express-utils": "6.4.3",
     "js-yaml": "4.1.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "ow": "0.23.0",
     "reflect-metadata": "0.1.13",
     "superagent": "7.1.1",
@@ -26,19 +27,15 @@
     "winston-transport": "4.4.0",
     "dotenv-flow": "~3.2.0"
   },
-  "peerDependencies": {
-    "aws-sdk": "2.1048.0"
-  },
   "devDependencies": {
-    "@types/node": "16.11.7",
+    "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
+    "@typescript-eslint/eslint-plugin": "6.2.0",
+    "@types/node": "^18.17.0",
     "@types/superagent": "4.1.15",
-    "@rushstack/eslint-config": "2.3.4",
-    "eslint": "7.26.0",
+    "eslint": "8.46.0",
     "nyc": "15.1.0",
     "shx": "0.3.3",
     "@types/jest": "26.0.23",
-    "@typescript-eslint/eslint-plugin": "4.23.0",
-    "@typescript-eslint/parser": "4.23.0",
     "jest-create-mock-instance": "1.1.0",
     "jest-haste-map": "26.6.2",
     "jest-mock-extended": "1.0.14",
@@ -50,8 +47,7 @@
     "@types/dotenv-flow": "~3.2.0"
   },
   "jest": {
-    "globals": {
-               },
+    "globals": {},
     "roots": [
       "<rootDir>/src"
     ],
@@ -70,6 +66,5 @@
       "node"
     ]
   },
-  "license": "ISC",
-  "private": true
+  "license": "ISC"
 }

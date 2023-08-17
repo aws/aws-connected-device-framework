@@ -11,5 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 declare module 'cfn-response-promise' {
-    export function send(event:unknown, context:unknown, responseStatus:string, responseData: unknown, physicalResourceId?:string): unknown;
+    export function send(
+        event: unknown,
+        context: unknown,
+        responseStatus: string,
+        responseData: unknown,
+        physicalResourceId?: string,
+    ): unknown;
 }

@@ -11,50 +11,82 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-
 import { ActivationResponse } from './activation.model';
 import { ActivationService, ActivationServiceBase } from './activation.service';
 import { RequestHeaders } from './common.model';
 
 @injectable()
 export class ActivationApigwService extends ActivationServiceBase implements ActivationService {
-    private readonly baseUrl:string;
+    private readonly baseUrl: string;
 
     public constructor() {
         super();
         this.baseUrl = process.env.DEVICE_PATCHER_BASE_URL;
     }
 
-    async createActivation(deviceId: string, additionalHeaders?:RequestHeaders): Promise<ActivationResponse> {
+    async createActivation(
+        deviceId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ActivationResponse> {
         ow(deviceId, ow.string.nonEmpty);
 
         const requestBody = {
-            deviceId
-        }
+            deviceId,
+        };
 
-        const res = await request.post(`${this.baseUrl}${super.activationsRelativeUrl()}`)
+        return await request
+            .post(`${this.baseUrl}${super.activationsRelativeUrl()}`)
             .set(super.buildHeaders(additionalHeaders))
-            .send(requestBody);
-
-        return res.body;
+            .send(requestBody)
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async getActivation(activationId: string, additionalHeaders?:RequestHeaders): Promise<ActivationResponse> {
+    async getActivation(
+        activationId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ActivationResponse> {
         ow(activationId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.activationsByIdRelativeUrl(activationId)}`;
-        const res = await request.get(url).set(super.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(url)
+            .set(super.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async deleteActivation(activationId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async deleteActivation(
+        activationId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(activationId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.activationsByIdRelativeUrl(activationId)}`;
-        await request.delete(url).set(super.buildHeaders(additionalHeaders));
+        return await request
+            .delete(url)
+            .set(super.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 }

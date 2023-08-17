@@ -10,31 +10,30 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {logger} from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import * as als from 'async-local-storage';
 
 export class Claims {
-    paths:{[path:string] : ClaimAccess[]}= {};
+    paths: { [path: string]: ClaimAccess[] } = {};
 
-    constructor(rawClaims:string[]) {
-
+    constructor(rawClaims: string[]) {
         logger.debug(`claims in: rawClaims:${rawClaims}`);
 
-        if (rawClaims===undefined) {
+        if (rawClaims === undefined) {
             return;
         }
 
-        for(const claim of rawClaims) {
+        for (const claim of rawClaims) {
             logger.debug(`claims claim:${JSON.stringify(claim)}`);
             const claim_items = claim.split(':');
-            if (claim_items.length!==2) {
+            if (claim_items.length !== 2) {
                 logger.debug(`claims invalid split claim_items:${JSON.stringify(claim_items)}`);
                 return;
             }
             const path = claim_items[0];
-            const access:ClaimAccess[]=[];
-            for(const x of claim_items[1] ) {
-                if (x==='*') {
+            const access: ClaimAccess[] = [];
+            for (const x of claim_items[1]) {
+                if (x === '*') {
                     access.push(...[ClaimAccess.C, ClaimAccess.R, ClaimAccess.U, ClaimAccess.D]);
                 } else {
                     access.push(ClaimAccess[x]);
@@ -44,9 +43,9 @@ export class Claims {
         }
     }
 
-    public isAuthorized(path:string, access:ClaimAccess): boolean {
-        const allowed:ClaimAccess[] = this.paths[path];
-        if (allowed===undefined) {
+    public isAuthorized(path: string, access: ClaimAccess): boolean {
+        const allowed: ClaimAccess[] = this.paths[path];
+        if (allowed === undefined) {
             return false;
         }
         return allowed.includes(access);
@@ -56,24 +55,24 @@ export class Claims {
         return Object.keys(this.paths);
     }
 
-    public hasAccessForPath(path:string, access:ClaimAccess): boolean {
-        return (this.paths[path]!==undefined && this.paths[path].includes(access));
+    public hasAccessForPath(path: string, access: ClaimAccess): boolean {
+        return this.paths[path] !== undefined && this.paths[path].includes(access);
     }
 
-    public static getInstance() : Claims {
+    public static getInstance(): Claims {
         const claims = als.get('claims') as Claims;
-        if (claims!==undefined) {
+        if (claims !== undefined) {
             return claims;
         } else {
-            const noClaims:string[]= [];
+            const noClaims: string[] = [];
             return new Claims(noClaims);
         }
     }
 }
 
 export enum ClaimAccess {
-    C='C',
-    R='R',
-    U='U',
-    D='D'
+    C = 'C',
+    R = 'R',
+    U = 'U',
+    D = 'D',
 }

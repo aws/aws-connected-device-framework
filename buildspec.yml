@@ -16,34 +16,28 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 14
+      nodejs: 18
     commands:
-      - echo "nothing to do in install"
+      - npm install -g @microsoft/rush
+
   pre_build:
     commands:
-      - echo "Installing dependencies and executing unit tests - `pwd`"
-      - cd deployment && chmod +x ./run-unit-tests.sh && ./run-unit-tests.sh
-      - echo "Installing dependencies and executing unit tests completed `date`"
+      - echo "Reset shell dir" && cd ${CODEBUILD_SRC_DIR}
+      - mkdir artifacts
+
   build:
     commands:
-      - echo "Starting build `date` in `pwd`"
-      - chmod +x ./build-s3-dist.sh && ./build-s3-dist.sh $DIST_OUTPUT_BUCKET $SOLUTION_NAME $VERSION $TEMPLATE_OUTPUT_BUCKET $ECR_REPO $AWS_REGION
-      - echo "Build completed `date`"
-      - echo "Starting open-source-dist `date` in `pwd`"
-      - chmod +x ./build-open-source-dist.sh && ./build-open-source-dist.sh $SOLUTION_NAME
-      - echo "Open Source Dist completed `date`"
-
-  post_build:
-    commands:
-      - echo "Retrieving next stage buildspec `date` in `pwd`"
-      - aws s3 cp s3://solutions-build-assets/changelog-spec.yml ../buildspec.yml
-      - echo "Retrieving next stage buildspec complete"
-      - echo "Post build completed on `date`"
+      - echo "Reset shell dir" && cd ${CODEBUILD_SRC_DIR}
+      - cd source
+      - rush update
+      - rush bundle
+      - JEST_MAX_WORKERS=1 rush test
+      - rush publish --pack --include-all --publish --release-folder ../artifacts/npm --version-policy external
 
 artifacts:
   files:
-    - deployment/**/*
-    - CHANGELOG.md
-    - buildspec.yml
-    - .cfnnag_global_disable
-    - .cfnnagignore
+    - artifacts/**/*
+  secondary-artifacts:
+    noZip:
+      files:
+        - artifacts/**/*

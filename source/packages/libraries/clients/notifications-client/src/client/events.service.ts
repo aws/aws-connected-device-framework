@@ -10,13 +10,17 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {EventResource, EventResourceList} from './events.model';
-import {RequestHeaders} from './common.model';
-import {injectable} from 'inversify';
-import {CommonServiceBase} from './common.service';
+import { injectable } from 'inversify';
+import { RequestHeaders } from './common.model';
+import { CommonServiceBase } from './common.service';
+import { EventResource, EventResourceList } from './events.model';
 
 export interface EventsService {
-    createEvent(eventSourceId: string, event: EventResource, additionalHeaders?: RequestHeaders): Promise<string>;
+    createEvent(
+        eventSourceId: string,
+        event: EventResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string>;
 
     getEvent(eventId: string, additionalHeaders?: RequestHeaders): Promise<EventResource>;
 
@@ -24,12 +28,16 @@ export interface EventsService {
 
     updateEvent(event: EventResource, additionalHeaders?: RequestHeaders): Promise<void>;
 
-    listEventsForEventSource(eventSourceId: string, count?: number, fromEventId?: string, additionalHeaders?: RequestHeaders): Promise<EventResourceList>;
+    listEventsForEventSource(
+        eventSourceId: string,
+        count?: number,
+        fromEventId?: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<EventResourceList>;
 }
 
 @injectable()
-export class EventsServiceBase extends CommonServiceBase  {
-
+export class EventsServiceBase extends CommonServiceBase {
     protected eventSourceEventsRelativeUrl(eventSourceId: string): string {
         return `/eventsources/${eventSourceId}/events`;
     }

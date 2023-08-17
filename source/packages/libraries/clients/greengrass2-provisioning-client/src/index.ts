@@ -22,5 +22,5 @@ export * from './client/fleet.service';
 export * from './client/devices.model';
 export * from './client/devices.service';
 
-export {GREENGRASS2_PROVISIONING_CLIENT_TYPES} from './di/types';
-export {greengrass2ProvisioningContainerModule} from './di/inversify.config';
+export { GREENGRASS2_PROVISIONING_CLIENT_TYPES } from './di/types';
+export { greengrass2ProvisioningContainerModule } from './di/inversify.config';

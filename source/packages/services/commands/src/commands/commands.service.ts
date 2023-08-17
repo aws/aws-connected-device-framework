@@ -10,24 +10,32 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import * as fs from 'fs';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import * as stream from 'stream';
+import * as util from 'util';
+import { v1 as uuid } from 'uuid';
 import { TYPES } from '../di/types';
-import {logger} from '../utils/logger';
-import { CommandModel, CommandListModel, CommandType, ExecutionSummaryListModel, ExecutionStatus, JobStatus, ExecutionModel, CommandStatus } from './commands.models';
+import { logger } from '../utils/logger';
 import { CommandsDao } from './commands.dao';
+import {
+    CommandListModel,
+    CommandModel,
+    CommandStatus,
+    CommandType,
+    ExecutionModel,
+    ExecutionStatus,
+    ExecutionSummaryListModel,
+    JobStatus,
+} from './commands.models';
+import { CommandsValidator } from './commands.validator';
 import { WorkflowFactory } from './workflow/workflow.factory';
 import { WorkflowAction } from './workflow/workflow.interfaces';
 import { InvalidTransitionAction } from './workflow/workflow.invalidTransition';
-import {v1 as uuid} from 'uuid';
-import * as fs from 'fs';
-import * as stream from 'stream';
-import * as util from 'util';
-import ow from 'ow';
-import { CommandsValidator } from './commands.validator';
 
 @injectable()
 export class CommandsService {
-
     private _iot: AWS.Iot;
     private _s3: AWS.S3;
     private _unlinkAsync = util.promisify(fs.unlink);
@@ -39,34 +47,35 @@ export class CommandsService {
         @inject('aws.s3.bucket') private s3Bucket: string,
         @inject('aws.s3.prefix') private s3Prefix: string,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
-        @inject(TYPES.S3Factory) s3Factory: () => AWS.S3 ) {
-            this._iot = iotFactory();
-            this._s3 = s3Factory();
+        @inject(TYPES.S3Factory) s3Factory: () => AWS.S3
+    ) {
+        this._iot = iotFactory();
+        this._s3 = s3Factory();
     }
 
-    public async get(commandId: string):Promise<CommandModel> {
+    public async get(commandId: string): Promise<CommandModel> {
         logger.debug(`commands.service get: in:commandId:${commandId}`);
 
         // TODO: improve the performance of this by running the promises in parallel
 
         const command = await this.commandsDao.get(commandId);
-        if (command===undefined) {
+        if (command === undefined) {
             logger.debug('commands.service get: exit: command:undefined');
             return command;
         }
 
         try {
             // if a job has been created, use its values instead of the ones we have stored
-            const jobId =  `cdf-${commandId}`;
-            const job = await this._iot.describeJob({jobId}).promise();
+            const jobId = `cdf-${commandId}`;
+            const job = await this._iot.describeJob({ jobId }).promise();
 
             if (job !== undefined) {
                 command.type = CommandType[job.job.targetSelection];
                 command.jobStatus = JobStatus[job.job.status];
                 command.targets = job.job.targets;
-                command.rolloutMaximumPerMinute = job.job.jobExecutionsRolloutConfig.maximumPerMinute;
+                command.rolloutMaximumPerMinute =
+                    job.job.jobExecutionsRolloutConfig.maximumPerMinute;
             }
-
         } catch (err) {
             logger.debug(`unable to retrieve job: ${err}`);
         }
@@ -75,33 +84,32 @@ export class CommandsService {
             const key = `${this.s3Prefix}${commandId}/files`;
             const params = {
                 Bucket: this.s3Bucket,
-                Prefix: key
+                Prefix: key,
             };
             const uploadedFiles = await this._s3.listObjectsV2(params).promise();
-            if (uploadedFiles.Contents && uploadedFiles.Contents.length>0) {
-                command.files= {};
-                uploadedFiles.Contents.forEach(s3Obj => {
+            if (uploadedFiles.Contents && uploadedFiles.Contents.length > 0) {
+                command.files = {};
+                uploadedFiles.Contents.forEach((s3Obj) => {
                     const fileId = s3Obj.Key.split(/.*[/|\\]/).pop();
-                    command.files[fileId] = {bucketName:this.s3Bucket, key:s3Obj.Key};
+                    command.files[fileId] = { bucketName: this.s3Bucket, key: s3Obj.Key };
                 });
             }
             logger.debug(JSON.stringify(uploadedFiles));
-        }  catch (err) {
+        } catch (err) {
             logger.debug(`unable to retrieve file listing: ${err}`);
         }
 
         logger.debug(`commands.service get: exit: command:${JSON.stringify(command)}`);
         return command;
-
     }
 
-    public async getByJobId(jobId: string):Promise<CommandModel> {
+    public async getByJobId(jobId: string): Promise<CommandModel> {
         logger.debug(`commands.service getByJobId: in:commandId:${jobId}`);
 
         // TODO: improve the performance of this by running the promises in parallel
 
         const commandByJob = await this.commandsDao.getByJobId(jobId);
-        if (commandByJob===undefined) {
+        if (commandByJob === undefined) {
             logger.debug('commands.service getByJobId: exit: commandByJob:undefined');
             return commandByJob;
         }
@@ -110,10 +118,9 @@ export class CommandsService {
 
         logger.debug(`commands.service get: exit: command:${JSON.stringify(command)}`);
         return command;
-
     }
 
-    public async create(command: CommandModel) : Promise<string> {
+    public async create(command: CommandModel): Promise<string> {
         logger.debug(`commands.service create: in: command: ${JSON.stringify(command)}`);
 
         command.commandId = uuid();
@@ -125,20 +132,23 @@ export class CommandsService {
         this.commandsValidator.validate(command);
 
         // determine the action to take based on the status
-        const actions:WorkflowAction[] = this.workflowFactory.getAction(null, command.commandStatus);
+        const actions: WorkflowAction[] = this.workflowFactory.getAction(
+            null,
+            command.commandStatus
+        );
 
         // perform the actions
-        let result=true;
+        let result = true;
 
         for (const a of actions) {
             if (a instanceof InvalidTransitionAction) {
                 throw new Error('UNSUPPORTED_TRANSITION');
             } else {
-                result = result && await a.execute({} as CommandModel, command);
+                result = result && (await a.execute({} as CommandModel, command));
             }
         }
 
-        if (result===false) {
+        if (result === false) {
             throw new Error('CREATE_ACTION_FAILED');
         }
 
@@ -146,36 +156,38 @@ export class CommandsService {
         return command.commandId;
     }
 
-    public async update(updated: CommandModel) : Promise<void> {
+    public async update(updated: CommandModel): Promise<void> {
         logger.debug(`commands.service update: in: command: ${JSON.stringify(updated)}`);
 
         ow(updated, ow.object.nonEmpty);
         ow(updated.commandId, ow.string.nonEmpty);
         ow(updated.commandStatus, ow.string.nonEmpty);
 
-
         // retrieve the existing command definition
         const existing = await this.commandsDao.get(updated.commandId);
-        if (existing===undefined) {
+        if (existing === undefined) {
             throw new Error('NOT_FOUND');
         }
         logger.debug(`commands.service existing: ${JSON.stringify(existing)}`);
 
         // determine the action to take based on the status
-        const actions:WorkflowAction[] = this.workflowFactory.getAction(existing.commandStatus, updated.commandStatus);
+        const actions: WorkflowAction[] = this.workflowFactory.getAction(
+            existing.commandStatus,
+            updated.commandStatus
+        );
 
         // perform the actions
-        let result=true;
+        let result = true;
 
         for (const a of actions) {
             if (a instanceof InvalidTransitionAction) {
                 throw new Error('UNSUPPORTED_TRANSITION');
             } else {
-                result = result && await a.execute(existing, updated);
+                result = result && (await a.execute(existing, updated));
             }
         }
 
-        if (result===false) {
+        if (result === false) {
             throw new Error('UPDATE_FAILED');
         }
 
@@ -191,11 +203,16 @@ export class CommandsService {
 
         logger.debug(`commands.service get: exit: commands:${commands}`);
         return commands;
-
     }
 
-    public async uploadFile(commandId:string, fileId:string, fileLocation:string): Promise<void> {
-        logger.debug(`commands.service uploadFile: in: commandId:${commandId}, fileId:${fileId}, fileLocation:${fileLocation}`);
+    public async uploadFile(
+        commandId: string,
+        fileId: string,
+        fileLocation: string
+    ): Promise<void> {
+        logger.debug(
+            `commands.service uploadFile: in: commandId:${commandId}, fileId:${fileId}, fileLocation:${fileLocation}`
+        );
 
         const key = `${this.s3Prefix}${commandId}/files/${fileId}`;
         const tags = `commandId=${commandId}&fileId=${fileId}`;
@@ -206,7 +223,9 @@ export class CommandsService {
         readStream.pipe(writeStream);
 
         try {
-            await this._s3.upload({ Bucket:this.s3Bucket, Key:key, Body: writeStream, Tagging: tags }).promise();
+            await this._s3
+                .upload({ Bucket: this.s3Bucket, Key: key, Body: writeStream, Tagging: tags })
+                .promise();
             logger.debug('commands.service uploadFile: exit:');
         } catch (err) {
             logger.error(`commands.service uploadFile: err:${err}`);
@@ -215,24 +234,23 @@ export class CommandsService {
             readStream.close();
             await this._unlinkAsync(fileLocation);
         }
-
     }
 
-    public async listExecutions(req:ListExecutionsRequest) : Promise<ExecutionSummaryListModel> {
+    public async listExecutions(req: ListExecutionsRequest): Promise<ExecutionSummaryListModel> {
         logger.debug(`commands.service listExecutions: in: req:${JSON.stringify(req)}`);
 
         const command = await this.get(req.commandId);
 
         const params = {
-             jobId: command.jobId,
-             status: req.status,
-             maxResults: req.maxResults,
-             nextToken: req.nextToken
+            jobId: command.jobId,
+            status: req.status,
+            maxResults: req.maxResults,
+            nextToken: req.nextToken,
         };
 
         try {
             const result = await this._iot.listJobExecutionsForJob(params).promise();
-            const executions = result.executionSummaries.map(es=> {
+            const executions = result.executionSummaries.map((es) => {
                 return {
                     thingName: es.thingArn.split(/.*[/|\\]/).pop(),
                     executionNumber: es.jobExecutionSummary.executionNumber,
@@ -244,7 +262,7 @@ export class CommandsService {
                 pagination: {
                     maxResults: req.maxResults,
                     nextToken: result.nextToken,
-                }
+                },
             };
             logger.debug(`commands.service get: listExecutions: response:${response}`);
             return response;
@@ -252,27 +270,28 @@ export class CommandsService {
             logger.error(`commands.service get: listExecutions: error:${err}`);
             throw new Error('LIST_EXECUTIONS_FAILED');
         }
-
     }
 
-    public async getExecution(commandId:string, thingName:string) : Promise<ExecutionModel> {
-        logger.debug(`commands.service getExecution: in: commandId:${commandId}, thingName:${thingName}`);
+    public async getExecution(commandId: string, thingName: string): Promise<ExecutionModel> {
+        logger.debug(
+            `commands.service getExecution: in: commandId:${commandId}, thingName:${thingName}`
+        );
 
         const command = await this.get(commandId);
         const params = {
             jobId: command.jobId,
-            thingName
+            thingName,
         };
 
         try {
             const result = await this._iot.describeJobExecution(params).promise();
             const execution = {
-                    thingName,
-                    executionNumber: result.execution.executionNumber,
-                    status: ExecutionStatus[result.execution.status],
-                    lastUpdatedAt: result.execution.lastUpdatedAt,
-                    queuedAt: result.execution.queuedAt,
-                    startedAt: result.execution.startedAt
+                thingName,
+                executionNumber: result.execution.executionNumber,
+                status: ExecutionStatus[result.execution.status],
+                lastUpdatedAt: result.execution.lastUpdatedAt,
+                queuedAt: result.execution.queuedAt,
+                startedAt: result.execution.startedAt,
             };
 
             if (result.execution.statusDetails && result.execution.statusDetails.detailsMap) {
@@ -282,16 +301,16 @@ export class CommandsService {
             logger.debug(`commands.service getExecution: execution:${execution}`);
 
             return execution;
-
         } catch (err) {
             logger.error(`commands.service getExecution: error:${err}`);
             throw new Error('GET_EXECUTION_FAILED');
         }
-
     }
 
-    public async cancelExecution(commandId:string, thingName:string) : Promise<void> {
-        logger.debug(`commands.service cancelExecution: in: commandId:${commandId}, thingName:${thingName}`);
+    public async cancelExecution(commandId: string, thingName: string): Promise<void> {
+        logger.debug(
+            `commands.service cancelExecution: in: commandId:${commandId}, thingName:${thingName}`
+        );
 
         const command = await this.get(commandId);
 
@@ -302,20 +321,19 @@ export class CommandsService {
             logger.error(`commands.service cancelExecution: error:${err}`);
             throw new Error('DELETE_EXECUTION_FAILED');
         }
-
     }
 
     /**
      * As AWS IoT has multiple overloaded definitions of cancelJobExecution, we cannot use async/await with it .promise()
      */
-    private async cancelJobExecutionWrapper(jobId:string, thingName:string) : Promise<void> {
-        await this._iot.cancelJobExecution({jobId, thingName}).promise()
+    private async cancelJobExecutionWrapper(jobId: string, thingName: string): Promise<void> {
+        await this._iot.cancelJobExecution({ jobId, thingName }).promise();
     }
 }
 
 export class ListExecutionsRequest {
-    commandId:string;
-    status?:ExecutionStatus;
-    maxResults?:number;
-    nextToken?:string;
+    commandId: string;
+    status?: ExecutionStatus;
+    maxResults?: number;
+    nextToken?: string;
 }

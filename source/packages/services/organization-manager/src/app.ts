@@ -12,11 +12,12 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 import { container } from './di/inversify.config';
-import { InversifyExpressServer } from 'inversify-express-utils';
+
+import { normalisePath } from '@awssolutions/cdf-express-middleware';
+import { getRequestIdFromRequest, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
 import * as bodyParser from 'body-parser';
-import { logger } from './utils/logger';
-import { Request, Response, NextFunction, Application } from 'express';
-import { normalisePath } from '@cdf/express-middleware';
+import { Application, NextFunction, Request, Response } from 'express';
+import { InversifyExpressServer } from 'inversify-express-utils';
 import cors = require('cors');
 
 const PORT = 3002;
@@ -28,6 +29,12 @@ const server = new InversifyExpressServer(container);
 const supportedVersions: string[] = process.env.SUPPORTED_API_VERSIONS?.split(',') || [];
 
 server.setConfig((app) => {
+    // apply the awsRequestId to the logger so all logs reflect the requestId
+    app.use((req: Request, _res: Response, next: NextFunction) => {
+        setRequestId(getRequestIdFromRequest(req));
+        next();
+    });
+
     // only process requests that we can support the requested accept header
     app.use((req: Request, res: Response, next: NextFunction) => {
         if (supportedVersions.includes(req.headers['accept']) || req.method === 'OPTIONS') {
@@ -41,7 +48,7 @@ server.setConfig((app) => {
         const customDomainPath = process.env.CUSTOM_DOMAIN_BASE_PATH;
         if (customDomainPath) {
             req.url = normalisePath(req.url, customDomainPath);
-            logger.silly(`${customDomainPath} is removed from the request url`)
+            logger.silly(`${customDomainPath} is removed from the request url`);
         }
         next();
     });
@@ -66,7 +73,7 @@ server.setConfig((app) => {
     if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
         const c = cors({
             origin: corsAllowedOrigin,
-            exposedHeaders
+            exposedHeaders,
         });
         app.use(c);
     }

@@ -57,22 +57,22 @@ export interface DeviceBaseResource {
      * The device components that this Device is assembled of.
      */
     components?: DeviceBaseResource[];
-    attributes?: { [key: string]: string | number | boolean; };
+    attributes?: { [key: string]: string | number | boolean | null };
 
-	// populated for related resources
-	relation?: string;
-	direction?: string;
+    // populated for related resources
+    relation?: string;
+    direction?: string;
 }
 
 export interface Device10Resource extends DeviceBaseResource {
-	groups?: StringToArrayMap;
-	devices?: StringToArrayMap;
+    groups?: StringToArrayMap;
+    devices?: StringToArrayMap;
 }
 
 export interface Device20Resource extends DeviceBaseResource {
-	groups?: DirectionStringToArrayMap;
+    groups?: DirectionStringToArrayMap;
 
-	devices?: DirectionStringToArrayMap;
+    devices?: DirectionStringToArrayMap;
 }
 
 export interface BulkDevicesResource {
@@ -80,23 +80,23 @@ export interface BulkDevicesResource {
 }
 
 export interface DeviceResourceList {
-	results: DeviceBaseResource[];
-	pagination?: {
-		offset:number;
-		count: number;
-	};
+    results: DeviceBaseResource[];
+    pagination?: {
+        offset: number;
+        count: number;
+    };
 }
 
 export enum DeviceState {
     Unprovisioned = 'unprovisioned',
     Active = 'active',
     Decommisioned = 'decommisioned',
-    Retired = 'retired'
+    Retired = 'retired',
 }
 
 export interface BulkDevicesResult {
     success: number;
     failed: number;
     total: number;
-    errors: {[key:string]:string};
+    errors: { [key: string]: string };
 }

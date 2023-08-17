@@ -12,23 +12,20 @@
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 
 @injectable()
 export class EventEmitter {
-
     private _iotData: AWS.IotData;
 
-    public constructor(
-	    @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData
-    ) {
+    public constructor(@inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData) {
         this._iotData = iotDataFactory();
     }
 
-    public async fire(event:EventInfo): Promise<void> {
+    public async fire(event: EventInfo): Promise<void> {
         logger.debug(`eventEmitter.service fire: in: event:${JSON.stringify(event)}`);
 
         event.time = new Date().toISOString();
@@ -36,16 +33,18 @@ export class EventEmitter {
         const topicEnvName = `EVENTS_${event.type.toUpperCase()}_TOPIC`;
         const topicTemplate = process.env[topicEnvName];
 
-        if (topicTemplate===undefined || topicTemplate.length===0) {
+        if (topicTemplate === undefined || topicTemplate.length === 0) {
             return;
         }
 
-        const topic = topicTemplate.replace('{objectId}', encodeURIComponent(event.objectId)).replace('{event}', event.event);
+        const topic = topicTemplate
+            .replace('{objectId}', encodeURIComponent(event.objectId))
+            .replace('{event}', event.event);
 
         const params = {
             topic,
             payload: JSON.stringify(event),
-            qos: 1
+            qos: 1,
         };
 
         logger.debug(`eventEmitter.service publishing: ${JSON.stringify(params)}`);
@@ -59,7 +58,7 @@ export interface EventInfo {
     type: Type;
     event: Event;
     payload?: string;
-    attributes?: {[key: string]: string};
+    attributes?: { [key: string]: string };
     time?: string;
 }
 
@@ -69,11 +68,11 @@ export enum Type {
     device = 'devices',
     deviceTemplate = 'deviceTemplates',
     policy = 'policies',
-    profile = 'profiles'
+    profile = 'profiles',
 }
 
 export enum Event {
-    create='create',
-    modify='modify',
-    delete='delete'
+    create = 'create',
+    modify = 'modify',
+    delete = 'delete',
 }

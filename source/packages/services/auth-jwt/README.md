@@ -7,4 +7,3 @@ This module is a reference implementation on how to implement an API Gateway cus
 ## Useful Links
 
 - [Application configuration](docs/configuration.md)
-

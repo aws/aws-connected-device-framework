@@ -10,42 +10,61 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { ProvisionThingResponse, ThingDetailModel, ThingCertificateModel, CertificateStatus, ThingPolicyModel, ThingGroupModel, BulkProvisionThingsResponse, CdfProvisioningParameters } from './things.models';
-import { logger } from '../utils/logger';
-import AWS = require('aws-sdk');
-import { TYPES } from '../di/types';
-import { CDFProvisioningTemplate } from './templates/template.models';
-import { RegisterThingRequest, StartThingRegistrationTaskResponse, StartThingRegistrationTaskRequest, DescribeThingGroupResponse, DescribeThingRegistrationTaskRequest } from 'aws-sdk/clients/iot';
-import { AWSError, Iot } from 'aws-sdk';
-import clone from 'just-clone';
-import { GetObjectRequest, GetObjectOutput, PutObjectRequest } from 'aws-sdk/clients/s3';
-import { v1 as uuid } from 'uuid';
-import { GetPolicyResponse } from 'aws-sdk/clients/iot';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS, { AWSError, Iot } from 'aws-sdk';
+import {
+    DescribeThingGroupResponse,
+    DescribeThingRegistrationTaskRequest,
+    GetPolicyResponse,
+    RegisterThingRequest,
+    StartThingRegistrationTaskRequest,
+    StartThingRegistrationTaskResponse,
+} from 'aws-sdk/clients/iot';
+import { GetObjectOutput, GetObjectRequest, PutObjectRequest } from 'aws-sdk/clients/s3';
 import { PromiseResult } from 'aws-sdk/lib/request';
-import { ProvisioningStepData } from './steps/provisioningStep.model';
-import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientIdEnforcementPolicyStepProcessor';
-import { CreateDeviceCertificateStepProcessor } from './steps/createDeviceCertificateProcessor';
-import { RegisterDeviceCertificateWithoutCAStepProcessor } from './steps/registerDeviceCertificateWithoutCaProcessor';
+import { inject, injectable } from 'inversify';
+import clone from 'just-clone';
+import { v1 as uuid } from 'uuid';
+import { TYPES } from '../di/types';
 import { AttachAdditionalPoliciesProcessor } from './steps/attachAdditionalPoliciesProcessor';
-import { UseACMPCAStepProcessor } from './steps/useACMPCAProcessor';
+import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientIdEnforcementPolicyStepProcessor';
 import { CreateAwsCertiticateProcessor } from './steps/createAwsCertificateProcessor';
+import { CreateDeviceCertificateStepProcessor } from './steps/createDeviceCertificateProcessor';
+import { ProvisioningStepData } from './steps/provisioningStep.model';
+import { RegisterDeviceCertificateWithoutCAStepProcessor } from './steps/registerDeviceCertificateWithoutCaProcessor';
+import { UseACMPCAStepProcessor } from './steps/useACMPCAProcessor';
+import { CDFProvisioningTemplate } from './templates/template.models';
+import {
+    BulkProvisionThingsResponse,
+    CdfProvisioningParameters,
+    CertificateStatus,
+    ProvisionThingResponse,
+    ThingCertificateModel,
+    ThingDetailModel,
+    ThingGroupModel,
+    ThingPolicyModel,
+} from './things.models';
 
 @injectable()
 export class ThingsService {
-
     private _iot: AWS.Iot;
     private _s3: AWS.S3;
 
     public constructor(
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
-        @inject(TYPES.ClientIdEnforcementPolicyStepProcessor) private clientIdEnforcementPolicyStepProcessor: ClientIdEnforcementPolicyStepProcessor,
-        @inject(TYPES.CreateDeviceCertificateStepProcessor) private createDeviceCertificateStepProcessor: CreateDeviceCertificateStepProcessor,
-        @inject(TYPES.CreateAwsCertiticateProcessor) private createAwsCertiticateProcessor: CreateAwsCertiticateProcessor,
-        @inject(TYPES.RegisterDeviceCertificateWithoutCAStepProcessor) private registerDeviceCertificateWithoutCAStepProcessor: RegisterDeviceCertificateWithoutCAStepProcessor,
-        @inject(TYPES.UseACMPCAStepProcessor) private useACMPAStepProcessor: UseACMPCAStepProcessor,
-        @inject(TYPES.AttachAdditionalPoliciesProcessor) private attachAdditionalPoliciesProcessor: AttachAdditionalPoliciesProcessor,
+        @inject(TYPES.ClientIdEnforcementPolicyStepProcessor)
+        private clientIdEnforcementPolicyStepProcessor: ClientIdEnforcementPolicyStepProcessor,
+        @inject(TYPES.CreateDeviceCertificateStepProcessor)
+        private createDeviceCertificateStepProcessor: CreateDeviceCertificateStepProcessor,
+        @inject(TYPES.CreateAwsCertiticateProcessor)
+        private createAwsCertiticateProcessor: CreateAwsCertiticateProcessor,
+        @inject(TYPES.RegisterDeviceCertificateWithoutCAStepProcessor)
+        private registerDeviceCertificateWithoutCAStepProcessor: RegisterDeviceCertificateWithoutCAStepProcessor,
+        @inject(TYPES.UseACMPCAStepProcessor)
+        private useACMPAStepProcessor: UseACMPCAStepProcessor,
+        @inject(TYPES.AttachAdditionalPoliciesProcessor)
+        private attachAdditionalPoliciesProcessor: AttachAdditionalPoliciesProcessor,
         @inject('aws.s3.roleArn') private s3RoleArn: string,
         @inject('aws.s3.templates.bucket') private templateBucketName: string,
         @inject('aws.s3.templates.prefix') private templatePrefix: string,
@@ -59,20 +78,30 @@ export class ThingsService {
         this._s3 = s3Factory();
     }
 
-    public async provision(provisioningTemplateId: string, parameters: { [key: string]: string }, cdfProvisioningParameters: CdfProvisioningParameters): Promise<ProvisionThingResponse> {
-        logger.debug(`things.service provision: in: provisioningTemplateId:${provisioningTemplateId}, parameters:${JSON.stringify(parameters)}`);
+    public async provision(
+        provisioningTemplateId: string,
+        parameters: { [key: string]: string },
+        cdfProvisioningParameters: CdfProvisioningParameters
+    ): Promise<ProvisionThingResponse> {
+        logger.debug(
+            `things.service provision: in: provisioningTemplateId:${provisioningTemplateId}, parameters:${JSON.stringify(
+                parameters
+            )}`
+        );
 
         // download the template
         const key = `${this.templatePrefix}${provisioningTemplateId}${this.templateSuffix}`;
         const s3Params: AWS.S3.GetObjectRequest = {
             Bucket: this.templateBucketName,
-            Key: key
+            Key: key,
         };
 
-        let cdfTemplate: CDFProvisioningTemplate
+        let cdfTemplate: CDFProvisioningTemplate;
         try {
             logger.silly(`things.service provision: s3Params: ${JSON.stringify(s3Params)}`);
-            const result = await this._s3.getObject(s3Params).promise() as AWS.S3.GetObjectOutput;
+            const result = (await this._s3
+                .getObject(s3Params)
+                .promise()) as AWS.S3.GetObjectOutput;
             const templateBody = result.Body.toString();
 
             // lets strongly type the template body, so that we can determine the CDF specific pre/post steps (if any)
@@ -93,7 +122,7 @@ export class ThingsService {
             template: cdfTemplate,
             parameters,
             cdfProvisioningParameters,
-            state: {}
+            state: {},
         };
 
         // perform CDF pre-process steps before we apply the provisioning template
@@ -104,11 +133,13 @@ export class ThingsService {
         // provision thing with AWS IoT
         const iotParams: RegisterThingRequest = {
             templateBody: JSON.stringify(awsTemplate),
-            parameters: stepData.parameters
+            parameters: stepData.parameters,
         };
 
         try {
-            const registered = await this._iot.registerThing(iotParams).promise() as AWS.Iot.Types.RegisterThingResponse;
+            const registered = (await this._iot
+                .registerThing(iotParams)
+                .promise()) as AWS.Iot.Types.RegisterThingResponse;
             if (stepData.state === undefined) {
                 stepData.state = {};
             }
@@ -118,8 +149,8 @@ export class ThingsService {
             stepData.state.arns = {
                 policyLogicalName: registered.resourceArns['PolicyLogicalName'],
                 certificate: registered.resourceArns['certificate'],
-                thing: registered.resourceArns['thing']
-            }
+                thing: registered.resourceArns['thing'],
+            };
             stepData.state.certificatePem = registered.certificatePem;
         } catch (err) {
             throw new Error('REGISTRATION_FAILED: ' + (<AWSError>err).message);
@@ -138,8 +169,8 @@ export class ThingsService {
             resourceArns: {
                 policyLogicalName: stepData.state.arns.policyLogicalName,
                 certificate: stepData.state.arns.certificate,
-                thing: stepData.state.arns.thing
-            }
+                thing: stepData.state.arns.thing,
+            },
         };
 
         // TODO: fire event
@@ -151,11 +182,15 @@ export class ThingsService {
     }
 
     private async preProcessSteps(stepData: ProvisioningStepData): Promise<void> {
-        logger.debug(`things.service preProcessSteps: in: stepData:${JSON.stringify(this.redactStepData(stepData))}`);
+        logger.debug(
+            `things.service preProcessSteps: in: stepData:${JSON.stringify(
+                this.redactStepData(stepData)
+            )}`
+        );
 
         const cdfOptions = stepData.template.CDF;
 
-        if (!cdfOptions) return
+        if (!cdfOptions) return;
 
         if (cdfOptions.createDeviceCertificate === true) {
             logger.debug(`things.service preProcessSteps: processing createDeviceCertificate`);
@@ -163,24 +198,33 @@ export class ThingsService {
         } else if (cdfOptions.createDeviceAWSCertificate === true) {
             logger.debug(`things.service preProcessSteps: processing createDeviceAWSCertificate`);
             await this.createAwsCertiticateProcessor.process(stepData);
-        }
-        else if (cdfOptions.registerDeviceCertificateWithoutCA === true) {
-            logger.debug(`things.service preProcessSteps: processing registerDeviceCertificateWithoutCA`);
+        } else if (cdfOptions.registerDeviceCertificateWithoutCA === true) {
+            logger.debug(
+                `things.service preProcessSteps: processing registerDeviceCertificateWithoutCA`
+            );
             await this.registerDeviceCertificateWithoutCAStepProcessor.process(stepData);
         } else if (cdfOptions.acmpca?.mode) {
             logger.debug(`things.service preProcessSteps: processing useACMPCA`);
             await this.useACMPAStepProcessor.process(stepData);
         }
 
-        logger.debug(`things.service preProcessSteps: exit: ${JSON.stringify(this.redactStepData(stepData))}`);
+        logger.debug(
+            `things.service preProcessSteps: exit: ${JSON.stringify(
+                this.redactStepData(stepData)
+            )}`
+        );
     }
 
     private async postProcessSteps(stepData: ProvisioningStepData): Promise<void> {
-        logger.debug(`things.service postProcessSteps: in: stepData:${JSON.stringify(this.redactStepData(stepData))}`);
+        logger.debug(
+            `things.service postProcessSteps: in: stepData:${JSON.stringify(
+                this.redactStepData(stepData)
+            )}`
+        );
 
         const cdfOptions = stepData.template.CDF;
 
-        if (!cdfOptions) return
+        if (!cdfOptions) return;
 
         if (cdfOptions?.clientIdMustMatchThingName === true) {
             await this.clientIdEnforcementPolicyStepProcessor.process(stepData);
@@ -190,46 +234,61 @@ export class ThingsService {
             await this.attachAdditionalPoliciesProcessor.process(stepData);
         }
 
-        logger.debug(`things.service postProcessSteps: exit: ${JSON.stringify(this.redactStepData(stepData))}`);
+        logger.debug(
+            `things.service postProcessSteps: exit: ${JSON.stringify(
+                this.redactStepData(stepData)
+            )}`
+        );
     }
 
     private redactStepData(stepData: ProvisioningStepData): ProvisioningStepData {
-        const redactedStepData = clone(stepData)
+        const redactedStepData = clone(stepData);
         if (stepData.state) {
-            redactedStepData.state.privateKey = this.removeStringForLogging(stepData.state.privateKey);
+            redactedStepData.state.privateKey = this.removeStringForLogging(
+                stepData.state.privateKey
+            );
         }
         return redactedStepData;
     }
 
-    public async bulkProvision(provisioningTemplateId: string, parameters: { [key: string]: string }[]): Promise<BulkProvisionThingsResponse> {
-        logger.debug(`things.service bulkProvision: in: provisioningTemplateId:${provisioningTemplateId}, parameters:${JSON.stringify(parameters)}`);
+    public async bulkProvision(
+        provisioningTemplateId: string,
+        parameters: { [key: string]: string }[]
+    ): Promise<BulkProvisionThingsResponse> {
+        logger.debug(
+            `things.service bulkProvision: in: provisioningTemplateId:${provisioningTemplateId}, parameters:${JSON.stringify(
+                parameters
+            )}`
+        );
 
         // download the template
         const templateKey = `${this.templatePrefix}${provisioningTemplateId}${this.templateSuffix}`;
         const s3TemplateParams: GetObjectRequest = {
             Bucket: this.templateBucketName,
-            Key: templateKey
+            Key: templateKey,
         };
-        const result = await this._s3.getObject(s3TemplateParams).promise() as GetObjectOutput;
+        const result = (await this._s3.getObject(s3TemplateParams).promise()) as GetObjectOutput;
         const templateBody = result.Body.toString();
 
         // CDF extensions are not yet supported in the bulk registration flow
         const templateBodyAsJson = JSON.parse(templateBody);
         if (templateBodyAsJson.CDF) {
-            throw new Error('REGISTRATION_FAILED: CDF provisioning template extensions are not yet supported in the bulk registration flow.');
+            throw new Error(
+                'REGISTRATION_FAILED: CDF provisioning template extensions are not yet supported in the bulk registration flow.'
+            );
         }
 
         // upload the parameters to S3 for processing (each thing's parameters needs
         // to be well-formed json on its own line)
         const data: string[] = [];
-        parameters.forEach(p => {
+        parameters.forEach((p) => {
             data.push(JSON.stringify(p).replace('\t', '').replace('\n', ''));
         });
         const bulkrequestKey = `${this.bulkrequestsPrefix}${uuid()}`;
         const s3ThingsParam: PutObjectRequest = {
             Body: Buffer.from(data.join('\n'), 'binary'),
             Bucket: this.bulkrequestsBucketName,
-            Key: bulkrequestKey
+            Key: bulkrequestKey,
         };
         await this._s3.putObject(s3ThingsParam).promise();
 
@@ -240,14 +299,16 @@ export class ThingsService {
             templateBody,
             inputFileBucket: this.bulkrequestsBucketName,
             inputFileKey: bulkrequestKey,
-            roleArn: this.s3RoleArn
+            roleArn: this.s3RoleArn,
         };
 
         let response: BulkProvisionThingsResponse;
         try {
-            const task = await this._iot.startThingRegistrationTask(taskParams).promise() as StartThingRegistrationTaskResponse;
+            const task = (await this._iot
+                .startThingRegistrationTask(taskParams)
+                .promise()) as StartThingRegistrationTaskResponse;
             response = {
-                taskId: task.taskId
+                taskId: task.taskId,
             };
         } catch (err) {
             throw new Error('REGISTRATION_FAILED: ' + (<AWSError>err).message);
@@ -257,14 +318,13 @@ export class ThingsService {
 
         logger.debug(`things.service bulkProvision: exit: response:${JSON.stringify(response)}`);
         return response;
-
     }
 
     public async getBulkProvisionTask(taskId: string): Promise<BulkProvisionThingsResponse> {
         logger.debug(`things.service getBulkProvisionTask: in: taskId:${taskId}`);
 
         const params: DescribeThingRegistrationTaskRequest = {
-            taskId
+            taskId,
         };
 
         let response: BulkProvisionThingsResponse;
@@ -277,12 +337,14 @@ export class ThingsService {
                 lastModifiedDate: task.lastModifiedDate,
                 successCount: task.successCount,
                 failureCount: task.failureCount,
-                percentageProgress: task.percentageProgress
+                percentageProgress: task.percentageProgress,
             };
         } catch (err) {
             return undefined;
         }
-        logger.debug(`things.service getBulkProvisionTask: exit: response:${JSON.stringify(response)}`);
+        logger.debug(
+            `things.service getBulkProvisionTask: exit: response:${JSON.stringify(response)}`
+        );
         return response;
     }
 
@@ -291,8 +353,14 @@ export class ThingsService {
 
         const describeThingFuture = this._iot.describeThing({ thingName }).promise();
         const listThingPrincipalsFuture = this._iot.listThingPrincipals({ thingName }).promise();
-        const listThingGroupsForThingFuture = this._iot.listThingGroupsForThing({ thingName }).promise();
-        const results = await Promise.all([describeThingFuture, listThingPrincipalsFuture, listThingGroupsForThingFuture]);
+        const listThingGroupsForThingFuture = this._iot
+            .listThingGroupsForThing({ thingName })
+            .promise();
+        const results = await Promise.all([
+            describeThingFuture,
+            listThingPrincipalsFuture,
+            listThingGroupsForThingFuture,
+        ]);
 
         let thing: AWS.Iot.DescribeThingResponse = {};
         try {
@@ -307,7 +375,7 @@ export class ThingsService {
             attributes: thing.attributes,
             certificates: [],
             policies: [],
-            groups: []
+            groups: [],
         };
 
         const foundPolicies: { [key: string]: boolean } = {};
@@ -317,22 +385,31 @@ export class ThingsService {
         if (thingPrincipals.principals.length > 0) {
             for (const certArn of thingPrincipals.principals) {
                 const certificateId = certArn.split('/')[1];
-                const describeCertificateFuture = this._iot.describeCertificate({ certificateId }).promise();
-                const listPrincipalPoliciesFuture = this._iot.listPrincipalPolicies({ principal: certArn }).promise();
-                const pricipalResults = await Promise.all([describeCertificateFuture, listPrincipalPoliciesFuture]);
+                const describeCertificateFuture = this._iot
+                    .describeCertificate({ certificateId })
+                    .promise();
+                const listPrincipalPoliciesFuture = this._iot
+                    .listPrincipalPolicies({ principal: certArn })
+                    .promise();
+                const pricipalResults = await Promise.all([
+                    describeCertificateFuture,
+                    listPrincipalPoliciesFuture,
+                ]);
 
                 const describeCertificateResponse = pricipalResults[0];
 
                 const certificateStatus: CertificateStatus =
-                    describeCertificateResponse.certificateDescription.status === 'ACTIVE' ?
-                        CertificateStatus.ACTIVE :
-                        CertificateStatus.INACTIVE;
+                    describeCertificateResponse.certificateDescription.status === 'ACTIVE'
+                        ? CertificateStatus.ACTIVE
+                        : CertificateStatus.INACTIVE;
 
                 const certDetails: ThingCertificateModel = {
-                    certificateId: describeCertificateResponse.certificateDescription.certificateId,
+                    certificateId:
+                        describeCertificateResponse.certificateDescription.certificateId,
                     arn: describeCertificateResponse.certificateDescription.certificateArn,
                     certificateStatus,
-                    certificatePem: describeCertificateResponse.certificateDescription.certificatePem
+                    certificatePem:
+                        describeCertificateResponse.certificateDescription.certificatePem,
                 };
                 thingModel.certificates.push(certDetails);
 
@@ -351,7 +428,7 @@ export class ThingsService {
                 const policyDetails: ThingPolicyModel = {
                     policyName: policyResult.policyName,
                     arn: policyResult.policyArn,
-                    policyDocument: JSON.parse(policyResult.policyDocument)
+                    policyDocument: JSON.parse(policyResult.policyDocument),
                 };
                 thingModel.policies.push(policyDetails);
             }
@@ -359,9 +436,13 @@ export class ThingsService {
 
         // TODO: this returns immmediate groups and does not traverse the group hierarchy
         const thingGroups = results[2];
-        const describeThingGroupFutures: Promise<PromiseResult<DescribeThingGroupResponse, AWSError>>[] = [];
+        const describeThingGroupFutures: Promise<
+            PromiseResult<DescribeThingGroupResponse, AWSError>
+        >[] = [];
         for (const group of thingGroups.thingGroups) {
-            describeThingGroupFutures.push(this._iot.describeThingGroup({ thingGroupName: group.groupName }).promise());
+            describeThingGroupFutures.push(
+                this._iot.describeThingGroup({ thingGroupName: group.groupName }).promise()
+            );
         }
         const describeThingGroupResults = await Promise.all(describeThingGroupFutures);
 
@@ -369,14 +450,15 @@ export class ThingsService {
             let groupAttributes: { [key: string]: string } = {};
             if (describeThingGroupResult.hasOwnProperty('thingGroupProperties')) {
                 if (describeThingGroupResult.hasOwnProperty('attributePayload')) {
-                    groupAttributes = describeThingGroupResult.thingGroupProperties.attributePayload.attributes;
+                    groupAttributes =
+                        describeThingGroupResult.thingGroupProperties.attributePayload.attributes;
                 }
             }
 
             const groupModel: ThingGroupModel = {
                 groupName: describeThingGroupResult.thingGroupName,
                 arn: describeThingGroupResult.thingGroupArn,
-                attributes: groupAttributes
+                attributes: groupAttributes,
             };
             thingModel.groups.push(groupModel);
         }
@@ -395,7 +477,9 @@ export class ThingsService {
      */
     public async deleteThing(thingName: string): Promise<void> {
         logger.debug(`things.service deleteThing: in: thingName:${thingName}`);
-        logger.debug(`feature flags: deleteCertificates: ${this.deleteCertificates}, deletePolicies: ${this.deletePolicies}`);
+        logger.debug(
+            `feature flags: deleteCertificates: ${this.deleteCertificates}, deletePolicies: ${this.deletePolicies}`
+        );
 
         const thingPrincipals = await this._iot.listThingPrincipals({ thingName }).promise();
 
@@ -405,18 +489,31 @@ export class ThingsService {
                     // all to do in this case is detach the cert, then delete thing
                     await this._iot.detachThingPrincipal({ thingName, principal }).promise();
                 } else {
-                    const attachedPolicies = await this._iot.listPrincipalPolicies({ principal }).promise();
+                    const attachedPolicies = await this._iot
+                        .listPrincipalPolicies({ principal })
+                        .promise();
                     for (const policy of attachedPolicies.policies) {
                         // first detach the policy from the cert
-                        await this._iot.detachPrincipalPolicy({ principal, policyName: policy.policyName }).promise();
+                        await this._iot
+                            .detachPrincipalPolicy({ principal, policyName: policy.policyName })
+                            .promise();
                         if (this.deletePolicies) {
                             // fetch certificates targeted by this policy
-                            const policyTargets = await this._iot.listTargetsForPolicy({ policyName: policy.policyName }).promise();
+                            const policyTargets = await this._iot
+                                .listTargetsForPolicy({ policyName: policy.policyName })
+                                .promise();
                             // if this policy no longer targets any certificates or
                             // if every cert targeted by this policy is a cert attached to this thing
-                            const policyTargetsOnlyThisThingsCerts = policyTargets.targets.every((val) => thingPrincipals.principals.indexOf(val) >= 0);
-                            if (policyTargets.targets.length === 0 || policyTargetsOnlyThisThingsCerts) {
-                                await this._iot.deletePolicy({ policyName: policy.policyName }).promise();
+                            const policyTargetsOnlyThisThingsCerts = policyTargets.targets.every(
+                                (val) => thingPrincipals.principals.indexOf(val) >= 0
+                            );
+                            if (
+                                policyTargets.targets.length === 0 ||
+                                policyTargetsOnlyThisThingsCerts
+                            ) {
+                                await this._iot
+                                    .deletePolicy({ policyName: policy.policyName })
+                                    .promise();
                             }
                         }
                     }
@@ -424,11 +521,15 @@ export class ThingsService {
                     await this._iot.detachThingPrincipal({ principal, thingName }).promise();
                     if (this.deleteCertificates) {
                         // fetch things associated with this cert
-                        const princpalThings = await this._iot.listPrincipalThings({ principal }).promise();
+                        const princpalThings = await this._iot
+                            .listPrincipalThings({ principal })
+                            .promise();
                         // delete cert if no longer attached to any things
                         if (princpalThings.things.length === 0) {
                             const certificateId = principal.split('/')[1];
-                            await this._iot.updateCertificate({ certificateId, newStatus: 'INACTIVE' }).promise();
+                            await this._iot
+                                .updateCertificate({ certificateId, newStatus: 'INACTIVE' })
+                                .promise();
                             await this._iot.deleteCertificate({ certificateId }).promise();
                         }
                     }
@@ -442,8 +543,13 @@ export class ThingsService {
         return;
     }
 
-    public async updateThingCertificatesStatus(thingName: string, newStatus: CertificateStatus): Promise<void> {
-        logger.debug(`things.service updateThingCertificatesStatus: in: thingName:${thingName}, newStatus:${newStatus}`);
+    public async updateThingCertificatesStatus(
+        thingName: string,
+        newStatus: CertificateStatus
+    ): Promise<void> {
+        logger.debug(
+            `things.service updateThingCertificatesStatus: in: thingName:${thingName}, newStatus:${newStatus}`
+        );
 
         const thing = await this.getThing(thingName);
 
@@ -456,17 +562,21 @@ export class ThingsService {
         logger.debug('things.service updateThingCertificatesStatus: exit');
     }
 
-    public async updateCertificateStatus(certificateId: string, newStatus: CertificateStatus): Promise<void> {
-        logger.debug(`things.service updateCertificateStatus: in: certificateId:${certificateId}, newStatus:${newStatus}`);
+    public async updateCertificateStatus(
+        certificateId: string,
+        newStatus: CertificateStatus
+    ): Promise<void> {
+        logger.debug(
+            `things.service updateCertificateStatus: in: certificateId:${certificateId}, newStatus:${newStatus}`
+        );
 
         const params: Iot.Types.UpdateCertificateRequest = {
             certificateId,
-            newStatus
+            newStatus,
         };
         await this._iot.updateCertificate(params).promise();
 
         logger.debug('things.service updateCertificateStatus: exit:');
-
     }
 
     private removeStringForLogging(stringIn: string): string {

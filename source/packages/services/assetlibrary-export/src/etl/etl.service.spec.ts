@@ -11,19 +11,18 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import { createMockInstance } from 'jest-create-mock-instance';
 
-import { ExtractService } from './extract.service';
-import { TransformService } from './transform.service';
-import { LoadService } from './load.service';
-import { ETLService } from './etl.service';
 import { LabelsService } from '../labels/labels.service';
+import { ETLService } from './etl.service';
+import { ExtractService } from './extract.service';
+import { LoadService } from './load.service';
+import { TransformService } from './transform.service';
 
 import { S3Utils } from '../utils/s3.util';
 
-
 describe('ETLService', () => {
-
     let mockedExtractService: ExtractService;
     let mockedTransformService: TransformService;
     let mockedLoadService: LoadService;
@@ -39,63 +38,66 @@ describe('ETLService', () => {
         mockedLablesService = createMockInstance(LabelsService);
         mockedS3Utils = createMockInstance(S3Utils);
 
-        instance = new ETLService(mockedExtractService, mockedTransformService, mockedLoadService, mockedLablesService, 'exportBucket', 'exportKey', mockedS3Utils);
-
+        instance = new ETLService(
+            mockedExtractService,
+            mockedTransformService,
+            mockedLoadService,
+            mockedLablesService,
+            'exportBucket',
+            'exportKey',
+            mockedS3Utils
+        );
     });
 
     it('should process batch', async () => {
-
-        const batchId = 'some-uuid'
+        const batchId = 'some-uuid';
 
         const mockedExtractServiceResponse = {
             id: '1',
             category: 'device',
             type: 'type1',
-            items: [
-                'deviceId-1',
-                'deviceId-2'
-            ],
-            timestamp: 'timestamp'
+            items: ['deviceId-1', 'deviceId-2'],
+            timestamp: 'timestamp',
         };
         const mockedTransformServiceResponse = {
             id: '1',
             category: 'device',
             type: 'type1',
             items: [
-                {deviceId: 'deviceId-1', templateId: 'type1'},
-                {deviceId: 'deviceId-2', templateId: 'type1'},
+                { deviceId: 'deviceId-1', templateId: 'type1' },
+                { deviceId: 'deviceId-2', templateId: 'type1' },
             ],
-            timestamp: 'timestamp'
+            timestamp: 'timestamp',
         };
         const mockedLoadServiceResponse = {
             batchId: '1',
             exportBucket: 'myBucket',
-            exportKey: 'assetlibrary-export/device/type1/dt=YYYY-MM-DD-HH-MM/some-uuid.json'
+            exportKey: 'assetlibrary-export/device/type1/dt=YYYY-MM-DD-HH-MM/some-uuid.json',
         };
 
-        const mockedLabelServiceResponse = [
-            'deviceId-1',
-            'deviceId-2'
-        ]
+        const mockedLabelServiceResponse = ['deviceId-1', 'deviceId-2'];
 
         const mockedS3UtilsResponse = {
             id: '1',
             category: 'device',
             type: 'type1',
-            range: [0,100],
-            timestamp: 'timestamp'
-        }
+            range: [0, 100],
+            timestamp: 'timestamp',
+        };
 
         mockedS3Utils.get = jest.fn().mockReturnValueOnce(mockedS3UtilsResponse);
-        mockedLablesService.getIdsByRange = jest.fn().mockReturnValueOnce(mockedLabelServiceResponse);
+        mockedLablesService.getIdsByRange = jest
+            .fn()
+            .mockReturnValueOnce(mockedLabelServiceResponse);
         mockedExtractService.extract = jest.fn().mockReturnValueOnce(mockedExtractServiceResponse);
-        mockedTransformService.transform = jest.fn().mockReturnValueOnce(mockedTransformServiceResponse);
+        mockedTransformService.transform = jest
+            .fn()
+            .mockReturnValueOnce(mockedTransformServiceResponse);
         mockedLoadService.load = jest.fn().mockReturnValueOnce(mockedLoadServiceResponse);
 
         const response = await instance.processBatch(batchId);
 
         expect(response).toBeDefined();
         expect(response).toEqual(mockedLoadServiceResponse);
-
     });
 });

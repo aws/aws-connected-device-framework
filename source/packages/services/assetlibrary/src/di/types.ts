@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const TYPES = {
-
     TypesService: Symbol.for('TypesService'),
     TypesDao: Symbol.for('TypesDao'),
 
@@ -63,5 +62,5 @@ export const TYPES = {
     IotDataFactory: Symbol.for('Factory<IotData>'),
 
     Iot: Symbol.for('Iot'),
-    IotFactory: Symbol.for('Factory<Iot>')
+    IotFactory: Symbol.for('Factory<Iot>'),
 };

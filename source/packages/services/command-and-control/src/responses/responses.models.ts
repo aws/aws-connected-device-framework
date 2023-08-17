@@ -11,11 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface Response {
-	thingName: string;
-	correlationId: string;
-	action?: ResponseAction;
-	payload?: unknown;
-	timestamp?: number;
+    thingName: string;
+    correlationId: string;
+    action?: ResponseAction;
+    payload?: unknown;
+    timestamp?: number;
 }
 
 export type ResponseAction = 'accepted' | 'rejected' | 'reply';

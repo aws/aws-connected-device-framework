@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -24,7 +25,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 openapi: 3.0.0
 info:
-  title: "AWS Connected Device Framework: Asset Library"
+  title: 'AWS Connected Device Framework: Asset Library'
   description: >
     The Asset Library service is a device registry that allows you to manage
     your fleet of devices within multiple hierarchical groups.  Each one of the
@@ -216,7 +217,7 @@ tags:
 
           ?eq=deviceId:MOD123&eq=state:active
 paths:
-  "/templates/device":
+  '/templates/device':
     get:
       tags:
         - Templates
@@ -229,18 +230,18 @@ paths:
         - $ref: '#/components/parameters/countQuery'
         - $ref: '#/components/parameters/sortQuery'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/TemplateInfoList"
+                $ref: '#/components/schemas/TemplateInfoList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/TemplateInfoList"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-  "/templates/device/{templateId}":
+                $ref: '#/components/schemas/TemplateInfoList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  '/templates/device/{templateId}':
     parameters:
       - $ref: '#/components/parameters/templateIdPath'
     post:
@@ -251,12 +252,14 @@ paths:
         standard to define the device template attributes and constraints.
       operationId: createDeviceTemplate
       requestBody:
-        $ref: "#/components/requestBodies/TemplateDefinition"
+        $ref: '#/components/requestBodies/TemplateDefinition'
       responses:
-        "201":
-          $ref: "#/components/responses/Created"
-        "400":
-          $ref: "#/components/responses/BadRequest"
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ConcurrentModificationException'
     get:
       tags:
         - Templates
@@ -266,46 +269,48 @@ paths:
       parameters:
         - $ref: '#/components/parameters/templateStatusQuery'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/TemplateInfo"
+                $ref: '#/components/schemas/TemplateInfo'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/TemplateInfo"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/TemplateInfo'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags:
         - Templates
       summary: Update an existing device template.
       operationId: updateDeviceTemplate
       requestBody:
-        $ref: "#/components/requestBodies/TemplateDefinition"
+        $ref: '#/components/requestBodies/TemplateDefinition'
       responses:
-        "204":
+        '204':
           description: OK
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ConcurrentModificationException'
     delete:
       tags:
         - Templates
       summary: Deletes an existing device template.
       operationId: deleteDeviceTemplate
       responses:
-        "204":
+        '204':
           description: OK
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/templates/device/{templateId}/publish":
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/templates/device/{templateId}/publish':
     parameters:
       - $ref: '#/components/parameters/templateIdPath'
     put:
@@ -314,13 +319,13 @@ paths:
       summary: Publishes an existing device template.
       operationId: publishDeviceTemplate
       responses:
-        "204":
+        '204':
           description: OK
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/templates/group":
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/templates/group':
     get:
       tags:
         - Templates
@@ -333,18 +338,18 @@ paths:
         - $ref: '#/components/parameters/countQuery'
         - $ref: '#/components/parameters/sortQuery'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/TemplateInfoList"
+                $ref: '#/components/schemas/TemplateInfoList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/TemplateInfoList"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-  "/templates/group/{templateId}":
+                $ref: '#/components/schemas/TemplateInfoList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  '/templates/group/{templateId}':
     parameters:
       - $ref: '#/components/parameters/templateIdPath'
     post:
@@ -355,12 +360,14 @@ paths:
         standard to define the group template attributes and constraints.
       operationId: createGroupTemplate
       requestBody:
-        $ref: "#/components/requestBodies/TemplateDefinition"
+        $ref: '#/components/requestBodies/TemplateDefinition'
       responses:
-        "201":
-          $ref: "#/components/responses/Created"
-        "400":
-          $ref: "#/components/responses/BadRequest"
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ConcurrentModificationException'
     get:
       tags:
         - Templates
@@ -378,46 +385,48 @@ paths:
               - draft
               - published
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/TemplateInfo"
+                $ref: '#/components/schemas/TemplateInfo'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/TemplateInfo"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/TemplateInfo'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags:
         - Templates
       summary: Update an existing group template.
       operationId: updateGroupTemplate
       requestBody:
-        $ref: "#/components/requestBodies/TemplateDefinition"
+        $ref: '#/components/requestBodies/TemplateDefinition'
       responses:
-        "204":
+        '204':
           description: OK
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ConcurrentModificationException'
     delete:
       tags:
         - Templates
       summary: Deletes an existing group template.
       operationId: deleteGroupTemplate
       responses:
-        "204":
+        '204':
           description: OK
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/templates/group/{templateId}/publish":
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/templates/group/{templateId}/publish':
     parameters:
       - $ref: '#/components/parameters/templateIdPath'
     put:
@@ -426,12 +435,12 @@ paths:
       summary: Publishes an existing group template.
       operationId: publishGroupTemplate
       responses:
-        "204":
+        '204':
           description: OK
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /devices:
     post:
       tags:
@@ -445,17 +454,17 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/Device_1_0"
+              $ref: '#/components/schemas/Device_1_0'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/Device_2_0"
+              $ref: '#/components/schemas/Device_2_0'
         description: Device to add to the asset library
         required: true
       responses:
-        "201":
-          $ref: "#/components/responses/Created"
-        "400":
-          $ref: "#/components/responses/BadRequest"
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
   /bulkdevices:
     post:
       tags:
@@ -469,17 +478,17 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/BulkDevices"
+              $ref: '#/components/schemas/BulkDevices'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/BulkDevices"
+              $ref: '#/components/schemas/BulkDevices'
         description: List of devices to add to the asset library
         required: true
       responses:
-        "201":
-          $ref: "#/components/responses/Created"
-        "400":
-          $ref: "#/components/responses/BadRequest"
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
     patch:
       tags:
         - Devices
@@ -491,19 +500,19 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/BulkDevices"
+              $ref: '#/components/schemas/BulkDevices'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/BulkDevices"
+              $ref: '#/components/schemas/BulkDevices'
         description: List of devices and their attributes to update
         required: true
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags:
         - Devices
@@ -516,21 +525,21 @@ paths:
         - $ref: '#/components/parameters/attributesQuery'
         - $ref: '#/components/parameters/includeGroupsQuery'
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceList"
+                $ref: '#/components/schemas/DeviceList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceList"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/DeviceList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/devices/{deviceId}":
+  '/devices/{deviceId}':
     parameters:
       - $ref: '#/components/parameters/deviceIdPath'
     get:
@@ -547,19 +556,19 @@ paths:
         - $ref: '#/components/parameters/expandRelatedGroupsQuery'
         - $ref: '#/components/parameters/filterRelationsQuery'
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Device_1_0"
+                $ref: '#/components/schemas/Device_1_0'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/Device_2_0"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Device_2_0'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Devices
@@ -567,10 +576,10 @@ paths:
       description: Deletes a single device
       operationId: deleteDevice
       responses:
-        "204":
+        '204':
           description: successful operation
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags:
         - Devices
@@ -587,20 +596,20 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/Device_1_0"
+              $ref: '#/components/schemas/Device_1_0'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/Device_2_0"
+              $ref: '#/components/schemas/Device_2_0'
         description: Device object that needs to be updated in device store
         required: true
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/devices/{deviceId}/{relationship}/groups":
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/devices/{deviceId}/{relationship}/groups':
     parameters:
       - $ref: '#/components/parameters/deviceIdPath'
       - $ref: '#/components/parameters/relationshipPath'
@@ -616,29 +625,29 @@ paths:
         - $ref: '#/components/parameters/countQuery'
         - $ref: '#/components/parameters/sortQuery'
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/GroupList"
+                $ref: '#/components/schemas/GroupList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/GroupList"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/GroupList'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Groups
       summary: Remove a device's associated groups
       operationId: detachFromGroups
       responses:
-        "204":
+        '204':
           description: successful operation
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/devices/{deviceId}/{relationship}/groups/{groupPath}":
+  '/devices/{deviceId}/{relationship}/groups/{groupPath}':
     parameters:
       - $ref: '#/components/parameters/deviceIdPath'
       - $ref: '#/components/parameters/relationshipPath'
@@ -649,26 +658,26 @@ paths:
       summary: Associates a device to a group, giving context to its relationship.
       operationId: attachToGroup
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Devices
       summary: Removes a device from an associated group
       operationId: detachFromGroup
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/devices/{deviceId}/{relationship}/{direction}/groups/{groupPath}":
+  '/devices/{deviceId}/{relationship}/{direction}/groups/{groupPath}':
     parameters:
       - $ref: '#/components/parameters/deviceIdPath'
       - $ref: '#/components/parameters/relationshipPath'
@@ -680,26 +689,26 @@ paths:
       summary: Associates a device to a group, giving context to its relationship.
       operationId: attachToGroupWithDirection
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Devices
       summary: Removes a device from an associated group
       operationId: detachFromGroupWithDirection
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/devices/{deviceId}/{relationship}/devices":
+  '/devices/{deviceId}/{relationship}/devices':
     parameters:
       - $ref: '#/components/parameters/deviceIdPath'
       - $ref: '#/components/parameters/relationshipPath'
@@ -716,29 +725,29 @@ paths:
         - $ref: '#/components/parameters/countQuery'
         - $ref: '#/components/parameters/sortQuery'
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceList"
+                $ref: '#/components/schemas/DeviceList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceList"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/DeviceList'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Devices
       summary: Remove a device's associated devices
       operationId: detachFromDevices
       responses:
-        "204":
+        '204':
           description: successful operation
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/devices/{deviceId}/{relationship}/devices/{otherDeviceId}":
+  '/devices/{deviceId}/{relationship}/devices/{otherDeviceId}':
     parameters:
       - $ref: '#/components/parameters/deviceIdPath'
       - $ref: '#/components/parameters/relationshipPath'
@@ -755,26 +764,26 @@ paths:
         relationship.
       operationId: attachToDevice
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Devices
       summary: Removes a device from an associated device
       operationId: detachFromDevice
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/devices/{deviceId}/{relationship}/{direction}/devices/{otherDeviceId}":
+  '/devices/{deviceId}/{relationship}/{direction}/devices/{otherDeviceId}':
     parameters:
       - $ref: '#/components/parameters/deviceIdPath'
       - $ref: '#/components/parameters/relationshipPath'
@@ -792,26 +801,26 @@ paths:
         relationship.
       operationId: attachToDeviceWithDirection
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Devices
       summary: Removes a device from an associated device
       operationId: detachFromDeviceWithDirection
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  "/devices/{deviceId}/components":
+  '/devices/{deviceId}/components':
     parameters:
       - $ref: '#/components/parameters/deviceIdPath'
     post:
@@ -823,18 +832,18 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/Device_1_0"
+              $ref: '#/components/schemas/Device_1_0'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/Device_2_0"
+              $ref: '#/components/schemas/Device_2_0'
         description: Device to add as a component
         required: true
       responses:
-        "201":
-          $ref: "#/components/responses/Created"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-  "/devices/{deviceId}/components/{componentId}":
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  '/devices/{deviceId}/components/{componentId}':
     parameters:
       - $ref: '#/components/parameters/deviceIdPath'
       - $ref: '#/components/parameters/componentIdPath'
@@ -844,24 +853,24 @@ paths:
       summary: Updates the component of a device.
       operationId: updateComponent
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Devices
       summary: Deletes a component of a devoce.
       operationId: deleteComponent
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /groups:
     post:
       tags:
@@ -875,17 +884,17 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/Group_1_0"
+              $ref: '#/components/schemas/Group_1_0'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/Group_2_0"
+              $ref: '#/components/schemas/Group_2_0'
         description: Group to add to the asset library
         required: true
       responses:
-        "201":
-          $ref: "#/components/responses/Created"
-        "400":
-          $ref: "#/components/responses/BadRequest"
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
   /bulkgroups:
     post:
       tags:
@@ -901,19 +910,19 @@ paths:
             schema:
               type: array
               items:
-                $ref: "#/components/schemas/BulkGroups"
+                $ref: '#/components/schemas/BulkGroups'
           application/vnd.aws-cdf-v2.0+json:
             schema:
               type: array
               items:
-                $ref: "#/components/schemas/BulkGroups"
+                $ref: '#/components/schemas/BulkGroups'
         description: Group to add to the asset library
         required: true
       responses:
-        "201":
-          $ref: "#/components/responses/Created"
-        "400":
-          $ref: "#/components/responses/BadRequest"
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
     get:
       tags:
         - Groups
@@ -922,23 +931,25 @@ paths:
       operationId: bulkGetGroups
       parameters:
         - $ref: '#/components/parameters/groupPathsQuery'
+        - $ref: '#/components/parameters/includeGroupsBooleanQuery'
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/GroupList"
+                $ref: '#/components/schemas/GroupList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/GroupList"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/groups/{groupPath}":
+                $ref: '#/components/schemas/GroupList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/groups/{groupPath}':
     parameters:
       - $ref: '#/components/parameters/groupPathPath'
+      - $ref: '#/components/parameters/includeGroupsBooleanQuery'
     get:
       tags:
         - Groups
@@ -946,17 +957,17 @@ paths:
       description: Returns a single group
       operationId: getGroup
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Group_1_0"
+                $ref: '#/components/schemas/Group_1_0'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/Group_2_0"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Group_2_0'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Groups
@@ -964,10 +975,10 @@ paths:
       description: Deletes a single group
       operationId: deleteGroup
       responses:
-        "204":
+        '204':
           description: successful operation
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags:
         - Groups
@@ -979,20 +990,20 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/Group_1_0"
+              $ref: '#/components/schemas/Group_1_0'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/Group_2_0"
+              $ref: '#/components/schemas/Group_2_0'
         description: Group object that needs to be updated
         required: true
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/groups/{groupPath}/members/devices":
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/groups/{groupPath}/members/devices':
     parameters:
       - $ref: '#/components/parameters/groupPathPath'
     get:
@@ -1008,20 +1019,20 @@ paths:
         - $ref: '#/components/parameters/countQuery'
         - $ref: '#/components/parameters/sortQuery'
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceList"
+                $ref: '#/components/schemas/DeviceList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceList"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/groups/{groupPath}/members/groups":
+                $ref: '#/components/schemas/DeviceList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/groups/{groupPath}/members/groups':
     parameters:
       - $ref: '#/components/parameters/groupPathPath'
     get:
@@ -1036,20 +1047,20 @@ paths:
         - $ref: '#/components/parameters/countQuery'
         - $ref: '#/components/parameters/sortQuery'
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/GroupList"
+                $ref: '#/components/schemas/GroupList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/GroupList"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/groups/{groupPath}/memberships":
+                $ref: '#/components/schemas/GroupList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/groups/{groupPath}/memberships':
     parameters:
       - $ref: '#/components/parameters/groupPathPath'
     get:
@@ -1058,24 +1069,21 @@ paths:
       summary: List all ancestor groups of a specific group.
       description: List all ancestor groups of a specific group.
       operationId: listGroupMemberships
-      parameters:
-        - $ref: '#/components/parameters/offsetQuery'
-        - $ref: '#/components/parameters/countQuery'
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/GroupList"
+                $ref: '#/components/schemas/GroupList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/GroupList"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/groups/{groupPath}/{relationship}/devices":
+                $ref: '#/components/schemas/GroupList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/groups/{groupPath}/{relationship}/devices':
     parameters:
       - $ref: '#/components/parameters/groupPathPath'
       - $ref: '#/components/parameters/relationshipPath'
@@ -1092,18 +1100,18 @@ paths:
         - $ref: '#/components/parameters/countQuery'
         - $ref: '#/components/parameters/sortQuery'
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceList"
+                $ref: '#/components/schemas/DeviceList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceList"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/groups/{groupPath}/{relationship}/groups":
+                $ref: '#/components/schemas/DeviceList'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/groups/{groupPath}/{relationship}/groups':
     parameters:
       - $ref: '#/components/parameters/groupPathPath'
       - $ref: '#/components/parameters/relationshipPath'
@@ -1119,18 +1127,18 @@ paths:
         - $ref: '#/components/parameters/countQuery'
         - $ref: '#/components/parameters/sortQuery'
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/GroupList"
+                $ref: '#/components/schemas/GroupList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/GroupList"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/groups/{sourceGroupPath}/{relationship}/groups/{targetGroupPath}":
+                $ref: '#/components/schemas/GroupList'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/groups/{sourceGroupPath}/{relationship}/groups/{targetGroupPath}':
     parameters:
       - name: sourceGroupPath
         in: path
@@ -1152,25 +1160,25 @@ paths:
         relationship.
       operationId: attachGroupToGroup
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Groups
       summary: Removes a group from an associated group
       operationId: detachGroupFromGroup
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/profiles/device/{templateId}":
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/profiles/device/{templateId}':
     parameters:
       - $ref: '#/components/parameters/templateIdPath'
     post:
@@ -1182,17 +1190,17 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/DeviceProfile_1_0"
+              $ref: '#/components/schemas/DeviceProfile_1_0'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/DeviceProfile_2_0"
+              $ref: '#/components/schemas/DeviceProfile_2_0'
         description: Device Profile to add to the asset library
         required: true
       responses:
-        "201":
-          $ref: "#/components/responses/Created"
-        "400":
-          $ref: "#/components/responses/BadRequest"
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
     get:
       tags:
         - Profiles
@@ -1200,18 +1208,18 @@ paths:
       description: ReturnsReturn all device profiles for a specific template
       operationId: listDeviceProfiles
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceProfileList"
+                $ref: '#/components/schemas/DeviceProfileList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceProfileList"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/profiles/device/{templateId}/{profileId}":
+                $ref: '#/components/schemas/DeviceProfileList'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/profiles/device/{templateId}/{profileId}':
     parameters:
       - $ref: '#/components/parameters/templateIdPath'
       - $ref: '#/components/parameters/profileIdPath'
@@ -1222,17 +1230,17 @@ paths:
       description: Returns a single device profile
       operationId: getDeviceProfile
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceProfile_1_0"
+                $ref: '#/components/schemas/DeviceProfile_1_0'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceProfile_2_0"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/DeviceProfile_2_0'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Profiles
@@ -1240,10 +1248,10 @@ paths:
       description: Delete a specific device profile
       operationId: deleteDeviceProfile
       responses:
-        "204":
+        '204':
           description: successful operation
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags:
         - Profiles
@@ -1253,20 +1261,20 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/DeviceProfile_1_0"
+              $ref: '#/components/schemas/DeviceProfile_1_0'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/DeviceProfile_2_0"
+              $ref: '#/components/schemas/DeviceProfile_2_0'
         description: Profile that needs to be updated
         required: true
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/profiles/group/{templateId}":
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/profiles/group/{templateId}':
     parameters:
       - $ref: '#/components/parameters/templateIdPath'
     post:
@@ -1278,17 +1286,17 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/GroupProfile_1_0"
+              $ref: '#/components/schemas/GroupProfile_1_0'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/GroupProfile_2_0"
+              $ref: '#/components/schemas/GroupProfile_2_0'
         description: Group Profile to add to the asset library
         required: true
       responses:
-        "201":
-          $ref: "#/components/responses/Created"
-        "400":
-          $ref: "#/components/responses/BadRequest"
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
     get:
       tags:
         - Profiles
@@ -1296,18 +1304,18 @@ paths:
       description: Return all group profiles for a specific template
       operationId: listGroupProfiles
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/GroupProfileList"
+                $ref: '#/components/schemas/GroupProfileList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/GroupProfileList"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/profiles/group/{templateId}/{profileId}":
+                $ref: '#/components/schemas/GroupProfileList'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/profiles/group/{templateId}/{profileId}':
     parameters:
       - $ref: '#/components/parameters/templateIdPath'
       - $ref: '#/components/parameters/profileIdPath'
@@ -1318,17 +1326,17 @@ paths:
       description: Returns a single group profile
       operationId: getGroupProfile
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/GroupProfile_1_0"
+                $ref: '#/components/schemas/GroupProfile_1_0'
             application/vnd.aws-cdf-v2.0+json:
               schema:
-                $ref: "#/components/schemas/GroupProfile_2_0"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/GroupProfile_2_0'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Profiles
@@ -1336,10 +1344,10 @@ paths:
       description: Delete a specific group profile
       operationId: deleteGroupProfile
       responses:
-        "204":
+        '204':
           description: successful operation
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags:
         - Profiles
@@ -1349,19 +1357,19 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/GroupProfile_1_0"
+              $ref: '#/components/schemas/GroupProfile_1_0'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/GroupProfile_2_0"
+              $ref: '#/components/schemas/GroupProfile_2_0'
         description: Profile that needs to be updated
         required: true
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /search:
     get:
       tags:
@@ -1391,7 +1399,17 @@ paths:
       parameters:
         - name: type
           in: query
-          description: Type of group/device to filter.  This can be the high level `group`
+          description: Type of group/device to filter for.  This can be the high level `group`
+            or `device`, as well as any custom group or device template that may
+            have been registered.
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: ntype
+          in: query
+          description: Type of group/device to filter out.  This can be the high level `group`
             or `device`, as well as any custom group or device template that may
             have been registered.
           explode: true
@@ -1404,6 +1422,14 @@ paths:
           description: The path of a common ancestor group to filter results by.
           schema:
             type: string
+        - name: includeAncestor
+          in: query
+          description: Whether or not to include the ancestor in the search. Defaults to false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
         - name: eq
           in: query
           description: Filter an attribute based on an exact match. E.g.
@@ -1490,7 +1516,8 @@ paths:
               type: string
         - name: exist
           in: query
-          description: Return a match if the device/group in context has a matching relation/atrribute. E.g.
+          description:
+            Return a match if the device/group in context has a matching relation/atrribute. E.g.
             `?exists=installed_in:out:groupPath:/vehicle/001`
           explode: true
           schema:
@@ -1499,7 +1526,8 @@ paths:
               type: string
         - name: nexist
           in: query
-          description: Return a match if the device/group in context does not have a matching relation/atrribute. E.g.
+          description:
+            Return a match if the device/group in context does not have a matching relation/atrribute. E.g.
             `?nxists=installed_in:out:groupPath:/vehicle/001`
           explode: true
           schema:
@@ -1522,23 +1550,194 @@ paths:
         - $ref: '#/components/parameters/countQuery'
         - $ref: '#/components/parameters/sortQuery'
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/SearchResults"
+                  $ref: '#/components/schemas/SearchResults'
             application/vnd.aws-cdf-v2.0+json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/SearchResults"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                  $ref: '#/components/schemas/SearchResults'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Search
+      summary: Search for groups and devices, and delete the results.
+      description: >
+        Search results can be filtered by type, ancestorPath, and an arbitrary number of 
+        additional filter parameters. Each filter can reference a field of the search
+        result, for example `eq=fieldname:value` or traverse the asset library graph to 
+        reference a related entry, for example `eq=traversal1:out:traversal2:in:fieldname:value`.
+        All parameters are combined with a logical AND.
+
+        For all search parameters that include a search key and search value separated 
+        by a colon (:) character, the HTTP parameter must be assembled using the following 
+        sequence of steps:
+         1. URL-encode the search value.
+         2. Concatenate the search key (incl. any traversals), the colon character, and 
+            result of step 1.
+         3. URL-encode the output of step 2.
+        Failure to do so can yield incorrect search results for any search values that include
+        the colon character.
+
+        For example, a search for entries with an outgoing "manufactured_by" relation whose 
+        name starts with "Mfg+Asy Inc" should be expressed as:
+        `/search?startsWith=manufactured_by%3Aout%3Aname%3AMfg%252BAsy%2520Inc`
+      operationId: deleteSearch
+      parameters:
+        - name: type
+          in: query
+          description: Type of group/device to filter for.  This can be the high level `group`
+            or `device`, as well as any custom group or device template that may
+            have been registered.
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: ntype
+          in: query
+          description: Type of group/device to filter out.  This can be the high level `group`
+            or `device`, as well as any custom group or device template that may
+            have been registered.
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: ancestorPath
+          in: query
+          description: The path of a common ancestor group to filter results by.
+          schema:
+            type: string
+        - name: includeAncestor
+          in: query
+          description: Whether or not to include the ancestor in the search. Defaults to false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: eq
+          in: query
+          description: Filter an attribute based on an exact match. E.g.
+            `?eq=firmwareVersion:ABC123`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: neq
+          in: query
+          description: Filter by an attribute based on not matching. E.g.
+            `?neq=firmwareVersion:ABC123`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: lt
+          in: query
+          description: Filter an attribute based on having a value less than. E.g.
+            `?lt=deploymentId:3`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: number
+        - name: lte
+          in: query
+          description: Filter an attribute based on having a value less than or equal to.
+            E.g. `?lte=deploymentId:3`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: number
+        - name: gt
+          in: query
+          description: Filter an attribute based on having a value greater than. E.g.
+            `?gt=deploymentId:3`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: number
+        - name: gte
+          in: query
+          description: Filter an attribute based on having a value greater than or equal
+            to. E.g. `?gte=deploymentId:3`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: number
+        - name: startsWith
+          in: query
+          description: >
+            Filter by an attribute based on starting with specific text. Case sensitive.
+            For example: `?startsWith=model:MOD123`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: endsWith
+          in: query
+          description: >
+            Filter by an attribute based on ending with specific text. Case sensitive.
+            For example: `?endsWith=model:limited%20edition`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: contains
+          in: query
+          description: >
+            Filter by an attribute based on ending with specific text. Case sensitive.
+            For example: `?endsWith=model:quattro`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: exist
+          in: query
+          description:
+            Return a match if the device/group in context has a matching relation/atrribute. E.g.
+            `?exists=installed_in:out:groupPath:/vehicle/001`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: nexist
+          in: query
+          description:
+            Return a match if the device/group in context does not have a matching relation/atrribute. E.g.
+            `?nxists=installed_in:out:groupPath:/vehicle/001`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '204':
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   /policies:
     post:
       tags:
@@ -1549,17 +1748,17 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/Policy"
+              $ref: '#/components/schemas/Policy'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/Policy"
+              $ref: '#/components/schemas/Policy'
         description: Policy to create.
         required: true
       responses:
-        "201":
-          $ref: "#/components/responses/Created"
-        "400":
-          $ref: "#/components/responses/BadRequest"
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
     get:
       tags:
         - Policies
@@ -1568,28 +1767,29 @@ paths:
       parameters:
         - name: type
           in: query
-          description: Policy type to refilterturn
-          required: true
+          description: Policy type to filter return
           schema:
             type: string
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/countQuery'
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/PolicyList"
+                  $ref: '#/components/schemas/PolicyList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/PolicyList"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                  $ref: '#/components/schemas/PolicyList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /policies/inherited:
     get:
       tags:
@@ -1619,24 +1819,24 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/PolicyList"
+                  $ref: '#/components/schemas/PolicyList'
             application/vnd.aws-cdf-v2.0+json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/PolicyList"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  "/policies/{policyId}":
+                  $ref: '#/components/schemas/PolicyList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/policies/{policyId}':
     parameters:
       - name: policyId
         in: path
@@ -1653,57 +1853,56 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: "#/components/schemas/Policy"
+              $ref: '#/components/schemas/Policy'
           application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: "#/components/schemas/Policy"
+              $ref: '#/components/schemas/Policy'
         description: Policy that needs to be updated
         required: true
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Policies
       summary: Delete an existing policy.
       operationId: deletePolicy
       responses:
-        "204":
+        '204':
           description: successful operation
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags:
         - Policies
       summary: Retrieve a specific policy.
       operationId: getPolicy
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Policy"
+                  $ref: '#/components/schemas/Policy'
             application/vnd.aws-cdf-v2.0+json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Policy"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                  $ref: '#/components/schemas/Policy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
 components:
-
   parameters:
     templateIdPath:
       in: path
@@ -1824,6 +2023,13 @@ components:
         type: array
         items:
           type: string
+    includeGroupsBooleanQuery:
+      name: includeGroups
+      in: query
+      description: Specify false to exclude the groups parameter from the response body
+      schema:
+        type: boolean
+        default: true
     expandRelatedDevicesQuery:
       name: expandRelatedDevices
       in: query
@@ -1923,32 +2129,35 @@ components:
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
         application/vnd.aws-cdf-v2.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
     NotFound:
       description: Not found
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
         application/vnd.aws-cdf-v2.0+json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
+    ConcurrentModificationException:
+      description: ConcurrentModificationException
+      schema:
+        $ref: '#/components/schemas/Error'
   requestBodies:
     TemplateDefinition:
       content:
         application/vnd.aws-cdf-v1.0+json:
           schema:
-            $ref: "#/components/schemas/TemplateDefinition"
+            $ref: '#/components/schemas/TemplateDefinition'
         application/vnd.aws-cdf-v2.0+json:
           schema:
-            $ref: "#/components/schemas/TemplateDefinition"
+            $ref: '#/components/schemas/TemplateDefinition'
       required: true
 
   schemas:
-
     Entity:
       type: object
       properties:
@@ -1963,7 +2172,7 @@ components:
 
     Device:
       allOf:
-        - $ref: "#/components/schemas/Entity"
+        - $ref: '#/components/schemas/Entity'
         - type: object
           properties:
             deviceId:
@@ -1993,12 +2202,12 @@ components:
                 - retired
               description: The current state of the device
             assemblyOf:
-              $ref: "#/components/schemas/Device"
+              $ref: '#/components/schemas/Device'
             components:
               type: array
               description: The device components that this Device is assembled of.
               items:
-                $ref: "#/components/schemas/Device"
+                $ref: '#/components/schemas/Device'
             attributes:
               type: object
               additionalProperties: true
@@ -2019,7 +2228,7 @@ components:
 
     Device_1_0:
       allOf:
-        - $ref: "#/components/schemas/Device"
+        - $ref: '#/components/schemas/Device'
         - type: object
           properties:
             groups:
@@ -2039,7 +2248,7 @@ components:
 
     Device_2_0:
       allOf:
-        - $ref: "#/components/schemas/Device"
+        - $ref: '#/components/schemas/Device'
         - type: object
           properties:
             groups:
@@ -2079,7 +2288,7 @@ components:
 
     DeviceProfile_1_0:
       allOf:
-        - $ref: "#/components/schemas/Device_1_0"
+        - $ref: '#/components/schemas/Device_1_0'
         - type: object
           properties:
             profileId:
@@ -2091,7 +2300,7 @@ components:
 
     DeviceProfile_2_0:
       allOf:
-        - $ref: "#/components/schemas/Device_2_0"
+        - $ref: '#/components/schemas/Device_2_0'
         - type: object
           properties:
             profileId:
@@ -2103,7 +2312,7 @@ components:
 
     Group:
       allOf:
-        - $ref: "#/components/schemas/Entity"
+        - $ref: '#/components/schemas/Entity'
         - type: object
           properties:
             groupPath:
@@ -2142,7 +2351,7 @@ components:
 
     Group_1_0:
       allOf:
-        - $ref: "#/components/schemas/Group"
+        - $ref: '#/components/schemas/Group'
         - type: object
           properties:
             groups:
@@ -2155,7 +2364,7 @@ components:
 
     Group_2_0:
       allOf:
-        - $ref: "#/components/schemas/Group"
+        - $ref: '#/components/schemas/Group'
         - type: object
           properties:
             groups:
@@ -2178,7 +2387,7 @@ components:
 
     GroupProfile_1_0:
       allOf:
-        - $ref: "#/components/schemas/Group_1_0"
+        - $ref: '#/components/schemas/Group_1_0'
         - type: object
           properties:
             profileId:
@@ -2190,7 +2399,7 @@ components:
 
     GroupProfile_2_0:
       allOf:
-        - $ref: "#/components/schemas/Group_2_0"
+        - $ref: '#/components/schemas/Group_2_0'
         - type: object
           properties:
             profileId:
@@ -2207,8 +2416,8 @@ components:
           type: array
           items:
             oneOf:
-              - $ref: "#/components/schemas/Device_1_0"
-              - $ref: "#/components/schemas/Device_2_0"
+              - $ref: '#/components/schemas/Device_1_0'
+              - $ref: '#/components/schemas/Device_2_0'
 
     BulkGroups:
       type: object
@@ -2217,8 +2426,8 @@ components:
           type: array
           items:
             oneOf:
-              - $ref: "#/components/schemas/Group_1_0"
-              - $ref: "#/components/schemas/Group_2_0"
+              - $ref: '#/components/schemas/Group_1_0'
+              - $ref: '#/components/schemas/Group_2_0'
 
     GroupList:
       type: object
@@ -2227,8 +2436,8 @@ components:
           type: array
           items:
             oneOf:
-              - $ref: "#/components/schemas/Group_1_0"
-              - $ref: "#/components/schemas/Group_2_0"
+              - $ref: '#/components/schemas/Group_1_0'
+              - $ref: '#/components/schemas/Group_2_0'
         pagination:
           type: object
           properties:
@@ -2248,8 +2457,8 @@ components:
           type: array
           items:
             oneOf:
-              - $ref: "#/components/schemas/Device_1_0"
-              - $ref: "#/components/schemas/Device_2_0"
+              - $ref: '#/components/schemas/Device_1_0'
+              - $ref: '#/components/schemas/Device_2_0'
         pagination:
           type: object
           properties:
@@ -2269,8 +2478,8 @@ components:
           type: array
           items:
             oneOf:
-              - $ref: "#/components/schemas/DeviceProfile_1_0"
-              - $ref: "#/components/schemas/DeviceProfile_2_0"
+              - $ref: '#/components/schemas/DeviceProfile_1_0'
+              - $ref: '#/components/schemas/DeviceProfile_2_0'
         pagination:
           type: object
           properties:
@@ -2286,8 +2495,8 @@ components:
           type: array
           items:
             oneOf:
-              - $ref: "#/components/schemas/GroupProfile_1_0"
-              - $ref: "#/components/schemas/GroupProfile_2_0"
+              - $ref: '#/components/schemas/GroupProfile_1_0'
+              - $ref: '#/components/schemas/GroupProfile_2_0'
         pagination:
           type: object
           properties:
@@ -2304,15 +2513,15 @@ components:
           items:
             oneOf:
               - anyOf:
-                - $ref: "#/components/schemas/Device_1_0"
-                - $ref: "#/components/schemas/Group_1_0"
+                  - $ref: '#/components/schemas/Device_1_0'
+                  - $ref: '#/components/schemas/Group_1_0'
               - anyOf:
-                - $ref: "#/components/schemas/Device_2_0"
-                - $ref: "#/components/schemas/Group_2_0"
+                  - $ref: '#/components/schemas/Device_2_0'
+                  - $ref: '#/components/schemas/Group_2_0'
 
     TemplateInfoProperties:
       type: object
-      required: [ "type" ]
+      required: ['type']
       properties:
         type:
           type: array
@@ -2331,7 +2540,7 @@ components:
             type: string
         minLength:
           type: number
-        maxLength: 
+        maxLength:
           type: number
         pattern:
           type: string
@@ -2385,7 +2594,7 @@ components:
         properties:
           type: object
           additionalProperties:
-            $ref: "#/components/schemas/TemplateInfoProperties"
+            $ref: '#/components/schemas/TemplateInfoProperties'
         required:
           description: List of required properties
           type: array
@@ -2415,7 +2624,7 @@ components:
         results:
           type: array
           items:
-            $ref: "#/components/schemas/TemplateInfo"
+            $ref: '#/components/schemas/TemplateInfo'
         pagination:
           type: object
           properties:
@@ -2508,7 +2717,7 @@ components:
           type: array
           description: a list of policies
           items:
-            $ref: "#/components/schemas/Policy"
+            $ref: '#/components/schemas/Policy'
         pagination:
           type: object
           properties:

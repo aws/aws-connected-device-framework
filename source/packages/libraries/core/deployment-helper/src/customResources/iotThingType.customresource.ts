@@ -10,47 +10,54 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 
-import { TYPES } from '../di/types';
-import { CustomResourceEvent } from './customResource.model';
-import { CustomResource } from './customResource';
-import { logger } from '@cdf/lambda-invoke/dist/utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
 import ow from 'ow';
+import { TYPES } from '../di/types';
+import { CustomResource } from './customResource';
+import { CustomResourceEvent } from './customResource.model';
 
 @injectable()
 export class IotThingTypeCustomResource implements CustomResource {
-
     private _iot: AWS.Iot;
 
-    constructor(
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
-    ) {
+    constructor(@inject(TYPES.IotFactory) iotFactory: () => AWS.Iot) {
         this._iot = iotFactory();
     }
 
-    public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`IotThingTypeCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `IotThingTypeCustomResource: create: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent
+            )}`
+        );
 
         const thingTypeName = customResourceEvent.ResourceProperties.ThingTypeName;
 
         ow(thingTypeName, ow.string.nonEmpty);
 
-        const params:AWS.Iot.Types.CreateThingTypeRequest = {
-            thingTypeName
+        const params: AWS.Iot.Types.CreateThingTypeRequest = {
+            thingTypeName,
         };
-        const result:AWS.Iot.Types.CreateThingTypeResponse = await this._iot.createThingType(params).promise();
+        const result: AWS.Iot.Types.CreateThingTypeResponse = await this._iot
+            .createThingType(params)
+            .promise();
         logger.debug(`IotThingTypeCustomResource: create: exit: ${JSON.stringify(result)}`);
         return result;
-
     }
 
-    public async update(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`IotThingTypeCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `IotThingTypeCustomResource: create: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent
+            )}`
+        );
         return await this.create(customResourceEvent);
     }
 
-    public async delete(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+    public async delete(_customResourceEvent: CustomResourceEvent): Promise<unknown> {
         return {};
     }
 }

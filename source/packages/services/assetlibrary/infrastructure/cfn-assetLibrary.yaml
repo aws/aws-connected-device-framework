@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,7 +11,7 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Asset Library Service
@@ -20,24 +21,23 @@ Globals:
     OpenApiVersion: 3.0.1
 
 Parameters:
-  
   ApplicationConfigurationOverride:
     Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
 
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
 
   VpcId:
     Description: ID of VPC to deploy the Asset Library into
     Type: String
-  
+
   CDFSecurityGroupId:
     Description: ID of an existing CDF security group to deploy the Asset Library into (required if running full mode, or private API)
     Type: String
-  
+
   PrivateSubNetIds:
     Description: Comma delimited list of private subnetIds to deploy the Asset Library into
     Type: CommaDelimitedList
@@ -46,11 +46,11 @@ Parameters:
     Description: Run in 'lite' mode which includes device registry only, or 'full' mode which augments the device registry with an additional datastore
     Type: String
     Default: full
-    AllowedValues: 
+    AllowedValues:
       - full
       - lite
     MinLength: 1
-  
+
   PrivateApiGatewayVPCEndpoint:
     Description: VPC endpoint. Only required if AuthType = 'Private'.
     Type: String
@@ -130,26 +130,25 @@ Parameters:
       - 'false'
     MinLength: 1
 
-
 Conditions:
-  DeployFullMode: !Equals [ !Ref Mode, 'full' ]
-  DeployLiteMode: !Equals [ !Ref Mode, 'lite' ]
+  DeployFullMode: !Equals [!Ref Mode, 'full']
+  DeployLiteMode: !Equals [!Ref Mode, 'lite']
 
-  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+  DeployInVPC: !Not [!Equals [!Ref VpcId, 'N/A']]
 
-  DeployWithProvisionedCapacity: !Not [ !Equals [ !Ref ProvisionedConcurrentExecutions, "0" ]]
-  DeployWithScaling: !Equals [ !Ref ApplyAutoscaling, 'true' ]
+  DeployWithProvisionedCapacity: !Not [!Equals [!Ref ProvisionedConcurrentExecutions, '0']]
+  DeployWithScaling: !Equals [!Ref ApplyAutoscaling, 'true']
 
-  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
-  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
+  DeployWithLambdaAuth:
+    !Or [!Equals [!Ref AuthType, 'LambdaRequest'], !Equals [!Ref AuthType, 'LambdaToken']]
+  EnableApiGatewayAccessLogs: !Equals [!Ref EnableApiGatewayAccessLogs, 'true']
 
 Resources:
-
   ApiGatewayApi:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+        Location: !Sub '${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}'
     DependsOn:
       - LambdaFunction
 
@@ -158,7 +157,7 @@ Resources:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+        Location: !Sub '${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml'
     DependsOn:
       - LambdaFunction
 
@@ -178,7 +177,7 @@ Resources:
           Principal:
             Service: lambda.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/cdf/assetlibrary/"
+      Path: '/cdf/assetlibrary/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
         - arn:aws:iam::aws:policy/AWSLambdaExecute
@@ -198,81 +197,81 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W13
-            reason: "This policy allows the lambda to be able to manage things in IoT"
+            reason: 'This policy allows the lambda to be able to manage things in IoT'
     Properties:
       Description: 'cdf-assetlibrary application policies'
-      Path: "/cdf/assetlibrary/"
+      Path: '/cdf/assetlibrary/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
-              - "iot:Publish"
+              - 'iot:Publish'
             Effect: Allow
-            Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/cdf/*"
+            Resource: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/cdf/*'
           - Action:
-              - "iot:CreateThing"
-              - "iot:DescribeThing"
-              - "iot:DeleteThing"
-              - "iot:UpdateThing"
-              - "iot:AddThingToThingGroup"
-              - "iot:ListThingGroupsForThing"
-              - "iot:RemoveThingFromThingGroup"
+              - 'iot:CreateThing'
+              - 'iot:DescribeThing'
+              - 'iot:DeleteThing'
+              - 'iot:UpdateThing'
+              - 'iot:AddThingToThingGroup'
+              - 'iot:ListThingGroupsForThing'
+              - 'iot:RemoveThingFromThingGroup'
             Effect: Allow
-            Resource: 
-            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
+            Resource:
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*'
           - Action:
-              - "iot:DescribeThingType"
-              - "iot:CreateThingType"
+              - 'iot:DescribeThingType'
+              - 'iot:CreateThingType'
             Effect: Allow
-            Resource: 
-            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thingtype/*"
+            Resource:
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thingtype/*'
           - Action:
-              - "iot:AddThingToThingGroup"
-              - "iot:CreateThingGroup"
-              - "iot:DescribeThingGroup"
-              - "iot:DeleteThingGroup"
-              - "iot:ListThingGroupsForThing"
-              - "iot:ListThingsInThingGroup"
-              - "iot:RemoveThingFromThingGroup"
-              - "iot:UpdateThingGroup"
+              - 'iot:AddThingToThingGroup'
+              - 'iot:CreateThingGroup'
+              - 'iot:DescribeThingGroup'
+              - 'iot:DeleteThingGroup'
+              - 'iot:ListThingGroupsForThing'
+              - 'iot:ListThingsInThingGroup'
+              - 'iot:RemoveThingFromThingGroup'
+              - 'iot:UpdateThingGroup'
             Effect: Allow
-            Resource: 
-            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*"
+            Resource:
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*'
           - Action:
-              - "iot:SearchIndex"
+              - 'iot:SearchIndex'
             Effect: Allow
-            Resource: 
-            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:index/*"
+            Resource:
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:index/*'
           - Action:
-              - "iot:ListThingGroups"
-              - "iot:ListThingTypes"
-              - "iot:DeprecateThingType"
+              - 'iot:ListThingGroups'
+              - 'iot:ListThingTypes'
+              - 'iot:DeprecateThingType'
             Effect: Allow
-            Resource: 
-            - "*"
+            Resource:
+              - '*'
 
   LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub 'cdf-assetLibrary-rest-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/assetlibrary/dist/lambda_proxy.handler
+      Handler: lambda_proxy.handler
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
       ProvisionedConcurrencyConfig:
         Fn::If:
-        - DeployWithProvisionedCapacity
-        - ProvisionedConcurrentExecutions: !Ref ProvisionedConcurrentExecutions
-        - Ref: AWS::NoValue
+          - DeployWithProvisionedCapacity
+          - ProvisionedConcurrentExecutions: !Ref ProvisionedConcurrentExecutions
+          - Ref: AWS::NoValue
       Timeout: 30
       Environment:
         Variables:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
-          APP_CONFIG_DIR: 'packages/services/assetlibrary/dist/config'
+          APP_CONFIG_DIR: 'config'
           MODE: !Ref Mode
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_NEPTUNE_URL: !Ref NeptuneURL
@@ -280,11 +279,11 @@ Resources:
       # Difference between full and lite lambda is that lite is not deployed within a VPC
       VpcConfig:
         Fn::If:
-        - DeployInVPC
-        - SubnetIds: !Ref PrivateSubNetIds
-          SecurityGroupIds: 
-          - !Ref CDFSecurityGroupId
-        - Ref: AWS::NoValue
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
       Events:
         ProxyApiRoot:
           Type: Api
@@ -327,33 +326,28 @@ Resources:
     Condition: DeployLiteMode
     Version: 1.0
     Properties:
-      ServiceToken:
-        !Ref CustomResourceVPCLambdaArn
+      ServiceToken: !Ref CustomResourceVPCLambdaArn
 
   IotEndpoint:
     Type: Custom::IotEndpoint
     Version: 1.0
     Properties:
-      ServiceToken:
-        !Ref CustomResourceVPCLambdaArn
+      ServiceToken: !Ref CustomResourceVPCLambdaArn
 
   AssetLibraryInit:
     Type: Custom::AssetLibraryInit
     Condition: DeployFullMode
     Version: 1.0
     Properties:
-      ServiceToken:
-        !Ref CustomResourceVPCLambdaArn
-      FunctionName:
-        !Ref LambdaFunction
-
+      ServiceToken: !Ref CustomResourceVPCLambdaArn
+      FunctionName: !Ref LambdaFunction
 
 Outputs:
   RestApiFunctionName:
     Description: Asset library lambda function name
     Value: !Ref LambdaFunction
-    Export: 
-      Name: !Sub "cdf-assetlibrary-${Environment}-restApiFunctionName"
+    Export:
+      Name: !Sub 'cdf-assetlibrary-${Environment}-restApiFunctionName'
   ApiGatewayUrl:
     Description: URL for application
     Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'

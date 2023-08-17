@@ -1,6 +1,7 @@
 # GREENGRASS V2 INSTALLER CONFIG CONFIGURATION
 
 The recommended way to create a local configuration file for the Greengrass V2 Installer Config is through CDF's [installer](../../installer/README.md#deployment-using-wizard).
+
 # Configuration for Running Locally
 
 Once you had deployed cdf to your AWS account, you can generate `.env` file to be used for your local development

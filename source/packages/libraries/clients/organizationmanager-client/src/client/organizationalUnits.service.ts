@@ -11,43 +11,50 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { injectable } from "inversify";
-import { PathHelper } from "../utils/path.helper";
-import { RequestHeaders } from "./common.model";
-import { OrganizationalUnitResource } from "./organizationalUnits.model";
+import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
+import { RequestHeaders } from './common.model';
+import { OrganizationalUnitResource } from './organizationalUnits.model';
 
 export interface OrganizationalUnitsService {
-    createOrganizationalUnit(organizationalUnit: OrganizationalUnitResource, additionalHeaders?: RequestHeaders): Promise<string>
+    createOrganizationalUnit(
+        organizationalUnit: OrganizationalUnitResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string>;
 
-    getOrganizationalUnit(organizationalUnitId: string, additionalHeaders?: RequestHeaders): Promise<OrganizationalUnitResource>
-    
-    deleteOrganizationalUnit(organizationalUnitId: string, additionalHeaders?: RequestHeaders): Promise<void>
+    getOrganizationalUnit(
+        organizationalUnitId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<OrganizationalUnitResource>;
 
-    listOrganizationalUnits(additionalHeaders?: RequestHeaders): Promise<OrganizationalUnitResource[]>
+    deleteOrganizationalUnit(
+        organizationalUnitId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void>;
+
+    listOrganizationalUnits(
+        additionalHeaders?: RequestHeaders
+    ): Promise<OrganizationalUnitResource[]>;
 }
-
 
 @injectable()
 export class OrganizationalUnitsServiceBase {
-
     protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
     protected _headers: RequestHeaders = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
+        Accept: this.MIME_TYPE,
+        'Content-Type': this.MIME_TYPE,
     };
 
     protected organizationalUnitsRelativeUrl(): string {
         return '/organizationalUnits';
     }
 
-
     protected organizationalUnitRelativeUrl(organizationalUnitId: string): string {
         return PathHelper.encodeUrl('organizationalUnits', organizationalUnitId);
     }
 
     protected buildHeaders(additionalHeaders: RequestHeaders): RequestHeaders {
-
         let headers = Object.assign({}, this._headers);
 
         const customHeaders = process.env.ORGANIZATIONMANAGER_HEADERS;
@@ -64,7 +71,7 @@ export class OrganizationalUnitsServiceBase {
         }
 
         const keys = Object.keys(headers);
-        keys.forEach(k => {
+        keys.forEach((k) => {
             if (headers[k] === undefined || headers[k] === null) {
                 delete headers[k];
             }
@@ -72,5 +79,4 @@ export class OrganizationalUnitsServiceBase {
 
         return headers;
     }
-
 }

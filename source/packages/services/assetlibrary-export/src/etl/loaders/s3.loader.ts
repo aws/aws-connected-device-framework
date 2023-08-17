@@ -14,23 +14,22 @@ import { inject, injectable } from 'inversify';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger';
 
-import { Loader, Loaded } from '../load.service';
-import { Transformed } from '../transform.service';
 import ow from 'ow';
+import { Loaded, Loader } from '../load.service';
+import { Transformed } from '../transform.service';
 
 @injectable()
 export class S3Loader implements Loader {
-
     private s3: AWS.S3;
 
     constructor(
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
         @inject('defaults.etl.load.path') private loadPath: string,
         @inject('aws.s3.export.bucket') private exportBucket: string,
-        @inject('aws.s3.export.prefix') private exportKeyPrefix: string,
+        @inject('aws.s3.export.prefix') private exportKeyPrefix: string
     ) {
         this.s3 = s3Factory();
     }
@@ -46,8 +45,8 @@ export class S3Loader implements Loader {
         ow(batch.timestamp, 'batchType', ow.number.greaterThan(0));
 
         const dateTimeFormat = (timestamp: number, format: string) => {
-            return DateTime.fromMillis(timestamp, {zone: 'utc'}).toFormat(format)
-        }
+            return DateTime.fromMillis(timestamp, { zone: 'utc' }).toFormat(format);
+        };
 
         const compiled = _.template(this.loadPath);
         const compiledKey = compiled({
@@ -59,12 +58,12 @@ export class S3Loader implements Loader {
                     export: {
                         bucket: this.exportBucket,
                         prefix: this.exportKeyPrefix,
-                    }
-                }
-            }
+                    },
+                },
+            },
         });
 
-        const params:AWS.S3.PutObjectRequest = {
+        const params: AWS.S3.PutObjectRequest = {
             Bucket: this.exportBucket,
             Key: compiledKey,
             Body: JSON.stringify(batch.items),
@@ -78,8 +77,7 @@ export class S3Loader implements Loader {
         return {
             batchId: batch.id,
             exportBucket: this.exportBucket,
-            exportKey: compiledKey
+            exportKey: compiledKey,
         };
-
     }
 }

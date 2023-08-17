@@ -13,8 +13,8 @@
 export class InvalidArgumentError extends Error {
     public readonly argumentName: string;
     constructor(argumentName: string, message?: string) {
-      super(message);
-      this.argumentName = argumentName;
-      this.name = 'InvalidArgumentError';
+        super(message);
+        this.argumentName = argumentName;
+        this.name = 'InvalidArgumentError';
     }
 }

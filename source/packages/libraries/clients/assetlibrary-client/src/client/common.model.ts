@@ -10,13 +10,13 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-export type StringToArrayMap = { [key: string] : string[]};
+export type StringToArrayMap = { [key: string]: string[] };
 
 export type DirectionStringToArrayMap = {
-	in?: StringToArrayMap,
-	out?: StringToArrayMap
+    in?: StringToArrayMap;
+    out?: StringToArrayMap;
 };
 
 export interface RequestHeaders {
-	[key:string] : string;
+    [key: string]: string;
 }

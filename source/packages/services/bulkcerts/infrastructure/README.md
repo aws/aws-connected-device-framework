@@ -29,7 +29,7 @@ aws --profile <PROFILE> --region <REGION> ssm put-parameter --type SecureString 
 
 ## Deployment Steps
 
-The following steps describe a basic deployment.  Refer to the `./infrastructure/package-cfn.bash` and `./infrastructure/deploy-cfn.bash` files details on more advanced options available.
+The following steps describe a basic deployment. Refer to the `./infrastructure/package-cfn.bash` and `./infrastructure/deploy-cfn.bash` files details on more advanced options available.
 
 - Initialize and build the project
 - Package the CloudFormation template and upload to the S3 bucket

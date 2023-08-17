@@ -11,13 +11,13 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { ComponentItem } from "../components/components.model"
+import { ComponentItem } from '../components/components.model';
 
 export type Manifest = {
     region: string;
     version: string;
-    resources: StackSetResource[]
-}
+    resources: StackSetResource[];
+};
 
 export interface Parameter {
     parameter_key: string;
@@ -25,36 +25,35 @@ export interface Parameter {
 }
 
 export interface DeploymentTarget {
-    accounts: string[]
+    accounts: string[];
 }
 
 export interface StackSetResource {
     name: string;
     description: string;
     resource_file: string;
-    deploy_method: "stack_set" | "scp";
+    deploy_method: 'stack_set' | 'scp';
     regions: string[];
-    deployment_targets: DeploymentTarget
-    parameters: Parameter[]
+    deployment_targets: DeploymentTarget;
+    parameters: Parameter[];
 }
 
 export interface OrganizationalUnitRegionResource {
-    organizationalUnitId: string
-    region: string
-    accounts: string[]
+    organizationalUnitId: string;
+    region: string;
+    accounts: string[];
 }
 
-export type OrganizationalUnitRegionResourceList = OrganizationalUnitRegionResource[]
+export type OrganizationalUnitRegionResourceList = OrganizationalUnitRegionResource[];
 
 export interface AccountsByRegionListMap {
     [regionListKey: string]: {
-        accounts: string[]
-    }
+        accounts: string[];
+    };
 }
 export interface RegionListByOrganizationalUnitMap {
-    [organizationalUnitId: string]: AccountsByRegionListMap
+    [organizationalUnitId: string]: AccountsByRegionListMap;
 }
 export interface ComponentsByOrganizationalUnitMap {
-    [organizationalUnitId: string]: ComponentItem[]
+    [organizationalUnitId: string]: ComponentItem[];
 }
-

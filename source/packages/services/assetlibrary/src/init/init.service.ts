@@ -11,5 +11,5 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface InitService {
-    init(): Promise<void> ;
+    init(): Promise<void>;
 }

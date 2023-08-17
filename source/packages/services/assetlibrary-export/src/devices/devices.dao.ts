@@ -10,20 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { process, structure } from 'gremlin';
-import { injectable, inject } from 'inversify';
-import { logger } from '../utils/logger';
-import { TYPES } from '../di/types';
-import { Node } from '../data/node';
-import { FullAssembler } from '../data/full.assembler';
+import { inject, injectable } from 'inversify';
 import { BaseDaoFull } from '../data/base.full.dao';
-import { isRelatedEntityDto, isVertexDto, RelatedEntityDto, VertexDto } from '../data/full.model';
+import { FullAssembler } from '../data/full.assembler';
+import { RelatedEntityDto, VertexDto, isRelatedEntityDto, isVertexDto } from '../data/full.model';
+import { Node } from '../data/node';
+import { TYPES } from '../di/types';
 
 const __ = process.statics;
 
 @injectable()
 export class DevicesDao extends BaseDaoFull {
-
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
@@ -32,17 +31,23 @@ export class DevicesDao extends BaseDaoFull {
         super(neptuneUrl, graphSourceFactory);
     }
 
-    public async get(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean): Promise<Node[]> {
+    public async get(
+        deviceIds: string[],
+        expandComponents: boolean,
+        attributes: string[],
+        includeGroups: boolean
+    ): Promise<Node[]> {
+        logger.silly(
+            `device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`
+        );
 
-        logger.silly(`device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
-
-        const dbIds:string[] = deviceIds.map(d=> `device___${d}`);
+        const dbIds: string[] = deviceIds.map((d) => `device___${d}`);
 
         // define the traversers that handle finding associated groups/components
         const relatedIn = __.inE();
         const relatedOut = __.outE();
 
-        [relatedIn, relatedOut].forEach(t=> {
+        [relatedIn, relatedOut].forEach((t) => {
             if (expandComponents && !includeGroups) {
                 t.hasLabel('component_of');
             } else if (!expandComponents && includeGroups) {
@@ -50,42 +55,59 @@ export class DevicesDao extends BaseDaoFull {
             }
         });
 
-        relatedIn.as('e')
-            .outV().as('v')
-            .valueMap().with_(process.withOptions.tokens).as('vProps')
-            .constant('in').as('dir')
-            .select('entityId','dir','e','vProps');
+        relatedIn
+            .as('e')
+            .outV()
+            .as('v')
+            .valueMap()
+            .with_(process.withOptions.tokens)
+            .as('vProps')
+            .constant('in')
+            .as('dir')
+            .select('entityId', 'dir', 'e', 'vProps');
 
-        relatedOut.as('e')
-            .inV().as('v')
-            .valueMap().with_(process.withOptions.tokens).as('vProps')
-            .constant('out').as('dir')
-            .select('entityId','dir','e','vProps');
+        relatedOut
+            .as('e')
+            .inV()
+            .as('v')
+            .valueMap()
+            .with_(process.withOptions.tokens)
+            .as('vProps')
+            .constant('out')
+            .as('dir')
+            .select('entityId', 'dir', 'e', 'vProps');
 
         // build the traverser for returning the devices, optionally filtering the returned attributes
-        const deviceProps = (attributes===undefined) ?
-            __.select('devices').valueMap().with_(process.withOptions.tokens):
-            __.select('devices').valueMap('state', 'deviceId', ...attributes).with_(process.withOptions.tokens);
+        const deviceProps =
+            attributes === undefined
+                ? __.select('devices').valueMap().with_(process.withOptions.tokens)
+                : __.select('devices')
+                      .valueMap('state', 'deviceId', ...attributes)
+                      .with_(process.withOptions.tokens);
 
         // build the main part of the query, unioning the related traversers with the main entity we want to return
         let results: process.Traverser[];
         const conn = super.getConnection();
         try {
-            const traverser = conn.traversal.V(dbIds).as('devices')
-                .values('deviceId').as('entityId')
-                .select('devices').union(
-                    relatedIn, relatedOut, deviceProps
-                );
+            const traverser = conn.traversal
+                .V(dbIds)
+                .as('devices')
+                .values('deviceId')
+                .as('entityId')
+                .select('devices')
+                .union(relatedIn, relatedOut, deviceProps);
 
             // execute and retrieve the results
-            logger.silly(`common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`);
+            logger.silly(
+                `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`
+            );
             results = await traverser.toList();
             logger.silly(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
         } finally {
             await conn.close();
         }
 
-        if (results===undefined || results.length===0) {
+        if (results === undefined || results.length === 0) {
             logger.silly(`device.full.dao get: exit: node: undefined`);
             return undefined;
         }
@@ -94,19 +116,19 @@ export class DevicesDao extends BaseDaoFull {
         // the result should contain verticesx representing the entities requested as individual rows, then all requested relations as other rows
         // find the main entities first
         const nodes: Node[] = [];
-        const devices = results.filter(r=> isVertexDto(r)) as VertexDto[];
-        devices.forEach(d=> {
+        const devices = results.filter((r) => isVertexDto(r)) as VertexDto[];
+        devices.forEach((d) => {
             // construct the node
             const node = this.fullAssembler.assembleNode(d);
             // find any reltions for the device
-            const relatedEntities = results.filter(r=> isRelatedEntityDto(r) && r.entityId===d['deviceId'][0])
-                .map(r=> r as unknown as RelatedEntityDto);
-            relatedEntities.forEach(r=> this.fullAssembler.assembleAssociation(node,r));
+            const relatedEntities = results
+                .filter((r) => isRelatedEntityDto(r) && r.entityId === d['deviceId'][0])
+                .map((r) => r as unknown as RelatedEntityDto);
+            relatedEntities.forEach((r) => this.fullAssembler.assembleAssociation(node, r));
             nodes.push(node);
         });
 
         logger.silly(`device.full.dao get: exit: nodes: ${JSON.stringify(nodes)}`);
         return nodes;
     }
-
 }

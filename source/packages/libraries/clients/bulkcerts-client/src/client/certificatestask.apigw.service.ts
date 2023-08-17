@@ -17,33 +17,49 @@
 
 /* tslint:disable:no-unused-variable member-ordering */
 
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
 
 import {
-    CertificateBatchRequest, CertificateBatchTask, RequestHeaders
+    CertificateBatchRequest,
+    CertificateBatchTask,
+    RequestHeaders,
 } from './certificatestask.models';
 import { CertificatesTaskService, CertificatesTaskServiceBase } from './certificatestask.service';
 
 @injectable()
-export class CertificatesTaskApigwService extends CertificatesTaskServiceBase implements CertificatesTaskService {
-
-    private readonly baseUrl:string;
+export class CertificatesTaskApigwService
+    extends CertificatesTaskServiceBase
+    implements CertificatesTaskService
+{
+    private readonly baseUrl: string;
 
     public constructor() {
         super();
         this.baseUrl = process.env.BULKCERTS_BASEURL;
     }
 
-    async createCertificateTask(batchRequest:CertificateBatchRequest, caAlias:string, additionalHeaders?: RequestHeaders): Promise<CertificateBatchTask> {
+    async createCertificateTask(
+        batchRequest: CertificateBatchRequest,
+        caAlias: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<CertificateBatchTask> {
         ow(caAlias, ow.string.nonEmpty);
 
-            const url = `${this.baseUrl}${super.certificateTaskCreateRelativeUrl(caAlias)}`;
-            const res = await request.post(url)
-                .set(this.buildHeaders(additionalHeaders))
-                .send(batchRequest);
-        return res.body;
+        const url = `${this.baseUrl}${super.certificateTaskCreateRelativeUrl(caAlias)}`;
+        return await request
+            .post(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .send(batchRequest)
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
-
 }

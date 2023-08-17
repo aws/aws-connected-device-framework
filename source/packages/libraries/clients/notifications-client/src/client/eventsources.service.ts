@@ -10,26 +10,35 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {EventSourceDetailResource, EventSourceResourceList} from './eventsources.model';
-import {RequestHeaders} from './common.model';
-import {injectable} from 'inversify';
-import {CommonServiceBase} from './common.service';
+import { injectable } from 'inversify';
+import { RequestHeaders } from './common.model';
+import { CommonServiceBase } from './common.service';
+import { EventSourceDetailResource, EventSourceResourceList } from './eventsources.model';
 
 export interface EventsourcesService {
-    createEventSource(eventSource: EventSourceDetailResource, additionalHeaders?: RequestHeaders): Promise<string>;
+    createEventSource(
+        eventSource: EventSourceDetailResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string>;
 
     listEventSources(additionalHeaders?: RequestHeaders): Promise<EventSourceResourceList>;
 
-    getEventSource(eventSourceId: string, additionalHeaders?: RequestHeaders): Promise<EventSourceDetailResource>;
+    getEventSource(
+        eventSourceId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<EventSourceDetailResource>;
 
-    updateEventSource(eventSourceId: string, eventSource: EventSourceDetailResource, additionalHeaders?: RequestHeaders): Promise<void>;
+    updateEventSource(
+        eventSourceId: string,
+        eventSource: EventSourceDetailResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void>;
 
     deleteEventSource(eventSourceId: string, additionalHeaders?: RequestHeaders): Promise<void>;
 }
 
 @injectable()
-export class EventsourcesServiceBase extends CommonServiceBase  {
-
+export class EventsourcesServiceBase extends CommonServiceBase {
     protected eventSourcesRelativeUrl(): string {
         return `/eventsources`;
     }
@@ -37,5 +46,4 @@ export class EventsourcesServiceBase extends CommonServiceBase  {
     protected eventSourceRelativeUrl(eventSourceId: string): string {
         return `/eventsources/${eventSourceId}`;
     }
-
 }

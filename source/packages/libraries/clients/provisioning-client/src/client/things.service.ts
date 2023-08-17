@@ -10,71 +10,85 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
 import {
     BulkProvisionThingsRequest,
-    BulkProvisionThingsResponse, CertificateStatus,
+    BulkProvisionThingsResponse,
+    CertificateStatus,
     ProvisionThingRequest,
-    ProvisionThingResponse, RequestHeaders,
+    ProvisionThingResponse,
+    RequestHeaders,
     Thing,
 } from './things.model';
-import {PathHelper} from '../utils/path.helper';
-import {injectable} from 'inversify';
 
 export interface ThingsService {
+    provisionThing(
+        provisioningRequest: ProvisionThingRequest,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ProvisionThingResponse>;
 
-    provisionThing(provisioningRequest: ProvisionThingRequest, additionalHeaders?:RequestHeaders): Promise<ProvisionThingResponse>;
+    getThing(thingName: string, additionalHeaders?: RequestHeaders): Promise<Thing>;
 
-    getThing(thingName: string, additionalHeaders?:RequestHeaders): Promise<Thing>;
+    deleteThing(thingName: string, additionalHeaders?: RequestHeaders): Promise<void>;
 
-    deleteThing(thingName: string, additionalHeaders?:RequestHeaders): Promise<void>;
+    bulkProvisionThings(
+        req: BulkProvisionThingsRequest,
+        additionalHeaders?: RequestHeaders
+    ): Promise<BulkProvisionThingsResponse>;
 
-    bulkProvisionThings(req: BulkProvisionThingsRequest, additionalHeaders?:RequestHeaders): Promise<BulkProvisionThingsResponse>;
+    getBulkProvisionTask(
+        taskId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<BulkProvisionThingsResponse>;
 
-    getBulkProvisionTask(taskId: string, additionalHeaders?:RequestHeaders): Promise<BulkProvisionThingsResponse>;
-
-    updateThingCertificates(thingName: string, certificateStatus: CertificateStatus, additionalHeaders?:RequestHeaders): Promise<void>;
+    updateThingCertificates(
+        thingName: string,
+        certificateStatus: CertificateStatus,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void>;
 }
 
 @injectable()
 export class ThingsServiceBase {
-
     protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
-    protected _headers:RequestHeaders = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
+    protected _headers: RequestHeaders = {
+        Accept: this.MIME_TYPE,
+        'Content-Type': this.MIME_TYPE,
     };
 
-    protected thingsRelativeUrl() : string {
+    protected thingsRelativeUrl(): string {
         return '/things';
     }
 
-    protected thingRelativeUrl(thingName:string) : string {
+    protected thingRelativeUrl(thingName: string): string {
         return `/things/${PathHelper.encodeUrl(thingName)}`;
     }
 
-    protected bulkThingsRelativeUrl() : string {
+    protected bulkThingsRelativeUrl(): string {
         return '/bulkthings';
     }
 
-    protected bulkThingsTaskRelativeUrl(taskId:string) : string {
+    protected bulkThingsTaskRelativeUrl(taskId: string): string {
         return `/bulkthings/${PathHelper.encodeUrl(taskId)}`;
     }
 
-    protected thingCertificateRelativeUrl(thingName:string) : string {
+    protected thingCertificateRelativeUrl(thingName: string): string {
         return `/things/${PathHelper.encodeUrl(thingName)}/certificates`;
     }
 
-    protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
-
+    protected buildHeaders(additionalHeaders: RequestHeaders): RequestHeaders {
         let headers: RequestHeaders = Object.assign({}, this._headers);
 
         const customHeaders = process.env.PROVISIONING_HEADERS;
         if (customHeaders !== undefined) {
             try {
-                const headersFromConfig: RequestHeaders = JSON.parse(customHeaders) as unknown as RequestHeaders;
-                headers = {...headers, ...headersFromConfig};
-            } catch (err) { 
+                const headersFromConfig: RequestHeaders = JSON.parse(
+                    customHeaders
+                ) as unknown as RequestHeaders;
+                headers = { ...headers, ...headersFromConfig };
+            } catch (err) {
                 const wrappedErr = `Failed to parse configuration parameter PROVISIONING_HEADERS as JSON with error: ${err}`;
                 console.log(wrappedErr);
                 throw new Error(wrappedErr);
@@ -82,12 +96,12 @@ export class ThingsServiceBase {
         }
 
         if (additionalHeaders !== null && additionalHeaders !== undefined) {
-            headers = {...headers, ...additionalHeaders};
+            headers = { ...headers, ...additionalHeaders };
         }
 
         const keys = Object.keys(headers);
-        keys.forEach(k=> {
-            if (headers[k]===undefined || headers[k]===null) {
+        keys.forEach((k) => {
+            if (headers[k] === undefined || headers[k] === null) {
                 delete headers[k];
             }
         });

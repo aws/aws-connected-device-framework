@@ -11,6 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface SimulateIoTCoreMessageRequest {
-    topic:string;
-    payload:string;
+    topic: string;
+    payload: string;
 }

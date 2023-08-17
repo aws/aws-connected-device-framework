@@ -10,10 +10,13 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { setLevel } from '@awssolutions/simple-cdf-logger';
+setLevel('debug'); // TODO: investigate why this was overridden (maintaining previous code in utils/logger.ts)
+
 export * from './client/commands.model';
 export * from './client/commands.service';
 export * from './client/messages.model';
 export * from './client/messages.service';
 
-export {COMMANDANDCONTROL_CLIENT_TYPES} from './di/types';
-export {commandAndControlContainerModule} from './di/inversify.config';
+export { commandAndControlContainerModule } from './di/inversify.config';
+export { COMMANDANDCONTROL_CLIENT_TYPES } from './di/types';

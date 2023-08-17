@@ -1,22 +1,20 @@
 {
-  "name": "@cdf/auth-devicecert",
-  "version": "5.0.2",
+  "name": "@awssolutions/cdf-auth-devicecert",
+  "version": "0.0.0",
   "description": "API Gateway custom authorizer that authenticates based on a supplied device certificate",
   "author": "Rahul Sareen",
   "scripts": {
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
-
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
-    "test": "rushx lint && jest --silent",
-    "bundle": "../../../infrastructure/bundle-package.bash auth-devicecert"
+    "test": "rushx lint && NODE_ENV= jest --silent --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@cdf/errors": "^4.0.0",
-    "@cdf/config-inject": "^4.0.2",
-    "aws-sdk": "2.1048.0",
+    "@awssolutions/cdf-errors": "workspace:^2.4.0",
+    "@awssolutions/cdf-config-inject": "workspace:^2.4.0",
+    "aws-sdk": "2.1386.0",
     "js-yaml": "4.1.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "pem": "1.14.4",
     "reflect-metadata": "0.1.13",
     "winston": "3.3.3",
@@ -25,18 +23,14 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
+    "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
     "@types/pem": "1.9.5",
-
-    "@rushstack/eslint-config": "2.3.4",
-    "eslint": "7.26.0",
-
-    "nodemon": "2.0.7",
+    "eslint": "8.46.0",
+    "nodemon": "2.0.20",
     "nyc": "15.1.0",
     "shx": "0.3.3",
-
     "@types/jest": "26.0.23",
-    "@typescript-eslint/eslint-plugin": "4.23.0",
-    "@typescript-eslint/parser": "4.23.0",
+    "@typescript-eslint/eslint-plugin": "6.2.0",
     "jest-create-mock-instance": "1.1.0",
     "jest-haste-map": "26.6.2",
     "jest-mock-extended": "1.0.14",

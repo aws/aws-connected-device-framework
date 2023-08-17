@@ -10,36 +10,33 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {PathHelper} from '../utils/path.helper';
-import {ClientServiceBase} from './common.service';
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
 import { RequestHeaders } from './common.model';
-import { Template, NewTemplate } from './templates.model';
+import { ClientServiceBase } from './common.service';
+import { NewTemplate, Template } from './templates.model';
 
 export interface TemplatesService {
+    createTemplate(template: NewTemplate, additionalHeaders?: RequestHeaders): Promise<void>;
 
-    createTemplate(template: NewTemplate, additionalHeaders?:RequestHeaders) : Promise<void>;
+    updateTemplate(template: NewTemplate, additionalHeaders?: RequestHeaders): Promise<void>;
 
-    updateTemplate(template: NewTemplate, additionalHeaders?:RequestHeaders) : Promise<void>;
+    getLatestTemplate(name: string, additionalHeaders?: RequestHeaders): Promise<Template>;
 
-    getLatestTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<Template>;
-
-    deleteTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<void>;
-
+    deleteTemplate(name: string, additionalHeaders?: RequestHeaders): Promise<void>;
 }
 
 @injectable()
 export class TemplatesServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }
 
-    protected templatesRelativeUrl() : string {
+    protected templatesRelativeUrl(): string {
         return '/templates';
     }
 
-    protected templateRelativeUrl(name:string) : string {
+    protected templateRelativeUrl(name: string): string {
         return PathHelper.encodeUrl('templates', name);
     }
 }

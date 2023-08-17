@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const TYPES = {
-
     EventsDao: Symbol.for('EventsDao'),
     EventsService: Symbol.for('EventsService'),
 
@@ -30,5 +29,5 @@ export const TYPES = {
     HttpHeaderUtils: Symbol.for('HttpHeaderUtils'),
 
     DocumentClient: Symbol.for('DocumentClient'),
-    DocumentClientFactory: Symbol.for('Factory<DocumentClient>')
+    DocumentClientFactory: Symbol.for('Factory<DocumentClient>'),
 };

@@ -17,41 +17,39 @@
    * and then specify those projects in the "additionalProjectsToInclude" list.
    */
   "deploymentProjectNames": [
-    "@cdf/assetlibrary-client",
-    "@cdf/assetlibrary-export",
-    "@cdf/assetlibrary-history",
-    "@cdf/assetlibrary",
-    "@cdf/assetlibraryhistory-client",
-    "@cdf/auth-devicecert",
-    "@cdf/auth-jwt",
-    "@cdf/bulkcerts",
-    "@cdf/certificate-activator",
-    "@cdf/certificate-vendor",
-    "@cdf/command-and-control",
-    "@cdf/commandandcontrol-client",
-    "@cdf/commands-client",
-    "@cdf/commands",
-    "@cdf/config-inject",
-    "@cdf/deployment-helper",
-    "@cdf/device-monitoring",
-    "@cdf/device-patcher",
-    "@cdf/device-simulator-base",
-    "@cdf/errors",
-    "@cdf/events-alerts",
-    "@cdf/events-processor",
-    "@cdf/express-middleware",
-    "@cdf/greengrass2-installer-config-generators",
-    "@cdf/greengrass2-provisioning-client",
-    "@cdf/greengrass2-provisioning",
-    "@cdf/installer",
-    "@cdf/lambda-invoke",
-    "@cdf/logger",
-    "@cdf/organization-manager",
-    "@cdf/notifications-client",
-    "@cdf/provisioning-client",
-    "@cdf/provisioning",
-    "@cdf/simulation-launcher",
-    "@cdf/simulation-manager"
+    "@awssolutions/cdf-client-request-signer",
+    "@awssolutions/cdf-assetlibrary-client",
+    "@awssolutions/cdf-assetlibrary-export",
+    "@awssolutions/cdf-assetlibrary-history",
+    "@awssolutions/cdf-assetlibrary",
+    "@awssolutions/cdf-assetlibraryhistory-client",
+    "@awssolutions/cdf-bulkcerts",
+    "@awssolutions/cdf-certificate-activator",
+    "@awssolutions/cdf-certificate-vendor",
+    "@awssolutions/cdf-command-and-control",
+    "@awssolutions/cdf-commandandcontrol-client",
+    "@awssolutions/cdf-commands-client",
+    "@awssolutions/cdf-config-inject",
+    "@awssolutions/cdf-deployment-helper",
+    "@awssolutions/cdf-device-monitoring",
+    "@awssolutions/cdf-device-patcher",
+    "@awssolutions/cdf-device-simulator-base",
+    "@awssolutions/cdf-errors",
+    "@awssolutions/cdf-events-alerts",
+    "@awssolutions/cdf-events-processor",
+    "@awssolutions/cdf-express-middleware",
+    "@awssolutions/cdf-greengrass2-installer-config-generators",
+    "@awssolutions/cdf-greengrass2-provisioning-client",
+    "@awssolutions/cdf-greengrass2-provisioning",
+    "@awssolutions/cdf-installer",
+    "@awssolutions/cdf-lambda-invoke",
+    "@awssolutions/cdf-logger",
+    "@awssolutions/cdf-organization-manager",
+    "@awssolutions/cdf-notifications-client",
+    "@awssolutions/cdf-provisioning-client",
+    "@awssolutions/cdf-provisioning",
+    "@awssolutions/cdf-simulation-launcher",
+    "@awssolutions/cdf-simulation-manager"
   ],
   /**
    * When deploying a local Rush project, the package.json "devDependencies" are normally excluded.
@@ -139,109 +137,5 @@
     //     // "@types/*"
     //   ]
     // }
-    {
-      "projectName": "@cdf/assetlibrary-client",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/assetlibraryhistory-client",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/commands-client",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/organizationmanager-client",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/notifications-client",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/provisioning-client",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/errors",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/express-middleware",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/lambda-invoke",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/logger",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/assetlibrary",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/assetlibrary-history",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/assetlibrary-export",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/auth-devicecert",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/auth-jwt",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/bulkcerts",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/certificate-activator",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/config-inject",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/certificate-vendor",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/commands",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/device-monitoring",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/events-alerts",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/events-processor",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/assetlibrary-export",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/deployment-helper",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/organization-manager",
-      "dependenciesToExclude": ["aws-sdk"]
-    }
   ]
 }

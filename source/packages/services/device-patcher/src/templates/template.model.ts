@@ -16,8 +16,8 @@ export interface PatchSource {
 }
 
 export enum PatchType {
-    AGENTLESS='agentless',
-    AGENTBASED='agentbased',
+    AGENTLESS = 'agentless',
+    AGENTBASED = 'agentbased',
 }
 
 export class PatchTemplateItem {
@@ -30,6 +30,7 @@ export class PatchTemplateItem {
     playbookName?: string;
     playbookSource?: PatchSource;
     playbookFile?: Buffer;
+    playbookFileContents?: string;
     patchType?: PatchType;
     updatedAt?: Date;
     versionNo?: number;
@@ -53,8 +54,8 @@ export class PatchTemplatesListResource {
     templates: PatchTemplateItem[] = [];
     pagination?: {
         lastEvaluated?: {
-            name: string
-        },
-        count?: number
+            name: string;
+        };
+        count?: number;
     };
 }

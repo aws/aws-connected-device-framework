@@ -10,12 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {NodeAttributeValue} from './node';
+import { NodeAttributeValue } from './node';
 
 export interface VertexDto {
     id: string;
     label: string;
-    [key:string]: NodeAttributeValue;
+    [key: string]: NodeAttributeValue;
 }
 export interface EdgeDto {
     id: string;
@@ -28,26 +28,31 @@ export interface EdgeDto {
         id: string;
         label: string;
     };
-    properties: {[key:string]: NodeAttributeValue};
+    properties: { [key: string]: NodeAttributeValue };
 }
 
 export type RelationDirection = 'in' | 'out';
 export interface RelatedEntityDto {
     entityId?: string;
-    dir:RelationDirection;
+    dir: RelationDirection;
     e: EdgeDto;
     vProps: VertexDto;
 }
 
 export function isVertexDto(potential: unknown): potential is VertexDto {
     const castPotential = potential as VertexDto;
-    return castPotential.id!==undefined && castPotential.label!==undefined
-        && !isRelatedEntityDto(potential);
+    return (
+        castPotential.id !== undefined &&
+        castPotential.label !== undefined &&
+        !isRelatedEntityDto(potential)
+    );
 }
 
 export function isRelatedEntityDto(potential: unknown): potential is RelatedEntityDto {
     const castPotential = potential as RelatedEntityDto;
-    return (castPotential.dir!==undefined
-        && castPotential.e!==undefined
-        && castPotential.vProps!==undefined);
+    return (
+        castPotential.dir !== undefined &&
+        castPotential.e !== undefined &&
+        castPotential.vProps !== undefined
+    );
 }

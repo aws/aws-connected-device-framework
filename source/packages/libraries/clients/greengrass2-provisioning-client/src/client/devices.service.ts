@@ -1,8 +1,8 @@
-import { injectable } from "inversify";
-import { PathHelper } from "../utils/path.helper";
-import { RequestHeaders } from "./common.model";
-import { ClientServiceBase } from "./common.service";
-import { Device, DeviceTask, NewDeviceTask } from "./devices.model";
+import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
+import { RequestHeaders } from './common.model';
+import { ClientServiceBase } from './common.service';
+import { Device, DeviceTask, NewDeviceTask } from './devices.model';
 
 export interface DevicesService {
     createDeviceTask(task: NewDeviceTask, additionalHeaders?: RequestHeaders): Promise<string>;
@@ -16,7 +16,6 @@ export interface DevicesService {
 
 @injectable()
 export class DevicesServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }
@@ -29,7 +28,7 @@ export class DevicesServiceBase extends ClientServiceBase {
         return PathHelper.encodeUrl('devices', name);
     }
 
-    protected deviceTasksRelativeUrl(coreName:string): string {
+    protected deviceTasksRelativeUrl(coreName: string): string {
         return `/cores/${coreName}/deviceTasks`;
     }
 

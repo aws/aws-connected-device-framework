@@ -37,13 +37,11 @@ import { ProfilesService } from '../profiles/profiles.service';
 import { SearchDaoFull } from '../search/search.full.dao';
 import { SearchServiceFull } from '../search/search.full.service';
 import { SearchService } from '../search/search.service';
+import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { TypesDaoFull } from '../types/types.full.dao';
 import { TypesServiceFull } from '../types/types.full.service';
 import { TypesService } from '../types/types.service';
-import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { TYPES } from './types';
-
-
 
 export const FullContainerModule = new ContainerModule(
     (
@@ -52,15 +50,25 @@ export const FullContainerModule = new ContainerModule(
         _isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
-
         bind<string>('neptuneUrl').toConstantValue(process.env.AWS_NEPTUNE_URL);
-        bind<boolean>('enableDfeOptimization').toConstantValue(process.env.ENABLE_DFE_OPTIMIZATION === 'true');
-        bind<string>('defaults.devices.parent.relation').toConstantValue(process.env.DEFAULTS_DEVICES_PARENT_RELATION);
-        bind<string>('defaults.devices.parent.groupPath').toConstantValue(process.env.DEFAULTS_DEVICES_PARENT_GROUPPATH);
+        bind<boolean>('enableDfeOptimization').toConstantValue(
+            process.env.ENABLE_DFE_OPTIMIZATION === 'true'
+        );
+        bind<string>('defaults.devices.parent.relation').toConstantValue(
+            process.env.DEFAULTS_DEVICES_PARENT_RELATION
+        );
+        bind<string>('defaults.devices.parent.groupPath').toConstantValue(
+            process.env.DEFAULTS_DEVICES_PARENT_GROUPPATH
+        );
         bind<string>('defaults.devices.state').toConstantValue(process.env.DEFAULTS_DEVICES_STATE);
-        bind<boolean>('authorization.enabled').toConstantValue(process.env.AUTHORIZATION_ENABLED === 'true');
+        bind<boolean>('authorization.enabled').toConstantValue(
+            process.env.AUTHORIZATION_ENABLED === 'true'
+        );
         // if fgac is enabled, then validation of parent paths is automatically enabled too
-        bind<boolean>('defaults.groups.validateAllowedParentPaths').toConstantValue(process.env.DEFAULTS_GROUPS_VALIDATEALLOWEDPARENTPATHS === 'true' || process.env.AUTHORIZATION_ENABLED === 'true');
+        bind<boolean>('defaults.groups.validateAllowedParentPaths').toConstantValue(
+            process.env.DEFAULTS_GROUPS_VALIDATEALLOWEDPARENTPATHS === 'true' ||
+                process.env.AUTHORIZATION_ENABLED === 'true'
+        );
 
         bind<TypesService>(TYPES.TypesService).to(TypesServiceFull).inSingletonScope();
         bind<TypesDaoFull>(TYPES.TypesDao).to(TypesDaoFull).inSingletonScope();
@@ -89,19 +97,20 @@ export const FullContainerModule = new ContainerModule(
         bind<InitService>(TYPES.InitService).to(InitServiceFull).inSingletonScope();
         bind<InitDaoFull>(TYPES.InitDao).to(InitDaoFull).inSingletonScope();
 
-        bind<SchemaValidatorService>(TYPES.SchemaValidatorService).to(SchemaValidatorService).inSingletonScope();
+        bind<SchemaValidatorService>(TYPES.SchemaValidatorService)
+            .to(SchemaValidatorService)
+            .inSingletonScope();
 
         bind<AuthzDaoFull>(TYPES.AuthzDaoFull).to(AuthzDaoFull).inSingletonScope();
         bind<AuthzServiceFull>(TYPES.AuthzServiceFull).to(AuthzServiceFull).inSingletonScope();
 
         decorate(injectable(), structure.Graph);
-        bind<interfaces.Factory<structure.Graph>>(TYPES.GraphSourceFactory)
-            .toFactory<structure.Graph>((_ctx: interfaces.Context) => {
-                return () => {
-
-                    return new structure.Graph();
-
-                };
-            });
+        bind<interfaces.Factory<structure.Graph>>(
+            TYPES.GraphSourceFactory
+        ).toFactory<structure.Graph>((_ctx: interfaces.Context) => {
+            return () => {
+                return new structure.Graph();
+            };
+        });
     }
 );

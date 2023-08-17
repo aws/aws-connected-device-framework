@@ -16,24 +16,28 @@ import ow from 'ow';
 import pLimit from 'p-limit';
 
 import {
-    DescribeComponentCommand, DescribeComponentCommandOutput, GreengrassV2Client
+    DescribeComponentCommand,
+    DescribeComponentCommandOutput,
+    GreengrassV2Client,
 } from '@aws-sdk/client-greengrassv2';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger.util';
 import {
-    TemplateListPaginationKey, TemplatesDao, TemplateVersionListPaginationKey
+    TemplateListPaginationKey,
+    TemplateVersionListPaginationKey,
+    TemplatesDao,
 } from './templates.dao';
 import { Component, TemplateItem } from './templates.models';
 
 @injectable()
 export class TemplatesService {
-
     private ggv2: GreengrassV2Client;
 
     public constructor(
         @inject(TYPES.TemplatesDao) private dao: TemplatesDao,
-        @inject(TYPES.Greengrassv2Factory) ggv2Factory: () => GreengrassV2Client) {
+        @inject(TYPES.Greengrassv2Factory) ggv2Factory: () => GreengrassV2Client
+    ) {
         this.ggv2 = ggv2Factory();
     }
 
@@ -64,7 +68,6 @@ export class TemplatesService {
         await this.dao.save(template);
 
         logger.debug(`templates.service create: exit`);
-
     }
 
     public async update(template: TemplateItem): Promise<void> {
@@ -96,11 +99,12 @@ export class TemplatesService {
         await this.dao.save(merged);
 
         logger.debug(`templates.service update: exit`);
-
     }
 
     private async validateComponents(components: Component[]): Promise<void> {
-        logger.debug(`templates.service validateComponents: in: components:${JSON.stringify(components)}`);
+        logger.debug(
+            `templates.service validateComponents: in: components:${JSON.stringify(components)}`
+        );
 
         const awsAccountId = process.env.AWS_ACCOUNTID;
         const awsRegion = process.env.AWS_REGION;
@@ -114,7 +118,10 @@ export class TemplatesService {
             checks.push(this.ggv2.send(new DescribeComponentCommand({ arn: accountSpecificArn })));
             const [publicComponent, accountSpecificComponent] = await Promise.allSettled(checks);
 
-            if (publicComponent.status === 'rejected' && accountSpecificComponent.status === 'rejected') {
+            if (
+                publicComponent.status === 'rejected' &&
+                accountSpecificComponent.status === 'rejected'
+            ) {
                 throw new Error(`INVALID_COMPONENT: ${c.key}:${c.version}`);
             }
         }
@@ -122,19 +129,24 @@ export class TemplatesService {
     }
 
     public async associateDeployment(template: TemplateItem): Promise<void> {
-        logger.debug(`templates.service associateDeployment: in: template:${JSON.stringify(template)}`);
+        logger.debug(
+            `templates.service associateDeployment: in: template:${JSON.stringify(template)}`
+        );
 
         ow(template, ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
         ow(template.deployment?.id, 'deployment id', ow.string.nonEmpty);
         ow(template.deployment.jobId, 'deployment job id', ow.string.nonEmpty);
-        ow(template.deployment.thingGroupName, 'deployment target thing group', ow.string.nonEmpty);
+        ow(
+            template.deployment.thingGroupName,
+            'deployment target thing group',
+            ow.string.nonEmpty
+        );
 
         // save
         await this.dao.associateDeployment(template);
 
         logger.debug(`templates.service associateDeployment: exit`);
-
     }
 
     public async get(name: string, version?: number | string): Promise<TemplateItem> {
@@ -160,8 +172,16 @@ export class TemplatesService {
         return template;
     }
 
-    public async listVersions(name: string, count?: number, lastEvaluated?: TemplateVersionListPaginationKey): Promise<[TemplateItem[], TemplateVersionListPaginationKey]> {
-        logger.debug(`templates.service listVersions: in: name:${name}, count:${count}, lastEvaluated:${JSON.stringify(lastEvaluated)}`);
+    public async listVersions(
+        name: string,
+        count?: number,
+        lastEvaluated?: TemplateVersionListPaginationKey
+    ): Promise<[TemplateItem[], TemplateVersionListPaginationKey]> {
+        logger.debug(
+            `templates.service listVersions: in: name:${name}, count:${count}, lastEvaluated:${JSON.stringify(
+                lastEvaluated
+            )}`
+        );
 
         ow(name, ow.string.nonEmpty);
 
@@ -180,9 +200,9 @@ export class TemplatesService {
 
         const listVersionResponseSet = await this.listVersions(name);
 
-        if (!listVersionResponseSet) return
+        if (!listVersionResponseSet) return;
 
-        const [versions, _] = listVersionResponseSet
+        const [versions, _] = listVersionResponseSet;
 
         if ((versions?.length ?? 0) > 0) {
             const limit = pLimit(parseInt(process.env.PROMISES_CONCURRENCY));
@@ -193,7 +213,9 @@ export class TemplatesService {
                         try {
                             this.dao.delete(v);
                         } catch (e) {
-                            logger.error(`templates.service delete: error: ${e.name}: ${e.message}`);
+                            logger.error(
+                                `templates.service delete: error: ${e.name}: ${e.message}`
+                            );
                         }
                     })
                 );
@@ -217,8 +239,15 @@ export class TemplatesService {
         logger.debug(`templates.service delete: exit:`);
     }
 
-    public async list(count?: number, lastEvaluated?: TemplateListPaginationKey): Promise<[TemplateItem[], TemplateListPaginationKey]> {
-        logger.debug(`templates.service list: in: count:${count}, lastEvaluated:${JSON.stringify(lastEvaluated)}`);
+    public async list(
+        count?: number,
+        lastEvaluated?: TemplateListPaginationKey
+    ): Promise<[TemplateItem[], TemplateListPaginationKey]> {
+        logger.debug(
+            `templates.service list: in: count:${count}, lastEvaluated:${JSON.stringify(
+                lastEvaluated
+            )}`
+        );
 
         if (count) {
             count = Number(count);
@@ -228,5 +257,4 @@ export class TemplatesService {
         logger.debug(`templates.service list: exit: ${JSON.stringify(result)}`);
         return result;
     }
-
 }

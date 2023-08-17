@@ -10,54 +10,65 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { WorkflowAction } from './workflow.interfaces';
-import { TYPES } from '../../di/types';
-import { injectable, inject } from 'inversify';
-import { MessageItem, Recipient } from '../messages.models';
-import { logger } from '../../utils/logger.util';
+import {
+    AwsIotThingListBuilder,
+    THING_LIST_BUILDER_TYPES,
+} from '@awssolutions/cdf-thing-list-builder';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { AwsIotThingListBuilder, THING_LIST_BUILDER_TYPES } from '@cdf/thing-list-builder';
-import { MessagesDao } from '../messages.dao';
 import { CommandItem } from '../../commands/commands.models';
+import { TYPES } from '../../di/types';
+import { MessagesDao } from '../messages.dao';
+import { MessageItem, Recipient } from '../messages.models';
+import { WorkflowAction } from './workflow.interfaces';
 
 @injectable()
 export class ResolveTargetsAction implements WorkflowAction {
-
     constructor(
         @inject(TYPES.MessagesDao) private messagesDao: MessagesDao,
-        @inject(THING_LIST_BUILDER_TYPES.AwsIotThingListBuilder) private awsIotThingListBuilder: AwsIotThingListBuilder) {
-
-    }
+        @inject(THING_LIST_BUILDER_TYPES.AwsIotThingListBuilder)
+        private awsIotThingListBuilder: AwsIotThingListBuilder
+    ) {}
 
     async process(message: MessageItem, command: CommandItem): Promise<boolean> {
-        logger.debug(`workflow.resolveTargets process: message:${JSON.stringify(message)}, command:${JSON.stringify(command)}`);
+        logger.debug(
+            `workflow.resolveTargets process: message:${JSON.stringify(
+                message
+            )}, command:${JSON.stringify(command)}`
+        );
 
         ow(command, ow.object.plain);
         ow(message, ow.object.plain);
 
-        const skipResolveThingGroups: Recipient[] = message.targets?.awsIoT?.thingGroups?.filter(o => !o.expand).map(o => {
-            return {
-                id: o.name,
-                status: 'pending',
-                type: 'thingGroup'
-            }
-        }) ?? []
+        const skipResolveThingGroups: Recipient[] =
+            message.targets?.awsIoT?.thingGroups
+                ?.filter((o) => !o.expand)
+                .map((o) => {
+                    return {
+                        id: o.name,
+                        status: 'pending',
+                        type: 'thingGroup',
+                    };
+                }) ?? [];
 
         const resolvedTargets = await this.awsIotThingListBuilder.listThings({
             thingNames: message.targets?.awsIoT?.thingNames,
-            thingGroupNames: message.targets?.awsIoT?.thingGroups?.filter(o => o.expand).map(o => o.name),
+            thingGroupNames: message.targets?.awsIoT?.thingGroups
+                ?.filter((o) => o.expand)
+                .map((o) => o.name),
             assetLibraryDeviceIds: message.targets?.assetLibrary?.deviceIds,
             assetLibraryGroupPaths: message.targets?.assetLibrary?.groupPaths,
             assetLibraryQuery: message.targets?.assetLibrary?.query,
         });
 
-        message.resolvedTargets = resolvedTargets.thingNames?.map(t => ({
+        message.resolvedTargets = resolvedTargets.thingNames?.map((t) => ({
             id: t,
             status: 'pending',
-            type: 'thing'
+            type: 'thing',
         }));
 
-        message.resolvedTargets.push(...skipResolveThingGroups)
+        message.resolvedTargets.push(...skipResolveThingGroups);
 
         await this.messagesDao.saveResolvedTargets(message);
 

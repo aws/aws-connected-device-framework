@@ -21,11 +21,11 @@ export interface ComponentItem {
     description: string;
     runOrder: number;
     resourceFile: string;
-    parameters: { [key: string]: string }
-    bypassCheck?: boolean
+    parameters: { [key: string]: string };
+    bypassCheck?: boolean;
 }
 
-export type ComponentResource = Omit<ComponentItem, "organizationalUnitId">
+export type ComponentResource = Omit<ComponentItem, 'organizationalUnitId'>;
 
 export type ComponentResourceList = ComponentResource[];
 

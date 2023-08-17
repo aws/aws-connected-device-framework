@@ -10,32 +10,30 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 
+import AWS from 'aws-sdk';
 import { TYPES } from '../di/types';
-import { CustomResourceEvent } from './customResource.model';
 import { CustomResource } from './customResource';
+import { CustomResourceEvent } from './customResource.model';
 
 @injectable()
 export class IotFleetIndexCustomResource implements CustomResource {
-
     private _iot: AWS.Iot;
 
-    constructor(
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
-    ) {
+    constructor(@inject(TYPES.IotFactory) iotFactory: () => AWS.Iot) {
         this._iot = iotFactory();
     }
 
-    public async create(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        const indexingConfiguration:AWS.Iot.UpdateIndexingConfigurationRequest = {
+    public async create(_customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        const indexingConfiguration: AWS.Iot.UpdateIndexingConfigurationRequest = {
             thingGroupIndexingConfiguration: {
-                thingGroupIndexingMode: 'ON'
+                thingGroupIndexingMode: 'ON',
             },
             thingIndexingConfiguration: {
                 thingIndexingMode: 'REGISTRY_AND_SHADOW',
-                thingConnectivityIndexingMode:'STATUS'
-            }
+                thingConnectivityIndexingMode: 'STATUS',
+            },
         };
 
         await this._iot.updateIndexingConfiguration(indexingConfiguration).promise();
@@ -46,7 +44,7 @@ export class IotFleetIndexCustomResource implements CustomResource {
         return await this.create(_customResourceEvent);
     }
 
-    public async delete(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+    public async delete(_customResourceEvent: CustomResourceEvent): Promise<unknown> {
         return {};
     }
 }

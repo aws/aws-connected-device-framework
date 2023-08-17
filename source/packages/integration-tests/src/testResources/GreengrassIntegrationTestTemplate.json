@@ -1,0 +1,17 @@
+{
+  "Parameters": {
+    "ThingName": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "thing": {
+      "Type": "AWS::IoT::Thing",
+      "Properties": {
+        "ThingName": {
+          "Ref": "ThingName"
+        }
+      }
+    }
+  }
+}

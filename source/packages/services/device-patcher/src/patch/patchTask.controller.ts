@@ -16,26 +16,25 @@ import {
     controller,
     httpGet,
     httpPost,
-    interfaces, queryParam,
+    interfaces,
+    queryParam,
     requestBody,
     requestParam,
-    response
+    response,
 } from 'inversify-express-utils';
 
-import {handleError} from '../utils/errors';
-import {logger} from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { handleError } from '../utils/errors';
 
-import {TYPES} from '../di/types';
+import { TYPES } from '../di/types';
 
-import {PatchTaskService} from './patchTask.service';
+import { PatchAssembler } from './patch.assembler';
 import { PatchTaskAssembler } from './patchTask.assembler';
-import {PatchTaskResource} from './patchTask.model';
-import {PatchAssembler} from './patch.assembler';
-
+import { PatchTaskResource } from './patchTask.model';
+import { PatchTaskService } from './patchTask.service';
 
 @controller('/patchTasks')
 export class PatchTaskController implements interfaces.Controller {
-
     public constructor(
         @inject(TYPES.PatchTaskService) private patchTaskService: PatchTaskService,
         @inject(TYPES.PatchTaskAssembler) private patchTaskAssembler: PatchTaskAssembler,
@@ -47,17 +46,18 @@ export class PatchTaskController implements interfaces.Controller {
         @requestBody() resource: PatchTaskResource,
         @response() res: Response
     ): Promise<void> {
-        logger.debug(`PatchTask.controller createPatchTask(): patchRequest:${JSON.stringify(resource)}`);
+        logger.debug(
+            `PatchTask.controller createPatchTask(): patchRequest:${JSON.stringify(resource)}`
+        );
 
         try {
-            const item = this.patchTaskAssembler.toItem(resource)
+            const item = this.patchTaskAssembler.toItem(resource);
             const patch = await this.patchTaskService.create(item);
 
             res.location(`/patchTasks/${patch.taskId}`)
                 .header('x-taskId', patch.taskId)
                 .status(202)
                 .send();
-
         } catch (err) {
             handleError(err, res);
         }
@@ -68,7 +68,7 @@ export class PatchTaskController implements interfaces.Controller {
     @httpGet('/:taskId')
     public async getPatchTask(
         @response() res: Response,
-        @requestParam('taskId') taskId: string,
+        @requestParam('taskId') taskId: string
     ): Promise<PatchTaskResource> {
         logger.debug(`PatchTask.controller getPatchTask: in: taskId: ${taskId}`);
 
@@ -83,7 +83,6 @@ export class PatchTaskController implements interfaces.Controller {
         logger.debug(`PatchTask.controller getPatchTask: exit: ${JSON.stringify(patchTask)}`);
 
         return patchTask;
-
     }
 
     @httpGet('/:taskId/patches')
@@ -91,12 +90,14 @@ export class PatchTaskController implements interfaces.Controller {
         @response() res: Response,
         @requestParam('taskId') taskId: string,
         @queryParam('count') count: number,
-        @queryParam('exclusiveStartToken') exclusiveStartToken: string,
+        @queryParam('exclusiveStartToken') exclusiveStartToken: string
     ): Promise<void> {
         logger.debug(`PatchTask.controller getPatchTask: in: taskId: ${taskId}`);
 
         try {
-            const [items, paginationKey] = await this.patchTaskService.getPatches(taskId, count, {nextToken: exclusiveStartToken});
+            const [items, paginationKey] = await this.patchTaskService.getPatches(taskId, count, {
+                nextToken: exclusiveStartToken,
+            });
             const resources = this.patchAssembler.toListResource(items, count, paginationKey);
 
             logger.debug(`PatchTask.controller getPatches: exit: ${JSON.stringify(resources)}`);
@@ -105,7 +106,5 @@ export class PatchTaskController implements interfaces.Controller {
         } catch (err) {
             handleError(err, res);
         }
-
     }
-
 }

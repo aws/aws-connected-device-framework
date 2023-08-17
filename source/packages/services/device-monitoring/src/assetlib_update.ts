@@ -11,26 +11,32 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
+import {
+    ASSETLIBRARY_CLIENT_TYPES,
+    Device10Resource,
+    DevicesService,
+} from '@awssolutions/cdf-assetlibrary-client';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { inject, injectable } from 'inversify';
-import { DevicesService, Device10Resource, ASSETLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
-import { logger } from './utils/logger';
 
 @injectable()
 export class AssetLibUpdate {
-
     constructor(
-        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private readonly devices:DevicesService
+        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private readonly devices: DevicesService
     ) {}
 
-    public async updateDeviceConnected(deviceId: string, connected:boolean) : Promise<void> {
-        logger.debug(`assetlib_update: updatedevice: in: deviceId:${deviceId}, connected:${connected}`);
+    public async updateDeviceConnected(deviceId: string, connected: boolean): Promise<void> {
+        logger.debug(
+            `assetlib_update: updatedevice: in: deviceId:${deviceId}, connected:${connected}`
+        );
 
         // update device status to active
         logger.debug('Set device status to connected or disconnected');
 
-        const  updateRequest = {
+        const updateRequest = {
             deviceId,
-            connected
+            connected,
         } as Device10Resource;
 
         try {

@@ -1,23 +1,18 @@
 {
-    "extends": "../../tsconfig.libraries.json",
-    "compilerOptions": {
-        "outDir": "dist",
-        "rootDir": "src"
+  "extends": "../../tsconfig.libraries.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+
+  "references": [
+    {
+      "path": "../../config/config-inject"
     },
-    
-    "references": [
-        {
-            "path": "../../config/config-inject"
-        },
-        {
-            "path": "../../core/lambda-invoke"
-        }
-    ],
-    "include": [
-        "src"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist"
-    ]
+    {
+      "path": "../../core/lambda-invoke"
+    }
+  ],
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -1,15 +1,13 @@
 {
-    "extends": "../../tsconfig.libraries.json",
-    "compilerOptions": {
-        "outDir": "dist",
-        "rootDir": "src"
-    },
-    "references": [
-        {
-            "path": "../../core/logger"
-        }
-    ],
-    "include": [
-        "src"
-    ]
+  "extends": "../../tsconfig.libraries.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "references": [
+    {
+      "path": "../../core/logger"
+    }
+  ],
+  "include": ["src"]
 }

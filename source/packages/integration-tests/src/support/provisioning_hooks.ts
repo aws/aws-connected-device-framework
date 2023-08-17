@@ -13,7 +13,7 @@
 
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 setDefaultTimeout(30 * 1000);
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
@@ -36,7 +36,7 @@ const BASIC_THING_NAME = 'BasicIntegrationTestThing';
 const BASIC_POLICY_NAME = 'BasicIntegrationTestPolicy';
 
 export const AWS_ISSUED_CERTIFICATE_TEMPLATE_NAME = 'IntegrationTestTemplateAwsIssued';
-const AWS_ISSUED_THING_NAME = 'AwsIssuedIntegrationTestThing'
+const AWS_ISSUED_THING_NAME = 'AwsIssuedIntegrationTestThing';
 const AWS_ISSUED_POLICY_NAME = 'AwsIssuedIntegrationTestPolicy';
 
 export const ACMPCA_TEMPLATE_NAME = 'IntegrationTestTemplateWithACMPCA';
@@ -48,7 +48,7 @@ async function teardownBasic() {
         deleteTemplate(BASIC_CSR_TEMPLATE_NAME),
         deleteTemplate(AWS_ISSUED_CERTIFICATE_TEMPLATE_NAME),
         deleteThing(AWS_ISSUED_THING_NAME, AWS_ISSUED_POLICY_NAME),
-        deleteThing(BASIC_THING_NAME, BASIC_POLICY_NAME)
+        deleteThing(BASIC_THING_NAME, BASIC_POLICY_NAME),
     ]);
 }
 
@@ -59,77 +59,77 @@ Before({ tags: '@setup_basic_provisioning' }, async function () {
     const template = {
         Parameters: {
             ThingName: {
-                Type: 'String'
+                Type: 'String',
             },
             CSR: {
-                Type: 'String'
-            }
+                Type: 'String',
+            },
         },
         Resources: {
             thing: {
                 Type: 'AWS::IoT::Thing',
                 Properties: {
                     ThingName: {
-                        Ref: 'ThingName'
-                    }
-                }
+                        Ref: 'ThingName',
+                    },
+                },
             },
             certificate: {
                 Type: 'AWS::IoT::Certificate',
                 Properties: {
-                    CertificateSigningRequest: { Ref: 'CSR' }
-                }
+                    CertificateSigningRequest: { Ref: 'CSR' },
+                },
             },
             policy: {
                 Type: 'AWS::IoT::Policy',
                 Properties: {
-                    PolicyName: BASIC_POLICY_NAME
-                }
-            }
-        }
+                    PolicyName: BASIC_POLICY_NAME,
+                },
+            },
+        },
     };
 
     const awsIssuedTemplate = {
-        "CDF": {
-            "createDeviceAWSCertificate": true
+        CDF: {
+            createDeviceAWSCertificate: true,
         },
-        "Parameters": {
-            "ThingName": {
-                "Type": "String"
+        Parameters: {
+            ThingName: {
+                Type: 'String',
             },
-            "CertificateId": {
-                "Type": "String"
-            }
+            CertificateId: {
+                Type: 'String',
+            },
         },
-        "Resources": {
-            "thing": {
-                "Type": "AWS::IoT::Thing",
-                "Properties": {
-                    "ThingName": {
-                        "Ref": "ThingName"
-                    }
-                }
+        Resources: {
+            thing: {
+                Type: 'AWS::IoT::Thing',
+                Properties: {
+                    ThingName: {
+                        Ref: 'ThingName',
+                    },
+                },
             },
-            "certificate": {
-                "Type": "AWS::IoT::Certificate",
-                "Properties": {
-                    "CertificateId": { "Ref": "CertificateId" }
-                }
+            certificate: {
+                Type: 'AWS::IoT::Certificate',
+                Properties: {
+                    CertificateId: { Ref: 'CertificateId' },
+                },
             },
-            "policy": {
-                "Type": "AWS::IoT::Policy",
-                "Properties": {
-                    "PolicyName": AWS_ISSUED_POLICY_NAME
-                }
-            }
-        }
-    }
+            policy: {
+                Type: 'AWS::IoT::Policy',
+                Properties: {
+                    PolicyName: AWS_ISSUED_POLICY_NAME,
+                },
+            },
+        },
+    };
 
     await Promise.all([
         uploadTemplate(BASIC_CSR_TEMPLATE_NAME, template),
         uploadTemplate(AWS_ISSUED_CERTIFICATE_TEMPLATE_NAME, awsIssuedTemplate),
         createTestPolicy(BASIC_POLICY_NAME),
-        createTestPolicy(AWS_ISSUED_POLICY_NAME)
+        createTestPolicy(AWS_ISSUED_POLICY_NAME),
     ]);
 });
 
@@ -138,10 +138,7 @@ Before({ tags: '@teardown_basic_provisioning' }, async function () {
 });
 
 async function teardownAcmpca() {
-    await Promise.all([
-        deleteTemplate(ACMPCA_TEMPLATE_NAME),
-        deleteThing(ACMPCA_THING_NAME)
-    ]);
+    await Promise.all([deleteTemplate(ACMPCA_TEMPLATE_NAME), deleteThing(ACMPCA_THING_NAME)]);
 }
 
 Before({ tags: '@setup_acmpca_provisioning' }, async function () {
@@ -151,33 +148,33 @@ Before({ tags: '@setup_acmpca_provisioning' }, async function () {
     const template = {
         Parameters: {
             ThingName: {
-                Type: 'String'
+                Type: 'String',
             },
             CertificateId: {
-                Type: 'String'
-            }
+                Type: 'String',
+            },
         },
         Resources: {
             thing: {
                 Type: 'AWS::IoT::Thing',
                 Properties: {
                     ThingName: {
-                        Ref: 'ThingName'
-                    }
-                }
+                        Ref: 'ThingName',
+                    },
+                },
             },
             certificate: {
                 Type: 'AWS::IoT::Certificate',
                 Properties: {
-                    CertificateId: { Ref: "CertificateId" }
-                }
-            }
+                    CertificateId: { Ref: 'CertificateId' },
+                },
+            },
         },
         CDF: {
             acmpca: {
-                mode: 'REGISTER_WITHOUT_CA'
-            }
-        }
+                mode: 'REGISTER_WITHOUT_CA',
+            },
+        },
     };
     await uploadTemplate(ACMPCA_TEMPLATE_NAME, template);
 });
@@ -240,7 +237,7 @@ async function uploadTemplate(name: string, template: unknown): Promise<void> {
     const putObjectRequest = {
         Bucket: templateBucket,
         Key: `${templatePrefix}${name}.json`,
-        Body: JSON.stringify(template)
+        Body: JSON.stringify(template),
     };
     await s3.putObject(putObjectRequest).promise();
 }
@@ -248,7 +245,7 @@ async function uploadTemplate(name: string, template: unknown): Promise<void> {
 async function deleteTemplate(name: string): Promise<void> {
     const deleteObjectRequest = {
         Bucket: templateBucket,
-        Key: `${templatePrefix}${name}.json`
+        Key: `${templatePrefix}${name}.json`,
     };
     await s3.deleteObject(deleteObjectRequest).promise();
 }
@@ -261,7 +258,8 @@ async function createTestPolicy(policyName: string): Promise<void> {
         if (e.name === 'ResourceNotFoundException') {
             const integrationTestPolicy = {
                 policyName,
-                policyDocument: '{"Version": "2012-10-17","Statement": [{"Effect": "Allow","Action": "iot:*","Resource": "*"}]}'
+                policyDocument:
+                    '{"Version": "2012-10-17","Statement": [{"Effect": "Allow","Action": "iot:*","Resource": "*"}]}',
             };
             await iot.createPolicy(integrationTestPolicy).promise();
         }

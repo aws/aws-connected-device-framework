@@ -10,22 +10,22 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
-import {logger} from '../utils/logger';
-import { TemplateModel, TemplateListModel } from './templates.models';
-import { TemplatesDao } from './templates.dao';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
+import { TYPES } from '../di/types';
+import { logger } from '../utils/logger';
+import { TemplatesDao } from './templates.dao';
+import { TemplateListModel, TemplateModel } from './templates.models';
 import { TemplatesValidator } from './templates.validator';
 
 @injectable()
 export class TemplatesService {
+    constructor(
+        @inject(TYPES.TemplatesValidator) private validator: TemplatesValidator,
+        @inject(TYPES.TemplatesDao) private templatesDao: TemplatesDao
+    ) {}
 
-    constructor( 
-        @inject(TYPES.TemplatesValidator) private validator:TemplatesValidator,
-        @inject(TYPES.TemplatesDao) private templatesDao: TemplatesDao ) {}
-
-    public async create(model: TemplateModel) : Promise<void> {
+    public async create(model: TemplateModel): Promise<void> {
         logger.debug(`templates.service create: in: model: ${JSON.stringify(model)}`);
 
         // validation
@@ -37,16 +37,16 @@ export class TemplatesService {
         logger.debug('templates.service create: exit:');
     }
 
-    public async update(model: TemplateModel) : Promise<void> {
+    public async update(model: TemplateModel): Promise<void> {
         logger.debug(`templates.service update: in: model: ${JSON.stringify(model)}`);
 
         // validation
         ow(model, ow.object.nonEmpty);
         ow(model.templateId, ow.string.nonEmpty);
-        if (model.operation!==undefined) {
+        if (model.operation !== undefined) {
             ow(model.operation, ow.string.nonEmpty);
         }
-        if (model.document!==undefined) {
+        if (model.document !== undefined) {
             ow(model.document, ow.string.nonEmpty);
         }
 
@@ -56,17 +56,16 @@ export class TemplatesService {
         logger.debug('templates.service update: exit:');
     }
 
-    public async get(templateId:string): Promise<TemplateModel> {
+    public async get(templateId: string): Promise<TemplateModel> {
         logger.debug(`templates.service get: in: templateId:${templateId}`);
 
         // validation
-        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
 
         const template = await this.templatesDao.get(templateId);
 
         logger.debug(`templates.service get: exit: template:${JSON.stringify(template)}`);
         return template;
-
     }
 
     public async list(): Promise<TemplateListModel> {
@@ -76,14 +75,13 @@ export class TemplatesService {
 
         logger.debug(`templates.service get: exit: template:${JSON.stringify(templates)}`);
         return templates;
-
     }
 
-    public async delete(templateId:string) : Promise<void> {
+    public async delete(templateId: string): Promise<void> {
         logger.debug(`templates.service delete: in: templateId: ${templateId}`);
 
         // validation
-        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
 
         // Save to datastore
         await this.templatesDao.delete(templateId);

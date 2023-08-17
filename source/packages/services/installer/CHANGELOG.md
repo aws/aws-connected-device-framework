@@ -1,6 +1,11 @@
-# Change Log - @cdf/installer
+# Change Log - @awssolutions/cdf-installer
 
-This log was last generated on Thu, 04 Aug 2022 18:39:36 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Aug 2023 18:35:38 GMT and should not be manually modified.
+
+## 0.0.0
+Tue, 15 Aug 2023 18:35:38 GMT
+
+_Version update only_
 
 ## 1.3.1
 Thu, 04 Aug 2022 18:39:36 GMT

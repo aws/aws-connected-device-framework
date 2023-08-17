@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,7 +11,7 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Command & Control Service
@@ -21,7 +22,7 @@ Globals:
 
 Parameters:
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
 
@@ -128,21 +129,20 @@ Parameters:
     MinLength: 1
 
 Conditions:
+  DeployInVPC: !Not [!Equals [!Ref VpcId, 'N/A']]
+  DeployWithLambdaAuth:
+    !Or [!Equals [!Ref AuthType, 'LambdaRequest'], !Equals [!Ref AuthType, 'LambdaToken']]
+  DeployWithProvisionedCapacity: !Not [!Equals [!Ref ProvisionedConcurrentExecutions, '0']]
 
-  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
-  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
-  DeployWithProvisionedCapacity: !Not [ !Equals [ !Ref ProvisionedConcurrentExecutions, "0" ] ]
-
-  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
-  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
+  KmsKeyIdProvided: !Not [!Equals [!Ref KmsKeyId, '']]
+  EnableApiGatewayAccessLogs: !Equals [!Ref EnableApiGatewayAccessLogs, 'true']
 
 Resources:
-
   ApiGatewayApi:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+        Location: !Sub '${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}'
     DependsOn:
       - RESTLambdaFunction
 
@@ -151,7 +151,7 @@ Resources:
     'Fn::Transform':
       Name: 'AWS::Include'
       Parameters:
-        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+        Location: !Sub '${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml'
     DependsOn:
       - RESTLambdaFunction
 
@@ -165,16 +165,16 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Condition: KmsKeyIdProvided
     Properties:
-      Description: "cdf-commandandcontrol policy for accessing KMS"
-      Path: "/cdf/commandandcontrol/"
+      Description: 'cdf-commandandcontrol policy for accessing KMS'
+      Path: '/cdf/commandandcontrol/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
               - kms:Decrypt
               - kms:GenerateDataKey
             Effect: Allow
-            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+            Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}'
 
   ApplicationPolicies:
     Type: 'AWS::IAM::ManagedPolicy'
@@ -182,71 +182,71 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W13
-            reason: "Lambda provided permissions to manage resources in iot core"
+            reason: 'Lambda provided permissions to manage resources in iot core'
     Properties:
       Description: 'cdf-commandandcontrol application policies'
-      Path: "/"
+      Path: '/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Sid: "iotgroups"
+          - Sid: 'iotgroups'
             Action:
-              - "iot:ListThingsInThingGroup"
+              - 'iot:ListThingsInThingGroup'
             Effect: Allow
-            Resource: 
-                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*"
-          - Sid: "iotjobs"
+            Resource:
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*'
+          - Sid: 'iotjobs'
             Action:
-              - "iot:AssociateTargetsWithJob"
-              - "iot:CreateJob"
-              - "iot:CreateThingGroup"
-              - "iot:DescribeJob"
-              - "iot:DescribeJobExecution"
-              - "iot:GetJobDocument"
-              - "iot:ListJobExecutionsForJob"
-              - "iot:ListJobExecutionsForThing"
+              - 'iot:AssociateTargetsWithJob'
+              - 'iot:CreateJob'
+              - 'iot:CreateThingGroup'
+              - 'iot:DescribeJob'
+              - 'iot:DescribeJobExecution'
+              - 'iot:GetJobDocument'
+              - 'iot:ListJobExecutionsForJob'
+              - 'iot:ListJobExecutionsForThing'
             Effect: Allow
-            Resource: 
-                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:job/*"
-                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
-                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*"
-          - Sid: "iottopic"
+            Resource:
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:job/*'
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*'
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*'
+          - Sid: 'iottopic'
             Action:
               - 'iot:Publish'
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/cmd/cdf/cac/*'
-          - Sid: "iotshadow"
+          - Sid: 'iotshadow'
             Action:
               - iot:GetThingShadow
               - iot:UpdateThingShadow
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*'
-          - Sid: "dynamodb"
+          - Sid: 'dynamodb'
             Action:
-              - "dynamodb:BatchGetItem"
-              - "dynamodb:GetItem"
-              - "dynamodb:Query"
-              - "dynamodb:Scan"
-              - "dynamodb:BatchWriteItem"
-              - "dynamodb:PutItem"
-              - "dynamodb:UpdateItem"
-              - "dynamodb:DeleteItem"
+              - 'dynamodb:BatchGetItem'
+              - 'dynamodb:GetItem'
+              - 'dynamodb:Query'
+              - 'dynamodb:Scan'
+              - 'dynamodb:BatchWriteItem'
+              - 'dynamodb:PutItem'
+              - 'dynamodb:UpdateItem'
+              - 'dynamodb:DeleteItem'
             Effect: Allow
-            Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/cdf-commandandcontrol-*"
-          - Sid: "iampassrole"
+            Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/cdf-commandandcontrol-*'
+          - Sid: 'iampassrole'
             Action:
-              - "iam:PassRole"
+              - 'iam:PassRole'
             Effect: Allow
-            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-commandandcontrol-*"
-          - Sid: "s3bucket"
+            Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/cdf-commandandcontrol-*'
+          - Sid: 's3bucket'
             Action:
               - 's3:ListBucket'
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:s3:::${BucketName}'
-          - Sid: "s3objects"
+          - Sid: 's3objects'
             Action:
               - 's3:Get*'
               - 's3:Put*'
@@ -284,10 +284,10 @@ Resources:
               - lambda.amazonaws.com
               - iot.amazonaws.com
           Action: sts:AssumeRole
-      Path: "/"
+      Path: '/'
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
-        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref 'AWS::NoValue']
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
@@ -299,11 +299,11 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-commandandcontrol-rest-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/command-and-control/dist/lambda_rest_handler.handler
+      Handler: lambda_rest_handler.handler
 
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 29
 
       AutoPublishAlias: live
@@ -317,7 +317,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLE: !Ref DataTable
@@ -356,11 +356,11 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-commandandcontrol-topic-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/command-and-control/dist/lambda_topic_command_response_handler.handler
+      Handler: lambda_topic_command_response_handler.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
 
       AutoPublishAlias: live
@@ -374,7 +374,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_S3_ROLE_ARN: !Sub '${LambdaExecutionRole.Arn}'
@@ -383,7 +383,7 @@ Resources:
           AWS_DYNAMODB_TABLE: !Ref DataTable
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
           PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName
-      
+
       Tracing: Active
 
       VpcConfig:
@@ -398,7 +398,7 @@ Resources:
         TopicCommandResponseRule:
           Type: IoTRule
           Properties:
-            AwsIotSqlVersion: "2016-03-23"
+            AwsIotSqlVersion: '2016-03-23'
             Sql: !Sub "SELECT topic(4) as thingName, topic(5) as correlationId, topic(6) as action, * as payload FROM 'cmd/cdf/cac/+/+/+'"
 
   ShadowCommandResponseLambdaFunction:
@@ -406,11 +406,11 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-commandandcontrol-shadow-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/command-and-control/dist/lambda_shadow_command_response_handler.handler
+      Handler: lambda_shadow_command_response_handler.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
 
       AutoPublishAlias: live
@@ -424,7 +424,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_S3_ROLE_ARN: !Sub '${LambdaExecutionRole.Arn}'
@@ -433,7 +433,7 @@ Resources:
           AWS_DYNAMODB_TABLE: !Ref DataTable
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
           PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName
-      
+
       Tracing: Active
 
       VpcConfig:
@@ -448,7 +448,7 @@ Resources:
         ShadowCommandResponseRule:
           Type: IoTRule
           Properties:
-            AwsIotSqlVersion: "2016-03-23"
+            AwsIotSqlVersion: '2016-03-23'
             Sql: "SELECT topic(3) as thingName, clientToken as correlationId, state.reported as payload FROM '$aws/things/+/shadow/name/cac/update/accepted' where isUndefined(clientToken)=False AND isUndefined(state.reported)=False"
 
   JobCommandResponseLambdaFunction:
@@ -456,11 +456,11 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-commandandcontrol-job-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/command-and-control/dist/lambda_job_command_response_handler.handler
+      Handler: lambda_job_command_response_handler.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
 
       AutoPublishAlias: live
@@ -474,7 +474,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
@@ -483,7 +483,7 @@ Resources:
           AWS_S3_BUCKET: !Ref BucketName
           AWS_S3_ROLE_ARN: !Sub '${LambdaExecutionRole.Arn}'
           PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName
-      
+
       Tracing: Active
 
       VpcConfig:
@@ -495,24 +495,23 @@ Resources:
           - Ref: AWS::NoValue
 
       Events:
-
         StandardJobCommmandResponseRule:
           Type: IoTRule
           Properties:
-            AwsIotSqlVersion: "2016-03-23"
+            AwsIotSqlVersion: '2016-03-23'
             #TODO: if using standard jobs, need to check that a correlation id has been provided so that we can limit the number of actions executed
-            Sql: "SELECT * FROM '$aws/events/job/+/+' WHERE topic(5)='completed' OR topic(5)='canceled' OR topic(5)='deleted'" 
+            Sql: "SELECT * FROM '$aws/events/job/+/+' WHERE topic(5)='completed' OR topic(5)='canceled' OR topic(5)='deleted'"
 
   SQSLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub 'cdf-commandandcontrol-sqs-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/command-and-control/dist/lambda_sqs_handler.handler
+      Handler: lambda_sqs_handler.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 900
 
       AutoPublishAlias: live
@@ -526,7 +525,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
@@ -566,9 +565,9 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W28
-            reason: "safely naming this resources to be unique by environment"
+            reason: 'safely naming this resources to be unique by environment'
           - id: W73
-            reason: "Can be decided by the customer, to specify the billing mode"
+            reason: 'Can be decided by the customer, to specify the billing mode'
     Properties:
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
@@ -580,45 +579,35 @@ Resources:
             SSEType: KMS
           - Ref: AWS::NoValue
       TableName: !Sub 'cdf-commandandcontrol-${Environment}'
-      KeySchema: 
-        - 
-          AttributeName: pk
+      KeySchema:
+        - AttributeName: pk
           KeyType: HASH
-        - 
-          AttributeName: sk
+        - AttributeName: sk
           KeyType: RANGE
-          
-      AttributeDefinitions: 
-        - 
-          AttributeName: pk
+
+      AttributeDefinitions:
+        - AttributeName: pk
           AttributeType: S
-        - 
-          AttributeName: sk
+        - AttributeName: sk
           AttributeType: S
-        - 
-          AttributeName: siKey1
+        - AttributeName: siKey1
           AttributeType: S
-        - 
-          AttributeName: siKey2
+        - AttributeName: siKey2
           AttributeType: S
-        - 
-          AttributeName: siSort2
+        - AttributeName: siSort2
           AttributeType: S
 
-      ProvisionedThroughput: 
-        ReadCapacityUnits: "5"
-        WriteCapacityUnits: "5"
+      ProvisionedThroughput:
+        ReadCapacityUnits: '5'
+        WriteCapacityUnits: '5'
 
       GlobalSecondaryIndexes:
         # GSI-1
-        -
-          IndexName: 'siKey1-sk-index'
-          KeySchema: 
-            - 
-              AttributeName: siKey1
+        - IndexName: 'siKey1-sk-index'
+          KeySchema:
+            - AttributeName: siKey1
               KeyType: HASH
-            - 
-              AttributeName: sk
+            - AttributeName: sk
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
@@ -626,14 +615,11 @@ Resources:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
         # GSI-2
-        -
-          IndexName: 'siKey2-siSort2-index'
-          KeySchema: 
-            - 
-              AttributeName: siKey2
+        - IndexName: 'siKey2-siSort2-index'
+          KeySchema:
+            - AttributeName: siKey2
               KeyType: HASH
-            - 
-              AttributeName: siSort2
+            - AttributeName: siSort2
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
@@ -645,8 +631,7 @@ Resources:
     Type: Custom::IotEndpoint
     Version: 1.0
     Properties:
-      ServiceToken:
-        !Ref CustomResourceLambdaArn
+      ServiceToken: !Ref CustomResourceLambdaArn
 
   MessagesQueue:
     Type: AWS::SQS::Queue
@@ -689,9 +674,9 @@ Resources:
 Outputs:
   RESTLambdaArn:
     Description: REST API Lambda Arn
-    Value: !Sub "${RESTLambdaFunction.Arn}"
+    Value: !Sub '${RESTLambdaFunction.Arn}'
     Export:
-      Name: !Sub "cdf-commandandcontrol-${Environment}-RESTLambdaArn"
+      Name: !Sub 'cdf-commandandcontrol-${Environment}-RESTLambdaArn'
   RestApiFunctionName:
     Description: Command & Control REST API lambda function name
     Value: !Ref RESTLambdaFunction
@@ -707,4 +692,3 @@ Outputs:
     Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
     Export:
       Name: !Sub 'cdf-commandandcontrol-${Environment}-apigatewayhost'
-

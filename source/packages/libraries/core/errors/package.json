@@ -1,27 +1,24 @@
 {
-  "name": "@cdf/errors",
-  "version": "4.0.0",
+  "name": "@awssolutions/cdf-errors",
+  "version": "2.4.0",
   "description": "Library for CDF base errors",
   "author": "Atul Bargaje",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
+    "clean": "npx shx rm -rf dist *.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
-    "build": "npx tsc -b",
-    "test": "rushx lint && jest --silent --passWithNoTests"
+    "build": "npx tsc -p tsconfig.build.json",
+    "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "devDependencies": {
-    "@rushstack/eslint-config": "2.3.4",
-    "eslint": "7.26.0",
-
+    "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
+    "@typescript-eslint/eslint-plugin": "6.2.0",
+    "eslint": "8.46.0",
     "nyc": "15.1.0",
     "shx": "0.3.3",
-    
     "@types/jest": "26.0.23",
-    "@typescript-eslint/eslint-plugin": "4.23.0",
-    "@typescript-eslint/parser": "4.23.0",
     "jest-create-mock-instance": "1.1.0",
     "jest-haste-map": "26.6.2",
     "jest-mock-extended": "1.0.14",
@@ -32,8 +29,7 @@
     "typescript": "4.2.4"
   },
   "jest": {
-    "globals": {
-               },
+    "globals": {},
     "roots": [
       "<rootDir>/src"
     ],
@@ -52,6 +48,5 @@
       "node"
     ]
   },
-  "license": "ISC",
-  "private": true
+  "license": "ISC"
 }

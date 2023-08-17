@@ -15,5 +15,5 @@ export const EVENT_PUBLISHER_TYPES = {
     Iot: Symbol.for('Iot'),
     EventBridgeFactory: Symbol.for('Factory<EventBridge>'),
     EventBridge: Symbol.for('EventBridge'),
-    CDFEventPublisher:Symbol.for('CDFEventPublisher')
+    CDFEventPublisher: Symbol.for('CDFEventPublisher'),
 };

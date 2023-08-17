@@ -12,5 +12,5 @@
  *********************************************************************************************************************/
 export * from './awsIotThingListBuilder';
 
-export {THING_LIST_BUILDER_TYPES} from './di/types';
-export {thingListBuilderContainerModule} from './di/inversify.config';
+export { THING_LIST_BUILDER_TYPES } from './di/types';
+export { thingListBuilderContainerModule } from './di/inversify.config';

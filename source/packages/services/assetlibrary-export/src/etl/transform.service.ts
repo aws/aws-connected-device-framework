@@ -15,14 +15,11 @@ import ow from 'ow';
 
 import { Extracted } from './extract.service';
 
-
 @injectable()
 export class TransformService implements Transformer {
-
     private readonly transformers: Transformers = {};
 
     public async transform(batch: Extracted): Promise<Transformed> {
-
         ow(batch, 'batch', ow.object.nonEmpty);
         ow(batch.category, 'batchCategory', ow.string.nonEmpty);
         ow(batch.id, 'batchId', ow.string.nonEmpty);
@@ -30,14 +27,13 @@ export class TransformService implements Transformer {
         ow(batch.items, 'batchType', ow.array.nonEmpty);
         ow(batch.timestamp, 'batchType', ow.number.greaterThan(0));
 
-
-        if(!this.transformers[batch.category]) {
+        if (!this.transformers[batch.category]) {
             return {
                 id: batch.id,
                 category: batch.category,
                 type: batch.type,
                 items: batch.items,
-                timestamp: batch.timestamp
+                timestamp: batch.timestamp,
             };
         }
         return await this.transformers[batch.category].transform(batch);

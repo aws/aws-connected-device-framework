@@ -1,9 +1,15 @@
 {
-  "name": "@cdf/commands",
+  "name": "@awssolutions/cdf-commands",
   "entries": [
     {
+      "version": "2.4.0",
+      "tag": "@awssolutions/cdf-commands_v2.4.0",
+      "date": "Tue, 15 Aug 2023 18:35:38 GMT",
+      "comments": {}
+    },
+    {
       "version": "5.0.4",
-      "tag": "@cdf/commands_v5.0.4",
+      "tag": "@awssolutions/commands_v5.0.4",
       "date": "Fri, 24 Jun 2022 21:00:45 GMT",
       "comments": {
         "patch": [
@@ -15,7 +21,7 @@
     },
     {
       "version": "5.0.3",
-      "tag": "@cdf/commands_v5.0.3",
+      "tag": "@awssolutions/commands_v5.0.3",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",
       "comments": {
         "patch": [
@@ -25,17 +31,17 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.4` to `^5.0.5`"
+            "comment": "Updating dependency \"@awssolutions/assetlibrary-client\" from `^5.0.4` to `^5.0.5`"
           },
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^4.0.1` to `^4.0.2`"
+            "comment": "Updating dependency \"@awssolutions/config-inject\" from `^4.0.1` to `^4.0.2`"
           }
         ]
       }
     },
     {
       "version": "5.0.2",
-      "tag": "@cdf/commands_v5.0.2",
+      "tag": "@awssolutions/commands_v5.0.2",
       "date": "Mon, 21 Mar 2022 21:58:32 GMT",
       "comments": {
         "patch": [
@@ -45,20 +51,20 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^3.0.0` to `^3.0.1`"
+            "comment": "Updating dependency \"@awssolutions/lambda-invoke\" from `^3.0.0` to `^3.0.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.1` to `^5.0.2`"
+            "comment": "Updating dependency \"@awssolutions/assetlibrary-client\" from `^5.0.1` to `^5.0.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^5.0.0` to `^5.0.1`"
+            "comment": "Updating dependency \"@awssolutions/provisioning-client\" from `^5.0.0` to `^5.0.1`"
           }
         ]
       }
     },
     {
       "version": "5.0.1",
-      "tag": "@cdf/commands_v5.0.1",
+      "tag": "@awssolutions/commands_v5.0.1",
       "date": "Thu, 10 Mar 2022 00:08:34 GMT",
       "comments": {
         "patch": [
@@ -68,14 +74,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.0` to `^5.0.1`"
+            "comment": "Updating dependency \"@awssolutions/assetlibrary-client\" from `^5.0.0` to `^5.0.1`"
           }
         ]
       }
     },
     {
       "version": "5.0.0",
-      "tag": "@cdf/commands_v5.0.0",
+      "tag": "@awssolutions/commands_v5.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",
       "comments": {
         "major": [
@@ -85,32 +91,32 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/errors\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/logger\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.2` to `^3.0.0`"
+            "comment": "Updating dependency \"@awssolutions/lambda-invoke\" from `^2.0.2` to `^3.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.2.3` to `^5.0.0`"
+            "comment": "Updating dependency \"@awssolutions/assetlibrary-client\" from `^4.2.3` to `^5.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/express-middleware\" from `^2.1.0` to `^3.0.0`"
+            "comment": "Updating dependency \"@awssolutions/express-middleware\" from `^2.1.0` to `^3.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/config-inject\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^4.0.3` to `^5.0.0`"
+            "comment": "Updating dependency \"@awssolutions/provisioning-client\" from `^4.0.3` to `^5.0.0`"
           }
         ]
       }
     },
     {
       "version": "4.2.4",
-      "tag": "@cdf/commands_v4.2.4",
+      "tag": "@awssolutions/commands_v4.2.4",
       "date": "Tue, 25 Jan 2022 19:57:26 GMT",
       "comments": {
         "patch": [
@@ -122,7 +128,7 @@
     },
     {
       "version": "4.2.3",
-      "tag": "@cdf/commands_v4.2.3",
+      "tag": "@awssolutions/commands_v4.2.3",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",
       "comments": {
         "patch": [
@@ -132,20 +138,20 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^2.0.2`"
+            "comment": "Updating dependency \"@awssolutions/lambda-invoke\" from `^2.0.1` to `^2.0.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.2.0` to `^4.2.1`"
+            "comment": "Updating dependency \"@awssolutions/assetlibrary-client\" from `^4.2.0` to `^4.2.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^4.0.2` to `^4.0.3`"
+            "comment": "Updating dependency \"@awssolutions/provisioning-client\" from `^4.0.2` to `^4.0.3`"
           }
         ]
       }
     },
     {
       "version": "4.2.2",
-      "tag": "@cdf/commands_v4.2.2",
+      "tag": "@awssolutions/commands_v4.2.2",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",
       "comments": {
         "patch": [
@@ -158,23 +164,23 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.0` to `^2.0.1`"
+            "comment": "Updating dependency \"@awssolutions/lambda-invoke\" from `^2.0.0` to `^2.0.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.1` to `^4.1.2`"
+            "comment": "Updating dependency \"@awssolutions/assetlibrary-client\" from `^4.1.1` to `^4.1.2`"
           },
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^3.0.1`"
+            "comment": "Updating dependency \"@awssolutions/config-inject\" from `^3.0.0` to `^3.0.1`"
           },
           {
-            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^4.0.1` to `^4.0.2`"
+            "comment": "Updating dependency \"@awssolutions/provisioning-client\" from `^4.0.1` to `^4.0.2`"
           }
         ]
       }
     },
     {
       "version": "4.2.1",
-      "tag": "@cdf/commands_v4.2.1",
+      "tag": "@awssolutions/commands_v4.2.1",
       "date": "Wed, 11 Aug 2021 01:26:49 GMT",
       "comments": {
         "patch": [
@@ -184,14 +190,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.0` to `^4.1.1`"
+            "comment": "Updating dependency \"@awssolutions/assetlibrary-client\" from `^4.1.0` to `^4.1.1`"
           }
         ]
       }
     },
     {
       "version": "4.0.2",
-      "tag": "@cdf/device-monitoring_v4.0.2",
+      "tag": "@awssolutions/device-monitoring_v4.0.2",
       "date": "Wed, 21 Jul 2021 16:46:57 GMT",
       "comments": {
         "patch": [

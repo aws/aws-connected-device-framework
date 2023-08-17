@@ -1,6 +1,11 @@
-# Change Log - @cdf/commands
+# Change Log - @awssolutions/cdf-commands
 
-This log was last generated on Fri, 24 Jun 2022 21:00:45 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Aug 2023 18:35:38 GMT and should not be manually modified.
+
+## 2.4.0
+Tue, 15 Aug 2023 18:35:38 GMT
+
+_Version update only_
 
 ## 5.0.4
 Fri, 24 Jun 2022 21:00:45 GMT

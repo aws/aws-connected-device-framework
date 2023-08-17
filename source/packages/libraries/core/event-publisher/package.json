@@ -1,24 +1,25 @@
 {
-  "name": "@cdf/event-publisher",
-  "version": "1.1.0",
+  "name": "@awssolutions/cdf-event-publisher",
+  "version": "0.0.0",
   "description": "Utility library to be used by cdf components to publish events.",
   "author": "William Sia",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
+    "clean": "npx shx rm -rf dist *.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
-    "build": "npx tsc -b",
-    "test": "rushx lint && jest --silent --passWithNoTests"
+    "build": "npx tsc -p tsconfig.build.json",
+    "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
     "@aws-sdk/client-eventbridge": "3.38.0",
-    "@cdf/lambda-invoke": "^3.0.2",
-    "@cdf/logger": "^4.0.0",
-    "inversify": "5.1.1",
+    "@awssolutions/cdf-lambda-invoke": "workspace:^2.4.0",
+    "@awssolutions/cdf-logger": "workspace:^2.4.0",
+    "@awssolutions/simple-cdf-logger": "workspace:^2.4.0",
+    "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "ow": "0.23.0",
     "superagent": "7.1.1",
     "winston": "3.3.3",
@@ -26,17 +27,13 @@
     "@aws-sdk/client-iot": "~3.37.0"
   },
   "devDependencies": {
+    "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
+    "@typescript-eslint/eslint-plugin": "6.2.0",
     "@types/superagent": "4.1.15",
-
-    "@rushstack/eslint-config": "2.3.4",
-    "eslint": "7.26.0",
-
+    "eslint": "8.46.0",
     "nyc": "15.1.0",
     "shx": "0.3.3",
-
     "@types/jest": "26.0.23",
-    "@typescript-eslint/eslint-plugin": "4.23.0",
-    "@typescript-eslint/parser": "4.23.0",
     "jest-create-mock-instance": "1.1.0",
     "jest-haste-map": "26.6.2",
     "jest-mock-extended": "1.0.14",
@@ -47,8 +44,7 @@
     "typescript": "4.2.4"
   },
   "jest": {
-    "globals": {
-               },
+    "globals": {},
     "roots": [
       "<rootDir>/src"
     ],

@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export class AWSProvisioningTemplate {
-    Parameters: { [key:string] : Parameter };
+    Parameters: { [key: string]: Parameter };
     Resources: {
         thing?: Thing;
         certificate?: Certificate;
@@ -26,56 +26,58 @@ export class CDFProvisioningTemplate extends AWSProvisioningTemplate {
         createDeviceAWSCertificate?: boolean;
         registerDeviceCertificateWithoutCA?: boolean;
         acmpca?: {
-            mode: "REGISTER_WITH_CA" | "REGISTER_WITHOUT_CA"
-        }
-        attachAdditionalPolicies?: [{
-            name?: string;
-            document?: string;
-        }]
+            mode: 'REGISTER_WITH_CA' | 'REGISTER_WITHOUT_CA';
+        };
+        attachAdditionalPolicies?: [
+            {
+                name?: string;
+                document?: string;
+            },
+        ];
     };
 }
 export class Parameter {
-    Type:ParameterType;
-    Default?:string;
+    Type: ParameterType;
+    Default?: string;
 }
 
 export enum ParameterType {
-    String = 'String'
+    String = 'String',
 }
 
 export class Thing {
-    Type:string;
+    Type: string;
     Properties: {
-        ThingName: string | ParamaterReference,
-        AttributePayload?: { [key:string] : string | ParamaterReference },
-        ThingTypeName?: string | ParamaterReference,
-        ThingGroups?: (string | ParamaterReference) []
+        ThingName: string | ParamaterReference;
+        AttributePayload?: { [key: string]: string | ParamaterReference };
+        ThingTypeName?: string | ParamaterReference;
+        ThingGroups?: (string | ParamaterReference)[];
     };
-    OverrideSettings? : {
-        AttributePayload? : OverrideSettings,
-        ThingTypeName? : OverrideSettings,
-        ThingGroups? : OverrideSettings
+    OverrideSettings?: {
+        AttributePayload?: OverrideSettings;
+        ThingTypeName?: OverrideSettings;
+        ThingGroups?: OverrideSettings;
     };
 }
 
 export class Certificate {
-    Type:string;
+    Type: string;
     Properties: {
-        CertificateSigningRequest?: string | ParamaterReference,
-        CertificateId?: string | ParamaterReference,
-        CertificatePem?: string | ParamaterReference,
-        CACertificatePem?: string | ParamaterReference,
-        Status?: CertificateStatus
+        CertificateSigningRequest?: string | ParamaterReference;
+        CertificateId?: string | ParamaterReference;
+        CertificatePem?: string | ParamaterReference;
+        CACertificatePem?: string | ParamaterReference;
+        Status?: CertificateStatus;
     };
-    OverrideSettings? : {
-        Status? : OverrideSettings
+    OverrideSettings?: {
+        Status?: OverrideSettings;
     };
 }
 
 export class Policy {
-    Type:string;
+    Type: string;
     Properties: {
-        PolicyName?: string | ParamaterReference,
+        PolicyName?: string | ParamaterReference;
         PolicyDocument: string;
     };
 }
@@ -83,7 +85,7 @@ export class Policy {
 export enum CertificateStatus {
     ACTIVE = 'ACTIVE',
     INACTIVE = 'INACTIVE',
-    PENDING_ACTIVATION = 'PENDING_ACTIVATION'
+    PENDING_ACTIVATION = 'PENDING_ACTIVATION',
 }
 
 export class ParamaterReference {
@@ -94,5 +96,5 @@ export enum OverrideSettings {
     DO_NOTHING = 'DO_NOTHING',
     REPLACE = 'REPLACE',
     FAIL = 'FAIL',
-    MERGE = 'MERGE'
+    MERGE = 'MERGE',
 }

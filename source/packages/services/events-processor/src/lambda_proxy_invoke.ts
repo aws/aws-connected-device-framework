@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { logger } from './utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
 import { FilterService } from './filter/filter.service';
@@ -41,5 +41,4 @@ exports.handler = async (event: any, _context: unknown) => {
     await filter.filter([event]);
 
     logger.debug(`lambda_proxy_invoke handler: exit:`);
-
 };

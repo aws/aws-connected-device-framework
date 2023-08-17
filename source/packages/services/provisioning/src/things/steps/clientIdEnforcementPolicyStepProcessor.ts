@@ -10,111 +10,133 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { ProvisioningStepProcessor } from './provisioningStepProcessor';
-import { ProvisioningStepData } from './provisioningStep.model';
-import { CDFProvisioningTemplate, ParamaterReference } from '../templates/template.models';
-import { logger } from '../../utils/logger';
-import * as util from 'util';
-import * as path from 'path';
-import * as fs from 'fs';
-import { TYPES } from '../../di/types';
-import AWS = require('aws-sdk');
+import { logger } from '@awssolutions/simple-cdf-logger';
+import AWS from 'aws-sdk';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
+import { TYPES } from '../../di/types';
+import { CDFProvisioningTemplate, ParamaterReference } from '../templates/template.models';
+import { ProvisioningStepData } from './provisioningStep.model';
+import { ProvisioningStepProcessor } from './provisioningStepProcessor';
+
 @injectable()
 export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepProcessor {
+    private _clientIdEnforcementPolicyTemplate: string;
 
-  private _readFileAsync = util.promisify(fs.readFile);
-  private _clientIdEnforcementPolicyTemplate:string;
+    private _iot: AWS.Iot;
 
-  private _iot: AWS.Iot;
-
-  public constructor(
-    @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
-    @inject('aws.region') private region: string,
-    @inject('aws.accountId') private accountId: string) {
-
-      this._iot = iotFactory();
-  }
-
-  public async process(stepData: ProvisioningStepData): Promise<void> {
-    logger.debug(`things.steps.ClientIdEnforcementPolicyStepProcessor: process: in: stepData:${JSON.stringify(stepData)}`);
-
-    const certificateArn: string = stepData.state?.arns?.certificate;
-    ow(certificateArn, ow.string.nonEmpty);
-
-    await this.createClientIdEnforcementPolicy(stepData.template, stepData.parameters, certificateArn);
-    logger.debug(`things.steps.ClientIdEnforcementPolicyStepProcessor: process: exit:`);
-
-  }
-
-  private async createClientIdEnforcementPolicy(cdfTemplate: CDFProvisioningTemplate, parameters:{[key:string]:string}, certificateArn:string): Promise<void> {
-    logger.debug(`things.steps.ClientIdEnforcementPolicyStepProcessor createClientIdEnforcementPolicy: in: certificateArn:${certificateArn}`);
-
-    if (this._clientIdEnforcementPolicyTemplate===null || this._clientIdEnforcementPolicyTemplate===undefined) {
-        const templateLocation = path.join(__dirname, `../policies/clientIdEnforcementPolicyTemplate.json`);
-        this._clientIdEnforcementPolicyTemplate = await this._readFileAsync(templateLocation, {encoding: 'utf8'});
+    public constructor(
+        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
+        @inject('aws.region') private region: string,
+        @inject('aws.accountId') private accountId: string
+    ) {
+        this._iot = iotFactory();
     }
 
-    let thingName:string;
-    if (typeof cdfTemplate.Resources.thing.Properties.ThingName === 'string') {
-        logger.debug(`ThingName: string`);
-        thingName = cdfTemplate.Resources.thing.Properties.ThingName as string;
-    } else {
-        logger.debug(`ThingName: ParamaterReference`);
-        const parameter = (cdfTemplate.Resources.thing.Properties.ThingName as ParamaterReference).Ref;
-        thingName = parameters[parameter];
+    public async process(stepData: ProvisioningStepData): Promise<void> {
+        logger.debug(
+            `things.steps.ClientIdEnforcementPolicyStepProcessor: process: in: stepData:${JSON.stringify(
+                stepData
+            )}`
+        );
+
+        const certificateArn: string = stepData.state?.arns?.certificate;
+        ow(certificateArn, ow.string.nonEmpty);
+
+        await this.createClientIdEnforcementPolicy(
+            stepData.template,
+            stepData.parameters,
+            certificateArn
+        );
+        logger.debug(`things.steps.ClientIdEnforcementPolicyStepProcessor: process: exit:`);
     }
 
-    const policyName = `clientIdEnforcementPolicy_${thingName}`;
+    private async createClientIdEnforcementPolicy(
+        cdfTemplate: CDFProvisioningTemplate,
+        parameters: { [key: string]: string },
+        certificateArn: string
+    ): Promise<void> {
+        logger.debug(
+            `things.steps.ClientIdEnforcementPolicyStepProcessor createClientIdEnforcementPolicy: in: certificateArn:${certificateArn}`
+        );
 
-    // check to see if this policy already exists
-    logger.debug(`checking to see if policy ${policyName} exists`);
-    const getPolicyParams: AWS.Iot.GetPolicyRequest =  {
-        policyName
-    };
-
-    let policyExists = false;
-
-    try {
-        await this._iot.getPolicy(getPolicyParams).promise();
-        logger.debug(`policy ${policyName} exists`);
-        policyExists = true;
-    } catch (getPolicyError) {
-        if (getPolicyError.code === 'ResourceNotFoundException') {
-            logger.debug(`policy ${policyName} does not exists, will create`);
-            policyExists = false;
-        } else {
-            logger.error(`Error getting policy ${policyName}`);
-            throw getPolicyError;
+        if (
+            this._clientIdEnforcementPolicyTemplate === null ||
+            this._clientIdEnforcementPolicyTemplate === undefined
+        ) {
+            const templateObject = await import(
+                '../policies/clientIdEnforcementPolicyTemplate.json'
+            );
+            this._clientIdEnforcementPolicyTemplate = JSON.stringify(templateObject);
         }
-    }
 
-    if (!policyExists) {
-        // first create policy
-        const policy = this._clientIdEnforcementPolicyTemplate
-        .replace('${cdf:region}', this.region )
-        .replace('${cdf:accountId}', this.accountId )
-        .replace('${cdf:thingName}', thingName );
+        let thingName: string;
+        if (typeof cdfTemplate.Resources.thing.Properties.ThingName === 'string') {
+            logger.debug(`ThingName: string`);
+            thingName = cdfTemplate.Resources.thing.Properties.ThingName as string;
+        } else {
+            logger.debug(`ThingName: ParamaterReference`);
+            const parameter = (
+                cdfTemplate.Resources.thing.Properties.ThingName as ParamaterReference
+            ).Ref;
+            thingName = parameters[parameter];
+        }
 
-        logger.debug(`creating policy with params:  policyName:${policyName}, policyDocument:${JSON.stringify(policy)}`);
+        const policyName = `clientIdEnforcementPolicy_${thingName}`;
 
-        // create device specific policy and associate it with the certificate
-        const createPolicyParams: AWS.Iot.CreatePolicyRequest = {
+        // check to see if this policy already exists
+        logger.debug(`checking to see if policy ${policyName} exists`);
+        const getPolicyParams: AWS.Iot.GetPolicyRequest = {
             policyName,
-            policyDocument: policy
         };
-        await this._iot.createPolicy(createPolicyParams).promise();
+
+        let policyExists = false;
+
+        try {
+            await this._iot.getPolicy(getPolicyParams).promise();
+            logger.debug(`policy ${policyName} exists`);
+            policyExists = true;
+        } catch (getPolicyError) {
+            if (getPolicyError.code === 'ResourceNotFoundException') {
+                logger.debug(`policy ${policyName} does not exists, will create`);
+                policyExists = false;
+            } else {
+                logger.error(`Error getting policy ${policyName}`);
+                throw getPolicyError;
+            }
+        }
+
+        if (!policyExists) {
+            // first create policy
+            const policy = this._clientIdEnforcementPolicyTemplate
+                .replace('${cdf:region}', this.region)
+                .replace('${cdf:accountId}', this.accountId)
+                .replace('${cdf:thingName}', thingName);
+
+            logger.debug(
+                `creating policy with params:  policyName:${policyName}, policyDocument:${JSON.stringify(
+                    policy
+                )}`
+            );
+
+            // create device specific policy and associate it with the certificate
+            const createPolicyParams: AWS.Iot.CreatePolicyRequest = {
+                policyName,
+                policyDocument: policy,
+            };
+            await this._iot.createPolicy(createPolicyParams).promise();
+        }
+
+        // attach policy
+
+        const attachPolicyParams: AWS.Iot.AttachPolicyRequest = {
+            policyName,
+            target: certificateArn,
+        };
+        await this._iot.attachPolicy(attachPolicyParams).promise();
+
+        logger.debug(
+            'things.steps.ClientIdEnforcementPolicyStepProcessor createClientIdEnforcementPolicy: exit:'
+        );
     }
-
-    // attach policy
-
-    const attachPolicyParams: AWS.Iot.AttachPolicyRequest = {
-        policyName,
-        target: certificateArn
-    };
-    await this._iot.attachPolicy(attachPolicyParams).promise();
-
-    logger.debug('things.steps.ClientIdEnforcementPolicyStepProcessor createClientIdEnforcementPolicy: exit:');
-  }
 }

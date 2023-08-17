@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { PathHelper } from '../utils/path.helper';
-import { ClientServiceBase } from './common.service';
 import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
 import { RequestHeaders } from './common.model';
+import { ClientServiceBase } from './common.service';
 import { TemplateUsage } from './fleet.model';
 
 export interface FleetService {
@@ -22,7 +22,6 @@ export interface FleetService {
 
 @injectable()
 export class FleetServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }

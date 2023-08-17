@@ -15,5 +15,5 @@ export * from './client/certificatestask.service';
 // export * from './client/certificates.models';
 export * from './client/certificates.service';
 
-export {BULKCERTS_CLIENT_TYPES} from './di/types';
-export {bulkcertsContainerModule} from './di/inversify.config';
+export { BULKCERTS_CLIENT_TYPES } from './di/types';
+export { bulkcertsContainerModule } from './di/inversify.config';

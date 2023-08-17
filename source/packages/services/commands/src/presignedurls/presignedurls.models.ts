@@ -11,25 +11,25 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface PresignedUploadRequestModel {
-	thingName:string;
-	commandId:string;
-	requestedObjectKeys:string[];
+    thingName: string;
+    commandId: string;
+    requestedObjectKeys: string[];
 }
 
 export interface PresignedDownloadRequestModel {
-	thingName:string;
-	commandId:string;
-	requestedFileAliases:string[];
+    thingName: string;
+    commandId: string;
+    requestedFileAliases: string[];
 }
 
 export interface PresignedResponseModel {
-	thingName:string;
-	commandId:string;
-	status:PresignedResponseStatusType;
-	presignedUrls?: { [key: string] : string};
+    thingName: string;
+    commandId: string;
+    status: PresignedResponseStatusType;
+    presignedUrls?: { [key: string]: string };
 }
 
 export enum PresignedResponseStatusType {
-	SUCCESS = 'SUCCESS',
-	FAILED = 'FAILED'
+    SUCCESS = 'SUCCESS',
+    FAILED = 'FAILED',
 }

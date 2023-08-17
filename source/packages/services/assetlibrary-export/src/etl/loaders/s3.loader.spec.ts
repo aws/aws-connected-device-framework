@@ -11,12 +11,12 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import AWS, { AWSError } from 'aws-sdk';
 
 import { S3Loader } from './s3.loader';
 
 describe('S3Loader', () => {
-
     let mockedS3: AWS.S3;
     let instance: S3Loader;
 
@@ -26,10 +26,10 @@ describe('S3Loader', () => {
             return mockedS3;
         };
 
-        const loadPath = '${aws.s3.export.prefix}${batch.category}/${batch.type}/dt=${dateTimeFormat(batch.timestamp, \'yyyy-LL-dd-HH-mm\')}/${batch.id}.json';
+        const loadPath =
+            "${aws.s3.export.prefix}${batch.category}/${batch.type}/dt=${dateTimeFormat(batch.timestamp, 'yyyy-LL-dd-HH-mm')}/${batch.id}.json";
 
         instance = new S3Loader(mockedS3Factory, loadPath, 'myBucket', 'assetlibrary-export/');
-
     });
 
     it('should load the batch to S3', async () => {
@@ -37,19 +37,18 @@ describe('S3Loader', () => {
             id: 'some-uuid',
             category: 'device',
             type: 'type1',
-            items: [
-                'deviceId-1',
-                'deviceId-2'
-            ],
-            timestamp: 1643230032656
+            items: ['deviceId-1', 'deviceId-2'],
+            timestamp: 1643230032656,
         };
 
         const mockS3PutObjectResponse = new MockAWSPromise<AWS.S3.Types.PutObjectOutput>();
         mockS3PutObjectResponse.response = {
-            ETag: 'some-etag'
+            ETag: 'some-etag',
         };
 
-        const mockS3PutObject = mockedS3.putObject = <any> jest.fn().mockReturnValueOnce(mockS3PutObjectResponse);
+        const mockS3PutObject = (mockedS3.putObject = <any>(
+            jest.fn().mockReturnValueOnce(mockS3PutObjectResponse)
+        ));
 
         const response = await instance.load(Batch);
 
@@ -60,18 +59,16 @@ describe('S3Loader', () => {
 
         expect(response.batchId).toEqual('some-uuid');
         expect(response.exportBucket).toEqual('myBucket');
-        expect(response.exportKey).toEqual('assetlibrary-export/device/type1/dt=2022-01-26-20-47/some-uuid.json');
+        expect(response.exportKey).toEqual(
+            'assetlibrary-export/device/type1/dt=2022-01-26-20-47/some-uuid.json'
+        );
 
         expect(mockS3PutObject.mock.calls[0][0]).toStrictEqual({
             Bucket: 'myBucket',
             Key: 'assetlibrary-export/device/type1/dt=2022-01-26-20-47/some-uuid.json',
-            Body: JSON.stringify([
-                'deviceId-1',
-                'deviceId-2'
-            ]),
+            Body: JSON.stringify(['deviceId-1', 'deviceId-2']),
             ContentType: 'application/json',
         });
-
     });
 });
 

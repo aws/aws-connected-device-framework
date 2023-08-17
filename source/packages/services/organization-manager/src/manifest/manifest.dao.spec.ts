@@ -11,54 +11,55 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import AWS = require('aws-sdk');
-import { ManifestDao } from "./manifest.dao";
+
+import AWS from 'aws-sdk';
+import { ManifestDao } from './manifest.dao';
 
 describe('Templates Dao', () => {
-
     let mockedDynamoDb: AWS.DynamoDB.DocumentClient;
     let instance: ManifestDao;
 
     beforeEach(() => {
         mockedDynamoDb = new AWS.DynamoDB.DocumentClient();
-        instance = new ManifestDao('fakeAccountsTable', () => mockedDynamoDb)
-    })
+        instance = new ManifestDao('fakeAccountsTable', () => mockedDynamoDb);
+    });
 
     it('getAccountsRegionsByOu: happy path', async () => {
         mockedDynamoDb.query = jest.fn().mockReturnValueOnce({
-            promise: () => Promise.resolve({
-                Items: [
-                    {
-                        pk: 'OU:wl-development-tenant',
-                        sk: 'RG:cdf-test:ap-southeast-1',
-                        accountId: 'cdf-test'
-                    },
-                    {
-                        pk: 'OU:wl-development-tenant',
-                        sk: 'RG:cdf-test:us-west-2',
-                        accountId: 'cdf-test'
-                    },
-                    {
-                        pk: 'OU:wl-development-tenant',
-                        sk: 'RG:cdf-test:us-west-1',
-                        accountId: 'cdf-test'
-                    },
-                    {
-                        pk: 'OU:wl-development-tenant',
-                        sk: 'RG:cdf-two:ap-southeast-1',
-                        accountId: 'cdf-two'
-                    },
-                    {
-                        pk: 'OU:wl-development-tenant',
-                        sk: 'RG:cdf-two:us-west-2',
-                        accountId: 'cdf-two'
-                    }
-                ]
-            })
-        })
-        const result = await instance.getRegionAccountForOu("fakeOuName");
-        expect(result['ap-southeast-1'].accounts).toEqual(['cdf-test', 'cdf-two'])
-        expect(result['us-west-2'].accounts).toEqual(['cdf-test', 'cdf-two'])
-        expect(result['us-west-1'].accounts).toEqual(['cdf-test'])
-    })
-})
+            promise: () =>
+                Promise.resolve({
+                    Items: [
+                        {
+                            pk: 'OU:wl-development-tenant',
+                            sk: 'RG:cdf-test:ap-southeast-1',
+                            accountId: 'cdf-test',
+                        },
+                        {
+                            pk: 'OU:wl-development-tenant',
+                            sk: 'RG:cdf-test:us-west-2',
+                            accountId: 'cdf-test',
+                        },
+                        {
+                            pk: 'OU:wl-development-tenant',
+                            sk: 'RG:cdf-test:us-west-1',
+                            accountId: 'cdf-test',
+                        },
+                        {
+                            pk: 'OU:wl-development-tenant',
+                            sk: 'RG:cdf-two:ap-southeast-1',
+                            accountId: 'cdf-two',
+                        },
+                        {
+                            pk: 'OU:wl-development-tenant',
+                            sk: 'RG:cdf-two:us-west-2',
+                            accountId: 'cdf-two',
+                        },
+                    ],
+                }),
+        });
+        const result = await instance.getRegionAccountForOu('fakeOuName');
+        expect(result['ap-southeast-1'].accounts).toEqual(['cdf-test', 'cdf-two']);
+        expect(result['us-west-2'].accounts).toEqual(['cdf-test', 'cdf-two']);
+        expect(result['us-west-1'].accounts).toEqual(['cdf-test']);
+    });
+});

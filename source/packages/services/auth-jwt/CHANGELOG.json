@@ -1,9 +1,24 @@
 {
-  "name": "@cdf/auth-jwt",
+  "name": "@awssolutions/cdf-auth-jwt",
   "entries": [
     {
+      "version": "0.0.0",
+      "tag": "@awssolutions/cdf-auth-jwt_v0.0.0",
+      "date": "Tue, 15 Aug 2023 18:35:38 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Dependency @awssolutions/cdf-config-inject version bump from workspace:^2.3.0 to workspace:^2.4.0."
+          },
+          {
+            "comment": "Dependency @awssolutions/cdf-errors version bump from workspace:^2.3.0 to workspace:^2.4.0."
+          }
+        ]
+      }
+    },
+    {
       "version": "3.0.1",
-      "tag": "@cdf/auth-jwt_v3.0.1",
+      "tag": "@awssolutions/auth-jwt_v3.0.1",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",
       "comments": {
         "patch": [
@@ -13,14 +28,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^4.0.1` to `^4.0.2`"
+            "comment": "Updating dependency \"@awssolutions/config-inject\" from `^4.0.1` to `^4.0.2`"
           }
         ]
       }
     },
     {
       "version": "3.0.0",
-      "tag": "@cdf/auth-jwt_v3.0.0",
+      "tag": "@awssolutions/auth-jwt_v3.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",
       "comments": {
         "major": [
@@ -30,17 +45,17 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/errors\" from `^3.0.0` to `^4.0.0`"
           },
           {
-            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+            "comment": "Updating dependency \"@awssolutions/config-inject\" from `^3.0.0` to `^4.0.0`"
           }
         ]
       }
     },
     {
       "version": "2.0.3",
-      "tag": "@cdf/auth-jwt_v2.0.3",
+      "tag": "@awssolutions/auth-jwt_v2.0.3",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",
       "comments": {
         "patch": [
@@ -52,13 +67,13 @@
     },
     {
       "version": "2.0.2",
-      "tag": "@cdf/auth-jwt_v2.0.2",
+      "tag": "@awssolutions/auth-jwt_v2.0.2",
       "date": "Wed, 11 Aug 2021 01:26:49 GMT",
       "comments": {}
     },
     {
       "version": "5.1.0",
-      "tag": "@cdf/bulkcerts_v5.1.0",
+      "tag": "@awssolutions/bulkcerts_v5.1.0",
       "date": "Thu, 29 Jul 2021 00:16:37 GMT",
       "comments": {
         "minor": [
@@ -68,14 +83,14 @@
         ],
         "dependency": [
           {
-            "comment": "Updating dependency \"@cdf/express-middleware\" from `^2.0.0` to `^2.1.0`"
+            "comment": "Updating dependency \"@awssolutions/express-middleware\" from `^2.0.0` to `^2.1.0`"
           }
         ]
       }
     },
     {
       "version": "5.0.5",
-      "tag": "@cdf/bulkcerts_v5.0.5",
+      "tag": "@awssolutions/bulkcerts_v5.0.5",
       "date": "Wed, 21 Jul 2021 16:46:57 GMT",
       "comments": {
         "patch": [

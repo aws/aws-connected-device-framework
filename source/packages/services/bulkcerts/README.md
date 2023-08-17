@@ -4,7 +4,7 @@
 
 The bulk certs module allows for the creation of large batches of X.509 certificates, and optionally register them with AWS IoT.
 
-When a batch is requested, a task is created to track the creation of certificates.  Upon task creation, the creation call is returned immediately to the caller.  The task itself is then split in smaller chunks to allow for quick processing.  Once all chunks are complete, the overall task is complete, and the certificates can be downloaded as a single zip file.
+When a batch is requested, a task is created to track the creation of certificates. Upon task creation, the creation call is returned immediately to the caller. The task itself is then split in smaller chunks to allow for quick processing. Once all chunks are complete, the overall task is complete, and the certificates can be downloaded as a single zip file.
 
 ## Pre-Requisites
 
@@ -13,10 +13,10 @@ When a batch is requested, a task is created to track the creation of certificat
 When creating device certificates they can be signed by the Amazon Root certificate authority (CA), or alternatively signed by other root CAs. It is recommended that other root CAs are used due to:
 
 - currently all device certificates created using the Amazon Root CA are long-lived certificates. With other root CAs you have the opportunity to specify device expiration dates
-- if you need devices to self-register themselves using  [just-in-time registration](https://aws.amazon.com/blogs/iot/just-in-time-registration-of-device-certificates-on-aws-iot/) (JITR) or [just-in-time provisioning](https://docs.aws.amazon.com/iot/latest/developerguide/jit-provisioning.html) (JITP) type provisioning flows, then you must register a root CA
+- if you need devices to self-register themselves using [just-in-time registration](https://aws.amazon.com/blogs/iot/just-in-time-registration-of-device-certificates-on-aws-iot/) (JITR) or [just-in-time provisioning](https://docs.aws.amazon.com/iot/latest/developerguide/jit-provisioning.html) (JITP) type provisioning flows, then you must register a root CA
 - a recommended best practice is to use different CAs per device suppliers. Then in the event of a CA being compromised, just that single supplier can be notified and have a new CA issued for use with the other suppliers remaining unaffected
 
-The following outlines the steps for registering other root CAs. 
+The following outlines the steps for registering other root CAs.
 
 > Note that a CA may be registered with just one account within a region. If your devices need the ability to connect to multiple accounts within a region, such as having the same device certificate signed by a single CA able to connect to different development, testing, and production accounts, then use the [_CDF provisioning module_](../provisioning/README.md) to auto-create the device certificate as part of the provisioning flow which supports [multi-account registration](https://docs.aws.amazon.com/iot/latest/developerguide/x509-client-certs.html#multiple-account-cert).
 
@@ -44,12 +44,13 @@ aws ssm put-parameter --type SecureString /
  --value file://<PRIVATE KEY LOCATION> --overwrite
 ```
 
-
 ### [Optional] Creating certificates with ACMPCA
-Customers who need additional security can use Private CAs in AWS Certificate Manager (ACMPCA) to manage the generation of their device certificates. 
+
+Customers who need additional security can use Private CAs in AWS Certificate Manager (ACMPCA) to manage the generation of their device certificates.
 Additional resources can be found [here](https://docs.aws.amazon.com/acm-pca/latest/userguide/PcaWelcome.html).
 
 #### 1/ Create a private CA in AWS ACM
+
 if you need to create a private CA, refer to [PCA Planning Documentation](https://docs.aws.amazon.com/acm-pca/latest/userguide/PcaPlanning.html).
 Once you have created your private CA go to the next step and use its arn as value for the supplier.
 
@@ -89,6 +90,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
   "quantity": 2
 }
 ```
+
 ##### Response
 
 ```sh
@@ -101,7 +103,6 @@ x-taskid: jshs783h
   "status": "pending"
 }
 ```
-
 
 ### 1b/ Request a batch of certificates, setting certificate properties
 
@@ -119,6 +120,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
   }
 }
 ```
+
 ##### Response
 
 ```sh
@@ -134,7 +136,7 @@ x-taskid: jshs783h
 
 ### 1c/ Request a batch of certificates, auto-generating the certificate common name (incremental method)
 
-The following example  will create 100 sequential device certificates with a `commonName` starting from \``templateFoo::`\``AB1CD79EF` and ending with \``templateFoo::`\``AB1CD79F54`. This `commonName` format of \``<proviioningTemplateName>::`\``<deviceId>` is useful in JITR provisioning flows where devices are able to self register based on information presented in the certificate. Note that the count provided in the `commonName` field `${incement(100)}` will override the quantity value
+The following example will create 100 sequential device certificates with a `commonName` starting from \``templateFoo::`\``AB1CD79EF` and ending with \``templateFoo::`\``AB1CD79F54`. This `commonName` format of \``<proviioningTemplateName>::`\``<deviceId>` is useful in JITR provisioning flows where devices are able to self register based on information presented in the certificate. Note that the count provided in the `commonName` field `${incement(100)}` will override the quantity value
 
 ##### Request
 
@@ -150,6 +152,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
   }
 }
 ```
+
 ##### Response
 
 ```sh
@@ -165,7 +168,7 @@ x-taskid: jshs783h
 
 ### 1d/ Request a batch of certificates, auto-generating the certificate common name (list method)
 
-Th following example  will create 3 device certificates with  `commonNames` of \``templateFoo::`\``AB1CD79EF1`, \``templateFoo::`\``AB1CD79EF2` and \``templateFoo::`\``AB1CD79EF3`. Note that the number of elements in the `commonNameList` array would override the quantity value
+Th following example will create 3 device certificates with `commonNames` of \``templateFoo::`\``AB1CD79EF1`, \``templateFoo::`\``AB1CD79EF2` and \``templateFoo::`\``AB1CD79EF3`. Note that the number of elements in the `commonNameList` array would override the quantity value
 
 ##### Request
 
@@ -182,6 +185,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
   }
 }
 ```
+
 ##### Response
 
 ```sh
@@ -197,7 +201,7 @@ x-taskid: jshs783h
 
 ### 1e/ Request a batch of certificates, auto-generating the certificate common name (static method)
 
-The following example  will create 100 device certificates with a static `commonName` of \``templateFoo::`\``AB1CD79EF`.
+The following example will create 100 device certificates with a static `commonName` of \``templateFoo::`\``AB1CD79EF`.
 
 ##### Request
 
@@ -210,9 +214,10 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
   "quantity": 100,
   "certInfo": {
     "commonName": "`templateFoo::`AB1CD79EF${static}"
-  }   
+  }
 }
 ```
+
 ##### Response
 
 ```sh
@@ -237,6 +242,7 @@ GET /certificates/<taskId>
 Accept: application/vnd.aws-cdf-v1.0+json
 Content-Type: application/vnd.aws-cdf-v1.0+json
 ```
+
 ##### Response
 
 ```sh
@@ -263,6 +269,7 @@ GET /certificates/<taskId>
 Accept: application/vnd.aws-cdf-v1.0+json
 Content-Type: application/zip
 ```
+
 ##### Response
 
 ```sh
@@ -280,6 +287,7 @@ GET /certificates/<taskId>?downloadtype=signedUrl
 Accept: application/vnd.aws-cdf-v1.0+json
 Content-Type: application/vnd.aws-cdf-v1.0+json
 ```
+
 ##### Response
 
 ```sh

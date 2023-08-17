@@ -12,24 +12,32 @@
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
 
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
-import {CustomResourceEvent} from './customResource.model';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
-import { CustomResource } from './customResource';
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@awssolutions/cdf-lambda-invoke';
 import ow from 'ow';
+import { CustomResource } from './customResource';
+import { CustomResourceEvent } from './customResource.model';
 
 @injectable()
 export class CommandsTemplateCustomResource implements CustomResource {
-
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {}
 
-    protected headers:{[key:string]:string};
+    protected headers: { [key: string]: string };
 
-    public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`CommandsTemplateCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `CommandsTemplateCustomResource: create: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent
+            )}`
+        );
 
         const functionName = customResourceEvent.ResourceProperties.FunctionName;
         const contentType = customResourceEvent.ResourceProperties.ContentType;
@@ -53,7 +61,7 @@ export class CommandsTemplateCustomResource implements CustomResource {
         let exists;
         try {
             const response = await this.lambdaInvoker.invoke(functionName, getEvent);
-            exists = (response.status === 200);
+            exists = response.status === 200;
         } catch (err) {
             if (err.status === 404) {
                 exists = false;
@@ -65,40 +73,48 @@ export class CommandsTemplateCustomResource implements CustomResource {
         // if it does not exist, create it
         let event;
         if (!exists) {
-           event = new LambdaApiGatewayEventBuilder()
+            event = new LambdaApiGatewayEventBuilder()
                 .setMethod('POST')
                 .setPath('/templates')
                 .setHeaders(headers)
                 .setBody(body);
         }
         const res = await this.lambdaInvoker.invoke(functionName, event);
-        logger.debug(`CommandsTemplateCustomResource: create: create/update res: ${JSON.stringify(res)}`);
+        logger.debug(
+            `CommandsTemplateCustomResource: create: create/update res: ${JSON.stringify(res)}`
+        );
 
         return res;
-
     }
 
-    public async update(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`CommandsTemplateCustomResource: update: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `CommandsTemplateCustomResource: update: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent
+            )}`
+        );
         // no update
         return {};
     }
 
-    public async delete(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`CommandsTemplateCustomResource: delete: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+    public async delete(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        logger.debug(
+            `CommandsTemplateCustomResource: delete: in: customResourceEvent: ${JSON.stringify(
+                customResourceEvent
+            )}`
+        );
         // no delete
         return {};
     }
 
-    protected getHeaders(contentType:string): {[key:string]:string} {
-        if (this.headers===undefined) {
+    protected getHeaders(contentType: string): { [key: string]: string } {
+        if (this.headers === undefined) {
             const h = {
-                'Accept': contentType,
-                'Content-Type': contentType
+                Accept: contentType,
+                'Content-Type': contentType,
             };
-            this.headers = {...h};
+            this.headers = { ...h };
         }
         return this.headers;
     }
-
 }

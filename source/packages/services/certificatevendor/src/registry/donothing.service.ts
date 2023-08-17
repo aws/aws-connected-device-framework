@@ -10,28 +10,26 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { injectable } from 'inversify';
-import {logger} from '../utils/logger';
 import { RegistryManager } from './registry.interfaces';
 
 @injectable()
 export class DoNothingRegistryManager implements RegistryManager {
-
-    public async isWhitelisted(deviceId:string) : Promise<boolean> {
+    public async isWhitelisted(deviceId: string): Promise<boolean> {
         logger.debug(`donothing.service isWhitelisted: in: deviceId:${deviceId}`);
 
-        const whitelisted=true;
+        const whitelisted = true;
 
         logger.debug(`donothing.service isWhitelisted: exit:${whitelisted}`);
         return whitelisted;
     }
 
-    public async updateAssetStatus(deviceId:string) : Promise<void> {
+    public async updateAssetStatus(deviceId: string): Promise<void> {
         logger.debug(`donothing.service updateAssetStatus: in: deviceId:${deviceId}`);
 
         // intentionally doing nothing
 
         logger.debug('donothing.service updateAssetStatus: exit:');
     }
-
 }

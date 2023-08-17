@@ -17,38 +17,64 @@
 
 /* tslint:disable:no-unused-variable member-ordering */
 
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-
 import { CertificateBatchTaskWithChunks, RequestHeaders } from './certificates.models';
 import { CertificatesService, CertificatesServiceBase } from './certificates.service';
 
 @injectable()
-export class CertificatesApigwService extends CertificatesServiceBase implements CertificatesService {
-
-    private readonly baseUrl:string;
+export class CertificatesApigwService
+    extends CertificatesServiceBase
+    implements CertificatesService
+{
+    private readonly baseUrl: string;
 
     public constructor() {
         super();
         this.baseUrl = process.env.BULKCERTS_BASEURL;
     }
 
-    async getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string[]|Buffer> {
+    async getCertificates(
+        taskId: string,
+        downloadType: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string[] | Buffer> {
         ow(taskId, ow.string.nonEmpty);
 
-        const res = await request.get(`${this.baseUrl}${super.getCertificatesRelativeUrl(taskId)}?downloadType=${downloadType}`)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(
+                `${this.baseUrl}${super.getCertificatesRelativeUrl(
+                    taskId
+                )}?downloadType=${downloadType}`
+            )
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async getCertificatesTask(taskId:string, additionalHeaders?: RequestHeaders): Promise<CertificateBatchTaskWithChunks> {
+    async getCertificatesTask(
+        taskId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<CertificateBatchTaskWithChunks> {
         ow(taskId, ow.string.nonEmpty);
 
-        const res = await request.get(`${this.baseUrl}${super.getCertificatesTaskRelativeUrl(taskId)}`)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(`${this.baseUrl}${super.getCertificatesTaskRelativeUrl(taskId)}`)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 }

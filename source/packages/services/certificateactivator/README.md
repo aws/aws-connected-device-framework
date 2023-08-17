@@ -3,6 +3,7 @@
 ## Introduction
 
 The CDF Certificate Activator module is an opinionated reference implementation of how to integrate a Just In Time Registration (JITR) flow with CDF. The flow of events is:
+
 - JITR registration flow triggers this module upon new `PENDING_ACTIVATION`.
 - `deviceId` is extracted from the certificate common name.
 - `certificateId` is checked against a certification revocation list. If invalid, it is then revoked.

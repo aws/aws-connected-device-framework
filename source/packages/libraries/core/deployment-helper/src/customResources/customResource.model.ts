@@ -18,6 +18,5 @@ export interface CustomResourceEvent {
     RequestId: string;
     LogicalResourceId: string;
     ResourceType: string;
-    ResourceProperties: {[key:string]:string};
-
+    ResourceProperties: { [key: string]: string };
 }

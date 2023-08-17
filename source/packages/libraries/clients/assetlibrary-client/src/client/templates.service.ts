@@ -10,29 +10,47 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {CategoryEnum, StatusEnum, TypeResource, TypeResourceList} from './templates.model';
-import {RequestHeaders} from './common.model';
-import {ClientServiceBase} from './common.service';
-import {PathHelper} from '../utils/path.helper';
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
+import { RequestHeaders } from './common.model';
+import { ClientServiceBase } from './common.service';
+import { CategoryEnum, StatusEnum, TypeResource, TypeResourceList } from './templates.model';
 
 export interface TemplatesService {
-    getTemplate(category: CategoryEnum, templateId: string, status: StatusEnum, additionalHeaders?: RequestHeaders): Promise<TypeResource>;
+    getTemplate(
+        category: CategoryEnum,
+        templateId: string,
+        status: StatusEnum,
+        additionalHeaders?: RequestHeaders
+    ): Promise<TypeResource>;
 
     createTemplate(resource: TypeResource, additionalHeaders?: RequestHeaders): Promise<void>;
 
     updateTemplate(resource: TypeResource, additionalHeaders?: RequestHeaders): Promise<void>;
 
-    publishTemplate(category: CategoryEnum, templateId: string, additionalHeaders?: RequestHeaders): Promise<void>;
+    publishTemplate(
+        category: CategoryEnum,
+        templateId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void>;
 
-    deleteTemplate(category: CategoryEnum, templateId: string, additionalHeaders?: RequestHeaders): Promise<void>;
+    deleteTemplate(
+        category: CategoryEnum,
+        templateId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void>;
 
-    listTemplates(category: CategoryEnum, status?: string, offset?: number, count?: number, additionalHeaders?: RequestHeaders): Promise<TypeResourceList>;
+    listTemplates(
+        category: CategoryEnum,
+        status?: string,
+        offset?: number,
+        count?: number,
+        additionalHeaders?: RequestHeaders
+    ): Promise<TypeResourceList>;
 }
 
 @injectable()
 export class TemplatesServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }

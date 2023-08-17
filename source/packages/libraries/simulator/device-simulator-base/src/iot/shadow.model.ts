@@ -1,4 +1,4 @@
-export interface DeviceShadow<S,T,U> {
+export interface DeviceShadow<S, T, U> {
     /**
      *  Updates affect only the fields specified. Typically, you'll use either the desired or the reported property, but not both in the same request.
      */
@@ -24,14 +24,14 @@ export interface DeviceShadow<S,T,U> {
      */
     metadata?: {
         desired: {
-            [attribute: string] : {
+            [attribute: string]: {
                 timestamp: number;
-            }
+            };
         };
         reported: {
-            [attribute: string] : {
+            [attribute: string]: {
                 timestamp: number;
-            }
+            };
         };
     };
 
@@ -54,9 +54,9 @@ export interface DeviceShadow<S,T,U> {
 export interface DeviceDelta<U> {
     state: U;
     metadata?: {
-        [attribute: string] : {
+        [attribute: string]: {
             timestamp: number;
-        }
+        };
     };
     timestamp?: number;
     clientToken?: string;

@@ -68,8 +68,5 @@ Feature: Command & Control - Shadows
       | $.replies.[2].action     | reply                                                                  |
       | $.replies.[2].payload    | {"response":"second"}                                                  |
 
-
   @teardown_commandandcontrol_shadows
   Scenario: Teardown
-    When I pause for 5000ms
-    Then command-and-control command with operation "cdf-integration-test-stats" does not exist

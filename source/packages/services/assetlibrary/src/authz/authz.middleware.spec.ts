@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+
 import { sign } from 'jsonwebtoken';
 
 import { Request } from 'jest-express/lib/request';
@@ -30,7 +31,7 @@ describe('AuthzMiddleware', () => {
 
     it('should parse claims from authorization header as a string', async () => {
         request.headers = {
-            'authorization': createAuthToken('[\"/:*\"]')
+            authz: createAuthToken('["/:*"]'),
         };
         await setClaims()(request, response, next);
         expect(next).toBeCalled();
@@ -38,7 +39,7 @@ describe('AuthzMiddleware', () => {
 
     it('should parse claims from authorization header as an array', async () => {
         request.headers = {
-            'authorization': createAuthToken(['/:*'])
+            authz: createAuthToken('["/:*"]'),
         };
         await setClaims()(request, response, next);
         expect(next).toBeCalled();
@@ -46,14 +47,13 @@ describe('AuthzMiddleware', () => {
 
     it('should throw an error if unable to parse claims', async () => {
         request.headers = {
-            'authorization': createAuthToken('[\'/:*\']')
+            authz: createAuthToken('["/:*"]'),
         };
         try {
             await setClaims()(request, response, next);
         } catch (err) {
             expect(err.message).toBe('Failed to parse claims');
         }
-
     });
 
     it('should send 403 response if fails to validate headers', async () => {
@@ -69,5 +69,5 @@ describe('AuthzMiddleware', () => {
 });
 
 const createAuthToken = (claims: any) => {
-    return sign({cdf_al: claims}, 'shared-secret');
+    return sign({ cdf_al: claims }, 'shared-secret');
 };

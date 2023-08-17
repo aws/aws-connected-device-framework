@@ -11,12 +11,26 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { expect } from 'chai';
-import { setDefaultTimeout, Given, When, DataTable, Then} from '@cucumber/cucumber';
-import { AUTHORIZATION_TOKEN, RESPONSE_STATUS, validateExpectedAttributes} from '../common/common.steps';
-import {container} from '../../di/inversify.config';
-import { EventsourcesService, NOTIFICATIONS_CLIENT_TYPES } from '@cdf/notifications-client/dist';
-import { EventSourceDetailResource } from '@cdf/notifications-client/dist/client/eventsources.model';
-import { createEventSource, getAdditionalHeaders, EVENTSOURCE_NAME, EVENTSOURCE_DETAILS, EVENTSOURCE_ID, getEventSourceIdFromName } from './notifications.utils';
+import { setDefaultTimeout, Given, When, DataTable, Then } from '@cucumber/cucumber';
+import {
+    AUTHORIZATION_TOKEN,
+    RESPONSE_STATUS,
+    validateExpectedAttributes,
+} from '../common/common.steps';
+import { container } from '../../di/inversify.config';
+import {
+    EventsourcesService,
+    NOTIFICATIONS_CLIENT_TYPES,
+} from '@awssolutions/cdf-notifications-client/dist';
+import { EventSourceDetailResource } from '@awssolutions/cdf-notifications-client/dist/client/eventsources.model';
+import {
+    createEventSource,
+    getAdditionalHeaders,
+    EVENTSOURCE_NAME,
+    EVENTSOURCE_DETAILS,
+    EVENTSOURCE_ID,
+    getEventSourceIdFromName,
+} from './notifications.utils';
 
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
@@ -29,33 +43,39 @@ import { createEventSource, getAdditionalHeaders, EVENTSOURCE_NAME, EVENTSOURCE_
 
 setDefaultTimeout(10 * 1000);
 
-const eventsourcesService:EventsourcesService = container.get(NOTIFICATIONS_CLIENT_TYPES.EventSourcesService);
+const eventsourcesService: EventsourcesService = container.get(
+    NOTIFICATIONS_CLIENT_TYPES.EventSourcesService
+);
 
-Given('I am using eventsource {string}', async function (name:string) {
+Given('I am using eventsource {string}', async function (name: string) {
     // logger.debug(`I am using eventsource '${name}'`);
-    this[EVENTSOURCE_NAME]=name;
+    this[EVENTSOURCE_NAME] = name;
 });
 
-Given('eventsource {string} does not exist', async function (name:string) {
+Given('eventsource {string} does not exist', async function (name: string) {
     // logger.debug(`eventsource '${name}' does not exist`);
-    const existing = await eventsourcesService.listEventSources(getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
-    const matches = existing?.results?.filter(r=> r.name===name).length>0 ?? false;
+    const existing = await eventsourcesService.listEventSources(
+        getAdditionalHeaders(this[AUTHORIZATION_TOKEN])
+    );
+    const matches = existing?.results?.filter((r) => r.name === name).length > 0 ?? false;
     expect(matches).to.be.false;
 });
 
-Given('eventsource {string} exists', async function (name:string) {
-    const existing = await eventsourcesService.listEventSources(getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
-    const matches = existing?.results?.filter(r=> r.name===name).length>0 ?? false;
+Given('eventsource {string} exists', async function (name: string) {
+    const existing = await eventsourcesService.listEventSources(
+        getAdditionalHeaders(this[AUTHORIZATION_TOKEN])
+    );
+    const matches = existing?.results?.filter((r) => r.name === name).length > 0 ?? false;
     expect(matches).to.be.true;
 });
 
-When('I create an eventsource with attributes', async function (data:DataTable) {
-    this[EVENTSOURCE_ID]=null;
-    this[RESPONSE_STATUS]=null;
+When('I create an eventsource with attributes', async function (data: DataTable) {
+    this[EVENTSOURCE_ID] = null;
+    this[RESPONSE_STATUS] = null;
     try {
-        this[EVENTSOURCE_ID]=await createEventSource(eventsourcesService, this, data);
+        this[EVENTSOURCE_ID] = await createEventSource(eventsourcesService, this, data);
     } catch (err) {
-        this[RESPONSE_STATUS]=err.status;
+        this[RESPONSE_STATUS] = err.status;
     }
 });
 
@@ -68,21 +88,27 @@ When('I delete eventsource', async function () {
     // logger.debug(`\t id: ${id}`);
     expect(id, 'id').to.not.be.undefined;
 
-    await eventsourcesService.deleteEventSource(id, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
+    await eventsourcesService.deleteEventSource(
+        id,
+        getAdditionalHeaders(this[AUTHORIZATION_TOKEN])
+    );
 });
 
-Then('last eventsource exists with attributes', async function (data:DataTable) {
-    this[RESPONSE_STATUS]=null;
-    this[EVENTSOURCE_DETAILS]=null;
+Then('last eventsource exists with attributes', async function (data: DataTable) {
+    this[RESPONSE_STATUS] = null;
+    this[EVENTSOURCE_DETAILS] = null;
     const id = this[EVENTSOURCE_ID];
 
-    let r:EventSourceDetailResource;
+    let r: EventSourceDetailResource;
     try {
-        r = await eventsourcesService.getEventSource(id, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
+        r = await eventsourcesService.getEventSource(
+            id,
+            getAdditionalHeaders(this[AUTHORIZATION_TOKEN])
+        );
         expect(id).equals(r.id);
-        this[EVENTSOURCE_DETAILS]=r;
+        this[EVENTSOURCE_DETAILS] = r;
     } catch (err) {
-        this[RESPONSE_STATUS]=err.status;
+        this[RESPONSE_STATUS] = err.status;
     }
 
     validateExpectedAttributes(r, data);

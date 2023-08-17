@@ -1,6 +1,11 @@
-# Change Log - @cdf/auth-devicecert
+# Change Log - @awssolutions/cdf-auth-devicecert
 
-This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Aug 2023 18:35:38 GMT and should not be manually modified.
+
+## 0.0.0
+Tue, 15 Aug 2023 18:35:38 GMT
+
+_Version update only_
 
 ## 5.0.2
 Tue, 21 Jun 2022 00:47:55 GMT

@@ -10,24 +10,25 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
+import { injectable } from 'inversify';
+import ow from 'ow';
+import * as request from 'superagent';
 import {
     BulkProvisionThingsRequest,
     BulkProvisionThingsResponse,
     CertificateStatus,
     ProvisionThingRequest,
-    ProvisionThingResponse, RequestHeaders,
+    ProvisionThingResponse,
+    RequestHeaders,
     Thing,
 } from './things.model';
-
-import {injectable} from 'inversify';
-import ow from 'ow';
-import * as request from 'superagent';
-import {ThingsService, ThingsServiceBase} from './things.service';
+import { ThingsService, ThingsServiceBase } from './things.service';
 
 @injectable()
 export class ThingsApigwService extends ThingsServiceBase implements ThingsService {
-
-    private readonly baseUrl:string;
+    private readonly baseUrl: string;
 
     public constructor() {
         super();
@@ -39,54 +40,104 @@ export class ThingsApigwService extends ThingsServiceBase implements ThingsServi
      *
      * @param provisioningTemplateId Provisioning Template
      */
-    async provisionThing(provisioningRequest: ProvisionThingRequest, additionalHeaders?:RequestHeaders): Promise<ProvisionThingResponse> {
+    async provisionThing(
+        provisioningRequest: ProvisionThingRequest,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ProvisionThingResponse> {
         ow(provisioningRequest.provisioningTemplateId, ow.string.nonEmpty);
 
-        const res = await request.post(`${this.baseUrl}${super.thingsRelativeUrl()}`)
+        const url = `${this.baseUrl}${super.thingsRelativeUrl()}`;
+        return await request
+            .post(url)
+            .send(provisioningRequest)
             .set(super.buildHeaders(additionalHeaders))
-            .send(provisioningRequest);
-
-        return res.body;
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async getThing(thingName: string, additionalHeaders?:RequestHeaders): Promise<Thing> {
+    async getThing(thingName: string, additionalHeaders?: RequestHeaders): Promise<Thing> {
         ow(thingName, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.thingRelativeUrl(thingName)}`;
-        const res = await request.get(url).set(super.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(url)
+            .set(super.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async deleteThing(thingName: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async deleteThing(thingName: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(thingName, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.thingRelativeUrl(thingName)}`;
-        await request.delete(url).set(super.buildHeaders(additionalHeaders));
+        return await request
+            .delete(url)
+            .set(super.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async bulkProvisionThings(req: BulkProvisionThingsRequest, additionalHeaders?:RequestHeaders): Promise<BulkProvisionThingsResponse> {
+    async bulkProvisionThings(
+        req: BulkProvisionThingsRequest,
+        additionalHeaders?: RequestHeaders
+    ): Promise<BulkProvisionThingsResponse> {
         ow(req, ow.object.nonEmpty);
         ow(req.provisioningTemplateId, ow.string.nonEmpty);
         ow(req.parameters, ow.array.nonEmpty.minLength(1));
 
-        const res = await request.post(`${this.baseUrl}${super.bulkThingsRelativeUrl()}`)
+        const url = `${this.baseUrl}${super.bulkThingsRelativeUrl()}`;
+        return await request
+            .post(url)
+            .send(req)
             .set(super.buildHeaders(additionalHeaders))
-            .send(req);
-
-        return res.body;
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async getBulkProvisionTask(taskId: string, additionalHeaders?:RequestHeaders): Promise<BulkProvisionThingsResponse> {
+    async getBulkProvisionTask(
+        taskId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<BulkProvisionThingsResponse> {
         ow(taskId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.bulkThingsTaskRelativeUrl(taskId)}`;
-        const res = await request.get(url).set(super.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(url)
+            .set(super.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async updateThingCertificates(thingName: string, certificateStatus: CertificateStatus, additionalHeaders?:RequestHeaders): Promise<void> {
+    async updateThingCertificates(
+        thingName: string,
+        certificateStatus: CertificateStatus,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(thingName, ow.string.nonEmpty);
         ow(certificateStatus, ow.string.nonEmpty);
 
@@ -94,8 +145,16 @@ export class ThingsApigwService extends ThingsServiceBase implements ThingsServi
         const body = {
             certificateStatus,
         };
-        await request.patch(url)
+        return await request
+            .patch(url)
+            .send(body)
             .set(super.buildHeaders(additionalHeaders))
-            .send(body);
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 }

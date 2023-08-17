@@ -19,12 +19,15 @@ import { generate } from 'shortid';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
 import { SimulationsDao } from './simulations.dao';
-import { CreateSimulationRequest, SimulationStatus, SimulationTaskOverride, TemplateProperties } from './simulations.model';
-
+import {
+    CreateSimulationRequest,
+    SimulationStatus,
+    SimulationTaskOverride,
+    TemplateProperties,
+} from './simulations.model';
 
 @injectable()
 export class SimulationsService {
-
     private readonly _sns: AWS.SNS;
     private readonly _s3: AWS.S3;
     private readonly _s3Bucket: string;
@@ -33,7 +36,8 @@ export class SimulationsService {
     public constructor(
         @inject(TYPES.SimulationsDao) private _dao: SimulationsDao,
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
-        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS) {
+        @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS
+    ) {
         this._sns = snsFactory();
         this._s3 = s3Factory();
         this._s3Bucket = process.env.AWS_S3_BUCKET;
@@ -51,8 +55,9 @@ export class SimulationsService {
         ow(simulation.deviceCount, ow.number.greaterThan(0));
 
         if (taskOverrides?.taskRoleArn) {
-            const [_, roleName] = taskOverrides?.taskRoleArn.split('/')
-            ow(roleName, ow.string.startsWith('cdf-simulation-launcher'))
+            // eslint-disable-next-line no-unsafe-optional-chaining
+            const [_, roleName] = taskOverrides?.taskRoleArn.split('/');
+            ow(roleName, ow.string.startsWith('cdf-simulation-launcher'));
         }
 
         simulation.id = generate();
@@ -78,42 +83,43 @@ export class SimulationsService {
 
             // copy the test plan
 
-            await this._s3.copyObject({
-                CopySource: `/${this._s3Bucket}/${task.plan}`,
-                Bucket: this._s3Bucket,
-                Key: simulationPlanKey
-            }).promise();
+            await this._s3
+                .copyObject({
+                    CopySource: `/${this._s3Bucket}/${task.plan}`,
+                    Bucket: this._s3Bucket,
+                    Key: simulationPlanKey,
+                })
+                .promise();
 
             // prepare the config for each instance
             const properties: TemplateProperties = {
                 config: {
                     aws: {
                         iot: {
-                            host: process.env.AWS_IOT_HOST
+                            host: process.env.AWS_IOT_HOST,
                         },
                         region: process.env.AWS_REGION,
                         s3: {
                             bucket: process.env.AWS_S3_BUCKET,
-                            prefix: process.env.AWS_S3_PREFIX
-                        }
+                            prefix: process.env.AWS_S3_PREFIX,
+                        },
                     },
                     cdf: {
                         assetlibrary: {
                             mimetype: process.env.ASSETLIBRARY_MIMETYPE,
-                            apiFunctionName: process.env.ASSETLIBRARY_API_FUNCTION_NAME
-                        }
+                            apiFunctionName: process.env.ASSETLIBRARY_API_FUNCTION_NAME,
+                        },
                     },
                     runners: {
-                        dataDir: process.env.RUNNERS_DATADIR
-                    }
-
+                        dataDir: process.env.RUNNERS_DATADIR,
+                    },
                 },
                 simulation: simulation,
                 instance: {
                     id: 0,
                     devices: devicesPerInstance,
-                    threads: threadsPerInstance
-                }
+                    threads: threadsPerInstance,
+                },
             };
 
             const template = fs.readFileSync(process.env.TEMPLATES_PROVISIONING, 'utf8');
@@ -124,11 +130,13 @@ export class SimulationsService {
                 const propertyFile = compiledTemplate(properties);
 
                 const s3Key = `${s3RootKey}instances/${instanceId}/properties`;
-                await this._s3.putObject({
-                    Bucket: this._s3Bucket,
-                    Key: s3Key,
-                    Body: propertyFile
-                }).promise();
+                await this._s3
+                    .putObject({
+                        Bucket: this._s3Bucket,
+                        Key: s3Key,
+                        Body: propertyFile,
+                    })
+                    .promise();
             }
 
             // Launch provisioning tasks
@@ -139,11 +147,17 @@ export class SimulationsService {
 
         logger.debug(`simulations.service create: exit:${simulation.id}`);
         return simulation.id;
-
     }
 
-    public async launchRunner(simulationId: string, instances: number, s3RootKey: string, taskOverrides?: SimulationTaskOverride): Promise<void> {
-        logger.debug(`simulations.service launchRunner: in: simulationId:${simulationId}, instances:${instances}, s3RootKey:${s3RootKey}`);
+    public async launchRunner(
+        simulationId: string,
+        instances: number,
+        s3RootKey: string,
+        taskOverrides?: SimulationTaskOverride
+    ): Promise<void> {
+        logger.debug(
+            `simulations.service launchRunner: in: simulationId:${simulationId}, instances:${instances}, s3RootKey:${s3RootKey}`
+        );
 
         ow(simulationId, ow.string.nonEmpty);
         ow(instances, ow.number.greaterThan(0));
@@ -152,19 +166,20 @@ export class SimulationsService {
         const topic: string = process.env.AWS_SNS_TOPICS_LAUNCH;
 
         const msg = {
-            simulationId, instances, s3RootKey, taskOverrides
+            simulationId,
+            instances,
+            s3RootKey,
+            taskOverrides,
         };
 
         const params: AWS.SNS.Types.PublishInput = {
             Subject: 'LaunchRunner',
             Message: JSON.stringify(msg),
-            TopicArn: topic
+            TopicArn: topic,
         };
 
         logger.debug(`simulations.service launchRunner: publishing:${JSON.stringify(params)}`);
         await this._sns.publish(params).promise();
         logger.debug('simulations.service launchRunner: exit:');
-
     }
-
 }

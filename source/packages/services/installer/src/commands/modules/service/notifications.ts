@@ -10,346 +10,386 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Answers } from '../../../models/answers';
-import { ListrTask } from 'listr2';
-import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
-import { ConfigBuilder } from "../../../utils/configBuilder";
 import inquirer from 'inquirer';
-import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
-import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { customDomainPrompt } from '../../../prompts/domain.prompt';
+import { ListrTask } from 'listr2';
 import ow from 'ow';
 import path from 'path';
-import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
-import { includeOptionalModule } from '../../../utils/modules.util';
-import { getDaxInstanceTypeList } from '../../../utils/instancetypes';
+import { Answers } from '../../../models/answers';
+import { ModuleName, PostmanEnvironment, RestModule } from '../../../models/modules';
+import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
+import { customDomainPrompt } from '../../../prompts/domain.prompt';
+import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { getMonorepoRoot } from '../../../prompts/paths.prompt';
+import {
+    deleteStack,
+    getStackOutputs,
+    packageAndDeployStack,
+    packageAndUploadTemplate,
+} from '../../../utils/cloudformation.util';
+import { ConfigBuilder } from '../../../utils/configBuilder';
+import { getDaxInstanceTypeList } from '../../../utils/instancetypes';
+import { includeOptionalModule } from '../../../utils/modules.util';
 
 const DEFAULT_DAX_INSTANCE_TYPE = 'dax.t2.medium';
 export class NotificationsInstaller implements RestModule {
+    public readonly friendlyName = 'Notifications';
+    public readonly name = 'notifications';
+    public readonly localProjectDir = 'events-processor';
 
-  public readonly friendlyName = 'Notifications';
-  public readonly name = 'notifications';
-  public readonly localProjectDir = 'events-processor';
+    public readonly type = 'SERVICE';
+    public readonly dependsOnMandatory: ModuleName[] = ['apigw', 'deploymentHelper', 'kms'];
 
-  public readonly type = 'SERVICE';
-  public readonly dependsOnMandatory: ModuleName[] = [
-    'apigw',
-    'deploymentHelper',
-    'kms',
-  ];
+    public readonly dependsOnOptional: ModuleName[] = [];
+    private readonly eventsProcessorStackName: string;
+    private readonly eventsAlertStackName: string;
+    public readonly stackName: string;
 
-  public readonly dependsOnOptional: ModuleName[] = [];
-  private readonly eventsProcessorStackName: string;
-  private readonly eventsAlertStackName: string;
-  public readonly stackName: string;
-
-  constructor(environment: string) {
-    this.eventsProcessorStackName = `cdf-eventsProcessor-${environment}`
-    this.eventsAlertStackName = `cdf-eventsAlerts-${environment}`;
-    this.stackName = this.eventsProcessorStackName;
-  }
-
-  public async prompts(answers: Answers): Promise<Answers> {
-
-    delete answers.notifications?.redeploy;
-    let updatedAnswers: Answers = await inquirer.prompt([
-      redeployIfAlreadyExistsPrompt('notifications', this.eventsProcessorStackName),
-    ], answers);
-    if ((updatedAnswers.notifications?.redeploy ?? true)) {
-
-      const daxInstanceTypes = await getDaxInstanceTypeList(
-        answers.region,
-      );
-
-      updatedAnswers = await inquirer.prompt([
-        {
-          message: 'Use DAX for DynamoDB caching',
-          type: 'confirm',
-          name: 'notifications.useDax',
-          default: true,
-          askAnswered: true
-        },
-        {
-          message: `${(daxInstanceTypes.length > 0) ? "Select" : "Enter"} the DAX database instance type:`,
-          type: (daxInstanceTypes.length > 0) ? 'list' : 'input',
-          choices: daxInstanceTypes,
-          name: 'notifications.daxInstanceType',
-          default: (
-            answers.notifications?.daxInstanceType ??
-              (daxInstanceTypes.indexOf(DEFAULT_DAX_INSTANCE_TYPE) >= 0)
-              ? DEFAULT_DAX_INSTANCE_TYPE
-              : undefined
-          ),
-          askAnswered: true,
-          loop: false,
-          pageSize: 10,
-          when(answers: Answers) {
-            return answers.notifications?.useDax === true;
-          },
-          validate(answer: string) {
-            if (daxInstanceTypes.length > 0 && !daxInstanceTypes.includes(answer)) {
-              return `DAX Instance Type must be one of: ${daxInstanceTypes.join(', ')}`;
-            }
-            return true;
-          }
-        },
-        {
-          message: `Enter TTL (Time to Live) settings for DAX Query Cache in milliseconds`,
-          type: 'input',
-          name: 'notifications.queryCacheTTL',
-          default: (
-            answers.notifications?.queryCacheTTL ?? 60000
-          ),
-          askAnswered: true,
-          when(answers: Answers) {
-            return answers.notifications?.useDax === true;
-          },
-          validate(answer: number) {
-            if (answer < 0) {
-              return `DAX Query Cache TTL has to be larger than 0`;
-            }
-            return true;
-          }
-        },
-        {
-          message: `Enter TTL (Time to Live) settings for DAX Item Cache in milliseconds`,
-          type: 'input',
-          name: 'notifications.itemCacheTTL',
-          default: (
-            answers.notifications?.itemCacheTTL ?? 60000
-          ),
-          askAnswered: true,
-          when(answers: Answers) {
-            return answers.notifications?.useDax === true;
-          },
-          validate(answer: number) {
-            if (answer < 0) {
-              return `DAX Item Cache TTL has to be larger than 0`;
-            }
-            return true;
-          }
-        },
-        ...applicationConfigurationPrompt(this.name, answers, []),
-        ...customDomainPrompt(this.name, answers),
-      ], updatedAnswers);
+    constructor(environment: string) {
+        this.eventsProcessorStackName = `cdf-eventsProcessor-${environment}`;
+        this.eventsAlertStackName = `cdf-eventsAlerts-${environment}`;
+        this.stackName = this.eventsProcessorStackName;
     }
 
-    includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.notifications.useDax)
+    public async prompts(answers: Answers): Promise<Answers> {
+        delete answers.notifications?.redeploy;
+        let updatedAnswers: Answers = await inquirer.prompt(
+            [redeployIfAlreadyExistsPrompt('notifications', this.eventsProcessorStackName)],
+            answers
+        );
+        if (updatedAnswers.notifications?.redeploy ?? true) {
+            const daxInstanceTypes = await getDaxInstanceTypeList(answers.region);
 
-    if (!answers.notifications?.useDax) {
-      delete answers.notifications?.itemCacheTTL
-      delete answers.notifications?.queryCacheTTL
-      delete answers.notifications?.daxInstanceType
-      delete answers.notifications?.daxClusterEndpoint
-      delete answers.notifications?.daxClusterArn
+            updatedAnswers = await inquirer.prompt(
+                [
+                    {
+                        message: 'Use DAX for DynamoDB caching',
+                        type: 'confirm',
+                        name: 'notifications.useDax',
+                        default: true,
+                        askAnswered: true,
+                    },
+                    {
+                        message: `${
+                            daxInstanceTypes.length > 0 ? 'Select' : 'Enter'
+                        } the DAX database instance type:`,
+                        type: daxInstanceTypes.length > 0 ? 'list' : 'input',
+                        choices: daxInstanceTypes,
+                        name: 'notifications.daxInstanceType',
+                        default:
+                            answers.notifications?.daxInstanceType ??
+                            daxInstanceTypes.indexOf(DEFAULT_DAX_INSTANCE_TYPE) >= 0
+                                ? DEFAULT_DAX_INSTANCE_TYPE
+                                : undefined,
+                        askAnswered: true,
+                        loop: false,
+                        pageSize: 10,
+                        when(answers: Answers) {
+                            return answers.notifications?.useDax === true;
+                        },
+                        validate(answer: string) {
+                            if (
+                                daxInstanceTypes.length > 0 &&
+                                !daxInstanceTypes.includes(answer)
+                            ) {
+                                return `DAX Instance Type must be one of: ${daxInstanceTypes.join(
+                                    ', '
+                                )}`;
+                            }
+                            return true;
+                        },
+                    },
+                    {
+                        message: `Enter TTL (Time to Live) settings for DAX Query Cache in milliseconds`,
+                        type: 'input',
+                        name: 'notifications.queryCacheTTL',
+                        default: answers.notifications?.queryCacheTTL ?? 60000,
+                        askAnswered: true,
+                        when(answers: Answers) {
+                            return answers.notifications?.useDax === true;
+                        },
+                        validate(answer: number) {
+                            if (answer < 0) {
+                                return `DAX Query Cache TTL has to be larger than 0`;
+                            }
+                            return true;
+                        },
+                    },
+                    {
+                        message: `Enter TTL (Time to Live) settings for DAX Item Cache in milliseconds`,
+                        type: 'input',
+                        name: 'notifications.itemCacheTTL',
+                        default: answers.notifications?.itemCacheTTL ?? 60000,
+                        askAnswered: true,
+                        when(answers: Answers) {
+                            return answers.notifications?.useDax === true;
+                        },
+                        validate(answer: number) {
+                            if (answer < 0) {
+                                return `DAX Item Cache TTL has to be larger than 0`;
+                            }
+                            return true;
+                        },
+                    },
+                    ...applicationConfigurationPrompt(this.name, answers, []),
+                    ...customDomainPrompt(this.name, answers),
+                ],
+                updatedAnswers
+            );
+        }
+
+        includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.notifications.useDax);
+
+        if (!answers.notifications?.useDax) {
+            delete answers.notifications?.itemCacheTTL;
+            delete answers.notifications?.queryCacheTTL;
+            delete answers.notifications?.daxInstanceType;
+            delete answers.notifications?.daxClusterEndpoint;
+            delete answers.notifications?.daxClusterArn;
+        }
+
+        return updatedAnswers;
     }
 
-    return updatedAnswers;
-  }
+    private getEventsProcessorOverrides(answers: Answers): string[] {
+        const parameterOverrides = [
+            `Environment=${answers.environment}`,
+            `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
+            `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
+            `AuthType=${answers.apigw.type}`,
+            `KmsKeyId=${answers.kms.id}`,
+            `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
+            `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
+        ];
 
-  private getEventsProcessorOverrides(answers: Answers): string[] {
-    const parameterOverrides = [
-      `Environment=${answers.environment}`,
-      `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
-      `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
-      `AuthType=${answers.apigw.type}`,
-      `KmsKeyId=${answers.kms.id}`,
-      `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
-      `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`
-    ];
+        if (!answers.notifications.useDax) {
+            // When DAX is disabled, even if VPC is specified we will set it to N/A to match
+            // the CloudFormation condition
+            parameterOverrides.push(
+                `VpcId=${'N/A'}`,
+                `CDFSecurityGroupId=${''}`,
+                `PrivateSubNetIds=${''}`
+            );
+        } else {
+            parameterOverrides.push(
+                `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+                `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+                `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`
+            );
+        }
 
-    if (!answers.notifications.useDax) {
-      // When DAX is disabled, even if VPC is specified we will set it to N/A to match
-      // the CloudFormation condition
-      parameterOverrides.push(
-        `VpcId=${'N/A'}`,
-        `CDFSecurityGroupId=${''}`,
-        `PrivateSubNetIds=${''}`)
-    } else {
-      parameterOverrides.push(
-        `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-        `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-        `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`)
+        const addIfSpecified = (key: string, value: unknown) => {
+            if (value !== undefined) parameterOverrides.push(`${key}=${value}`);
+        };
+
+        addIfSpecified('DAXInstanceType', answers.notifications.daxInstanceType);
+        addIfSpecified('QueryCacheTTL', answers.notifications.queryCacheTTL);
+        addIfSpecified('ItemCacheTTL', answers.notifications.itemCacheTTL);
+        addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
+        addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
+        addIfSpecified(
+            'ApplicationConfigurationOverride',
+            this.generateApplicationConfiguration(answers)
+        );
+        return parameterOverrides;
     }
 
-    const addIfSpecified = (key: string, value: unknown) => {
-      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    private getEventsAlertsOverrides(answers: Answers): string[] {
+        const parameterOverrides = [
+            `Environment=${answers.environment}`,
+            `KmsKeyId=${answers.kms.id}`,
+            `EventNotificationsTable=${answers.notifications.notificationsTableName}`,
+            `EventNotificationsTableArn=${answers.notifications.notificationsTableArn}`,
+            `EventConfigTable=${answers.notifications.configTableName}`,
+            `EventConfigTableArn=${answers.notifications.configTableArn}`,
+            `EventNotificationsStreamArn=${answers.notifications.notificationsTableStreamArn}`,
+        ];
+
+        const addIfSpecified = (key: string, value: unknown) => {
+            if (value !== undefined) parameterOverrides.push(`${key}=${value}`);
+        };
+
+        addIfSpecified('DAXClusterEndpoint', answers.notifications.daxClusterEndpoint);
+        addIfSpecified('DAXClusterArn', answers.notifications.daxClusterArn);
+        addIfSpecified(
+            'ApplicationConfigurationOverride',
+            this.generateApplicationConfiguration(answers)
+        );
+
+        if (!answers.notifications.daxClusterEndpoint) {
+            // When DAX is disabled, even if VPC is specified we will set it to N/A to match
+            // the CloudFormation condition
+            parameterOverrides.push(`CDFSecurityGroupId=${''}`, `PrivateSubNetIds=${''}`);
+        } else {
+            parameterOverrides.push(
+                `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+                `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`
+            );
+        }
+        return parameterOverrides;
     }
 
-    addIfSpecified('DAXInstanceType', answers.notifications.daxInstanceType);
-    addIfSpecified('QueryCacheTTL', answers.notifications.queryCacheTTL);
-    addIfSpecified('ItemCacheTTL', answers.notifications.itemCacheTTL);
-    addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
-    addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
-    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
-    return parameterOverrides;
-  }
-
-  private getEventsAlertsOverrides(answers: Answers): string[] {
-    const parameterOverrides = [
-      `Environment=${answers.environment}`,
-      `KmsKeyId=${answers.kms.id}`,
-      `EventNotificationsTable=${answers.notifications.notificationsTableName}`,
-      `EventNotificationsTableArn=${answers.notifications.notificationsTableArn}`,
-      `EventConfigTable=${answers.notifications.configTableName}`,
-      `EventConfigTableArn=${answers.notifications.configTableArn}`,
-      `EventNotificationsStreamArn=${answers.notifications.notificationsTableStreamArn}`,
-    ]
-
-    const addIfSpecified = (key: string, value: unknown) => {
-      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-    };
-
-    addIfSpecified('DAXClusterEndpoint', answers.notifications.daxClusterEndpoint);
-    addIfSpecified('DAXClusterArn', answers.notifications.daxClusterArn);
-    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
-
-    if (!answers.notifications.daxClusterEndpoint) {
-      // When DAX is disabled, even if VPC is specified we will set it to N/A to match
-      // the CloudFormation condition
-      parameterOverrides.push(
-        `CDFSecurityGroupId=${''}`,
-        `PrivateSubNetIds=${''}`)
-    } else {
-      parameterOverrides.push(
-        `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-        `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`)
+    public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+        const monorepoRoot = await getMonorepoRoot();
+        const tasks: ListrTask[] = [
+            {
+                title: `Packaging module '${this.name} [Events Processor]'`,
+                task: async () => {
+                    await packageAndUploadTemplate({
+                        answers: answers,
+                        serviceName: 'events-processor',
+                        templateFile: 'infrastructure/cfn-eventsProcessor.yml',
+                        cwd: path.join(
+                            monorepoRoot,
+                            'source',
+                            'packages',
+                            'services',
+                            'events-processor'
+                        ),
+                        parameterOverrides: this.getEventsProcessorOverrides(answers),
+                    });
+                },
+            },
+            {
+                title: `Packaging module '${this.name} [Events Alerts]'`,
+                task: async () => {
+                    await packageAndUploadTemplate({
+                        answers: answers,
+                        serviceName: 'events-alerts',
+                        templateFile: 'infrastructure/cfn-eventsAlerts.yml',
+                        cwd: path.join(
+                            monorepoRoot,
+                            'source',
+                            'packages',
+                            'services',
+                            'events-alerts'
+                        ),
+                        parameterOverrides: this.getEventsAlertsOverrides(answers),
+                    });
+                },
+            },
+        ];
+        return [answers, tasks];
     }
-    return parameterOverrides;
-  }
 
-  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
-    const monorepoRoot = await getMonorepoRoot();
-    const tasks: ListrTask[] = [{
-      title: `Packaging module '${this.name} [Events Processor]'`,
-      task: async () => {
-        await packageAndUploadTemplate({
-          answers: answers,
-          serviceName: 'events-processor',
-          templateFile: 'infrastructure/cfn-eventsProcessor.yml',
-          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'events-processor'),
-          parameterOverrides: this.getEventsProcessorOverrides(answers)
+    public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
+        ow(answers, ow.object.nonEmpty);
+        ow(answers.notifications, ow.object.nonEmpty);
+        ow(answers.environment, ow.string.nonEmpty);
+        ow(answers.s3.bucket, ow.string.nonEmpty);
+
+        const monorepoRoot = await getMonorepoRoot();
+        const tasks: ListrTask[] = [];
+
+        if ((answers.notifications.redeploy ?? true) === false) {
+            return [answers, tasks];
+        }
+
+        tasks.push({
+            title: `Packaging and deploying stack '${this.eventsProcessorStackName}'`,
+            task: async () => {
+                await packageAndDeployStack({
+                    answers: answers,
+                    stackName: this.eventsProcessorStackName,
+                    serviceName: 'events-processor',
+                    templateFile: 'infrastructure/cfn-eventsProcessor.yml',
+                    cwd: path.join(
+                        monorepoRoot,
+                        'source',
+                        'packages',
+                        'services',
+                        'events-processor'
+                    ),
+                    parameterOverrides: this.getEventsProcessorOverrides(answers),
+                    needsPackaging: true,
+                    needsCapabilityNamedIAM: true,
+                    needsCapabilityAutoExpand: true,
+                });
+            },
         });
-      },
-    },
-    {
-      title: `Packaging module '${this.name} [Events Alerts]'`,
-      task: async () => {
-        await packageAndUploadTemplate({
-          answers: answers,
-          serviceName: 'events-alerts',
-          templateFile: 'infrastructure/cfn-eventsAlerts.yml',
-          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'events-alerts'),
-          parameterOverrides: this.getEventsAlertsOverrides(answers),
+
+        tasks.push({
+            title: `Detecting environment config for stack '${this.eventsAlertStackName}'`,
+            task: async () => {
+                const byOutputKey = await getStackOutputs(
+                    this.eventsProcessorStackName,
+                    answers.region
+                );
+                answers.notifications.notificationsTableName = byOutputKey(
+                    'EventNotificationsTable'
+                );
+                answers.notifications.notificationsTableArn = byOutputKey(
+                    'EventNotificationsTableArn'
+                );
+                answers.notifications.notificationsTableStreamArn = byOutputKey(
+                    'EventNotificationsStreamArn'
+                );
+                answers.notifications.configTableName = byOutputKey('EventConfigTable');
+                answers.notifications.configTableArn = byOutputKey('EventConfigTableArn');
+                answers.notifications.daxClusterEndpoint = byOutputKey('DAXClusterEndpoint');
+                answers.notifications.daxClusterArn = byOutputKey('DAXClusterArn');
+            },
         });
-      },
-    }
-    ];
-    return [answers, tasks]
-  }
 
-  public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
-
-    ow(answers, ow.object.nonEmpty);
-    ow(answers.notifications, ow.object.nonEmpty);
-    ow(answers.environment, ow.string.nonEmpty);
-    ow(answers.s3.bucket, ow.string.nonEmpty);
-
-    const monorepoRoot = await getMonorepoRoot();
-    const tasks: ListrTask[] = [];
-
-    if ((answers.notifications.redeploy ?? true) === false) {
-      return [answers, tasks];
-    }
-
-    tasks.push({
-      title: `Packaging and deploying stack '${this.eventsProcessorStackName}'`,
-      task: async () => {
-        await packageAndDeployStack({
-          answers: answers,
-          stackName: this.eventsProcessorStackName,
-          serviceName: 'events-processor',
-          templateFile: 'infrastructure/cfn-eventsProcessor.yml',
-          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'events-processor'),
-          parameterOverrides: this.getEventsProcessorOverrides(answers),
-          needsPackaging: true,
-          needsCapabilityNamedIAM: true,
-          needsCapabilityAutoExpand: true,
+        tasks.push({
+            title: `Packaging and deploying stack '${this.eventsAlertStackName}'`,
+            task: async () => {
+                await packageAndDeployStack({
+                    answers: answers,
+                    stackName: this.eventsAlertStackName,
+                    serviceName: 'events-alerts',
+                    templateFile: 'infrastructure/cfn-eventsAlerts.yml',
+                    cwd: path.join(
+                        monorepoRoot,
+                        'source',
+                        'packages',
+                        'services',
+                        'events-alerts'
+                    ),
+                    parameterOverrides: this.getEventsAlertsOverrides(answers),
+                    needsPackaging: true,
+                    needsCapabilityNamedIAM: true,
+                    needsCapabilityAutoExpand: true,
+                });
+            },
         });
-      }
-    });
 
-    tasks.push({
-      title: `Detecting environment config for stack '${this.eventsAlertStackName}'`,
-      task: async () => {
-        const byOutputKey = await getStackOutputs(this.eventsProcessorStackName, answers.region)
-        answers.notifications.notificationsTableName = byOutputKey('EventNotificationsTable')
-        answers.notifications.notificationsTableArn = byOutputKey('EventNotificationsTableArn');
-        answers.notifications.notificationsTableStreamArn = byOutputKey('EventNotificationsStreamArn');
-        answers.notifications.configTableName = byOutputKey('EventConfigTable');
-        answers.notifications.configTableArn = byOutputKey('EventConfigTableArn');
-        answers.notifications.daxClusterEndpoint = byOutputKey('DAXClusterEndpoint');
-        answers.notifications.daxClusterArn = byOutputKey('DAXClusterArn');
-      }
-    });
-
-    tasks.push({
-      title: `Packaging and deploying stack '${this.eventsAlertStackName}'`,
-      task: async () => {
-        await packageAndDeployStack({
-          answers: answers,
-          stackName: this.eventsAlertStackName,
-          serviceName: 'events-alerts',
-          templateFile: 'infrastructure/cfn-eventsAlerts.yml',
-          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'events-alerts'),
-          parameterOverrides: this.getEventsAlertsOverrides(answers),
-          needsPackaging: true,
-          needsCapabilityNamedIAM: true,
-          needsCapabilityAutoExpand: true,
-        });
-      }
-    });
-
-    return [answers, tasks];
-  }
-
-  public generateApplicationConfiguration(answers: Answers): string {
-    const configBuilder = new ConfigBuilder()
-
-    configBuilder
-      .add(`CUSTOMDOMAIN_BASEPATH`, answers.notifications.customDomainBasePath)
-      .add(`LOGGING_LEVEL`, answers.notifications.loggingLevel)
-      .add(`CORS_ORIGIN`, answers.apigw.corsOrigin)
-
-    return configBuilder.config;
-  }
-
-  public async generatePostmanEnvironment(answers: Answers): Promise<PostmanEnvironment> {
-    const byOutputKey = await getStackOutputs(this.eventsProcessorStackName, answers.region)
-    return {
-      key: 'events_processor_base_url',
-      value: byOutputKey('ApiGatewayUrl'),
-      enabled: true
+        return [answers, tasks];
     }
-  }
 
-  public async delete(answers: Answers): Promise<ListrTask[]> {
-    const tasks: ListrTask[] = [];
-    tasks.push({
-      title: `Deleting stack '${this.eventsAlertStackName}'`,
-      task: async () => {
-        await deleteStack(this.eventsAlertStackName, answers.region)
+    public generateApplicationConfiguration(answers: Answers): string {
+        const configBuilder = new ConfigBuilder();
 
-      }
-    });
-    tasks.push({
-      title: `Deleting stack '${this.eventsProcessorStackName}'`,
-      task: async () => {
-        await deleteStack(this.eventsProcessorStackName, answers.region)
-      }
-    });
-    return tasks
+        configBuilder
+            .add(`CUSTOMDOMAIN_BASEPATH`, answers.notifications.customDomainBasePath)
+            .add(`LOGGING_LEVEL`, answers.notifications.loggingLevel)
+            .add(`CORS_ORIGIN`, answers.apigw.corsOrigin);
 
-  }
+        return configBuilder.config;
+    }
+
+    public async generatePostmanEnvironment(answers: Answers): Promise<PostmanEnvironment> {
+        const byOutputKey = await getStackOutputs(this.eventsProcessorStackName, answers.region);
+        return {
+            key: 'events_processor_base_url',
+            value: byOutputKey('ApiGatewayUrl'),
+            enabled: true,
+        };
+    }
+
+    public async delete(answers: Answers): Promise<ListrTask[]> {
+        const tasks: ListrTask[] = [];
+        tasks.push({
+            title: `Deleting stack '${this.eventsAlertStackName}'`,
+            task: async () => {
+                await deleteStack(this.eventsAlertStackName, answers.region);
+            },
+        });
+        tasks.push({
+            title: `Deleting stack '${this.eventsProcessorStackName}'`,
+            task: async () => {
+                await deleteStack(this.eventsProcessorStackName, answers.region);
+            },
+        });
+        return tasks;
+    }
 }

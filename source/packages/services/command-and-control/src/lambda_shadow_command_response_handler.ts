@@ -13,36 +13,36 @@
 
 import ow from 'ow';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
 import { Response } from './responses/responses.models';
 import { ResponsesService } from './responses/responses.service';
-import { logger } from './utils/logger.util';
 
-const svc:ResponsesService = container.get<ResponsesService>(TYPES.ResponsesService);
+const svc: ResponsesService = container.get<ResponsesService>(TYPES.ResponsesService);
 
-exports.handler = async (event: Response, _context: unknown) : Promise<void> => {
-  logger.debug(`lambda_shadow_command_response_handler: handler: in: event: ${JSON.stringify(event)}`);
+exports.handler = async (event: Response, _context: unknown): Promise<void> => {
+    logger.debug(
+        `lambda_shadow_command_response_handler: handler: in: event: ${JSON.stringify(event)}`
+    );
 
-  // validate reply
-  ow(event, ow.object.nonEmpty);
-  ow(event.correlationId, ow.string.nonEmpty);
-  ow(event.thingName, ow.string.nonEmpty);
+    // validate reply
+    ow(event, ow.object.nonEmpty);
+    ow(event.correlationId, ow.string.nonEmpty);
+    ow(event.thingName, ow.string.nonEmpty);
 
+    // the response payload is the whole shadow delta. extract just what we're interested in
+    const payload = Object.values(event.payload)?.[0];
+    const reply: Response = {
+        thingName: event.thingName,
+        correlationId: event.correlationId,
+        payload: payload?.payload,
+        action: payload?.action,
+        timestamp: payload?.timestamp,
+    };
 
-  // the response payload is the whole shadow delta. extract just what we're interested in
-  const payload = Object.values(event.payload)?.[0];
-  const reply:Response = {
-    thingName: event.thingName,
-    correlationId: event.correlationId,
-    payload: payload?.payload,
-    action: payload?.action,
-    timestamp: payload?.timestamp
-  };
+    // TODO: configure a lambda destination to handle errors?
+    await svc.save(reply);
 
-  // TODO: configure a lambda destination to handle errors?
-  await svc.save(reply);
-
-  logger.debug(`lambda_shadow_command_response_handler: handler: exit:`);
-
+    logger.debug(`lambda_shadow_command_response_handler: handler: exit:`);
 };

@@ -11,6 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import serverlessHttp from 'serverless-http';
-import { serverInstance } from './app' ;
+import { serverInstance } from './app';
 
 exports.handler = serverlessHttp(serverInstance);

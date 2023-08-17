@@ -15,7 +15,7 @@ Feature: Subscriptions against an IoTCore event source
 
   @setup_iotCoreEventSourceFeature
   Scenario: Setup
-    Given eventsource "TEST-iotcore" does not exist
+    Given eventsource "TEST-IoTCore" does not exist
 
   Scenario: Create a new IoT Core event source
     Given eventsource "TEST-IoTCore" does not exist
@@ -24,6 +24,7 @@ Feature: Subscriptions against an IoTCore event source
       | name | TEST-IoTCore |
       | principal | thingName |
       | iotCore | {"mqttTopic": "test/iotcore", "attributes": {"batteryLevel": "bl"}} |
+    Then I pause for 70000ms
     Then last eventsource exists with attributes
       | sourceType | IoTCore |
       | name | TEST-IoTCore |
@@ -39,6 +40,8 @@ Feature: Subscriptions against an IoTCore event source
       | conditions | {"all": [{"fact": "batteryLevel","operator": "lessThanInclusive","value": "$batteryLevel"}]} |
       | supportedTargets | {"email": "default","sms": "small","push_gcm":"small","push_apns":"small","push_ads":"default"} |
       | templates | {"default": "The battery for bowl {{=it.principalValue}} is low (at {{=it.batteryLevel}}%).","small": "{{=it.principalValue}} battery low"} |
+    Then I pause for 70000ms
+    Then I get an event with attributes and preset eventId
     Then last event exists with attributes
       | name | TEST-IoTCore-event |
       | conditions.all[0].fact | batteryLevel |
@@ -89,6 +92,7 @@ Feature: Subscriptions against an IoTCore event source
       | principalValue | vin001 |
       | targets | {"email": [{"address": "someone@somewhere.com"}]} |
 	    | ruleParameterValues | { "batteryLevel": 15 } |
+    Then I pause for 70000ms
     Then last subscription exists with attributes
       | targets.email[0].address | someone@somewhere.com |
       | targets.email[0].subscriptionArn | Pending confirmation |
@@ -140,6 +144,7 @@ Feature: Subscriptions against an IoTCore event source
     And I am using subscription for principal "vin001" user "U001"
     When I add "email" target with attributes
       | address | someoneelse@somewhere.com |
+    Then I pause for 60000ms
     Then last subscription exists with attributes
       | targets.email[0].address | someone@somewhere.com |
       | targets.email[0].subscriptionArn | Pending confirmation |
@@ -171,6 +176,7 @@ Feature: Subscriptions against an IoTCore event source
     And I am using subscription for principal "vin001" user "U001"
     When I add "sms" target with attributes
       | phoneNumber | 5555555555 |
+    Then I pause for 60000ms
     Then last subscription exists with attributes
       | targets.email[0].address | someone@somewhere.com |
       | targets.email[0].subscriptionArn | Pending confirmation |
@@ -274,18 +280,21 @@ Feature: Subscriptions against an IoTCore event source
     Then it fails with a 400
 
   Scenario: Delete the event
+    Then I pause for 70000ms
     Given I am using eventsource "TEST-IoTCore"
     And I am using event "TEST-IoTCore-event"
     And event "TEST-IoTCore-event" exists
     When I delete event
+    Then I pause for 70000ms
     Then event "TEST-IoTCore-event" does not exist
     And no subscriptions exist for event "TEST-IoTCore-event"
 
   Scenario: Delete the event source
     Given I am using eventsource "TEST-IoTCore"
     When I delete eventsource
+    Then I pause for 70000ms
     Then eventsource "TEST-IoTCore" does not exist
 
   @teardown_iotCoreEventSourceFeature
   Scenario: Teardown
-    Given eventsource "TEST-IotCore" does not exist
+    Given eventsource "TEST-IoTCore" does not exist

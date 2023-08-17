@@ -29,7 +29,7 @@ aws --profile <PROFILE> --region <REGION> ssm put-parameter --type SecureString 
 
 ## Deployment Steps
 
-The following steps describe a basic deployment.  Refer to the `./infrastructure/package-cfn.bash` and `./infrastructure/deploy-cfn.bash` files details on more advanced options available.
+The following steps describe a basic deployment. Refer to the `./infrastructure/package-cfn.bash` and `./infrastructure/deploy-cfn.bash` files details on more advanced options available.
 
 - Initialize and build the project
 
@@ -49,4 +49,3 @@ npm run build
 ```sh
 ./infrastructure/deploy-cfn.bash -e <ENVIRONMENT NAME> -c ../cdf-infrastructure-<CUSTOMER PROJECT>/provisioning/development-config.json -k <KMS KEY ID>
 ```
-

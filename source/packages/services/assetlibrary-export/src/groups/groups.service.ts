@@ -10,21 +10,20 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
-import {logger} from '../utils/logger';
 
-import { GroupItemList } from './groups.models';
 import { GroupsAssembler } from './groups.assembler';
 import { GroupsDao } from './groups.dao';
+import { GroupItemList } from './groups.models';
 
 @injectable()
 export class GroupsService {
-
     constructor(
-        @inject(TYPES.GroupsDao) private groupsDao: GroupsDao ,
+        @inject(TYPES.GroupsDao) private groupsDao: GroupsDao,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler
     ) {}
 
@@ -34,13 +33,12 @@ export class GroupsService {
         ow(groupPaths, ow.array.nonEmpty);
 
         // any ids need to be lowercase
-        groupPaths = groupPaths.map(g => g.toLowerCase());
+        groupPaths = groupPaths.map((g) => g.toLowerCase());
 
-        const result  = await this.groupsDao.get(groupPaths);
+        const result = await this.groupsDao.get(groupPaths);
 
         const model = this.groupsAssembler.toGroupItems(result);
         logger.debug(`groups.full.service get: exit: model: ${JSON.stringify(model)}`);
-        return {results: model};
+        return { results: model };
     }
-
 }

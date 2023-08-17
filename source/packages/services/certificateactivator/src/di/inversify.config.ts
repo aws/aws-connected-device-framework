@@ -10,17 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
- import 'reflect-metadata';
- import '@cdf/config-inject';
+import 'reflect-metadata';
+
+import '@awssolutions/cdf-config-inject';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
-import { assetLibraryContainerModule } from '@cdf/assetlibrary-client';
-import { provisioningContainerModule } from '@cdf/provisioning-client';
+import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-client';
+import { provisioningContainerModule } from '@awssolutions/cdf-provisioning-client';
 
 import { ActivationService } from '../activation/activation.service';
 import { TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -35,12 +36,10 @@ container.bind<ActivationService>(TYPES.ActivationService).to(ActivationService)
 
 // for 3rd party objects, we need to use factory injectors
 decorate(injectable(), AWS.Iot);
-container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
-    .toFactory<AWS.Iot>(() => {
+container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory).toFactory<AWS.Iot>(() => {
     return () => {
-
         if (!container.isBound(TYPES.Iot)) {
-            const iot = new AWS.Iot({region: process.env.AWS_REGION});
+            const iot = new AWS.Iot({ region: process.env.AWS_REGION });
             container.bind<AWS.Iot>(TYPES.Iot).toConstantValue(iot);
         }
         return container.get<AWS.Iot>(TYPES.Iot);
@@ -49,12 +48,10 @@ container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
 
 // S3
 decorate(injectable(), AWS.S3);
-container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory)
-    .toFactory<AWS.S3>(() => {
+container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory).toFactory<AWS.S3>(() => {
     return () => {
-
         if (!container.isBound(TYPES.S3)) {
-            const s3 = new AWS.S3({region: process.env.AWS_REGION});
+            const s3 = new AWS.S3({ region: process.env.AWS_REGION });
             container.bind<AWS.S3>(TYPES.S3).toConstantValue(s3);
         }
         return container.get<AWS.S3>(TYPES.S3);

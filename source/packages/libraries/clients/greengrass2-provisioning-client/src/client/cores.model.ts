@@ -10,26 +10,26 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
- export interface NewCoreTask {
+export interface NewCoreTask {
     coreVersion: string;
-	cores: NewCore[];
+    cores: NewCore[];
     type: CoreTaskType;
     options?: DeleteCoreTaskOptions;
 }
 
 export interface DeleteCoreTaskOptions {
-	deprovisionClientDevices: boolean;
-	deprovisionCores: boolean;
+    deprovisionClientDevices: boolean;
+    deprovisionCores: boolean;
 }
 
 export interface CoreTask {
-	id: string;
-	cores: Core[];
+    id: string;
+    cores: Core[];
     options?: DeleteCoreTaskOptions;
-	taskStatus: CoreTaskStatus;
-	statusMessage?: string;
-	createdAt: Date;
-	updatedAt?: Date;
+    taskStatus: CoreTaskStatus;
+    statusMessage?: string;
+    createdAt: Date;
+    updatedAt?: Date;
     type: CoreTaskType;
     // no. of batches the task has been split into
     batchesTotal?: number;
@@ -38,10 +38,10 @@ export interface CoreTask {
 }
 
 export interface NewCore {
-	name: string;
+    name: string;
 
     provisioningTemplate: string;
-	provisioningParameters?: {[key : string] : string};
+    provisioningParameters?: { [key: string]: string };
     cdfProvisioningParameters?: CdfProvisioningParameters;
 }
 
@@ -49,28 +49,28 @@ export interface CoreList {
     cores: Core[];
     pagination?: {
         lastEvaluated?: {
-            thingName: string
-        },
-        count?: number
+            thingName: string;
+        };
+        count?: number;
     };
 }
 export interface Core extends NewCore {
-	taskStatus: CoreTaskStatus;
-	statusMessage?: string;
-	createdAt: Date;
-	updatedAt?: Date;
-    
-    artifacts?:  {
-        [key : string] : Artifact
+    taskStatus: CoreTaskStatus;
+    statusMessage?: string;
+    createdAt: Date;
+    updatedAt?: Date;
+
+    artifacts?: {
+        [key: string]: Artifact;
     };
-    
+
     device?: {
         coreVersion?: string;
         platform?: string;
         architecture?: string;
         status?: string;
         lastStatusUpdateTimestamp?: Date;
-        tags?: {[key : string] : string};
+        tags?: { [key: string]: string };
         installedComponents?: InstalledComponent[];
         effectiveDeployments: EffectiveDeployment[];
     };
@@ -85,13 +85,13 @@ export interface Core extends NewCore {
             version: number;
             deploymentStatus: StaticRange;
             jobStatus: string;
-        }
-    }
+        };
+    };
 }
 
 export interface Artifact {
-    bucket:string;
-    key:string;
+    bucket: string;
+    key: string;
     createdAt?: Date;
 }
 
@@ -113,7 +113,7 @@ export interface EffectiveDeployment {
     updatedAt?: Date;
 }
 
-export type CoreTaskStatus = 'Waiting'|'InProgress'|'Success'|'Failure';
+export type CoreTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';
 
 export interface CdfProvisioningParameters {
     caId?: string;
@@ -125,8 +125,8 @@ export interface CdfProvisioningParameters {
         stateName?: string;
         country?: string;
         emailAddress?: string;
-        daysExpiry?:number;
+        daysExpiry?: number;
     };
 }
 
-export type CoreTaskType = 'Create' | 'Delete'
+export type CoreTaskType = 'Create' | 'Delete';
