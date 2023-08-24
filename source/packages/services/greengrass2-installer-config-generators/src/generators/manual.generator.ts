@@ -17,6 +17,7 @@ import { logger } from '@awssolutions/simple-cdf-logger';
 import { InstallerConfig } from '../installerConfig/installer.models';
 import { ConfigGeneratorEvent, ConfigGeneratorHandler } from './models';
 
+export type GG_DATA_PLANE_PORT = 8443 | 443;
 export type ManualProvisioningConfig = {
     certificateFilePath: string;
     privateKeyPath: string;
@@ -26,6 +27,8 @@ export type ManualProvisioningConfig = {
     iotRoleAlias: string;
     iotDataEndpoint: string;
     iotCredEndpoint: string;
+    mqttPort?: number;
+    greengrassDataPlanePort?: GG_DATA_PLANE_PORT;
 };
 
 export const manualProvisioningHandler =
@@ -58,6 +61,15 @@ export const manualProvisioningHandler =
             },
         };
 
+        if (handlerConfig.mqttPort) {
+            configJson.services['aws.greengrass.Nucleus'].configuration.mqtt = {
+                port: handlerConfig.mqttPort,
+            };
+        }
+        if (handlerConfig.greengrassDataPlanePort) {
+            configJson.services['aws.greengrass.Nucleus'].configuration.greengrassDataPlanePort =
+                handlerConfig.greengrassDataPlanePort;
+        }
         const doc = new Document();
         doc.directivesEndMarker = true;
         doc.contents = configJson;

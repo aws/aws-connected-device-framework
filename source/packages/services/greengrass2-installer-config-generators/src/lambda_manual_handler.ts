@@ -13,6 +13,7 @@
 import '@awssolutions/cdf-config-inject';
 
 import {
+    GG_DATA_PLANE_PORT,
     ManualProvisioningConfig,
     manualProvisioningHandler,
 } from './generators/manual.generator';
@@ -26,6 +27,8 @@ const handlerConfig: ManualProvisioningConfig = {
     iotRoleAlias: process.env.AWS_IOT_ROLE_ALIAS,
     iotDataEndpoint: process.env.AWS_IOT_ENDPOINT_DATA,
     iotCredEndpoint: process.env.AWS_IOT_ENDPOINT_CREDENTIALS,
+    mqttPort: parseInt(process.env.MQTT_PORT),
+    greengrassDataPlanePort: process.env.GG_DATA_PLANE_PORT as unknown as GG_DATA_PLANE_PORT,
 };
 
 exports.handler = manualProvisioningHandler(handlerConfig);
