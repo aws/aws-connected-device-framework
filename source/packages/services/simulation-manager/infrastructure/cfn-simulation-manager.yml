@@ -114,30 +114,12 @@ Parameters:
       - 'false'
     MinLength: 1
 
-  CorsOrigin:
-    Description: Sets the Access-Control-Allow-Origin response header to indicate whether the response can be shared with requesting code from the given origin.
-    Type: String
-    Default: ''
-
-  LoggingLevel:
-    Description: Application logging level
-    Type: String
-    Default: info
-    AllowedValues:
-      - error
-      - warn
-      - info
-      - debug
-      - silly
-
 Conditions:
   DeployInVPC: !Not [!Equals [!Ref VpcId, 'N/A']]
   DeployWithLambdaAuth:
     !Or [!Equals [!Ref AuthType, 'LambdaRequest'], !Equals [!Ref AuthType, 'LambdaToken']]
   KmsKeyIdProvided: !Not [!Equals [!Ref KmsKeyId, '']]
   EnableApiGatewayAccessLogs: !Equals [!Ref EnableApiGatewayAccessLogs, 'true']
-  CorsOriginProvided: !Not [!Equals [!Ref CorsOrigin, '']]
-  LoggingLevelProvided: !Not [!Equals [!Ref LoggingLevel, '']]
 
 Resources:
   ApiGatewayApi:
@@ -253,8 +235,6 @@ Resources:
           AWS_SNS_TOPICS_LAUNCH: !Ref SimulationLauncherSnsTopic
           AWS_IOT_HOST: !GetAtt IotEndpoint.address
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
-          CORS_ORIGIN: !If [CorsOriginProvided, !Ref CorsOrigin, !Ref AWS::NoValue]
-          LOGGING_LEVEL: !If [LoggingLevelProvided, !Ref LoggingLevel, !Ref AWS::NoValue]
       Tracing: Active
 
       VpcConfig:

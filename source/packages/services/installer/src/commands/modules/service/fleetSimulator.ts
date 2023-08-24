@@ -96,7 +96,7 @@ export class FleetSimulatorInstaller implements RestModule {
                         propertyName: 's3Prefix',
                     },
                     {
-                        defaultConfiguration: '/opt/apache-jmeter-5.1.1/bin/cdf',
+                        defaultConfiguration: '/opt/apache-jmeter-5.4.3/bin/cdf',
                         question: 'Local location where to store jmeter execution results',
                         propertyName: 'runnerDataDir',
                     },

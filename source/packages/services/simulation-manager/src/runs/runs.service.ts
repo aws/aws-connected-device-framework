@@ -67,11 +67,14 @@ export class RunsService {
         // TODO: validation - no. devices < total available?
 
         // data generation - retrieve last known location
-        let simulationDevices = await this._runsDao.listDeviceState(run.simulationId);
+        const simulationDevices = await this._runsDao.listDeviceState(run.simulationId);
 
         // data generation - choose devices from pool
-        const runDevices = ps.pickSome(run.deviceCount, { unique: true }, simulationDevices);
-        simulationDevices = null;
+        let runDevices = [];
+        //Validate deviceList is not empty
+        if (simulationDevices.length > 0) {
+            runDevices = ps.pickSome(run.deviceCount, { unique: true }, simulationDevices);
+        }
 
         // chunk the devices into how many instances we need to run the simulation
         const task = simulation.tasks.simulation;
@@ -140,15 +143,17 @@ export class RunsService {
                 .promise();
 
             // for each instance, prepare and upload the last known device state for the devices to simulate
-            const fields = Object.keys(runDevices[0]);
-            const startIndex = (instanceId - 1) * devicesPerInstance;
-            const endIndex = startIndex + devicesPerInstance;
-            const instanceDevices = runDevices.splice(startIndex, endIndex);
-            const dataAsCsv = await parseAsync(instanceDevices, { fields });
-            s3Key = `${s3RootKey}instances/${instanceId}/deviceState.csv`;
-            await this._s3
-                .putObject({ Bucket: this._s3Bucket, Key: s3Key, Body: dataAsCsv })
-                .promise();
+            if (simulationDevices.length > 0) {
+                const fields = Object.keys(runDevices[0]);
+                const startIndex = (instanceId - 1) * devicesPerInstance;
+                const endIndex = startIndex + devicesPerInstance;
+                const instanceDevices = runDevices.splice(startIndex, endIndex);
+                const dataAsCsv = await parseAsync(instanceDevices, { fields });
+                s3Key = `${s3RootKey}instances/${instanceId}/deviceState.csv`;
+                await this._s3
+                    .putObject({ Bucket: this._s3Bucket, Key: s3Key, Body: dataAsCsv })
+                    .promise();
+            }
         }
 
         // launch the simulation
