@@ -17,10 +17,7 @@ import path from 'path';
 import { ListrTask } from 'listr2';
 import { Answers, CAAliases } from '../../../models/answers';
 import { ModuleName, ServiceModule } from '../../../models/modules';
-import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
-import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { Lambda } from '@aws-sdk/client-lambda';
 import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 import {
