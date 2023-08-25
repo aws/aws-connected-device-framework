@@ -233,7 +233,6 @@ export interface CertificateVendor extends ServiceModuleAttributes {
   deviceStatusSuccessValue?: string;
   certificateExpiryInDays?: number;
   registryMode?: "AssetLibrary" | "DeviceRegistry";
-
 }
 
 export interface Commands extends RestServiceModuleAttribues {
