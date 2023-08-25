@@ -14,16 +14,11 @@
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
-import {
-    BulkProvisionThingsRequest,
-    PROVISIONING_CLIENT_TYPES,
-    ThingsService,
-} from '@awssolutions/cdf-provisioning-client';
-
 import { logger } from '@awssolutions/simple-cdf-logger';
 import AWS from 'aws-sdk';
 import { CommandItem, JobDeliveryMethod } from '../../commands/commands.models';
 import { TYPES } from '../../di/types';
+import { MessagesDao } from '../messages.dao';
 import { MessageItem, Recipient } from '../messages.models';
 import { WorkflowPublishAction } from './workflow.publishAction';
 
@@ -33,17 +28,15 @@ export class JobAction extends WorkflowPublishAction {
 
     constructor(
         @inject('aws.accountId') private accountId: string,
-        @inject('aws.jobs.maxTargets') private maxJobTargets: number,
         @inject('aws.region') private region: string,
         @inject('aws.s3.roleArn') private s3RoleArn: string,
-        @inject(PROVISIONING_CLIENT_TYPES.ThingsService) private thingsService: ThingsService,
+        @inject(TYPES.MessagesDao) private messagesDao: MessagesDao,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot
     ) {
         super();
         this.iot = iotFactory();
     }
 
-    // TODO: at the moment as the batchTargets command runs prior to this, we end up creating a job for each batch. ideally we should be creating a single job for the entire message. need to think about how we can change this flow.
     async process(message: MessageItem, command: CommandItem): Promise<boolean> {
         logger.debug(
             `workflow.job process: in: message:${JSON.stringify(
@@ -120,6 +113,9 @@ export class JobAction extends WorkflowPublishAction {
 
         // TODO: tear down thing group once finished
 
+        await this.messagesDao.updateMessage(message);
+        await this.messagesDao.saveResolvedTargets(message);
+
         logger.debug(`workflow.job process: exit:${result}, message:${JSON.stringify(message)}`);
         return result;
     }
@@ -133,71 +129,16 @@ export class JobAction extends WorkflowPublishAction {
 
         ow(targets, ow.array.minLength(1));
 
+        const thingNames = targets.filter((o) => o.type === 'thing');
+        const jobTargetArns = thingNames.map((t) => this.thingNameToArn(t.id));
+
         const thingGroupArns = targets
             .filter((o) => o.type === 'thingGroup')
             .map((t) => this.thingGroupNameToArn(t.id));
-
-        const thingNames = targets.filter((o) => o.type === 'thing');
-
-        // if the no. devices is greater than the available slots we have, they need flattening into an ephemeral group
-        let ephemeralGroupArn: string;
-        if (targets.length > this.maxJobTargets) {
-            ephemeralGroupArn = await this.buildEphemeralGroup(
-                messageId,
-                thingNames.map((t) => t.id)
-            );
-        }
-
-        // TODO: check whether thing names need to be names or arns as job targets
-        const jobTargetArns =
-            ephemeralGroupArn !== undefined
-                ? [ephemeralGroupArn]
-                : thingNames.map((t) => this.thingNameToArn(t.id));
-
         jobTargetArns.push(...thingGroupArns);
 
         logger.debug(`workflow.job buildTargetArnList: exit:${jobTargetArns}`);
         return jobTargetArns;
-    }
-
-    private async buildEphemeralGroup(messageId: string, thingNames: string[]): Promise<string> {
-        logger.debug(
-            `workflow.job buildEphemeralGroup: messageId:${messageId},  thingNames:${JSON.stringify(
-                thingNames
-            )}`
-        );
-
-        // create the new group
-        // TODO: check whether neeed to sanitize the group name
-        const thingGroupName = `cdf-cac-${messageId}`;
-        const thingGroupResponse = await this.iot.createThingGroup({ thingGroupName }).promise();
-
-        // add the target things to the group
-        const params: BulkProvisionThingsRequest = {
-            provisioningTemplateId: process.env.PROVISIONING_TEMPLATES_ADDTHINGTOTHINGGROUP,
-            parameters: thingNames.map((thing) => ({
-                ThingName: thing,
-                ThingGroupName: thingGroupName,
-            })),
-        };
-
-        // wait until the task is complete
-        let task = await this.thingsService.bulkProvisionThings(params);
-        task = await this.thingsService.getBulkProvisionTask(task.taskId);
-        while (task.status !== 'Completed') {
-            if (
-                task.status === 'Failed' ||
-                task.status === 'Cancelled' ||
-                task.status === 'Cancelling'
-            ) {
-                throw new Error('EPHEMERAL_GROUP_CREATION_FAILURE');
-            }
-            await new Promise((resolve) => setTimeout(resolve, 2500));
-            task = await this.thingsService.getBulkProvisionTask(task.taskId);
-        }
-
-        logger.debug(`workflow.job buildEphemeralGroup: exit:${thingGroupResponse.thingGroupArn}`);
-        return thingGroupResponse.thingGroupArn;
     }
 
     private thingGroupNameToArn(name: string): string {

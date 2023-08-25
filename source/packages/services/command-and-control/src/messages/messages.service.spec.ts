@@ -234,14 +234,11 @@ describe('MessagesService', () => {
 
         expect(mockedMessagesDao.getMessageById).toHaveBeenCalledTimes(1);
 
-        expect(mockedMessagesDao.updateMessage).toHaveBeenCalledTimes(2);
+        expect(mockedMessagesDao.updateMessage).toHaveBeenCalledTimes(1);
         const save1Args = mockedMessagesDao.updateMessage.mock.calls[0];
         expect(save1Args[0]).toBe(message);
 
-        expect(mockedMessagesDao.saveResolvedTargets).toHaveBeenCalledTimes(1);
-
-        const save2Args = mockedMessagesDao.updateMessage.mock.calls[1];
-        expect(save2Args[0].status).toBe('awaiting_replies');
+        expect(save1Args[0].status).toBe('awaiting_replies');
 
         expect(mockedMessagesDao.saveBatchProgress).toHaveBeenCalledTimes(1);
     });
@@ -300,15 +297,13 @@ describe('MessagesService', () => {
 
         expect(mockedMessagesDao.getMessageById).toHaveBeenCalledTimes(1);
 
-        expect(mockedMessagesDao.updateMessage).toHaveBeenCalledTimes(2);
+        expect(mockedMessagesDao.updateMessage).toHaveBeenCalledTimes(1);
         const save1Args = mockedMessagesDao.updateMessage.mock.calls[0];
         expect(save1Args[0]).toBe(message);
+        expect(save1Args[0].status).toBe('failed');
+        expect(save1Args[0].statusMessage).toBe('PROCESS_MESSAGE_FAILED');
 
-        expect(mockedMessagesDao.saveResolvedTargets).toHaveBeenCalledTimes(1);
-
-        const save2Args = mockedMessagesDao.updateMessage.mock.calls[1];
-        expect(save2Args[0].status).toBe('failed');
-        expect(save2Args[0].statusMessage).toBe('PROCESS_MESSAGE_FAILED');
+        expect(mockedMessagesDao.saveResolvedTargets).toHaveBeenCalledTimes(0);
 
         expect(mockedMessagesDao.saveBatchProgress).toHaveBeenCalledTimes(1);
     });
