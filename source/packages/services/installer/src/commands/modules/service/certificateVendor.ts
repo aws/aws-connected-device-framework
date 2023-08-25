@@ -11,14 +11,14 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import ow from 'ow';
 import inquirer, { Question } from 'inquirer';
-import path from 'path';
 import { ListrTask } from 'listr2';
+import ow from 'ow';
+import path from 'path';
 import { Answers, CAAliases } from '../../../models/answers';
 import { ModuleName, ServiceModule } from '../../../models/modules';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { Lambda } from '@aws-sdk/client-lambda';
+import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 import {
     deleteStack,
@@ -53,118 +53,128 @@ export class CertificateVendorInstaller implements ServiceModule {
         this.commandAndControlStackName = `cdf-commandandcontrol-${environment}`;
     }
     
-    if (updatedAnswers.certificateVendor === undefined) {
-      updatedAnswers.certificateVendor = {};
-    }
+     public async prompts(answers: Answers): Promise<Answers> {
+        delete answers.certificateVendor?.redeploy;
+        let updatedAnswers: Answers = await inquirer.prompt(
+            [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
+            answers
+        );
+        if ((updatedAnswers.certificateVendor?.redeploy ?? true) === false) {
+            return updatedAnswers;
+        }
+        
+        if (updatedAnswers.certificateVendor === undefined) {
+          updatedAnswers.certificateVendor = {};
+        }
     
-    const pcaAliases = await this.getPcaAliases(answers);
-    updatedAnswers.certificateVendor.pcaAliases = pcaAliases;
+        const pcaAliases = await this.getPcaAliases(answers);
+        updatedAnswers.certificateVendor.pcaAliases = pcaAliases;
 
-    const iotCaAliases = await this.getIotCaAliases(answers);
-    updatedAnswers.certificateVendor.iotCaAliases = iotCaAliases;
+        const iotCaAliases = await this.getIotCaAliases(answers);
+        updatedAnswers.certificateVendor.iotCaAliases = iotCaAliases;
 
-    // eslint-disable-next-line
-    const _ = this;
+        // eslint-disable-next-line
+        const _ = this;
     
-    updatedAnswers = await inquirer.prompt([
-      {
-        message: 'Will you be requesting certificates using a CSR?',
-        type: 'confirm',
-        name: 'certificateVendor.providingCSRs',
-        default: false,
-        askAnswered: true,
-      },
-      {
-        message: 'Will you use ACMPCA to issue the certificate ?',
-        type: 'confirm',
-        name: 'certificateVendor.acmpcaEnabled',
-        default: false,
-        askAnswered: true,
-        when(answers: Answers) {
-          return answers.certificateVendor?.providingCSRs ?? false;
-        },
-      },
-      {
-        message: `If using ACM PCA, and ACM PCA is located in another AWS Account, enter the IAM cross-account role (leave blank otherwise)`,
-        type: 'input',
-        name: 'certificateVendor.acmpcaCrossAccountRoleArn',
-        default: answers.certificateVendor?.acmpcaCrossAccountRoleArn ?? '',
-        askAnswered: true,
-        validate(answer: string) {
-          if (answer?.length === 0) {
-            return true;
-          }
-          return _.validateAwsIAMRoleArn(answer);
-        },
-        when(answers: Answers) {
-          return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.acmpcaEnabled);
-        },
-      },
-      {
-        message: `If ACM PCA is located in a different region, enter the region name (leave blank for default region)`,
-        type: 'input',
-        name: 'certificateVendor.acmpcaRegion',
-        default: answers.certificateVendor?.acmpcaRegion ?? answers.region,
-        askAnswered: true,
-        validate(answer: string) {
-          if (answer?.length === 0) {
-            return false;
-          }
-          return true
-        },
-        when(answers: Answers) {
-          return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.acmpcaEnabled);
-        },
-      },
-      {
-        message: 'Enter the CAArn of ACMPCA to be used to sign the certificates with a CSR:',
-        type: 'input',
-        name: 'certificateVendor.caArnAcmpca',
-        default: updatedAnswers.certificateVendor?.caArnAcmpca,
-        askAnswered: true,
-        when(answers: Answers) {
-          return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.acmpcaEnabled);
-        },
-        validate(answer: string) {
-          if ((answer?.length ?? 0) === 0) {
-            return `You must enter the caARN of certificate ID.`;
-          }
-          return true;
-        },
-      },
-      {
-        message: 'Choose the Signaling Algorithmof ACMPCA to be used to sign the certificates with a CSR:',
-        type: 'list',
-        name: 'certificateVendor.acmpcaSingnalingAlgorithm',
-        choices: ['SHA256WITHECDSA','SHA384WITHECDSA','SHA512WITHECDSA', 'SHA256WITHRSA', 'SHA384WITHRSA', 'SHA512WITHRSA'],
-        default: updatedAnswers.certificateVendor?.acmpcaSingnalingAlgorithm,
-        askAnswered: true,
-        when(answers: Answers) {
-          return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.acmpcaEnabled);
-        },
-        validate(answer: string) {
-          if ((answer?.length ?? 0) === 0) {
-            return `You must choose Singnaling Algorithm.`;
-          }
-          return true;
-        },
-      },
-      {
-        message: 'Enter the CA certificate ID to be used to sign the certificates requested with a CSR:',
-        type: 'input',
-        name: 'certificateVendor.caCertificateId',
-        default: updatedAnswers.certificateVendor?.caCertificateId,
-        askAnswered: true,
-        when(answers: Answers) {
-          return answers.certificateVendor?.providingCSRs ?? false;
-        },
-        validate(answer: string) {
-          if ((answer?.length ?? 0) === 0) {
-            return `You must enter the CA certificate ID.`;
-          }
-          return true;
-        },
-      }], updatedAnswers);
+        updatedAnswers = await inquirer.prompt([
+          {
+            message: 'Will you be requesting certificates using a CSR?',
+            type: 'confirm',
+            name: 'certificateVendor.providingCSRs',
+           default: false,
+           askAnswered: true,
+          },
+          {
+            message: 'Will you use ACMPCA to issue the certificate ?',
+            type: 'confirm',
+            name: 'certificateVendor.acmpcaEnabled',
+            default: false,
+            askAnswered: true,
+            when(answers: Answers) {
+              return answers.certificateVendor?.providingCSRs ?? false;
+            },
+          },
+          {
+            message: `If using ACM PCA, and ACM PCA is located in another AWS Account, enter the IAM cross-account role (leave blank otherwise)`,
+            type: 'input',
+            name: 'certificateVendor.acmpcaCrossAccountRoleArn',
+            default: answers.certificateVendor?.acmpcaCrossAccountRoleArn ?? '',
+            askAnswered: true,
+            validate(answer: string) {
+              if (answer?.length === 0) {
+                return true;
+              }
+              return _.validateAwsIAMRoleArn(answer);
+            },
+            when(answers: Answers) {
+              return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.acmpcaEnabled);
+            },
+          },
+          {
+            message: `If ACM PCA is located in a different region, enter the region name (leave blank for default region)`,
+            type: 'input',
+            name: 'certificateVendor.acmpcaRegion',
+            default: answers.certificateVendor?.acmpcaRegion ?? answers.region,
+            askAnswered: true,
+            validate(answer: string) {
+              if (answer?.length === 0) {
+                return false;
+              }
+              return true
+            },
+            when(answers: Answers) {
+              return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.acmpcaEnabled);
+            },
+          },
+          {
+            message: 'Enter the CAArn of ACMPCA to be used to sign the certificates with a CSR:',
+            type: 'input',
+            name: 'certificateVendor.caArnAcmpca',
+            default: updatedAnswers.certificateVendor?.caArnAcmpca,
+            askAnswered: true,
+            when(answers: Answers) {
+              return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.acmpcaEnabled);
+            },
+            validate(answer: string) {
+              if ((answer?.length ?? 0) === 0) {
+                return `You must enter the caARN of certificate ID.`;
+              }
+              return true;
+            },
+          },
+          {
+            message: 'Choose the Signaling Algorithmof ACMPCA to be used to sign the certificates with a CSR:',
+            type: 'list',
+            name: 'certificateVendor.acmpcaSingnalingAlgorithm',
+            choices: ['SHA256WITHECDSA','SHA384WITHECDSA','SHA512WITHECDSA', 'SHA256WITHRSA', 'SHA384WITHRSA', 'SHA512WITHRSA'],
+            default: updatedAnswers.certificateVendor?.acmpcaSingnalingAlgorithm,
+            askAnswered: true,
+            when(answers: Answers) {
+              return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.acmpcaEnabled);
+            },
+            validate(answer: string) {
+              if ((answer?.length ?? 0) === 0) {
+                return `You must choose Singnaling Algorithm.`;
+              }
+              return true;
+            },
+          },
+          {
+            message: 'Enter the CA certificate ID to be used to sign the certificates requested with a CSR:',
+            type: 'input',
+            name: 'certificateVendor.caCertificateId',
+            default: updatedAnswers.certificateVendor?.caCertificateId,
+            askAnswered: true,
+            when(answers: Answers) {
+              return answers.certificateVendor?.providingCSRs ?? false;
+            },
+            validate(answer: string) {
+              if ((answer?.length ?? 0) === 0) {
+                return `You must enter the CA certificate ID.`;
+              }
+              return true;
+            },
+          }], updatedAnswers);
       
     updatedAnswers = await inquirer.prompt([{
       message: `Create or modify AWS IoT CA alias list ?`,
