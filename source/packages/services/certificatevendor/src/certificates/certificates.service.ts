@@ -186,7 +186,7 @@ export class CertificateService {
                 
             } else { // create certificate from SSM parameter and csr
                 caPem = await this.getCaCertificate(this.caCertificateId);
-                certificate = await this.getSSMCertificate(csr, caPem);
+                certificate = await this.getSSMCertificate(csr, caPem, this.caCertificateId);
             }
             
 
@@ -584,9 +584,9 @@ export class CertificateService {
         return policies;
     }
     
-    private async getSSMCertificate(csr: string, caPem: string): Promise<string> {
+    private async getSSMCertificate(csr: string, caPem: string, rootCACertId: string): Promise<string> {
         
-        const caKey:string = await this.getCAKey(this.caCertificateId);
+        const caKey:string = await this.getCAKey(rootCACertId);
         const certificate:string = await this.createCertificateFromCsr(csr, caKey, caPem);
         return certificate;
     }
