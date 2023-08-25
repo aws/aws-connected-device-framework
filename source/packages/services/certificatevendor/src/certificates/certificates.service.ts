@@ -150,7 +150,7 @@ export class CertificateService {
                         acmpcaParameters.awsiotCaID = process.env[`CA_${acmpcaParameters.awsiotCaAlias?.toUpperCase()}`];
                         ow(acmpcaParameters.awsiotCaID, ow.string.message('Invalid `awsiotCaAlias`.'));
                     } else {
-                        ow(acmpcaParameters.awsiotCaID, ow.string.message('Either `awsiotCaAlias` or `awsiotCaArn` must be provided'));
+                        ow(acmpcaParameters.awsiotCaID, ow.string.message('Either `awsiotCaAlias` or `awsiotCaId` must be provided'));
                     }
                     if (acmpcaParameters.acmpcaCaAlias) {
                         acmpcaParameters.acmpcaCaArn = process.env[`PCA_${acmpcaParameters.acmpcaCaAlias?.toUpperCase()}`];
