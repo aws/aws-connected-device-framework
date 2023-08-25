@@ -184,7 +184,7 @@ export class CertificateService {
                 caPem = await this.getCaCertificate(caCertID);
                 certificate = await this.getACMCertificate(csr, acmCaArn, certInfo);
                 
-            } else { // create certificate from SSM paramater and csr
+            } else { // create certificate from SSM parameter and csr
                 caPem = await this.getCaCertificate(this.caCertificateId);
                 certificate = await this.getSSMCertificate(csr, caPem);
             }
