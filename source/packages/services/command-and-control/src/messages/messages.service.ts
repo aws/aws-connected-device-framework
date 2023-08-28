@@ -133,9 +133,6 @@ export class MessagesService {
                 }
             }
 
-            await this.messagesDao.updateMessage(message);
-            await this.messagesDao.saveResolvedTargets(message);
-
             if (result === false) {
                 throw new Error('PROCESS_MESSAGE_FAILED');
             }

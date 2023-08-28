@@ -40,6 +40,8 @@ export interface MessageItem {
 
     createdAt?: number;
     updatedAt?: number;
+
+    bulkProvisioningTaskId?: string;
 }
 
 export interface Targets {
@@ -105,6 +107,7 @@ export interface ReplyResourceList {
 
 export type MessageStatus =
     | 'identifying_targets'
+    | 'awaiting_provisioning'
     | 'sending'
     | 'awaiting_replies'
     | 'success'

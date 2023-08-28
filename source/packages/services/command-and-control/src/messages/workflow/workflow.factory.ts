@@ -19,6 +19,8 @@ import { CommandItem } from '../../commands/commands.models';
 import { TYPES } from '../../di/types';
 import { MessageItem } from '../messages.models';
 import { BatchTargetsAction } from './workflow.batchTargets';
+import { CheckBulkProvisioningAction } from './workflow.bulkProvisioningCheck';
+import { CreateEphemeralGroupAction } from './workflow.createEphemeralGroup';
 import { WorkflowAction } from './workflow.interfaces';
 import { InvalidTransitionAction } from './workflow.invalidTransition';
 import { JobAction } from './workflow.job';
@@ -34,8 +36,12 @@ export class WorkflowFactory {
         @inject(TYPES.TopicAction) private topicAction: TopicAction,
         @inject(TYPES.ShadowAction) private shadowAction: ShadowAction,
         @inject(TYPES.JobAction) private jobAction: JobAction,
+        @inject(TYPES.CreateEphemeralGroupAction)
+        private createEphemeralGroup: CreateEphemeralGroupAction,
         @inject(TYPES.InvalidTransitionAction)
-        private invalidTransitionAction: InvalidTransitionAction
+        private invalidTransitionAction: InvalidTransitionAction,
+        @inject(TYPES.CheckBulkProvisioningAction)
+        private checkBulkProvisioningAction: CheckBulkProvisioningAction
     ) {}
 
     getAction(message: MessageItem, command: CommandItem): WorkflowAction[] {
@@ -50,10 +56,25 @@ export class WorkflowFactory {
 
         switch (message.status) {
             case 'identifying_targets': {
-                return [this.resolveTargetsAction, this.batchTargetsAction];
+                switch (command.deliveryMethod.type) {
+                    case 'TOPIC':
+                    case 'SHADOW': {
+                        return [this.resolveTargetsAction, this.batchTargetsAction];
+                    }
+                    case 'JOB': {
+                        return [this.resolveTargetsAction, this.createEphemeralGroup];
+                    }
+                    default: {
+                        return [this.invalidTransitionAction];
+                    }
+                }
             }
 
-            case 'sending': {
+            case 'awaiting_provisioning': {
+                return [this.checkBulkProvisioningAction];
+            }
+
+            case 'sending':
                 switch (command.deliveryMethod.type) {
                     case 'TOPIC': {
                         return [this.topicAction];
@@ -67,7 +88,6 @@ export class WorkflowFactory {
                     default:
                         return [this.invalidTransitionAction];
                 }
-            }
 
             default:
                 return [this.invalidTransitionAction];

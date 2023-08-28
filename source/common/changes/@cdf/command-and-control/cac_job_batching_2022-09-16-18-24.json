@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/command-and-control",
+      "comment": "When a jobs target list exceeds the maximum, the resolved things are added to an ephemeral thing group to be used as the target. This process is carried out via AWS ioT Bulk Provisioning which has a hard limit of 1 instance running per AWS Account at any single time. This enhancement moves the ephemeral grouping logic upstream so that a single batch provisioning task is carried out per message instead of per message batch.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/command-and-control",
+  "email": "deanhart@amazon.com"
+}

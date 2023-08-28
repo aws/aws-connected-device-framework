@@ -19,6 +19,7 @@ import { logger } from '@awssolutions/simple-cdf-logger';
 import AWS from 'aws-sdk';
 import { CommandItem, ShadowDeliveryMethod } from '../../commands/commands.models';
 import { TYPES } from '../../di/types';
+import { MessagesDao } from '../messages.dao';
 import { MessageItem } from '../messages.models';
 import { WorkflowPublishAction } from './workflow.publishAction';
 
@@ -28,6 +29,7 @@ export class ShadowAction extends WorkflowPublishAction {
 
     constructor(
         @inject('aws.iot.shadow.name') private shadowName: string,
+        @inject(TYPES.MessagesDao) private messagesDao: MessagesDao,
         @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData
     ) {
         super();
@@ -64,6 +66,9 @@ export class ShadowAction extends WorkflowPublishAction {
 
         // we remove the status field to prevent any accidental overwrites when saving to the db in future steps
         delete message.status;
+
+        await this.messagesDao.updateMessage(message);
+        await this.messagesDao.saveResolvedTargets(message);
 
         logger.debug(`workflow.shadow process: exit:true, message:${JSON.stringify(message)}`);
         return true;
