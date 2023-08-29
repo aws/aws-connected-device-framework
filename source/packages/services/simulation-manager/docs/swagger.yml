@@ -49,6 +49,21 @@ paths:
             location:
               schema:
                 type: 'string'
+  /simulations/{simulation-id}/runs:
+    post:
+      tags:
+        - 'Runs'
+      summary: 'Create a run for the simulation'
+      operationId: 'CreateRun'
+      requestBody:
+        $ref: '#/components/requestBodies/Run'
+      response:
+        204:
+          description: 'success'
+          headers:
+            location:
+              schema:
+                type: 'string'
 
 components:
   requestBodies:
@@ -57,6 +72,11 @@ components:
         application/vnd.aws-cdf-v1.0+json:
           schema:
             $ref: '#/components/schemas/Simulation'
+    Run:
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: '#/components/schemas/Run'
 
   schemas:
     Simulation:
@@ -96,6 +116,27 @@ components:
               description: 'A list of different task that will be executed by the simulator. the Task names are dynamic and can be modified as needed'
               additionalProperties:
                 $ref: '#/components/schemas/Task'
+    Run:
+      type: 'object'
+      properties:
+        deviceCount:
+          type: 'integer'
+          format: 'int32'
+          default: 100
+          required: true
+          description: 'the number of devices to simulate'
+        simulationId:
+          type: 'string'
+          description: 'the id of the simulation you are creating runs against'
+          required: true
+        id:
+          type: 'string'
+          description: 'the id of the run'
+          required: false
+        status:
+          type: 'string'
+          description: 'the status of the run'
+          required: false
 
     Task:
       type: 'object'

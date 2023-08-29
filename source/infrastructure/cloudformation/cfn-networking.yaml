@@ -265,6 +265,19 @@ Resources:
         From: 1024
         To: 65535
 
+  PrivateSubnetMqttOutboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PrivateSubnetNacl
+      RuleNumber: 103
+      Protocol: 6
+      Egress: true
+      RuleAction: allow
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 8883
+        To: 8883
 
   PublicSubnetOne:
     Condition: Deploy

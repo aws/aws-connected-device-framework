@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/simulation-manager",
+      "comment": "fixed minor issues in the runService and updated documentation",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/simulation-manager",
+  "email": "bahavar@amazon.com"
+}

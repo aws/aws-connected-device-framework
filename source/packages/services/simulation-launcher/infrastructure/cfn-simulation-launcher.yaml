@@ -53,20 +53,6 @@ Parameters:
     Description: The KMS key ID used to encrypt the SNS topic
     Type: String
 
-  LoggingLevel:
-    Description: Application logging level
-    Type: String
-    Default: info
-    AllowedValues:
-      - error
-      - warn
-      - info
-      - debug
-      - silly
-
-Conditions:
-  LoggingLevelProvided: !Not [!Equals [!Ref LoggingLevel, '']]
-
 Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
@@ -198,7 +184,7 @@ Resources:
                   - 's3:Get*'
                   - 's3:List*'
                   - 's3:Put*'
-                Resource: 'arn:aws:s3:::${BucketName}/*'
+                Resource: !Sub 'arn:aws:s3:::${BucketName}/*'
               - Sid: lambda
                 Action:
                   - lambda:InvokeFunction
@@ -308,7 +294,6 @@ Resources:
           AWS_ECS_CLUSTERID: !Ref ECSCluster
           AWS_ECS_SECURITYGROUPID: !Ref FargateContainerSecurityGroup
           AWS_ECS_TASKDEFINITIONARN: !Ref JMeterTaskDefinition
-          LOGGING_LEVEL: !If [LoggingLevelProvided, !Ref LoggingLevel, !Ref AWS::NoValue]
       Tracing: Active
     DependsOn:
       - LambdaExecutionRole
