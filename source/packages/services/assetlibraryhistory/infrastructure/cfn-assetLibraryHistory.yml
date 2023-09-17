@@ -323,7 +323,7 @@ Resources:
           Type: Kinesis
           Properties:
             Stream: !GetAtt EventsKinesisStream.Arn
-            BatchSize: 100 # What should this be?
+            BatchSize: 100
             MaximumBatchingWindowInSeconds: 30
             StartingPosition: LATEST
             MaximumRetryAttempts: 1
