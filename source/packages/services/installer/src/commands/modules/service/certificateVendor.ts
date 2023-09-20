@@ -158,7 +158,7 @@ export class CertificateVendorInstaller implements ServiceModule {
                     message:
                         'Choose the Signaling Algorithm of ACMPCA to be used to sign the certificates with a CSR:',
                     type: 'list',
-                    name: 'certificateVendor.acmpcaSingnalingAlgorithm',
+                    name: 'certificateVendor.acmpcaSigningAlgorithm',
                     choices: [
                         'SHA256WITHECDSA',
                         'SHA384WITHECDSA',
@@ -167,7 +167,7 @@ export class CertificateVendorInstaller implements ServiceModule {
                         'SHA384WITHRSA',
                         'SHA512WITHRSA',
                     ],
-                    default: updatedAnswers.certificateVendor?.acmpcaSingnalingAlgorithm,
+                    default: updatedAnswers.certificateVendor?.acmpcaSigningAlgorithm,
                     askAnswered: true,
                     when(answers: Answers) {
                         return (
@@ -177,7 +177,7 @@ export class CertificateVendorInstaller implements ServiceModule {
                     },
                     validate(answer: string) {
                         if ((answer?.length ?? 0) === 0) {
-                            return `You must choose Singnaling Algorithm.`;
+                            return `You must choose a Signaling Algorithm.`;
                         }
                         return true;
                     },
@@ -443,10 +443,7 @@ export class CertificateVendorInstaller implements ServiceModule {
         addIfSpecified('CaCertificateId', answers.certificateVendor.caCertificateId);
         addIfSpecified('AcmpcaCaArn', answers.certificateVendor.caArnAcmpca);
         addIfSpecified('AcmpcaEnabled', answers.certificateVendor.acmpcaEnabled);
-        addIfSpecified(
-            'AcmpcaSingnalingAlgorithm',
-            answers.certificateVendor.acmpcaSingnalingAlgorithm
-        );
+        addIfSpecified('AcmpcaSigningAlgorithm', answers.certificateVendor.acmpcaSigningAlgorithm);
         addIfSpecified(
             'RotatedCertificatePolicy',
             answers.certificateVendor.rotatedCertificatePolicy

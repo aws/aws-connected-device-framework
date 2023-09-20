@@ -70,7 +70,7 @@ Parameters:
   AcmpcaCaArn:
     Type: String
     Default: ''
-  AcmpcaSingnalingAlgorithm:
+  AcmpcaSigningAlgorithm:
     Type: String
     Default: 'SHA256WITHRSA'
   ACMPCACrossAccountRoleArn:
@@ -322,7 +322,7 @@ Resources:
           POLICIES_ROTATEDCERTIFICATEPOLICY: !Ref RotatedCertificatePolicy
           ACMPCA_ENABLED: !Ref AcmpcaEnabled
           ACMPCA_CA_ARN: !Ref AcmpcaCaArn
-          ACMPCA_SIGNALING_ALGORITHM: !Ref AcmpcaSingnalingAlgorithm
+          ACMPCA_SIGNING_ALGORITHM: !Ref AcmpcaSigningAlgorithm
           AWS_ACCOUNTID: !Ref AWS::AccountId
           ACM_PCA_CROSS_ACCOUNT_ROLE_ARN: !Ref ACMPCACrossAccountRoleArn
       Tracing: Active

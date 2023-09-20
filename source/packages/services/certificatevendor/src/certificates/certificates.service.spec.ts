@@ -40,7 +40,7 @@ const certificateExpiryDays = 100;
 const deletePreviousCertificate = false;
 const acmpcaCaArn = 'arn:aws:acm-pca:ap-northeast-1:12345678910:certificate-authority/abcdefghi';
 const acmpcaEnabled = false;
-const acmpcaSingnalingAlgorithm = 'SHA256WITHRSA';
+const acmpcaSigningAlgorithm = 'SHA256WITHRSA';
 const certId = 'cert123456';
 let defaultPolicyInstance: CertificateService;
 let inheritPolicyInstance: CertificateService;
@@ -100,7 +100,7 @@ describe('CertificatesService', () => {
             deletePreviousCertificate,
             acmpcaCaArn,
             acmpcaEnabled,
-            acmpcaSingnalingAlgorithm,
+            acmpcaSigningAlgorithm,
             mockedRegistryManager,
             mockedIotFactory,
             mockedIotDataFactory,
@@ -128,7 +128,7 @@ describe('CertificatesService', () => {
             deletePreviousCertificate,
             acmpcaCaArn,
             acmpcaEnabled,
-            acmpcaSingnalingAlgorithm,
+            acmpcaSigningAlgorithm,
             mockedRegistryManager,
             mockedIotFactory,
             mockedIotDataFactory,

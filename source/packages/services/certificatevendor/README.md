@@ -5,7 +5,7 @@
 The certificate vendor manages the rotation of certificates involving a number of moving parts across CDF and AWS IoT.
 
 There are two flows for certificate rotation. In the fist case, device certificates are pre-created and registered before the rotation request. In this case the device requests a new certificate and is vended an S3 presigned URL in order to download the certificate package. In the second case, the device provides the certificate vendor module a CSR. In this way the device can request an updated certificate while keeping the private key on the device.
-There are two options for CSR case. One option is to use ACM PCA to issue the certificate, and another option is to create a certificate from a CA certificate registered with AWS IoT, and CA private key sored in EC2 Parameter store.
+There are two options for CSR case. One option is to use ACM PCA to issue the certificate, and another option is to create a certificate from a CA certificate registered with AWS IoT, and CA private key sorted in EC2 Parameter store.
 
 ## Architecture
 

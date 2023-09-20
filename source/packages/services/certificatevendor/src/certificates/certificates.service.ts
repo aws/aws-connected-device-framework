@@ -61,7 +61,7 @@ export class CertificateService {
         @inject('features.deletePreviousCertificate') private deletePreviousCertificate: boolean,
         @inject('acmpca.caArn') private acmpcaCaArn: string,
         @inject('acmpca.enabled') private acmpcaEnabled: boolean,
-        @inject('acmpca.singnalingAlgorithm') private acmpcaSignalingAlgorithm: string,
+        @inject('acmpca.signingAlgorithm') private acmpcaSigningAlgorithm: string,
         @inject(TYPES.RegistryManager) private registry: RegistryManager,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData,
@@ -632,7 +632,7 @@ export class CertificateService {
             params = {
                 Csr: csr,
                 CertificateAuthorityArn: caArn,
-                SigningAlgorithm: this.acmpcaSignalingAlgorithm,
+                SigningAlgorithm: this.acmpcaSigningAlgorithm,
                 Validity: { Value: this.certificateExpiryDays, Type: 'DAYS' },
                 ApiPassthrough: {
                     Subject: {
@@ -648,7 +648,7 @@ export class CertificateService {
             params = {
                 Csr: csr,
                 CertificateAuthorityArn: caArn,
-                SigningAlgorithm: this.acmpcaSignalingAlgorithm,
+                SigningAlgorithm: this.acmpcaSigningAlgorithm,
                 Validity: { Value: this.certificateExpiryDays, Type: 'DAYS' },
             };
         }
