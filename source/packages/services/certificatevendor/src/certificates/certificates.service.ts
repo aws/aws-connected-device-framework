@@ -13,11 +13,6 @@
 import { logger } from '@awssolutions/simple-cdf-logger';
 import { Iot } from 'aws-sdk';
 
-import { 
-    CertificateResponseModel, 
-    ACMPCAParameters, 
-    CertInfo
-} from './certificates.models';
 import {
     AttachThingPrincipalRequest,
     DescribeCACertificateRequest,
@@ -35,7 +30,7 @@ import ow from 'ow';
 import * as pem from 'pem';
 import { TYPES } from '../di/types';
 import { RegistryManager } from '../registry/registry.interfaces';
-import { CertificateResponseModel } from './certificates.models';
+import { ACMPCAParameters, CertInfo, CertificateResponseModel } from './certificates.models';
 
 @injectable()
 export class CertificateService {
@@ -67,18 +62,19 @@ export class CertificateService {
         @inject('acmpca.caArn') private acmpcaCaArn: string,
         @inject('acmpca.enabled') private acmpcaEnabled: boolean,
         @inject('acmpca.singnalingAlgorithm') private acmpcaSignalingAlgorithm: string,
-        @inject(TYPES.RegistryManager) private registry:RegistryManager,
+        @inject(TYPES.RegistryManager) private registry: RegistryManager,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData,
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
         @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
         // as the ACMPCA may be configured for cross-account access, we use the factory directly which includes automatic STS expiration handling
-        @inject(TYPES.ACMPCAFactory) acmpcaFactory: () => AWS.ACMPCA) {
-            this.iot = iotFactory();
-            this.iotData = iotDataFactory();
-            this.s3 = s3Factory();
-            this.ssm = ssmFactory();
-            this.acmpca = acmpcaFactory();
+        @inject(TYPES.ACMPCAFactory) acmpcaFactory: () => AWS.ACMPCA
+    ) {
+        this.iot = iotFactory();
+        this.iotData = iotDataFactory();
+        this.s3 = s3Factory();
+        this.ssm = ssmFactory();
+        this.acmpca = acmpcaFactory();
     }
 
     public async get(deviceId: string): Promise<void> {
@@ -124,10 +120,18 @@ export class CertificateService {
         logger.debug(`certificates.service get exit: response:${JSON.stringify(response)}`);
     }
 
-
-    public async getWithCsr(deviceId:string, csr:string, previousCertificateId?:string, acmpcaParameters?:ACMPCAParameters): Promise<void> {
-        logger.debug(`certificates.service getWithCsr: in: deviceId:${deviceId}, csr: ${csr}, previousCertificateId: ${previousCertificateId}, ACMPCAParameters: certInfo:${JSON.stringify(acmpcaParameters)}`);
-        const response:CertificateResponseModel = {};
+    public async getWithCsr(
+        deviceId: string,
+        csr: string,
+        previousCertificateId?: string,
+        acmpcaParameters?: ACMPCAParameters
+    ): Promise<void> {
+        logger.debug(
+            `certificates.service getWithCsr: in: deviceId:${deviceId}, csr: ${csr}, previousCertificateId: ${previousCertificateId}, ACMPCAParameters: certInfo:${JSON.stringify(
+                acmpcaParameters
+            )}`
+        );
+        const response: CertificateResponseModel = {};
 
         try {
             ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -136,29 +140,47 @@ export class CertificateService {
             // ensure device is whitelisted
             if ((await this.registry.isWhitelisted(deviceId)) !== true) {
                 throw new Error('DEVICE_NOT_WHITELISTED');
-            }            
-            let caPem:string;
-            let certificate:string;
-            
-            if(this.acmpcaEnabled) {
+            }
+            let caPem: string;
+            let certificate: string;
+
+            if (this.acmpcaEnabled) {
                 let caCertID: string;
                 let acmCaArn: string;
                 let certInfo: CertInfo;
-                
+
                 if (acmpcaParameters) {
                     if (acmpcaParameters.awsiotCaAlias) {
-                        acmpcaParameters.awsiotCaID = process.env[`CA_${acmpcaParameters.awsiotCaAlias?.toUpperCase()}`];
-                        ow(acmpcaParameters.awsiotCaID, ow.string.message('Invalid `awsiotCaAlias`.'));
+                        acmpcaParameters.awsiotCaID =
+                            process.env[`CA_${acmpcaParameters.awsiotCaAlias?.toUpperCase()}`];
+                        ow(
+                            acmpcaParameters.awsiotCaID,
+                            ow.string.message('Invalid `awsiotCaAlias`.')
+                        );
                     } else {
-                        ow(acmpcaParameters.awsiotCaID, ow.string.message('Either `awsiotCaAlias` or `awsiotCaId` must be provided'));
+                        ow(
+                            acmpcaParameters.awsiotCaID,
+                            ow.string.message(
+                                'Either `awsiotCaAlias` or `awsiotCaId` must be provided'
+                            )
+                        );
                     }
                     if (acmpcaParameters.acmpcaCaAlias) {
-                        acmpcaParameters.acmpcaCaArn = process.env[`PCA_${acmpcaParameters.acmpcaCaAlias?.toUpperCase()}`];
-                        ow(acmpcaParameters.acmpcaCaArn, ow.string.message('Invalid `acmpcaCaAlias`.'));
+                        acmpcaParameters.acmpcaCaArn =
+                            process.env[`PCA_${acmpcaParameters.acmpcaCaAlias?.toUpperCase()}`];
+                        ow(
+                            acmpcaParameters.acmpcaCaArn,
+                            ow.string.message('Invalid `acmpcaCaAlias`.')
+                        );
                     } else {
-                        ow(acmpcaParameters.acmpcaCaArn, ow.string.message('Either `acmpcaCaAlias` or `acmpcaCaArn` must be provided.'));
+                        ow(
+                            acmpcaParameters.acmpcaCaArn,
+                            ow.string.message(
+                                'Either `acmpcaCaAlias` or `acmpcaCaArn` must be provided.'
+                            )
+                        );
                     }
-                
+
                     //prioritize requested parameters over parameters in installer
                     if (acmpcaParameters.acmpcaCaArn) {
                         acmCaArn = acmpcaParameters.acmpcaCaArn;
@@ -180,15 +202,14 @@ export class CertificateService {
                     caCertID = this.caCertificateId;
                     certInfo = null;
                 }
-                
+
                 caPem = await this.getCaCertificate(caCertID);
                 certificate = await this.getACMCertificate(csr, acmCaArn, certInfo);
-                
-            } else { // create certificate from SSM parameter and csr
+            } else {
+                // create certificate from SSM parameter and csr
                 caPem = await this.getCaCertificate(this.caCertificateId);
                 certificate = await this.getSSMCertificate(csr, caPem, this.caCertificateId);
             }
-            
 
             const certificateArn = await this.registerCertificate(caPem, certificate);
 
@@ -583,50 +604,68 @@ export class CertificateService {
 
         return policies;
     }
-    
-    private async getSSMCertificate(csr: string, caPem: string, rootCACertId: string): Promise<string> {
-        
-        const caKey:string = await this.getCAKey(rootCACertId);
-        const certificate:string = await this.createCertificateFromCsr(csr, caKey, caPem);
+
+    private async getSSMCertificate(
+        csr: string,
+        caPem: string,
+        rootCACertId: string
+    ): Promise<string> {
+        const caKey: string = await this.getCAKey(rootCACertId);
+        const certificate: string = await this.createCertificateFromCsr(csr, caKey, caPem);
         return certificate;
     }
-    
-    private async getACMCertificate(csr: string, caArn: string, certInfo?:CertInfo): Promise<string> {
-        logger.debug(`getACMCertificate: in: caArn:${caArn}, certInfo:${JSON.stringify(certInfo)}, csr:${csr}`);
-        
+
+    private async getACMCertificate(
+        csr: string,
+        caArn: string,
+        certInfo?: CertInfo
+    ): Promise<string> {
+        logger.debug(
+            `getACMCertificate: in: caArn:${caArn}, certInfo:${JSON.stringify(
+                certInfo
+            )}, csr:${csr}`
+        );
+
         let params: AWS.ACMPCA.IssueCertificateRequest;
-        
+
         if (certInfo) {
             params = {
                 Csr: csr,
                 CertificateAuthorityArn: caArn,
                 SigningAlgorithm: this.acmpcaSignalingAlgorithm,
-                Validity: { Value: this.certificateExpiryDays, Type: "DAYS" },
+                Validity: { Value: this.certificateExpiryDays, Type: 'DAYS' },
                 ApiPassthrough: {
                     Subject: {
                         Country: certInfo.country,
                         Organization: certInfo.organization,
                         OrganizationalUnit: certInfo.organizationalUnit,
                         State: certInfo.stateName,
-                        CommonName: certInfo.commonName?.toString()
-                    }
-                }
+                        CommonName: certInfo.commonName?.toString(),
+                    },
+                },
             };
         } else {
             params = {
                 Csr: csr,
                 CertificateAuthorityArn: caArn,
                 SigningAlgorithm: this.acmpcaSignalingAlgorithm,
-                Validity: { Value: this.certificateExpiryDays, Type: "DAYS" },
+                Validity: { Value: this.certificateExpiryDays, Type: 'DAYS' },
             };
         }
 
-        const data: AWS.ACMPCA.IssueCertificateResponse = await this.acmpca.issueCertificate(params).promise();
+        const data: AWS.ACMPCA.IssueCertificateResponse = await this.acmpca
+            .issueCertificate(params)
+            .promise();
         let cert: AWS.ACMPCA.GetCertificateResponse;
-        
+
         try {
-            cert = await this.acmpca.waitFor('certificateIssued', {CertificateAuthorityArn: caArn, CertificateArn: data.CertificateArn }).promise();
-        } catch(err) {
+            cert = await this.acmpca
+                .waitFor('certificateIssued', {
+                    CertificateAuthorityArn: caArn,
+                    CertificateArn: data.CertificateArn,
+                })
+                .promise();
+        } catch (err) {
             logger.debug(`certificates.service acmpca.waitFor certificateIssued: err: ${err}`);
             throw new Error('UNABLE_TO_ISSUE_CERTIFICATE');
         }

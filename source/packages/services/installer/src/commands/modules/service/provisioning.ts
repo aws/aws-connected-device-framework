@@ -27,6 +27,7 @@ import {
     packageAndDeployStack,
     packageAndUploadTemplate,
 } from '../../../utils/cloudformation.util';
+import * as CommonArnValidations from '../../../utils/common-arn-validations';
 import { ConfigBuilder } from '../../../utils/configBuilder';
 
 export class ProvisioningInstaller implements RestModule {
@@ -95,7 +96,7 @@ export class ProvisioningInstaller implements RestModule {
                         if (answer?.length === 0) {
                             return true;
                         }
-                        return _.validateAwsIAMRoleArn(answer);
+                        return CommonArnValidations.validateAwsIAMRoleArn(answer);
                     },
                     when(answers: Answers) {
                         return answers.provisioning?.pcaIntegrationEnabled;
@@ -507,29 +508,7 @@ export class ProvisioningInstaller implements RestModule {
         return aliases;
     }
 
-    private validateAcmPcaArn(arn: string): boolean | string {
-        return /^arn:aws:acm-pca:\w+(?:-\w+)+:\d{12}:certificate-authority\/[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+$/.test(
-            arn
-        )
-            ? true
-            : 'Value is not a valid ACM PCA Arn';
-    }
-
-    private validateAwsIotCaArn(arn: string): boolean | string {
-        return /^arn:aws:iot:\w+(?:-\w+)+:\d{12}:cacert\/[A-Za-z0-9]+(?:[A-Za-z0-9]+)+$/.test(arn)
-            ? true
-            : 'Value is not a valid AWS IoT CA Arn';
-    }
-
-    private validateAwsIAMRoleArn(arn: string): boolean | string {
-        return /^arn:aws:iam::\d{12}:role\/[A-Za-z0-9]+(?:[A-Za-z0-9_-]+)+$/.test(arn)
-            ? true
-            : 'Value is not a valid IAM Role Arn';
-    }
-
     private getPCAPrompt(answers: Answers, pcaAliases: CAAliases): Question[] {
-        // eslint-disable-next-line
-        const _ = this;
         const questions = [
             {
                 message: 'Select the ACM PCA aliases you wish to modify',
@@ -592,7 +571,7 @@ export class ProvisioningInstaller implements RestModule {
                 default: answers.provisioning?.pcaArn,
                 askAnswered: true,
                 validate(answer: string) {
-                    return _.validateAcmPcaArn(answer);
+                    return CommonArnValidations.validateAcmPcaArn(answer);
                 },
                 when(answers: Answers) {
                     return answers.provisioning?.setPcaAliases === true;
@@ -613,8 +592,6 @@ export class ProvisioningInstaller implements RestModule {
     }
 
     private getIoTCAPrompt(answers: Answers, iotCaAliases: CAAliases): Question[] {
-        // eslint-disable-next-line
-        const _ = this;
         const questions = [
             {
                 message: 'Select the AWS IoT CA aliases you wish to modify',
@@ -678,7 +655,7 @@ export class ProvisioningInstaller implements RestModule {
                 default: answers.provisioning?.iotCaArn,
                 askAnswered: true,
                 validate(answer: string) {
-                    return _.validateAwsIotCaArn(answer);
+                    return CommonArnValidations.validateAwsIotCaArn(answer);
                 },
                 when(answers: Answers) {
                     return answers.provisioning?.setIotCaAliases === true;
