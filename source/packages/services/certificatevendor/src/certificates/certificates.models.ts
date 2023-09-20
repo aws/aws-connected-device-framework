@@ -11,34 +11,33 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface CertificateRequestModel {
-	action: Action;
-	deviceId: string;
-	certId: string;
-	csr?: string;
-	previousCertificateId?:string;
-	acmpcaParameters?: ACMPCAParameters;
+    action: Action;
+    deviceId: string;
+    certId: string;
+    csr?: string;
+    previousCertificateId?: string;
+    acmpcaParameters?: ACMPCAParameters;
 }
 
 export interface ACMPCAParameters {
-	acmpcaCaArn?: string;
-	acmpcaCaAlias?: string;
+    acmpcaCaArn?: string;
+    acmpcaCaAlias?: string;
 
-	awsiotCaID?: string;
-	awsiotCaAlias?: string;
+    awsiotCaID?: string;
+    awsiotCaAlias?: string;
 
-	certInfo?: CertInfo;
-} 
+    certInfo?: CertInfo;
+}
 
 export interface CertInfo {
-	commonName?: string;
-	organization?: string;
-	organizationalUnit?: string;
-	locality?: string;
-	stateName?: string;
-	country?: string;
-	emailAddress?: string;
-	daysExpiry?:number;	
-
+    commonName?: string;
+    organization?: string;
+    organizationalUnit?: string;
+    locality?: string;
+    stateName?: string;
+    country?: string;
+    emailAddress?: string;
+    daysExpiry?: number;
 }
 
 export interface CertificateResponseModel {

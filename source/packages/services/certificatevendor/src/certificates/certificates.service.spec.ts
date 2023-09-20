@@ -81,17 +81,61 @@ describe('CertificatesService', () => {
             return mockedACMPCA;
         };
 
+        defaultPolicyInstance = new CertificateService(
+            accountId,
+            region,
+            s3Bucket,
+            s3Prefix,
+            s3Suffix,
+            presignedUrlExpiresInSeconds,
+            mqttGetSuccessTopic,
+            mqttGetFailureTopic,
+            mqttAckSuccessTopic,
+            mqttAckFailureTopic,
+            thingGroupName,
+            caCertificateId,
+            useDefaultPolicy,
+            rotateCertPolicy,
+            certificateExpiryDays,
+            deletePreviousCertificate,
+            acmpcaCaArn,
+            acmpcaEnabled,
+            acmpcaSingnalingAlgorithm,
+            mockedRegistryManager,
+            mockedIotFactory,
+            mockedIotDataFactory,
+            mockedS3Factory,
+            mockedSsmFactory,
+            mockedAcmpcaFactory
+        );
 
-        defaultPolicyInstance = new CertificateService(accountId, region, s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
-            mqttGetSuccessTopic, mqttGetFailureTopic, mqttAckSuccessTopic, mqttAckFailureTopic,
-            thingGroupName, caCertificateId, useDefaultPolicy, rotateCertPolicy, certificateExpiryDays, deletePreviousCertificate, acmpcaCaArn, acmpcaEnabled, acmpcaSingnalingAlgorithm,
-            mockedRegistryManager, mockedIotFactory, mockedIotDataFactory, mockedS3Factory, mockedSsmFactory, mockedAcmpcaFactory);
-
-        inheritPolicyInstance = new CertificateService(accountId, region, s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
-            mqttGetSuccessTopic, mqttGetFailureTopic, mqttAckSuccessTopic, mqttAckFailureTopic,
-            thingGroupName, caCertificateId, false, rotateCertPolicy, certificateExpiryDays, deletePreviousCertificate, acmpcaCaArn, acmpcaEnabled, acmpcaSingnalingAlgorithm,
-            mockedRegistryManager, mockedIotFactory, mockedIotDataFactory, mockedS3Factory, mockedSsmFactory, mockedAcmpcaFactory);
-
+        inheritPolicyInstance = new CertificateService(
+            accountId,
+            region,
+            s3Bucket,
+            s3Prefix,
+            s3Suffix,
+            presignedUrlExpiresInSeconds,
+            mqttGetSuccessTopic,
+            mqttGetFailureTopic,
+            mqttAckSuccessTopic,
+            mqttAckFailureTopic,
+            thingGroupName,
+            caCertificateId,
+            false,
+            rotateCertPolicy,
+            certificateExpiryDays,
+            deletePreviousCertificate,
+            acmpcaCaArn,
+            acmpcaEnabled,
+            acmpcaSingnalingAlgorithm,
+            mockedRegistryManager,
+            mockedIotFactory,
+            mockedIotDataFactory,
+            mockedS3Factory,
+            mockedSsmFactory,
+            mockedAcmpcaFactory
+        );
     });
 
     it('requesting certificate for non-whitelisted device returns error', async () => {

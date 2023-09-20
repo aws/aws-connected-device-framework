@@ -40,8 +40,13 @@ exports.handler = async (event: CertificateRequestModel, _context: unknown) => {
                 const previousCertificateId = event?.previousCertificateId
                     ? event?.previousCertificateId
                     : null;
-                const acmpcaParameters = (event?.acmpcaParameters) ? event?.acmpcaParameters : null
-                await service.getWithCsr(event.deviceId, event.csr, previousCertificateId, acmpcaParameters);
+                const acmpcaParameters = event?.acmpcaParameters ? event?.acmpcaParameters : null;
+                await service.getWithCsr(
+                    event.deviceId,
+                    event.csr,
+                    previousCertificateId,
+                    acmpcaParameters
+                );
             } else {
                 await service.get(event.deviceId);
             }

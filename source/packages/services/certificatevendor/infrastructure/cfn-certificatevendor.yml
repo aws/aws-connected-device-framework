@@ -79,10 +79,10 @@ Parameters:
     Default: ''
 
 Conditions:
-  ThingGroupNameProvided: !Not [ !Equals [ !Ref ThingGroupName, "" ]]
-  KmsKeyProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ]]
-  KmsKeyNotProvided: !Equals [ !Ref KmsKeyId, "" ]
-  ACMPCACrossAccountAccessRequired:  !Not [ !Equals [ !Ref ACMPCACrossAccountRoleArn, "" ] ] 
+  ThingGroupNameProvided: !Not [!Equals [!Ref ThingGroupName, '']]
+  KmsKeyProvided: !Not [!Equals [!Ref KmsKeyId, '']]
+  KmsKeyNotProvided: !Equals [!Ref KmsKeyId, '']
+  ACMPCACrossAccountAccessRequired: !Not [!Equals [!Ref ACMPCACrossAccountRoleArn, '']]
 Resources:
   MQTTGetRule:
     Type: 'AWS::IoT::TopicRule'
@@ -278,22 +278,22 @@ Resources:
   ACMPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      Description: "cdf-bulkcerts policy for accessing ACM PCA"
-      Path: "/cdf/provisioning/"
+      Description: 'cdf-bulkcerts policy for accessing ACM PCA'
+      Path: '/cdf/provisioning/'
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Action:
               - 'acm-pca:IssueCertificate'
               - 'acm-pca:GetCertificate'
             Effect: Allow
-            Resource: "*"
+            Resource: '*'
           # optional cross-account role access for ACM PCA
           - Fn::If:
               - ACMPCACrossAccountAccessRequired
               - !Ref ACMPCACrossAccountRoleArn
               - Ref: AWS::NoValue
-  
+
   LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:

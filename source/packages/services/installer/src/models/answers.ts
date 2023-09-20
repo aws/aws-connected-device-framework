@@ -194,45 +194,45 @@ export interface CertificateActivator extends ServiceModuleAttributes {
 }
 
 export interface CertificateVendor extends ServiceModuleAttributes {
-  commandsFunctionName?: string;
-  assetLibraryFunctionName?: string;
-  providingCSRs?: boolean;
-  acmpcaEnabled?: boolean;
-  caCertificateId?: string;
-  //acmpca related configurations
-  caArnAcmpca?: string;
-  acmpcaSingnalingAlgorithm?: string;
-  acmpcaCrossAccountRoleArn?: string;
-  acmpcaRegion?: string;
-  setPcaAliases?: boolean;
-  pcaAliases?: CAAliases;
-  pcaAlias?: string;
-  pcaArn?:string;
-  pcaFinished?: boolean;
-  setIotCaAliases?: boolean;
-  iotCaAliases?: CAAliases;
-  iotCaAlias?: string;
-  iotCaID?:string;
-  iotCaFinished?: boolean;
-  //
-  useDefaultPolicy?: boolean;
-  rotatedCertificatePolicy?: string;
-  // Application Configuration
-  certificatesPrefix?: string;
-  certificatesSuffix?: string;
-  presignedUrlExpiryInSeconds?: number;
-  rotateCertificatesThingGroup?: string;
-  getSuccessTopic?: string;
-  getFailureTopic?: string;
-  getRootTopic?: string;
-  ackSuccessTopic?: string;
-  ackFailureTopic?: string;
-  ackRootTopic?: string;
-  deletePreviousCertificate?: boolean;
-  deviceStatusSuccessKey?: string;
-  deviceStatusSuccessValue?: string;
-  certificateExpiryInDays?: number;
-  registryMode?: "AssetLibrary" | "DeviceRegistry";
+    commandsFunctionName?: string;
+    assetLibraryFunctionName?: string;
+    providingCSRs?: boolean;
+    acmpcaEnabled?: boolean;
+    caCertificateId?: string;
+    //acmpca related configurations
+    caArnAcmpca?: string;
+    acmpcaSingnalingAlgorithm?: string;
+    acmpcaCrossAccountRoleArn?: string;
+    acmpcaRegion?: string;
+    setPcaAliases?: boolean;
+    pcaAliases?: CAAliases;
+    pcaAlias?: string;
+    pcaArn?: string;
+    pcaFinished?: boolean;
+    setIotCaAliases?: boolean;
+    iotCaAliases?: CAAliases;
+    iotCaAlias?: string;
+    iotCaID?: string;
+    iotCaFinished?: boolean;
+    //
+    useDefaultPolicy?: boolean;
+    rotatedCertificatePolicy?: string;
+    // Application Configuration
+    certificatesPrefix?: string;
+    certificatesSuffix?: string;
+    presignedUrlExpiryInSeconds?: number;
+    rotateCertificatesThingGroup?: string;
+    getSuccessTopic?: string;
+    getFailureTopic?: string;
+    getRootTopic?: string;
+    ackSuccessTopic?: string;
+    ackFailureTopic?: string;
+    ackRootTopic?: string;
+    deletePreviousCertificate?: boolean;
+    deviceStatusSuccessKey?: string;
+    deviceStatusSuccessValue?: string;
+    certificateExpiryInDays?: number;
+    registryMode?: 'AssetLibrary' | 'DeviceRegistry';
 }
 
 export interface Commands extends RestServiceModuleAttribues {

@@ -4,7 +4,7 @@
 
 The certificate vendor manages the rotation of certificates involving a number of moving parts across CDF and AWS IoT.
 
-There are two flows for certificate rotation. In the fist case, device certificates are pre-created and registered before the rotation request. In this case the device requests a new certificate and is vended an S3 presigned URL in order to download the certificate package. In the second case, the device provides the certificate vendor module a CSR. In this way the device can request an updated certificate while keeping the private key on the device. 
+There are two flows for certificate rotation. In the fist case, device certificates are pre-created and registered before the rotation request. In this case the device requests a new certificate and is vended an S3 presigned URL in order to download the certificate package. In the second case, the device provides the certificate vendor module a CSR. In this way the device can request an updated certificate while keeping the private key on the device.
 There are two options for CSR case. One option is to use ACM PCA to issue the certificate, and another option is to create a certificate from a CA certificate registered with AWS IoT, and CA private key sored in EC2 Parameter store.
 
 ## Architecture
@@ -20,11 +20,16 @@ The following represents the architecture of Certificate Vendor.
 A certificate package comprising of the certificate, public key and private key is to be created and registered with AWS IoT. This certificate package is to be zipped, and stored in S3 with the name of the zip matching the thing name of the intended device. The `certificateId` is associated with the certificate package by setting the `x-amz-meta-certificateid` S3 user metadata attribute of the uploaded zip file.
 
 ### Certificate Creation with a device CSR
+
 #### Certiicate Creation with CA private key
+
 A CA certificate needs to be registered with AWS IoT. In addtion, the CA private key needs to be encrypted and stored in EC2 Parameter store so the certificate vendor module can sign device certificates using the CA.
+
 #### Certificate Creation from ACMPCA
-AWS Private Certificate Authority needs to be prepared and private CA needs to be created as prerequisite. 
+
+AWS Private Certificate Authority needs to be prepared and private CA needs to be created as prerequisite.
 The private CA needs to be registered with AWS IoT. The example registration step is as follows.
+
 ```
 1. Create Verification CSR
   $ openssl genrsa -out verificationCert.key 2048
@@ -47,6 +52,7 @@ The private CA needs to be registered with AWS IoT. The example registration ste
 7. Register to IoT Core by using Verification CSR and Root CA certification.
   $ aws iot register-ca-certificate --ca-certificate file://Certificate.pem --verification-certificate file://Verify.crt --region ap-northeast-1 --set-as-active
 ```
+
 The registered CA Certificate ID and PCA Authority Arn needs to be inputted
 in the in the inquiry prompt in the installer, or request body as parameters.
 
@@ -176,18 +182,18 @@ MQTT PUBLISH BODY:
 {
     "csr":"-----BEGIN CERTIFICATE REQUEST-----\nCSR CONTENT\n-----END CERTIFICATE REQUEST-----"
     "acmpcaParameters" :{ // If not specified, the values specified in the installer will be used.
-        // Mandatory. Either provide the ACM PCA CA ARN to issue the device certificate, 
+        // Mandatory. Either provide the ACM PCA CA ARN to issue the device certificate,
         //      or an alias that points to said AWS ACM PCA CA ARN:
-        "acmpcaCaArn": "?",           
+        "acmpcaCaArn": "?",
         "acmpcaCaAlias": "?",
 
-        // Mandatory. Either provide the AWS IoT CA ID of the ACM PCA CA registered with AWS IoT, 
+        // Mandatory. Either provide the AWS IoT CA ID of the ACM PCA CA registered with AWS IoT,
         //      or an alias that points to said AWS IoT CA ID:
-        "awsiotCaID": "?",           
+        "awsiotCaID": "?",
         "awsiotCaAlias": "?",
-        
+
         // Optional. Certificate information to apply:
-        "certInfo": {                       // optional. 
+        "certInfo": {                       // optional.
             "commonName": "?",              // optional
             "organization": "?",            // optional
             "organizationalUnit": "?",      // optional

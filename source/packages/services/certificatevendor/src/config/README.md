@@ -10,6 +10,7 @@ POLICIES_ROTATEDCERTIFICATEPOLICY=
 ACMPCA_ENABLED=
 ACMPCA_CA_ARN=
 ```
+
 # The following is optional:
 
 ```ini
