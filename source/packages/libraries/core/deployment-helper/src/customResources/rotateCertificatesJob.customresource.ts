@@ -40,7 +40,7 @@ export class RotateCertificatesJobCustomResource implements CustomResource {
     }
 
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
-        const functionName = customResourceEvent?.ResourceProperties?.FunctionName;
+        const functionName = customResourceEvent?.ResourceProperties?.CommandsFunctionName;
         const thingGroupArn = customResourceEvent?.ResourceProperties?.ThingGroupArn;
         const mqttGetTopic = customResourceEvent?.ResourceProperties?.MQTTGetTopic;
         const mqttAckTopic = customResourceEvent?.ResourceProperties?.MQTTAckTopic;
