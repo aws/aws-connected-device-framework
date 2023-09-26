@@ -9,7 +9,7 @@ export function validateAcmPcaArn(arn: string): boolean | string {
 export function validateAwsIotCaID(arn: string): boolean | string {
     return /^[A-Za-z0-9]+(?:[A-Za-z0-9]+)+$/.test(arn)
         ? true
-        : 'Value is not a valid AWS IoT CA Arn';
+        : 'Value is not a valid AWS IoT CA ID';
 }
 
 export function validateAwsIAMRoleArn(arn: string): boolean | string {

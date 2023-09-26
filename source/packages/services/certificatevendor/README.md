@@ -53,8 +53,8 @@ The private CA needs to be registered with AWS IoT. The example registration ste
   $ aws iot register-ca-certificate --ca-certificate file://Certificate.pem --verification-certificate file://Verify.crt --region ap-northeast-1 --set-as-active
 ```
 
-The registered CA Certificate ID and PCA Authority Arn needs to be inputted
-in the in the inquiry prompt in the installer, or request body as parameters.
+The registered CA Certificate ID and PCA Authority Arn need to be entered
+in the inquiry prompt in the installer or request body as parameters.
 
 ## Deployment
 

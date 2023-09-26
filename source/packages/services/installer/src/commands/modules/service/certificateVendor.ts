@@ -104,7 +104,7 @@ export class CertificateVendorInstaller implements ServiceModule {
                     askAnswered: true,
                     validate: (answer: string) => {
                         if (answer?.length === 0) {
-                            return true; // TODO: should this be false?
+                            return true;
                         }
                         return CommonArnValidations.validateAwsIAMRoleArn(answer);
                     },
