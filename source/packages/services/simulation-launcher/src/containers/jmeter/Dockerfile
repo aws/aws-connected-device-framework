@@ -20,7 +20,7 @@ ARG AWSCLI_VERSION="1.16.278"
 ARG JMETER_PLUGINS_MANAGER_VERSION="1.3"
 ARG CMDRUNNER_VERSION="2.2"
 ARG JSON_LIB_VERSION="2.4"
-ARG JSON_LIB_FULL_VERSION="${JSON_LIB_VERSION}-jdk15"
+ARG JSON_LIB_FULL_VERSION="${JSON_LIB_VERSION}-jdk11"
 
 ENV JMETER_HOME /opt/apache-jmeter-${JMETER_VERSION}
 ENV	JMETER_BIN	${JMETER_HOME}/bin
@@ -34,17 +34,20 @@ RUN yum install -y \
     python \
     python-devel \
     python-pip \
-    java-1.8.0-openjdk \
+    openssl.x86_64 \
     && pip install awscli==$AWSCLI_VERSION --upgrade --user \
     && yum remove -y python-pip \
     && yum clean all
+
+# install openJDK11
+RUN amazon-linux-extras install java-openjdk11
 
 # Install jmeter
 RUN    yum update -y \
 	&& yum upgrade -y \
 	&& yum install -y ca-certificates \
 	&& update-ca-trust \
-	&& yum install -y openjdk8-jre tzdata curl unzip bash nss gzip tar\
+	&& yum install -y tzdata curl unzip bash nss gzip tar zip\
 	&& mkdir -p /tmp/dependencies  \
 	&& curl -L --silent ${JMETER_DOWNLOAD_URL} >  /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz  \
 	&& mkdir -p /opt  \

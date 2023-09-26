@@ -16,7 +16,7 @@ CORS_ORIGIN=*
 # Application logging level. Set to (in order) error, warn, info, verbose, debug or silly.
 LOGGING_LEVEL=info
 # local location where to store jmeter execution results
-RUNNERS_DATADIR=/opt/apache-jmeter-5.1.1/bin/cdf
+RUNNERS_DATADIR=/opt/apache-jmeter-5.4.3/bin/cdf
 # Container allocated memory size. Tune for best performance.
 RUNNERS_MEMORY=2048
 # Container allocated cpu. Tune for best performance.

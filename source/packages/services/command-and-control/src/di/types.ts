@@ -52,4 +52,6 @@ export const TYPES = {
     TopicAction: Symbol.for('TopicAction'),
     ShadowAction: Symbol.for('ShadowAction'),
     JobAction: Symbol.for('JobAction'),
+    CreateEphemeralGroupAction: Symbol.for('CreateEphemeralGroupAction'),
+    CheckBulkProvisioningAction: Symbol.for('CheckBulkProvisioningAction')
 };

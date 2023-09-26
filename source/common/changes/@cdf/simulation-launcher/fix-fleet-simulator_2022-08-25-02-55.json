@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/simulation-launcher",
+      "comment": "updated java version and jmeter version",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/simulation-launcher",
+  "email": "bahavar@amazon.com"
+}

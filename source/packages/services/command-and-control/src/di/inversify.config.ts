@@ -47,6 +47,8 @@ import { TYPES } from './types';
 // Note: importing @controller's carries out a one time inversify metadata generation...
 import '../commands/commands.controller';
 import '../messages/messages.controller';
+import { CreateEphemeralGroupAction } from '../messages/workflow/workflow.createEphemeralGroup';
+import {CheckBulkProvisioningAction} from "../messages/workflow/workflow.bulkProvisioningCheck";
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -105,6 +107,8 @@ container.bind<ShadowAction>(TYPES.ShadowAction).to(ShadowAction);
 container.bind<ResolveTargetsAction>(TYPES.ResolveTargetsAction).to(ResolveTargetsAction);
 container.bind<BatchTargetsAction>(TYPES.BatchTargetsAction).to(BatchTargetsAction);
 container.bind<JobAction>(TYPES.JobAction).to(JobAction);
+container.bind<CreateEphemeralGroupAction>(TYPES.CreateEphemeralGroupAction).to(CreateEphemeralGroupAction);
+container.bind<CheckBulkProvisioningAction>(TYPES.CheckBulkProvisioningAction).to(CheckBulkProvisioningAction);
 
 container.bind<DynamoDbUtils>(TYPES.DynamoDbUtils).to(DynamoDbUtils);
 

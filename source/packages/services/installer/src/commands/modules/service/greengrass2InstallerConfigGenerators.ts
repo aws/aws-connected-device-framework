@@ -82,6 +82,17 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
                         defaultConfiguration: '/greengrass/v2/claim-certs/claim.private.pem.key',
                         question: 'Path to claim private key',
                     },
+                    {
+                        propertyName: 'mqttPort',
+                        defaultConfiguration: 8883,
+                        question: 'Please enter the port to use for MQTT. For example 443 or 8883',
+                    },
+                    {
+                        propertyName: 'greengrassDataPlanePort',
+                        defaultConfiguration: 8443,
+                        question:
+                            'Please enter the port to use for GG Data Plane. Allowed options are 8443 or 443',
+                    },
                 ]),
             ],
             updatedAnswers
@@ -197,6 +208,11 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
             .add(
                 `DEVICE_CLAIM_CERTIFICATE_PRIVATE_KEY_PATH`,
                 answers.greengrass2InstallerConfigGenerators.deviceClaimCertificatePrivateKeyPath
+            )
+            .add(`MQTT_PORT`, answers.greengrass2InstallerConfigGenerators.mqttPort)
+            .add(
+                `GG_DATA_PLANE_PORT`,
+                answers.greengrass2InstallerConfigGenerators.greengrassDataPlanePort
             );
 
         return configBuilder.config;

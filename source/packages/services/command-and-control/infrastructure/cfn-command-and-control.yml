@@ -189,6 +189,12 @@ Resources:
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
+          - Sid: 'iotBulk'
+            Action:
+              - 'iot:ListThingRegistrationTasks'
+            Effect: Allow
+            Resource:
+              - '*'
           - Sid: 'iotgroups'
             Action:
               - 'iot:ListThingsInThingGroup'

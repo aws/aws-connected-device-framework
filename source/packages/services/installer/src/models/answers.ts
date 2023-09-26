@@ -274,6 +274,7 @@ export interface Notifications extends RestServiceModuleAttribues {
     itemCacheTTL?: number;
 }
 
+export type GG_DATA_PLANE_PORT = 8443 | 443;
 export interface Greengrass2InstallerConfigGenerators extends ServiceModuleAttributes {
     tokenExchangeRoleAlias?: string;
     // Application Configuration
@@ -283,6 +284,8 @@ export interface Greengrass2InstallerConfigGenerators extends ServiceModuleAttri
     devicePrivateKeyPath?: string;
     deviceClaimCertificatePath?: string;
     deviceClaimCertificatePrivateKeyPath?: string;
+    mqttPort?: number;
+    greengrassDataPlanePort?: GG_DATA_PLANE_PORT;
 }
 
 export interface Greengrass2Provisioning

@@ -27,6 +27,45 @@ describe('ManualProvisioningGenerator', () => {
         iotCredEndpoint: 'somewhere.credentials.iot.us-west-2.amazonaws.com',
     };
 
+    const handlerConfigPort: ManualProvisioningConfig = {
+        ...handlerConfig,
+        mqttPort: 443,
+        greengrassDataPlanePort: 443,
+    };
+
+    it('mqtt port test', async () => {
+        const handler = manualProvisioningHandler(handlerConfigPort);
+        const event: ConfigGeneratorEvent = {
+            coreDeviceName: 'device001',
+            version: '1.0.0',
+        };
+
+        const actual = await handler(event, undefined, undefined);
+        const expected =
+            '---\n' +
+            'system:\n' +
+            `  certificateFilePath: ${handlerConfig.certificateFilePath}\n` +
+            `  privateKeyPath: ${handlerConfig.privateKeyPath}\n` +
+            `  rootCaPath: ${handlerConfig.rootCaPath}\n` +
+            `  rootpath: ${handlerConfig.rootPath}\n` +
+            `  thingName: ${event.coreDeviceName}\n` +
+            'services:\n' +
+            '  aws.greengrass.Nucleus:\n' +
+            '    componentType: NUCLEUS\n' +
+            `    version: ${event.version}\n` +
+            '    configuration:\n' +
+            `      awsRegion: ${handlerConfig.awsRegion}\n` +
+            `      iotRoleAlias: ${handlerConfig.iotRoleAlias}\n` +
+            `      iotDataEndpoint: ${handlerConfig.iotDataEndpoint}\n` +
+            `      iotCredEndpoint: ${handlerConfig.iotCredEndpoint}\n` +
+            '      mqtt:\n' +
+            `        port: ${handlerConfigPort.mqttPort}\n` +
+            `      greengrassDataPlanePort: ${handlerConfigPort.greengrassDataPlanePort}\n`;
+
+        expect(actual).toBeDefined();
+        expect(actual['config']).toEqual(expected);
+    });
+
     it('happy path', async () => {
         const handler = manualProvisioningHandler(handlerConfig);
         const event: ConfigGeneratorEvent = {

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "allow users to modify mqtt and greengrassDataPlanePort ",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "joysl@amazon.com"
+}

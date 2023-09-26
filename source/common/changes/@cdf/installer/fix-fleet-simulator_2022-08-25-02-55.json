@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "updated jmeter version",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "bahavar@amazon.com"
+}

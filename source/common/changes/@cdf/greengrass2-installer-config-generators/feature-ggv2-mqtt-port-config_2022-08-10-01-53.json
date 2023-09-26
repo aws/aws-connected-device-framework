@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/greengrass2-installer-config-generators",
+      "comment": "allow users to modify mqtt and greengrassDataPlanePort",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/greengrass2-installer-config-generators",
+  "email": "joysl@amazon.com"
+}

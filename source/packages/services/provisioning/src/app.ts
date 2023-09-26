@@ -53,7 +53,7 @@ server.setConfig((app) => {
         next();
     });
 
-    app.use(json({ type: supportedVersions }));
+    app.use(json({ limit: '10mb', type: supportedVersions }));
 
     // default the response's headers
     app.use((req, res, next) => {
