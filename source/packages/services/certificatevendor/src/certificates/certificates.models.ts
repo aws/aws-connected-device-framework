@@ -16,6 +16,28 @@ export interface CertificateRequestModel {
     certId: string;
     csr?: string;
     previousCertificateId?: string;
+    acmpcaParameters?: ACMPCAParameters;
+}
+
+export interface ACMPCAParameters {
+    acmpcaCaArn?: string;
+    acmpcaCaAlias?: string;
+
+    awsiotCaID?: string;
+    awsiotCaAlias?: string;
+
+    certInfo?: CertInfo;
+}
+
+export interface CertInfo {
+    commonName?: string;
+    organization?: string;
+    organizationalUnit?: string;
+    locality?: string;
+    stateName?: string;
+    country?: string;
+    emailAddress?: string;
+    daysExpiry?: number;
 }
 
 export interface CertificateResponseModel {

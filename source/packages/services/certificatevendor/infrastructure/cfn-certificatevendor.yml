@@ -64,12 +64,25 @@ Parameters:
   RotatedCertificatePolicy:
     Type: String
     Default: ''
+  AcmpcaEnabled:
+    Type: String
+    Default: 'false'
+  AcmpcaCaArn:
+    Type: String
+    Default: ''
+  AcmpcaSigningAlgorithm:
+    Type: String
+    Default: 'SHA256WITHRSA'
+  ACMPCACrossAccountRoleArn:
+    Description: If ACM PCA functionality is to be used, and a ACM PCA is located within a different AWS Account, specify the cross-account IAM Role ARN.
+    Type: String
+    Default: ''
 
 Conditions:
   ThingGroupNameProvided: !Not [!Equals [!Ref ThingGroupName, '']]
   KmsKeyProvided: !Not [!Equals [!Ref KmsKeyId, '']]
   KmsKeyNotProvided: !Equals [!Ref KmsKeyId, '']
-
+  ACMPCACrossAccountAccessRequired: !Not [!Equals [!Ref ACMPCACrossAccountRoleArn, '']]
 Resources:
   MQTTGetRule:
     Type: 'AWS::IoT::TopicRule'
@@ -149,6 +162,7 @@ Resources:
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
         - !Ref ApplicationCsrPolicies
+        - !Ref ACMPolicy
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
     Condition: KmsKeyProvided
@@ -261,6 +275,25 @@ Resources:
             Effect: Allow
             Resource: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*'
 
+  ACMPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: 'cdf-bulkcerts policy for accessing ACM PCA'
+      Path: '/cdf/provisioning/'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+              - 'acm-pca:IssueCertificate'
+              - 'acm-pca:GetCertificate'
+            Effect: Allow
+            Resource: '*'
+          # optional cross-account role access for ACM PCA
+          - Fn::If:
+              - ACMPCACrossAccountAccessRequired
+              - !Ref ACMPCACrossAccountRoleArn
+              - Ref: AWS::NoValue
+
   LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -287,7 +320,11 @@ Resources:
           AWS_S3_CERTIFICATES_BUCKET: !Ref BucketName
           CERTIFICATES_CACERTIFICATEID: !Ref CaCertificateId
           POLICIES_ROTATEDCERTIFICATEPOLICY: !Ref RotatedCertificatePolicy
+          ACMPCA_ENABLED: !Ref AcmpcaEnabled
+          ACMPCA_CA_ARN: !Ref AcmpcaCaArn
+          ACMPCA_SIGNING_ALGORITHM: !Ref AcmpcaSigningAlgorithm
           AWS_ACCOUNTID: !Ref AWS::AccountId
+          ACM_PCA_CROSS_ACCOUNT_ROLE_ARN: !Ref ACMPCACrossAccountRoleArn
       Tracing: Active
 
   IotEndpoint:

@@ -4,7 +4,8 @@
 
 The certificate vendor manages the rotation of certificates involving a number of moving parts across CDF and AWS IoT.
 
-There are two flows for certificate rotation. In the fist case, device certificates are pre-created and registered before the rotation request. In this case the device requests a new certificate and is vended an S3 presigned URL in order to download the certificate package. In the second case, the device provides the certificate vendor module a CSR. In this way the device can request an updated certificate while keeping the private key on the device. The certificate vendor then uses a CA certificate registered with AWS IoT to create a device certificate from the CSR and return this certificate to the device.
+There are two flows for certificate rotation. In the fist case, device certificates are pre-created and registered before the rotation request. In this case the device requests a new certificate and is vended an S3 presigned URL in order to download the certificate package. In the second case, the device provides the certificate vendor module a CSR. In this way the device can request an updated certificate while keeping the private key on the device.
+There are two options for CSR case. One option is to use ACM PCA to issue the certificate, and another option is to create a certificate from a CA certificate registered with AWS IoT, and CA private key sorted in EC2 Parameter store.
 
 ## Architecture
 
@@ -20,7 +21,40 @@ A certificate package comprising of the certificate, public key and private key 
 
 ### Certificate Creation with a device CSR
 
+#### Certiicate Creation with CA private key
+
 A CA certificate needs to be registered with AWS IoT. In addtion, the CA private key needs to be encrypted and stored in EC2 Parameter store so the certificate vendor module can sign device certificates using the CA.
+
+#### Certificate Creation from ACMPCA
+
+AWS Private Certificate Authority needs to be prepared and private CA needs to be created as prerequisite.
+The private CA needs to be registered with AWS IoT. The example registration step is as follows.
+
+```
+1. Create Verification CSR
+  $ openssl genrsa -out verificationCert.key 2048
+2. Get IoT Core Registration Code
+  $ aws iot get-registration-code
+3. Create CSR. Insert the registration code in Common Name.
+  $ openssl req -new -key verificationCert.key -out verificationCert.csr
+4. Request to issue certificate to ACM PCA for verification. It will return certificate ARN.
+  $ aws acm-pca issue-certificate \
+  --region ap-northeast-1  \
+  --certificate-authority-arn arn:aws:acm-pca:ap-northeast-1:XXXXXXXXXXX:certificate-authority/12345678910 \
+  --csr fileb://verificationCert.csr  \
+  --signing-algorithm SHA256WITHRSA \
+  --validity Value=365,Type="DAYS"
+5. Call get-certificate to get certificate
+  $ aws acm-pca get-certificate --region ap-northeast-1 \
+--certificate-authority-arn arn:aws:acm-pca:ap-northeast-1:XXXXXXXXXXX:certificate-authority/12345678910 \
+--certificate-arn arn:aws:acm-pca:ap-northeast-1:XXXXXXXXXXX:certificate-authority/12345678910
+6. Store the Certificate as verify.crt. Transform \n into return code.
+7. Register to IoT Core by using Verification CSR and Root CA certification.
+  $ aws iot register-ca-certificate --ca-certificate file://Certificate.pem --verification-certificate file://Verify.crt --region ap-northeast-1 --set-as-active
+```
+
+The registered CA Certificate ID and PCA Authority Arn need to be entered
+in the inquiry prompt in the installer or request body as parameters.
 
 ## Deployment
 
@@ -136,6 +170,40 @@ MQTT PUBLISH BODY:
 {
     "previousCertificateId" : "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "csr":"-----BEGIN CERTIFICATE REQUEST-----\nCSR CONTENT\n-----END CERTIFICATE REQUEST-----"
+}
+```
+
+Example MQTT message body sent from the device to the AWS IoT Gateway to retrieve a certificate based on a provided CSR. That use ACM PCA to issue a new certificate:
+
+```sh
+MQTT SUBSCRIBE TOPIC:     cdf/certificates/thing001/get/+
+MQTT PUBLISH TOPIC:       cdf/certificates/thing001/get
+MQTT PUBLISH BODY:
+{
+    "csr":"-----BEGIN CERTIFICATE REQUEST-----\nCSR CONTENT\n-----END CERTIFICATE REQUEST-----"
+    "acmpcaParameters" :{ // If not specified, the values specified in the installer will be used.
+        // Mandatory. Either provide the ACM PCA CA ARN to issue the device certificate,
+        //      or an alias that points to said AWS ACM PCA CA ARN:
+        "acmpcaCaArn": "?",
+        "acmpcaCaAlias": "?",
+
+        // Mandatory. Either provide the AWS IoT CA ID of the ACM PCA CA registered with AWS IoT,
+        //      or an alias that points to said AWS IoT CA ID:
+        "awsiotCaID": "?",
+        "awsiotCaAlias": "?",
+
+        // Optional. Certificate information to apply:
+        "certInfo": {                       // optional.
+            "commonName": "?",              // optional
+            "organization": "?",            // optional
+            "organizationalUnit": "?",      // optional
+            "locality": "?",                // optional
+            "stateName": "?",               // optional
+            "country": "?",                 // optional
+            "emailAddress": "?",            // optional
+            "daysExpiry": ?                 // optional
+        }
+    }
 }
 ```
 

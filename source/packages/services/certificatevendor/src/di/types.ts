@@ -26,4 +26,10 @@ export const TYPES = {
 
     SSM: Symbol.for('SSM'),
     SSMFactory: Symbol.for('Factory<SSM>'),
+
+    STS: Symbol.for('STS'),
+    STSFactory: Symbol.for('Factory<STS>'),
+
+    ACMPCA: Symbol.for('ACMPCA'),
+    ACMPCAFactory: Symbol.for('Factory<ACMPCA>'),
 };

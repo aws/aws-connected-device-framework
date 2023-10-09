@@ -21,6 +21,7 @@ let mockedIot: AWS.Iot;
 let mockedIotData: AWS.IotData;
 let mockedS3: AWS.S3;
 let mockedSSM: AWS.SSM;
+let mockedACMPCA: AWS.ACMPCA;
 const accountId = '12345678';
 const region = 'us-west-2';
 const s3Bucket = 'myBucket';
@@ -37,6 +38,9 @@ const useDefaultPolicy = true;
 const rotateCertPolicy = 'UnitTestDevicePolicy';
 const certificateExpiryDays = 100;
 const deletePreviousCertificate = false;
+const acmpcaCaArn = 'arn:aws:acm-pca:ap-northeast-1:12345678910:certificate-authority/abcdefghi';
+const acmpcaEnabled = false;
+const acmpcaSigningAlgorithm = 'SHA256WITHRSA';
 const certId = 'cert123456';
 let defaultPolicyInstance: CertificateService;
 let inheritPolicyInstance: CertificateService;
@@ -59,6 +63,7 @@ describe('CertificatesService', () => {
         mockedIot = new AWS.Iot();
         mockedIotData = new AWS.IotData({ endpoint: 'mocked' });
         mockedSSM = new AWS.SSM();
+        mockedACMPCA = new AWS.ACMPCA();
 
         const mockedS3Factory = () => {
             return mockedS3;
@@ -71,6 +76,9 @@ describe('CertificatesService', () => {
         };
         const mockedSsmFactory = () => {
             return mockedSSM;
+        };
+        const mockedAcmpcaFactory = () => {
+            return mockedACMPCA;
         };
 
         defaultPolicyInstance = new CertificateService(
@@ -90,11 +98,15 @@ describe('CertificatesService', () => {
             rotateCertPolicy,
             certificateExpiryDays,
             deletePreviousCertificate,
+            acmpcaCaArn,
+            acmpcaEnabled,
+            acmpcaSigningAlgorithm,
             mockedRegistryManager,
             mockedIotFactory,
             mockedIotDataFactory,
             mockedS3Factory,
-            mockedSsmFactory
+            mockedSsmFactory,
+            mockedAcmpcaFactory
         );
 
         inheritPolicyInstance = new CertificateService(
@@ -114,11 +126,15 @@ describe('CertificatesService', () => {
             rotateCertPolicy,
             certificateExpiryDays,
             deletePreviousCertificate,
+            acmpcaCaArn,
+            acmpcaEnabled,
+            acmpcaSigningAlgorithm,
             mockedRegistryManager,
             mockedIotFactory,
             mockedIotDataFactory,
             mockedS3Factory,
-            mockedSsmFactory
+            mockedSsmFactory,
+            mockedAcmpcaFactory
         );
     });
 
