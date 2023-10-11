@@ -329,4 +329,35 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
     }
+
+    /**
+     * Gets the group details in bulk for the given group paths. 
+     * @param groupPaths List of group paths to get details for
+     * @param includeGroups Optional flag to include the groups in the response. 
+     * @param additionalHeaders Optional additional headers to send with the request. 
+     * @returns Group details for the given group paths. 
+     * @throws Error if the groupPaths is not an array. 
+     * 
+     */
+    async bulkGetGroups(
+        groupPaths: string[], 
+        includeGroups?:boolean,
+        additionalHeaders?:RequestHeaders, 
+    ): Promise<GroupResourceList> {
+        ow(groupPaths, 'groupPaths', ow.array.nonEmpty);
+        let query = "";
+        groupPaths.forEach(gp => {
+            query += gp + ",";
+        });
+        query = query.substring(0, query.length - 1);
+        const event = new LambdaApiGatewayEventBuilder()
+            .setMethod('GET')
+            .setPath(super.bulkGroupsRelativeUrl())
+            .setQueryStringParameters({includeGroups: `${includeGroups}`})
+            .setQueryStringParameters({groupPaths: query })
+            .setHeaders(super.buildHeaders(additionalHeaders));
+            
+        const res = await this.lambdaInvoker.invoke(this.functionName, event);
+        return res.body;
+    }
 }
