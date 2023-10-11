@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-assetlibrary-client",
+      "comment": "Added \"bulkGetGroups\" to groups service",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-assetlibrary-client"
+}
