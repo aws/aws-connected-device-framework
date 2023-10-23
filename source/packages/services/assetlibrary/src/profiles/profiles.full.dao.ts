@@ -39,34 +39,30 @@ export class ProfilesDaoFull extends BaseDaoFull {
         const labels = n.types.join('::');
 
         /*  create the profile  */
-        const conn = super.getConnection();
-        try {
-            const traversal = conn.traversal
-                .V(templateId)
-                .as('type')
-                .addV(labels)
-                .property(process.t.id, profileId);
+        const conn = await super.getConnection();
+        const traversal = conn.traversal
+            .V(templateId)
+            .as('type')
+            .addV(labels)
+            .property(process.t.id, profileId);
 
-            /*  set the profiles attributes  */
-            for (const key of Object.keys(n.attributes)) {
-                if (n.attributes[key] !== undefined) {
-                    traversal.property(process.cardinality.single, key, n.attributes[key]);
-                }
+        /*  set the profiles attributes  */
+        for (const key of Object.keys(n.attributes)) {
+            if (n.attributes[key] !== undefined) {
+                traversal.property(process.cardinality.single, key, n.attributes[key]);
             }
-
-            /*  save any groups  */
-            if (n.groups) {
-                traversal.property(process.cardinality.single, 'groups', JSON.stringify(n.groups));
-            }
-
-            /*  link the profile to the type  */
-            traversal.as('profile').addE('profiles').from_('profile').to('type');
-
-            // logger.debug(`profiles.full.dao create: traversal:${traversal}`);
-            await traversal.iterate();
-        } finally {
-            await conn.close();
         }
+
+        /*  save any groups  */
+        if (n.groups) {
+            traversal.property(process.cardinality.single, 'groups', JSON.stringify(n.groups));
+        }
+
+        /*  link the profile to the type  */
+        traversal.as('profile').addE('profiles').from_('profile').to('type');
+
+        // logger.debug(`profiles.full.dao create: traversal:${traversal}`);
+        await traversal.iterate();
 
         logger.debug(`profiles.full.dao create: exit: id:${profileId}`);
         return profileId;
@@ -80,26 +76,21 @@ export class ProfilesDaoFull extends BaseDaoFull {
         const id = `profile___${templateId}___${profileId}`;
 
         // assemble the main query
-        const conn = super.getConnection();
-        let result;
-        try {
-            const traverser = conn.traversal
-                .V(id)
-                .as('profile')
-                .out('profiles')
-                .as('template')
-                .out('super_type')
-                .as('category')
-                .project('profile', 'template', 'category')
-                .by(__.select('profile').valueMap().with_(process.withOptions.tokens))
-                .by(__.select('template').valueMap().with_(process.withOptions.tokens))
-                .by(__.select('category').valueMap().with_(process.withOptions.tokens));
+        const conn = await super.getConnection();
+        const traverser = conn.traversal
+            .V(id)
+            .as('profile')
+            .out('profiles')
+            .as('template')
+            .out('super_type')
+            .as('category')
+            .project('profile', 'template', 'category')
+            .by(__.select('profile').valueMap().with_(process.withOptions.tokens))
+            .by(__.select('template').valueMap().with_(process.withOptions.tokens))
+            .by(__.select('category').valueMap().with_(process.withOptions.tokens));
 
-            // execute and retrieve the resutls
-            result = await traverser.next();
-        } finally {
-            await conn.close();
-        }
+        // execute and retrieve the resutls
+        const result = await traverser.next();
 
         if (result === undefined || result.value === undefined || result.value === null) {
             logger.debug(`profiles.full.dao get: exit: node: undefined`);
@@ -118,29 +109,25 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
         const id = `profile___${n.templateId}___${n.attributes['profileId']}`;
 
-        const conn = super.getConnection();
-        try {
-            const traversal = conn.traversal.V(id);
-            // drop() step terminates a traversal, process all drops as part of a final union step
-            const dropTraversals: process.GraphTraversal[] = [];
+        const conn = await super.getConnection();
+        const traversal = conn.traversal.V(id);
+        // drop() step terminates a traversal, process all drops as part of a final union step
+        const dropTraversals: process.GraphTraversal[] = [];
 
-            for (const [key, val] of Object.entries(n.attributes)) {
-                if (val !== undefined) {
-                    if (val === null) {
-                        dropTraversals.push(__.properties(key));
-                    } else {
-                        traversal.property(process.cardinality.single, key, val);
-                    }
+        for (const [key, val] of Object.entries(n.attributes)) {
+            if (val !== undefined) {
+                if (val === null) {
+                    dropTraversals.push(__.properties(key));
+                } else {
+                    traversal.property(process.cardinality.single, key, val);
                 }
             }
-            if (dropTraversals.length > 0) {
-                traversal.local(__.union(...dropTraversals)).drop();
-            }
-
-            await traversal.iterate();
-        } finally {
-            await conn.close();
         }
+        if (dropTraversals.length > 0) {
+            traversal.local(__.union(...dropTraversals)).drop();
+        }
+
+        await traversal.iterate();
 
         logger.debug(`profiles.full.dao update: exit: id:${id}`);
         return id;
@@ -183,12 +170,8 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
         const id = `profile___${templateId}___${profileId}`;
 
-        const conn = super.getConnection();
-        try {
-            await conn.traversal.V(id).drop().iterate();
-        } finally {
-            await conn.close();
-        }
+        const conn = await super.getConnection();
+        await conn.traversal.V(id).drop().iterate();
 
         logger.debug(`profiles.full.dao delete: exit`);
     }
@@ -198,26 +181,21 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
         const id = `type___${templateId}`;
 
-        const conn = super.getConnection();
-        let result;
-        try {
-            const traverser = conn.traversal
-                .V(id)
-                .as('template')
-                .out('super_type')
-                .as('category')
-                .select('template')
-                .in_('profiles')
-                .as('profiles')
-                .project('profiles', 'template', 'category')
-                .by(__.select('profiles').valueMap().with_(process.withOptions.tokens).fold())
-                .by(__.select('template').valueMap().with_(process.withOptions.tokens))
-                .by(__.select('category').valueMap().with_(process.withOptions.tokens));
+        const conn = await super.getConnection();
+        const traverser = conn.traversal
+            .V(id)
+            .as('template')
+            .out('super_type')
+            .as('category')
+            .select('template')
+            .in_('profiles')
+            .as('profiles')
+            .project('profiles', 'template', 'category')
+            .by(__.select('profiles').valueMap().with_(process.withOptions.tokens).fold())
+            .by(__.select('template').valueMap().with_(process.withOptions.tokens))
+            .by(__.select('category').valueMap().with_(process.withOptions.tokens));
 
-            result = await traverser.next();
-        } finally {
-            await conn.close();
-        }
+        const result = await traverser.next();
 
         logger.debug(`profiles.full.dao get: results: ${JSON.stringify(result)}`);
 

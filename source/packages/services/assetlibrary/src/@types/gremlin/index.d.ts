@@ -414,7 +414,10 @@ declare module 'gremlin' {
         export class RemoteStrategy extends process.TraversalStrategy {}
 
         export class DriverRemoteConnection extends RemoteConnection {
+            open(): Promise<void>;
             close(): Promise<void>;
+            addListener(event: string | symbol, handler: (...args: any[]) => void): void;
+            removeListener(event: string | symbol, handler: (...args: any[]) => void): void;
         }
     }
 }

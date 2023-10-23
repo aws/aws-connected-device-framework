@@ -243,37 +243,32 @@ export class SearchDaoFull extends BaseDaoFull {
             )}, authorizedPaths:${authorizedPaths}`
         );
 
-        let results;
-        const conn = super.getConnection();
-        try {
-            const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
+        const conn = await super.getConnection();
+        const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
 
-            if (request.sort?.length > 0) {
-                traverser.order();
-                request.sort.forEach((s) => {
-                    const order = s.direction === 'ASC' ? process.order.asc : process.order.desc;
-                    traverser.by(__.coalesce(__.values(s.field), __.constant('')), order);
-                });
-            }
-
-            // TODO: this should be done from any service that calls this, so we should replace this with a simple number/range validation
-            const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
-                request.offset,
-                request.count
-            );
-            traverser
-                .range(offsetAsInt, offsetAsInt + countAsInt)
-                .valueMap()
-                .with_(process.withOptions.tokens);
-
-            logger.debug(
-                `search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`
-            );
-
-            results = await traverser.toList();
-        } finally {
-            await conn.close();
+        if (request.sort?.length > 0) {
+            traverser.order();
+            request.sort.forEach((s) => {
+                const order = s.direction === 'ASC' ? process.order.asc : process.order.desc;
+                traverser.by(__.coalesce(__.values(s.field), __.constant('')), order);
+            });
         }
+
+        // TODO: this should be done from any service that calls this, so we should replace this with a simple number/range validation
+        const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+            request.offset,
+            request.count
+        );
+        traverser
+            .range(offsetAsInt, offsetAsInt + countAsInt)
+            .valueMap()
+            .with_(process.withOptions.tokens);
+
+        logger.debug(
+            `search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`
+        );
+
+        const results = await traverser.toList();
 
         logger.debug(`search.full.dao search: results:${JSON.stringify(results)}`);
 
@@ -304,17 +299,13 @@ export class SearchDaoFull extends BaseDaoFull {
                 request
             )}, authorizedPaths:${authorizedPaths}`
         );
-        const conn = super.getConnection();
-        try {
-            const traverser = this.buildSearchTraverser(conn, request, authorizedPaths).union(
-                __.hasLabel('group'),
-                __.has('deviceId')
-            );
-            logger.debug(`search.full.dao delete: in: traverser: ${traverser.toString()}`);
-            await traverser.drop().iterate();
-        } finally {
-            await conn.close();
-        }
+        const conn = await super.getConnection();
+        const traverser = this.buildSearchTraverser(conn, request, authorizedPaths).union(
+            __.hasLabel('group'),
+            __.has('deviceId')
+        );
+        logger.debug(`search.full.dao delete: in: traverser: ${traverser.toString()}`);
+        await traverser.drop().iterate();
     }
 
     public async facet(
@@ -327,32 +318,27 @@ export class SearchDaoFull extends BaseDaoFull {
             )}, authorizedPaths:${authorizedPaths}`
         );
 
-        let results;
-        const conn = super.getConnection();
-        try {
-            const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
+        const conn = await super.getConnection();
+        const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
 
-            if (request.facetField !== undefined) {
-                if (request.facetField.traversals !== undefined) {
-                    request.facetField.traversals.forEach((t) => {
-                        if (t.direction === SearchRequestFilterDirection.in) {
-                            traverser.in_(t.relation);
-                        } else {
-                            traverser.out(t.relation);
-                        }
-                    });
-                }
-                traverser.values(request.facetField.field).groupCount();
+        if (request.facetField !== undefined) {
+            if (request.facetField.traversals !== undefined) {
+                request.facetField.traversals.forEach((t) => {
+                    if (t.direction === SearchRequestFilterDirection.in) {
+                        traverser.in_(t.relation);
+                    } else {
+                        traverser.out(t.relation);
+                    }
+                });
             }
-            logger.debug(
-                `search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(
-                    traverser.toString()
-                )}`
-            );
-            results = await traverser.next();
-        } finally {
-            await conn.close();
+            traverser.values(request.facetField.field).groupCount();
         }
+        logger.debug(
+            `search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(
+                traverser.toString()
+            )}`
+        );
+        const results = await traverser.next();
 
         logger.debug(`search.full.dao facet: results: ${JSON.stringify(results)}`);
 
@@ -374,14 +360,9 @@ export class SearchDaoFull extends BaseDaoFull {
             )}, authorizedPaths:${authorizedPaths}`
         );
 
-        const conn = super.getConnection();
-        let result;
-        try {
-            const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
-            result = await traverser.count().next();
-        } finally {
-            await conn.close();
-        }
+        const conn = await super.getConnection();
+        const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
+        const result = await traverser.count().next();
 
         const total = result.value as number;
         logger.debug(`search.full.dao summarize: exit: total: ${total}`);
