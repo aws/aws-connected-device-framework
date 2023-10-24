@@ -2,6 +2,12 @@
   "name": "@awssolutions/cdf-provisioning-client",
   "entries": [
     {
+      "version": "2.5.0",
+      "tag": "@awssolutions/cdf-provisioning-client_v2.5.0",
+      "date": "Tue, 24 Oct 2023 15:32:09 GMT",
+      "comments": {}
+    },
+    {
       "version": "2.4.0",
       "tag": "@awssolutions/cdf-provisioning-client_v2.4.0",
       "date": "Tue, 15 Aug 2023 18:35:38 GMT",
