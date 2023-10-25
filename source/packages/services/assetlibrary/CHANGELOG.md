@@ -1,6 +1,13 @@
 # Change Log - @awssolutions/cdf-assetlibrary
 
-This log was last generated on Tue, 15 Aug 2023 18:35:38 GMT and should not be manually modified.
+This log was last generated on Tue, 24 Oct 2023 15:32:09 GMT and should not be manually modified.
+
+## 2.5.0
+Tue, 24 Oct 2023 15:32:09 GMT
+
+### Updates
+
+- Change connection life cycle between Lambda and Neptune
 
 ## 2.4.0
 Tue, 15 Aug 2023 18:35:38 GMT
