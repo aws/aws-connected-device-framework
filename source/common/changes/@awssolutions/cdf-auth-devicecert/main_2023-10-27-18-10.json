@@ -1,0 +1,16 @@
+{
+  "changes": [
+    {
+      "changeType": 1,
+      "comment": "Dependency @awssolutions/cdf-config-inject version bump from workspace:^2.5.1 to workspace:^2.5.2.",
+      "packageName": "@awssolutions/cdf-auth-devicecert"
+    },
+    {
+      "changeType": 1,
+      "comment": "Dependency @awssolutions/cdf-errors version bump from workspace:^2.5.1 to workspace:^2.5.2.",
+      "packageName": "@awssolutions/cdf-auth-devicecert"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-auth-devicecert",
+  "email": "tylesams@amazon.com"
+}

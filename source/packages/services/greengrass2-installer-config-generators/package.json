@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-greengrass2-installer-config-generators",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "CDF Greengrass V2 Provisioning - Sample core device installer config generators",
   "author": "Dean Hart",
   "files": [
@@ -36,12 +36,12 @@
     }
   },
   "devDependencies": {
-    "@awssolutions/cdf-config-inject": "workspace:^2.5.1",
-    "@awssolutions/cdf-errors": "workspace:^2.5.1",
+    "@awssolutions/cdf-config-inject": "workspace:^2.5.2",
+    "@awssolutions/cdf-errors": "workspace:^2.5.2",
     "@awssolutions/cdf-lambda-zip": "workspace:~0.0.0",
-    "@awssolutions/cdf-logger": "workspace:^2.5.1",
+    "@awssolutions/cdf-logger": "workspace:^2.5.2",
     "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
-    "@awssolutions/simple-cdf-logger": "workspace:^2.5.1",
+    "@awssolutions/simple-cdf-logger": "workspace:^2.5.2",
     "@types/aws-lambda": "8.10.84",
     "@types/dotenv-flow": "3.2.0",
     "@types/jest": "26.0.23",
