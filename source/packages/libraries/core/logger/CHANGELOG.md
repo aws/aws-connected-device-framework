@@ -1,6 +1,11 @@
 # Change Log - @awssolutions/cdf-logger
 
-This log was last generated on Thu, 26 Oct 2023 21:17:00 GMT and should not be manually modified.
+This log was last generated on Fri, 27 Oct 2023 18:10:50 GMT and should not be manually modified.
+
+## 2.5.2
+Fri, 27 Oct 2023 18:10:50 GMT
+
+_Version update only_
 
 ## 2.5.1
 Thu, 26 Oct 2023 21:17:00 GMT

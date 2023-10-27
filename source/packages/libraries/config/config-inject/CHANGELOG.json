@@ -2,6 +2,12 @@
   "name": "@awssolutions/cdf-config-inject",
   "entries": [
     {
+      "version": "2.5.2",
+      "tag": "@awssolutions/cdf-config-inject_v2.5.2",
+      "date": "Fri, 27 Oct 2023 18:10:50 GMT",
+      "comments": {}
+    },
+    {
       "version": "2.5.1",
       "tag": "@awssolutions/cdf-config-inject_v2.5.1",
       "date": "Thu, 26 Oct 2023 21:17:00 GMT",

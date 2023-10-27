@@ -1,7 +1,7 @@
 {
   "name": "@awssolutions/cdf-logger",
   "description": "Common logging capability for platform.",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "author": "Atul Bargaje <atulbar@amazon.com>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
