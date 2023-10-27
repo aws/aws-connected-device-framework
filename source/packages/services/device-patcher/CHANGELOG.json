@@ -2,6 +2,12 @@
   "name": "@awssolutions/cdf-device-patcher",
   "entries": [
     {
+      "version": "2.5.1",
+      "tag": "@awssolutions/cdf-device-patcher_v2.5.1",
+      "date": "Thu, 26 Oct 2023 21:17:00 GMT",
+      "comments": {}
+    },
+    {
       "version": "2.5.0",
       "tag": "@awssolutions/cdf-device-patcher_v2.5.0",
       "date": "Tue, 24 Oct 2023 15:32:09 GMT",

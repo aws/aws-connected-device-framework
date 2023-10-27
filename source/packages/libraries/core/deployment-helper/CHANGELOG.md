@@ -1,6 +1,11 @@
 # Change Log - @awssolutions/cdf-deployment-helper
 
-This log was last generated on Tue, 24 Oct 2023 15:32:09 GMT and should not be manually modified.
+This log was last generated on Thu, 26 Oct 2023 21:17:00 GMT and should not be manually modified.
+
+## 2.5.1
+Thu, 26 Oct 2023 21:17:00 GMT
+
+_Version update only_
 
 ## 2.5.0
 Tue, 24 Oct 2023 15:32:09 GMT
