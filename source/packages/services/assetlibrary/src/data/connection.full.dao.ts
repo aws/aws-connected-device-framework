@@ -14,6 +14,8 @@ import { logger } from '@awssolutions/simple-cdf-logger';
 import { driver, process, structure } from 'gremlin';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
+import { PrematurelyClosedConnectionError } from '../utils/errors';
+import { retry } from '../utils/retry';
 
 @injectable()
 export class ConnectionDaoFull {
@@ -28,7 +30,7 @@ export class ConnectionDaoFull {
         this._conn = null;
     }
 
-    public async withTraversal<T>(fn: (conn: NeptuneConnection) => Promise<T>): Promise<T> {
+    private async _withTraversal<T>(fn: (conn: NeptuneConnection) => Promise<T>): Promise<T> {
         logger.debug(`connection.full.dao withTraversal: in:`);
         if (this._conn == null) {
             logger.debug(`connection.full.dao withTraversal: create new connection:`);
@@ -46,7 +48,7 @@ export class ConnectionDaoFull {
                 );
                 this._conn = null;
                 if (code === 1006) {
-                    reject(new Error('Connection closed prematurely'));
+                    reject(new PrematurelyClosedConnectionError());
                 }
             };
 
@@ -71,6 +73,17 @@ export class ConnectionDaoFull {
                     reject(e);
                 });
         });
+    }
+
+    public async withTraversal<T>(fn: (conn: NeptuneConnection) => Promise<T>): Promise<T> {
+        return await retry(
+            async () => {
+                return await this._withTraversal(fn);
+            },
+            {
+                shouldRetry: (e) => e.name === 'PrematurelyClosedConnectionError',
+            }
+        );
     }
 }
 
