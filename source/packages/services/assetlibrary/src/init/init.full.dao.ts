@@ -11,24 +11,21 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { process, structure } from 'gremlin';
+import { process } from 'gremlin';
 import { inject, injectable } from 'inversify';
-import { BaseDaoFull } from '../data/base.full.dao';
+import { ConnectionDaoFull } from '../data/connection.full.dao';
 import { TYPES } from '../di/types';
 
 @injectable()
-export class InitDaoFull extends BaseDaoFull {
+export class InitDaoFull {
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
-    ) {
-        super(neptuneUrl, graphSourceFactory);
-    }
+        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull
+    ) {}
 
     public async isInitialized(): Promise<boolean> {
         logger.debug('init.dao isInitialized: in: ');
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const query = await conn.traversal.V('type___device').next();
 
         logger.debug(`init.dao isInitialized: query: ${JSON.stringify(query)}`);
@@ -46,7 +43,7 @@ export class InitDaoFull extends BaseDaoFull {
     public async initialize(): Promise<void> {
         logger.debug('init.dao initialize: in:');
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         await conn.traversal
             .addV('type')
             .property(process.t.id, 'type___device')
@@ -63,7 +60,7 @@ export class InitDaoFull extends BaseDaoFull {
         logger.debug('init.dao getVersion: in: ');
 
         const id = 'app_version';
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const results = await conn.traversal.V(id).valueMap('version').next();
 
         logger.debug(`init.dao getVersion: results: ${JSON.stringify(results)}`);
@@ -83,7 +80,7 @@ export class InitDaoFull extends BaseDaoFull {
         const currentVersion = await this.getVersion();
         const id = 'app_version';
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         if (currentVersion === 0) {
             await conn.traversal
                 .addV(id)
@@ -103,7 +100,7 @@ export class InitDaoFull extends BaseDaoFull {
     public async upgrade_from_0(): Promise<void> {
         logger.debug(`init.dao upgrade_from_0: in:`);
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         // set groupPath of root group '/'
         await conn.traversal.V('group___/').property('groupPath', '/').iterate();
 

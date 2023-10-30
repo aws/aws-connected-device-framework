@@ -16,7 +16,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
 
 @injectable()
-export class BaseDaoFull {
+export class ConnectionDaoFull {
     private _graph: structure.Graph;
     private _conn: driver.DriverRemoteConnection | null;
 
@@ -28,18 +28,18 @@ export class BaseDaoFull {
         this._conn = null;
     }
 
-    protected async getConnection(): Promise<NeptuneConnection> {
-        logger.debug(`base.full.dao getConnection: in:`);
+    public async getConnection(): Promise<NeptuneConnection> {
+        logger.debug(`connection.full.dao getConnection: in:`);
 
         if (this._conn == null) {
-            logger.debug(`base.full.dao getConnection: create new connection:`);
+            logger.debug(`connection.full.dao getConnection: create new connection:`);
             this._conn = new driver.DriverRemoteConnection(this.neptuneUrl, {
                 mimeType: 'application/vnd.gremlin-v2.0+json',
                 pingEnabled: false,
                 connectOnStartup: false,
             });
             this._conn.addListener('close', (code: number, message: string) => {
-                logger.info(`base.full.dao connection close: code: ${code}, message: ${message}`);
+                logger.info(`connection.full.dao connection close: code: ${code}, message: ${message}`);
                 this._conn = null;
                 if (code === 1006) {
                     throw new Error('Connection closed prematurely');
@@ -48,20 +48,16 @@ export class BaseDaoFull {
             await this._conn.open();
         }
 
-        logger.debug(`base.full.dao getConnection: withRemote:`);
-        const res = new NeptuneConnection(
-            this._graph.traversal().withRemote(this._conn),
-        );
+        logger.debug(`connection.full.dao getConnection: withRemote:`);
+        const res = new NeptuneConnection(this._graph.traversal().withRemote(this._conn));
 
-        logger.debug(`base.full.dao getConnection: exit:`);
+        logger.debug(`connetion.full.dao getConnection: exit:`);
         return res;
     }
 }
 
 export class NeptuneConnection {
-    constructor(
-        private _traversal: process.GraphTraversalSource,
-    ) {}
+    constructor(private _traversal: process.GraphTraversalSource) {}
 
     public get traversal(): process.GraphTraversalSource {
         return this._traversal;

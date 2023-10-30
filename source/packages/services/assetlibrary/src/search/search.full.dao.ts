@@ -11,10 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { process, structure } from 'gremlin';
+import { process } from 'gremlin';
 import { inject, injectable } from 'inversify';
 import { NodeAssembler } from '../data/assembler';
-import { BaseDaoFull, NeptuneConnection } from '../data/base.full.dao';
+import { ConnectionDaoFull, NeptuneConnection } from '../data/connection.full.dao';
 import { Node } from '../data/node';
 import { TYPES } from '../di/types';
 import { TypeUtils } from '../utils/typeUtils';
@@ -29,16 +29,13 @@ import {
 const __ = process.statics;
 
 @injectable()
-export class SearchDaoFull extends BaseDaoFull {
+export class SearchDaoFull {
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
         @inject('enableDfeOptimization') private enableDfeOptimization: boolean,
         @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
         @inject(TYPES.NodeAssembler) private assembler: NodeAssembler,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
-    ) {
-        super(neptuneUrl, graphSourceFactory);
-    }
+        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull
+    ) {}
 
     private buildSearchTraverser(
         conn: NeptuneConnection,
@@ -243,7 +240,7 @@ export class SearchDaoFull extends BaseDaoFull {
             )}, authorizedPaths:${authorizedPaths}`
         );
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
 
         if (request.sort?.length > 0) {
@@ -299,7 +296,7 @@ export class SearchDaoFull extends BaseDaoFull {
                 request
             )}, authorizedPaths:${authorizedPaths}`
         );
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = this.buildSearchTraverser(conn, request, authorizedPaths).union(
             __.hasLabel('group'),
             __.has('deviceId')
@@ -318,7 +315,7 @@ export class SearchDaoFull extends BaseDaoFull {
             )}, authorizedPaths:${authorizedPaths}`
         );
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
 
         if (request.facetField !== undefined) {
@@ -360,7 +357,7 @@ export class SearchDaoFull extends BaseDaoFull {
             )}, authorizedPaths:${authorizedPaths}`
         );
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
         const result = await traverser.count().next();
 

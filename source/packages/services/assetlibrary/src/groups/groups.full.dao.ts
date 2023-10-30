@@ -11,10 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { process, structure } from 'gremlin';
+import { process } from 'gremlin';
 import { inject, injectable } from 'inversify';
 import { Claims } from '../authz/claims';
-import { BaseDaoFull } from '../data/base.full.dao';
+import { ConnectionDaoFull } from '../data/connection.full.dao';
 import { CommonDaoFull } from '../data/common.full.dao';
 import { FullAssembler } from '../data/full.assembler';
 import { RelatedEntityDto, VertexDto, isRelatedEntityDto, isVertexDto } from '../data/full.model';
@@ -82,17 +82,14 @@ const disassociateRels = (
 };
 
 @injectable()
-export class GroupsDaoFull extends BaseDaoFull {
+export class GroupsDaoFull {
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.CommonDao) private commonDao: CommonDaoFull,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull,
         @inject('authorization.enabled') private isAuthzEnabled: boolean
-    ) {
-        super(neptuneUrl, graphSourceFactory);
-    }
+    ) {}
 
     public async get(groupPaths: string[], includeGroups: boolean): Promise<Node[]> {
         logger.debug(`groups.full.dao get: in: groupPath: ${groupPaths}`);
@@ -134,7 +131,7 @@ export class GroupsDaoFull extends BaseDaoFull {
          * return the group, but when retrieving linked entities we need to retrieve
          * all groups excluding linked via 'parent' and ignore linked devices
          */
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = await conn.traversal
             .V(dbIds)
             .as('main')
@@ -147,9 +144,7 @@ export class GroupsDaoFull extends BaseDaoFull {
             ? traverser.union(groupProps)
             : traverser.union(relatedIn, relatedOut, groupProps);
 
-        logger.debug(
-            `groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`
-        );
+        logger.debug(`groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`);
         const results = await traverser.toList();
         logger.debug(`groups.full.dao get: result: ${JSON.stringify(results)}`);
 
@@ -200,7 +195,7 @@ export class GroupsDaoFull extends BaseDaoFull {
         const labels = n.types.join('::');
         const parentId = `group___${n.attributes['parentPath']}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traversal = conn.traversal
             .V(parentId)
             .as('parent')
@@ -229,7 +224,7 @@ export class GroupsDaoFull extends BaseDaoFull {
 
         const id = `group___${n.attributes['groupPath'].toString()}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traversal = conn.traversal.V(id).as('group');
         // drop() step terminates a traversal, process all drops as part of a final union step
         const dropTraversals: process.GraphTraversal[] = [];
@@ -332,7 +327,7 @@ export class GroupsDaoFull extends BaseDaoFull {
 
         const id = 'group___' + groupPath;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const results = await conn.traversal
             .V(id)
             .local(
@@ -367,7 +362,7 @@ export class GroupsDaoFull extends BaseDaoFull {
 
         const dbId = `group___${groupPath}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         await conn.traversal.V(dbId).drop().next();
 
         logger.debug(`groups.full.dao delete: exit`);
@@ -386,7 +381,7 @@ export class GroupsDaoFull extends BaseDaoFull {
         const sourceId = `group___${sourceGroupPath}`;
         const targetId = `group___${targetGroupPath}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal
             .V(targetId)
             .as('target')
@@ -418,7 +413,7 @@ export class GroupsDaoFull extends BaseDaoFull {
         const sourceId = `group___${sourceGroupPath}`;
         const targetId = `group___${targetGroupPath}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const result = await conn.traversal
             .V(sourceId)
             .as('source')

@@ -11,9 +11,9 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { process, structure } from 'gremlin';
+import { process } from 'gremlin';
 import { inject, injectable } from 'inversify';
-import { BaseDaoFull } from '../data/base.full.dao';
+import { ConnectionDaoFull } from '../data/connection.full.dao';
 import { safeExtractLabels } from '../data/model';
 import { NodeAttributeValue } from '../data/node';
 import { TYPES } from '../di/types';
@@ -23,13 +23,10 @@ import { ProfileNode } from './profiles.models';
 const __ = process.statics;
 
 @injectable()
-export class ProfilesDaoFull extends BaseDaoFull {
+export class ProfilesDaoFull {
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
-    ) {
-        super(neptuneUrl, graphSourceFactory);
-    }
+        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull
+    ) {}
 
     public async create(n: ProfileNode): Promise<string> {
         logger.debug(`profiles.full.dao create: in: n:${JSON.stringify(n)}`);
@@ -39,7 +36,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
         const labels = n.types.join('::');
 
         /*  create the profile  */
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traversal = conn.traversal
             .V(templateId)
             .as('type')
@@ -76,7 +73,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
         const id = `profile___${templateId}___${profileId}`;
 
         // assemble the main query
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal
             .V(id)
             .as('profile')
@@ -109,7 +106,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
         const id = `profile___${n.templateId}___${n.attributes['profileId']}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traversal = conn.traversal.V(id);
         // drop() step terminates a traversal, process all drops as part of a final union step
         const dropTraversals: process.GraphTraversal[] = [];
@@ -170,7 +167,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
         const id = `profile___${templateId}___${profileId}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         await conn.traversal.V(id).drop().iterate();
 
         logger.debug(`profiles.full.dao delete: exit`);
@@ -181,7 +178,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
         const id = `type___${templateId}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal
             .V(id)
             .as('template')

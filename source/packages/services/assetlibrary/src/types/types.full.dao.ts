@@ -12,9 +12,9 @@
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
 import * as jsonpatch from 'fast-json-patch';
-import { process, structure } from 'gremlin';
+import { process } from 'gremlin';
 import { inject, injectable } from 'inversify';
-import { BaseDaoFull } from '../data/base.full.dao';
+import { ConnectionDaoFull } from '../data/connection.full.dao';
 import { DirectionToStringArrayMap, SortKeys } from '../data/model';
 import { TYPES } from '../di/types';
 import { TemplateNotFoundError } from '../utils/errors';
@@ -32,13 +32,10 @@ import {
 const __ = process.statics;
 
 @injectable()
-export class TypesDaoFull extends BaseDaoFull {
+export class TypesDaoFull {
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
-    ) {
-        super(neptuneUrl, graphSourceFactory);
-    }
+        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull
+    ) {}
 
     public async get(
         templateId: string,
@@ -51,7 +48,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
         const dbId = `type___${templateId}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal.V(dbId).as('type');
 
         if (category !== undefined) {
@@ -145,7 +142,7 @@ export class TypesDaoFull extends BaseDaoFull {
                 .fold();
         }
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal.V(superId).inE('super_type').outV().as('a');
 
         // apply sorting
@@ -202,7 +199,7 @@ export class TypesDaoFull extends BaseDaoFull {
         const id = `type___${model.templateId}`;
         const defId = `${id}___v${model.schema.version}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal
             .V(superId)
             .as('superType')
@@ -376,7 +373,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
         const id = `type___${existing.templateId}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal
             .V(id)
             .outE('current_definition')
@@ -680,7 +677,7 @@ export class TypesDaoFull extends BaseDaoFull {
         const draftVersion = model.schema.version;
         const defId = `${id}___v${draftVersion}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal
             .V(id)
             .as('type')
@@ -732,7 +729,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
         // if we don't have a published version (new type), we just need to change the current_definition status
         let query: { value: process.Traverser | process.TraverserValue; done: boolean };
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         if (published === undefined) {
             query = await conn.traversal
                 // 1st get a handle on all the vertices/edges that we need to update
@@ -787,7 +784,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
         const dbId = `type___${templateId}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const g = conn.traversal;
 
         await g
@@ -815,7 +812,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
         const id = `type___${templateId}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal
             .V(id)
             .outE('current_definition')
@@ -863,7 +860,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
         const typesAsLower = types.map((t) => `type___${t.toLowerCase()}`);
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         try {
             const count = await conn.traversal
                 .V(...typesAsLower)
@@ -883,7 +880,7 @@ export class TypesDaoFull extends BaseDaoFull {
     public async countInUse(templateId: string): Promise<number> {
         logger.debug(`types.full.dao countInUse: in: templateId:${templateId}`);
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const result = await conn.traversal.V().hasLabel(templateId).count().next();
 
         logger.debug(`types.full.dao countInUse: exit: ${JSON.stringify(result)}`);

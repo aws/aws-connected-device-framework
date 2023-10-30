@@ -11,29 +11,26 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { process, structure } from 'gremlin';
+import { process } from 'gremlin';
 import { inject, injectable } from 'inversify';
-import { BaseDaoFull } from '../data/base.full.dao';
+import { ConnectionDaoFull } from '../data/connection.full.dao';
 import { TYPES } from '../di/types';
 import { AttachedPolicy, Policy, PolicyModel } from './policies.models';
 
 const __ = process.statics;
 
 @injectable()
-export class PoliciesDaoFull extends BaseDaoFull {
+export class PoliciesDaoFull {
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
-    ) {
-        super(neptuneUrl, graphSourceFactory);
-    }
+        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull
+    ) {}
 
     public async get(policyId: string): Promise<Policy> {
         logger.debug(`policy.full.dao get: in: policyId: ${policyId}`);
 
         const id = `policy___${policyId.toLowerCase()}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const query = await conn.traversal
             .V(id)
             .as('policy')
@@ -59,7 +56,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
         const id = `policy___${model.policyId.toLowerCase()}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traversal = conn.traversal
             .addV('policy')
             .property(process.t.id, id)
@@ -104,7 +101,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
         const id = `policy___${existing.policyId}`;
 
         /*  update the main policy object  */
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traversal = conn.traversal.V(id);
 
         if (updated.type) {
@@ -183,7 +180,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
         const id = `device___${deviceId.toLowerCase()}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const results = await conn.traversal
             .V(id)
             .as('device')
@@ -222,7 +219,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
         const ids: string[] = [];
         groupPaths.forEach((v) => ids.push(`group___${v.toLowerCase()}`));
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal
             .V(ids)
             .as('groups')
@@ -259,7 +256,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
     public async listPolicies(type: string, offset: number, count: number): Promise<Policy[]> {
         logger.debug(`policies.dao listPolicies: type:${type}, offset:${offset}, count:${count}`);
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal.V().hasLabel('policy');
         if (type !== undefined) {
             traverser.has('type', type.toLowerCase());
@@ -297,7 +294,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
         const dbId = `policy___${policyId.toLowerCase()}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         await conn.traversal.V(dbId).drop().next();
 
         logger.debug(`policies.dao delete: exit`);

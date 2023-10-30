@@ -11,11 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { process, structure } from 'gremlin';
+import { process } from 'gremlin';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { Claims } from '../authz/claims';
-import { BaseDaoFull } from '../data/base.full.dao';
+import { ConnectionDaoFull } from '../data/connection.full.dao';
 import { CommonDaoFull } from '../data/common.full.dao';
 import { FullAssembler } from '../data/full.assembler';
 import { RelatedEntityDto, VertexDto, isRelatedEntityDto, isVertexDto } from '../data/full.model';
@@ -95,17 +95,14 @@ const diassociateRels = (
 };
 
 @injectable()
-export class DevicesDaoFull extends BaseDaoFull {
+export class DevicesDaoFull {
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.CommonDao) private commonDao: CommonDaoFull,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
         @inject('authorization.enabled') private isAuthzEnabled: boolean
-    ) {
-        super(neptuneUrl, graphSourceFactory);
-    }
+    ) {}
 
     public async listRelated(
         deviceId: string,
@@ -200,7 +197,7 @@ export class DevicesDaoFull extends BaseDaoFull {
                       .with_(process.withOptions.tokens);
 
         // build the main part of the query, unioning the related traversers with the main entity we want to return
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal
             .V(dbIds)
             .as('devices')
@@ -275,7 +272,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         const labels = n.types.join('::');
 
         /*  create the device  */
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traversal = conn.traversal.addV(labels).property(process.t.id, id);
 
         /*  set all the device properties  */
@@ -328,7 +325,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         const labels = n.types.join('::');
 
         /*  create the component  */
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traversal = conn.traversal.addV(labels).property(process.t.id, componentId);
 
         for (const key of Object.keys(n.attributes)) {
@@ -360,7 +357,7 @@ export class DevicesDaoFull extends BaseDaoFull {
 
         const id = `device___${n.attributes['deviceId']}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traversal = conn.traversal.V(id).as('device');
         // drop() step terminates a traversal, process all drops as part of a final union step
         const dropTraversals: process.GraphTraversal[] = [];
@@ -484,7 +481,7 @@ export class DevicesDaoFull extends BaseDaoFull {
 
         const id = `device___${deviceId}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         await conn.traversal.V(id).drop().iterate();
 
         logger.debug(`devices.full.dao delete: exit`);
@@ -512,7 +509,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             targetId = `device___${deviceId}`;
         }
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal
             .V(targetId)
             .as('target')
@@ -571,7 +568,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         const sourceId = `device___${source}`;
         const targetId = `device___${target}`;
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal
             .V(targetId)
             .as('other')
@@ -642,7 +639,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             edgesToDelete.push(t);
         }
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         await conn.traversal
             .V(`device___${deviceId}`)
             .as('source')

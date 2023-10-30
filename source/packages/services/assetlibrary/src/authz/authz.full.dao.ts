@@ -11,22 +11,19 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { process, structure } from 'gremlin';
+import { process } from 'gremlin';
 import { inject, injectable } from 'inversify';
-import { BaseDaoFull } from '../data/base.full.dao';
+import { ConnectionDaoFull } from '../data/connection.full.dao';
 import { TYPES } from '../di/types';
 import { Authorizations } from './authz.full.model';
 
 const __ = process.statics; // eslint-disable-line no-underscore-dangle
 
 @injectable()
-export class AuthzDaoFull extends BaseDaoFull {
+export class AuthzDaoFull {
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
-    ) {
-        super(neptuneUrl, graphSourceFactory);
-    }
+        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull
+    ) {}
 
     public async listAuthorizedHierarchies(
         deviceIds: string[],
@@ -48,7 +45,7 @@ export class AuthzDaoFull extends BaseDaoFull {
         const ids: string[] = deviceIds.map((d) => `device___${d}`);
         ids.push(...groupPaths.map((g) => `group___${g}`));
 
-        const conn = await super.getConnection();
+        const conn = await this.connectionDao.getConnection();
         const traverser = conn.traversal
             .V(ids)
             .as('entity')
