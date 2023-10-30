@@ -131,21 +131,24 @@ export class GroupsDaoFull {
          * return the group, but when retrieving linked entities we need to retrieve
          * all groups excluding linked via 'parent' and ignore linked devices
          */
-        const conn = await this.connectionDao.getConnection();
-        const traverser = await conn.traversal
-            .V(dbIds)
-            .as('main')
-            .values('groupPath')
-            .as('entityId')
-            .select('main');
+        const results = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = await conn.traversal
+                .V(dbIds)
+                .as('main')
+                .values('groupPath')
+                .as('entityId')
+                .select('main');
 
-        // TODO: verify and optimize this further
-        !includeGroups
-            ? traverser.union(groupProps)
-            : traverser.union(relatedIn, relatedOut, groupProps);
+            // TODO: verify and optimize this further
+            !includeGroups
+                ? traverser.union(groupProps)
+                : traverser.union(relatedIn, relatedOut, groupProps);
 
-        logger.debug(`groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`);
-        const results = await traverser.toList();
+            logger.debug(
+                `groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`
+            );
+            return await traverser.toList();
+        });
         logger.debug(`groups.full.dao get: result: ${JSON.stringify(results)}`);
 
         if (results === undefined || results.length === 0) {
@@ -195,25 +198,26 @@ export class GroupsDaoFull {
         const labels = n.types.join('::');
         const parentId = `group___${n.attributes['parentPath']}`;
 
-        const conn = await this.connectionDao.getConnection();
-        const traversal = conn.traversal
-            .V(parentId)
-            .as('parent')
-            .addV(labels)
-            .property(process.t.id, id);
+        await this.connectionDao.withTraversal(async (conn) => {
+            const traversal = conn.traversal
+                .V(parentId)
+                .as('parent')
+                .addV(labels)
+                .property(process.t.id, id);
 
-        for (const key of Object.keys(n.attributes)) {
-            if (n.attributes[key] !== undefined) {
-                traversal.property(process.cardinality.single, key, n.attributes[key]);
+            for (const key of Object.keys(n.attributes)) {
+                if (n.attributes[key] !== undefined) {
+                    traversal.property(process.cardinality.single, key, n.attributes[key]);
+                }
             }
-        }
 
-        traversal.as('group').addE('parent').from_('group').to('parent');
+            traversal.as('group').addE('parent').from_('group').to('parent');
 
-        associateRels(traversal, groups?.in, 'in');
-        associateRels(traversal, groups?.out, 'out');
+            associateRels(traversal, groups?.in, 'in');
+            associateRels(traversal, groups?.out, 'out');
 
-        await traversal.next();
+            await traversal.next();
+        });
 
         logger.debug(`groups.full.dao create: exit: id:${id}`);
         return id;
@@ -224,63 +228,64 @@ export class GroupsDaoFull {
 
         const id = `group___${n.attributes['groupPath'].toString()}`;
 
-        const conn = await this.connectionDao.getConnection();
-        const traversal = conn.traversal.V(id).as('group');
-        // drop() step terminates a traversal, process all drops as part of a final union step
-        const dropTraversals: process.GraphTraversal[] = [];
+        await this.connectionDao.withTraversal(async (conn) => {
+            const traversal = conn.traversal.V(id).as('group');
+            // drop() step terminates a traversal, process all drops as part of a final union step
+            const dropTraversals: process.GraphTraversal[] = [];
 
-        for (const [key, val] of Object.entries(n.attributes)) {
-            if (val !== undefined) {
-                if (val === null) {
-                    dropTraversals.push(__.properties(key));
-                } else {
-                    traversal.property(process.cardinality.single, key, val);
+            for (const [key, val] of Object.entries(n.attributes)) {
+                if (val !== undefined) {
+                    if (val === null) {
+                        dropTraversals.push(__.properties(key));
+                    } else {
+                        traversal.property(process.cardinality.single, key, val);
+                    }
                 }
             }
-        }
 
-        // Check if related groups part of update request
-        if (groups?.in || groups?.out) {
-            // Update request contains relationships to enforce. This requires current
-            // relationships be dropped where specified and new relations created.
-            logger.info(
-                `groups.full.dao update groups relations specified as part of update: ${JSON.stringify(
-                    { groups: groups }
-                )}`
-            );
-            const result = await this.get([`${n.attributes['groupPath']}`], true);
-            let currentGroup: GroupItem;
-            if (result !== undefined && result.length > 0) {
-                currentGroup = this.groupsAssembler.toGroupItem(result[0]);
+            // Check if related groups part of update request
+            if (groups?.in || groups?.out) {
+                // Update request contains relationships to enforce. This requires current
+                // relationships be dropped where specified and new relations created.
+                logger.info(
+                    `groups.full.dao update groups relations specified as part of update: ${JSON.stringify(
+                        { groups: groups }
+                    )}`
+                );
+                const result = await this.get([`${n.attributes['groupPath']}`], true);
+                let currentGroup: GroupItem;
+                if (result !== undefined && result.length > 0) {
+                    currentGroup = this.groupsAssembler.toGroupItem(result[0]);
+                }
+                const existingGroups = currentGroup.groups ? currentGroup.groups : {};
+                logger.debug(`Current group definition: ${JSON.stringify(currentGroup)}`);
+                // Methodology
+                // 1. Collect relations to be dropped as independent traversal objects via disassociateRels
+                // 2. Union and then drop() these with traversal.sideEffect(...)
+                //    -- Use of sideEffect acts on the traversal then passes results to next step. Without this, a drop() will terminate traversal.
+                // 3. Add specified relations for groups and devices directly to traversal in associateRels
+                const relationsToDropTraversals: process.GraphTraversal[] = [];
+                if (groups.in && 'in' in existingGroups) {
+                    disassociateRels(relationsToDropTraversals, existingGroups.in, 'in');
+                }
+                if (groups.out && 'out' in existingGroups) {
+                    disassociateRels(relationsToDropTraversals, existingGroups.out, 'out');
+                }
+                traversal.sideEffect(__.union(...relationsToDropTraversals).drop());
+                if (groups.in) {
+                    associateRels(traversal, groups.in, 'in');
+                }
+                if (groups.out) {
+                    associateRels(traversal, groups.out, 'out');
+                }
             }
-            const existingGroups = currentGroup.groups ? currentGroup.groups : {};
-            logger.debug(`Current group definition: ${JSON.stringify(currentGroup)}`);
-            // Methodology
-            // 1. Collect relations to be dropped as independent traversal objects via disassociateRels
-            // 2. Union and then drop() these with traversal.sideEffect(...)
-            //    -- Use of sideEffect acts on the traversal then passes results to next step. Without this, a drop() will terminate traversal.
-            // 3. Add specified relations for groups and devices directly to traversal in associateRels
-            const relationsToDropTraversals: process.GraphTraversal[] = [];
-            if (groups.in && 'in' in existingGroups) {
-                disassociateRels(relationsToDropTraversals, existingGroups.in, 'in');
-            }
-            if (groups.out && 'out' in existingGroups) {
-                disassociateRels(relationsToDropTraversals, existingGroups.out, 'out');
-            }
-            traversal.sideEffect(__.union(...relationsToDropTraversals).drop());
-            if (groups.in) {
-                associateRels(traversal, groups.in, 'in');
-            }
-            if (groups.out) {
-                associateRels(traversal, groups.out, 'out');
-            }
-        }
 
-        if (dropTraversals.length > 0) {
-            traversal.local(__.union(...dropTraversals)).drop();
-        }
+            if (dropTraversals.length > 0) {
+                traversal.local(__.union(...dropTraversals)).drop();
+            }
 
-        await traversal.iterate();
+            await traversal.iterate();
+        });
 
         logger.debug(`groups.full.dao update: exit: id:${id}`);
         return id;
@@ -327,19 +332,20 @@ export class GroupsDaoFull {
 
         const id = 'group___' + groupPath;
 
-        const conn = await this.connectionDao.getConnection();
-        const results = await conn.traversal
-            .V(id)
-            .local(
-                __.union(
-                    __.identity().valueMap().with_(process.withOptions.tokens),
-                    __.repeat(__.out('parent').simplePath().dedup())
-                        .emit()
-                        .valueMap()
-                        .with_(process.withOptions.tokens)
+        const results = await this.connectionDao.withTraversal(async (conn) => {
+            return await conn.traversal
+                .V(id)
+                .local(
+                    __.union(
+                        __.identity().valueMap().with_(process.withOptions.tokens),
+                        __.repeat(__.out('parent').simplePath().dedup())
+                            .emit()
+                            .valueMap()
+                            .with_(process.withOptions.tokens)
+                    )
                 )
-            )
-            .toList();
+                .toList();
+        });
 
         logger.debug(`groups.full.dao listParentGroups: results: ${JSON.stringify(results)}`);
 
@@ -362,8 +368,9 @@ export class GroupsDaoFull {
 
         const dbId = `group___${groupPath}`;
 
-        const conn = await this.connectionDao.getConnection();
-        await conn.traversal.V(dbId).drop().next();
+        await this.connectionDao.withTraversal(async (conn) => {
+            await conn.traversal.V(dbId).drop().next();
+        });
 
         logger.debug(`groups.full.dao delete: exit`);
     }
@@ -381,20 +388,21 @@ export class GroupsDaoFull {
         const sourceId = `group___${sourceGroupPath}`;
         const targetId = `group___${targetGroupPath}`;
 
-        const conn = await this.connectionDao.getConnection();
-        const traverser = conn.traversal
-            .V(targetId)
-            .as('target')
-            .V(sourceId)
-            .as('source')
-            .addE(relationship)
-            .to('target');
+        const result = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = conn.traversal
+                .V(targetId)
+                .as('target')
+                .V(sourceId)
+                .as('source')
+                .addE(relationship)
+                .to('target');
 
-        if (isAuthCheck) {
-            traverser.property(process.cardinality.single, 'isAuthCheck', true);
-        }
+            if (isAuthCheck) {
+                traverser.property(process.cardinality.single, 'isAuthCheck', true);
+            }
 
-        const result = await traverser.iterate();
+            return await traverser.iterate();
+        });
 
         logger.verbose(`groups.full.dao attachToGroup: result:${JSON.stringify(result)}`);
 
@@ -413,19 +421,20 @@ export class GroupsDaoFull {
         const sourceId = `group___${sourceGroupPath}`;
         const targetId = `group___${targetGroupPath}`;
 
-        const conn = await this.connectionDao.getConnection();
-        const result = await conn.traversal
-            .V(sourceId)
-            .as('source')
-            .outE(relationship)
-            .as('edge')
-            .inV()
-            .has(process.t.id, targetId)
-            .as('target')
-            .select('edge')
-            .dedup()
-            .drop()
-            .iterate();
+        const result = await this.connectionDao.withTraversal(async (conn) => {
+            return await conn.traversal
+                .V(sourceId)
+                .as('source')
+                .outE(relationship)
+                .as('edge')
+                .inV()
+                .has(process.t.id, targetId)
+                .as('target')
+                .select('edge')
+                .dedup()
+                .drop()
+                .iterate();
+        });
 
         logger.verbose(`groups.full.dao detachFromGroup: result:${JSON.stringify(result)}`);
 

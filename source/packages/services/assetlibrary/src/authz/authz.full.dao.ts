@@ -21,9 +21,7 @@ const __ = process.statics; // eslint-disable-line no-underscore-dangle
 
 @injectable()
 export class AuthzDaoFull {
-    public constructor(
-        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull
-    ) {}
+    public constructor(@inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull) {}
 
     public async listAuthorizedHierarchies(
         deviceIds: string[],
@@ -45,39 +43,40 @@ export class AuthzDaoFull {
         const ids: string[] = deviceIds.map((d) => `device___${d}`);
         ids.push(...groupPaths.map((g) => `group___${g}`));
 
-        const conn = await this.connectionDao.getConnection();
-        const traverser = conn.traversal
-            .V(ids)
-            .as('entity')
-            .union(
-                // return an item if the entity exists
-                __.project('entity', 'exists')
-                    .by(
-                        __.select('entity').coalesce(
-                            __.values('deviceId'),
-                            __.values('groupPath')
+        const results = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = conn.traversal
+                .V(ids)
+                .as('entity')
+                .union(
+                    // return an item if the entity exists
+                    __.project('entity', 'exists')
+                        .by(
+                            __.select('entity').coalesce(
+                                __.values('deviceId'),
+                                __.values('groupPath')
+                            )
                         )
+                        .by(__.constant(true)),
+                    // return an item if the entity is authorized
+                    __.local(
+                        __.until(__.has('groupPath', process.P.within(hierarchies)))
+                            .repeat(
+                                __.outE().has('isAuthCheck', true).otherV().simplePath().dedup()
+                            )
+                            .as('authorizedPath')
                     )
-                    .by(__.constant(true)),
-                // return an item if the entity is authorized
-                __.local(
-                    __.until(__.has('groupPath', process.P.within(hierarchies)))
-                        .repeat(
-                            __.outE().has('isAuthCheck', true).otherV().simplePath().dedup()
+                        .project('entity', 'authorizedPath')
+                        .by(
+                            __.select('entity').coalesce(
+                                __.values('deviceId'),
+                                __.values('groupPath')
+                            )
                         )
-                        .as('authorizedPath')
-                )
-                    .project('entity', 'authorizedPath')
-                    .by(
-                        __.select('entity').coalesce(
-                            __.values('deviceId'),
-                            __.values('groupPath')
-                        )
-                    )
-                    .by(__.select('authorizedPath').values('groupPath'))
-            );
+                        .by(__.select('authorizedPath').values('groupPath'))
+                );
 
-        const results = await traverser.toList();
+            return await traverser.toList();
+        });
 
         logger.debug(
             `authz.full.dao listAuthorizedHierarchies: results:${JSON.stringify(results)}`

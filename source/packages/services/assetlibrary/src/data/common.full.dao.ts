@@ -143,20 +143,21 @@ export class CommonDaoFull {
         relatedUnion.range(offsetAsInt, offsetAsInt + countAsInt);
 
         // build the main part of the query, unioning the related traversers with the main entity we want to return
-        const conn = await this.connectionDao.getConnection();
-        const traverser = conn.traversal
-            .V(entityDbId)
-            .as('main')
-            .union(
-                relatedUnion,
-                __.select('main').valueMap().with_(process.withOptions.tokens)
-            );
+        const results = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = conn.traversal
+                .V(entityDbId)
+                .as('main')
+                .union(
+                    relatedUnion,
+                    __.select('main').valueMap().with_(process.withOptions.tokens)
+                );
 
-        // execute and retrieve the results
-        logger.debug(
-            `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`
-        );
-        const results = await traverser.toList();
+            // execute and retrieve the results
+            logger.debug(
+                `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`
+            );
+            return await traverser.toList();
+        });
         logger.debug(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
 
         if (results === undefined || results.length === 0) {
@@ -185,15 +186,16 @@ export class CommonDaoFull {
             return {};
         }
 
-        const conn = await this.connectionDao.getConnection();
-        const query = conn.traversal
-            .V(entityDbIds)
-            .project('id', 'labels')
-            .by(__.coalesce(__.values('deviceId'), __.values('groupPath')))
-            .by(__.label().fold());
+        const results = await this.connectionDao.withTraversal(async (conn) => {
+            const query = conn.traversal
+                .V(entityDbIds)
+                .project('id', 'labels')
+                .by(__.coalesce(__.values('deviceId'), __.values('groupPath')))
+                .by(__.label().fold());
 
-        logger.silly(`common.full.dao getLabels: query: ${JSON.stringify(query)}`);
-        const results = await query.toList();
+            logger.silly(`common.full.dao getLabels: query: ${JSON.stringify(query)}`);
+            return await query.toList();
+        });
         logger.silly(`common.full.dao getLabels: results: ${JSON.stringify(results)}`);
 
         if ((results?.length ?? 0) === 0) {

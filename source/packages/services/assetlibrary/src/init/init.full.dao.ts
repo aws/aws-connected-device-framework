@@ -18,15 +18,14 @@ import { TYPES } from '../di/types';
 
 @injectable()
 export class InitDaoFull {
-    public constructor(
-        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull
-    ) {}
+    public constructor(@inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull) {}
 
     public async isInitialized(): Promise<boolean> {
         logger.debug('init.dao isInitialized: in: ');
 
-        const conn = await this.connectionDao.getConnection();
-        const query = await conn.traversal.V('type___device').next();
+        const query = await this.connectionDao.withTraversal(async (conn) => {
+            return await conn.traversal.V('type___device').next();
+        });
 
         logger.debug(`init.dao isInitialized: query: ${JSON.stringify(query)}`);
 
@@ -43,25 +42,27 @@ export class InitDaoFull {
     public async initialize(): Promise<void> {
         logger.debug('init.dao initialize: in:');
 
-        const conn = await this.connectionDao.getConnection();
-        await conn.traversal
-            .addV('type')
-            .property(process.t.id, 'type___device')
-            .addV('type')
-            .property(process.t.id, 'type___group')
-            .addV('root')
-            .property(process.t.id, 'group___/')
-            .property('name', '/')
-            .property('groupPath', '/')
-            .iterate();
+        await this.connectionDao.withTraversal(async (conn) => {
+            await conn.traversal
+                .addV('type')
+                .property(process.t.id, 'type___device')
+                .addV('type')
+                .property(process.t.id, 'type___group')
+                .addV('root')
+                .property(process.t.id, 'group___/')
+                .property('name', '/')
+                .property('groupPath', '/')
+                .iterate();
+        });
     }
 
     public async getVersion(): Promise<number> {
         logger.debug('init.dao getVersion: in: ');
 
         const id = 'app_version';
-        const conn = await this.connectionDao.getConnection();
-        const results = await conn.traversal.V(id).valueMap('version').next();
+        const results = await this.connectionDao.withTraversal(async (conn) => {
+            return await conn.traversal.V(id).valueMap('version').next();
+        });
 
         logger.debug(`init.dao getVersion: results: ${JSON.stringify(results)}`);
 
@@ -80,19 +81,20 @@ export class InitDaoFull {
         const currentVersion = await this.getVersion();
         const id = 'app_version';
 
-        const conn = await this.connectionDao.getConnection();
-        if (currentVersion === 0) {
-            await conn.traversal
-                .addV(id)
-                .property(process.t.id, id)
-                .property(process.cardinality.single, 'version', version)
-                .iterate();
-        } else {
-            await conn.traversal
-                .V(id)
-                .property(process.cardinality.single, 'version', version)
-                .iterate();
-        }
+        await this.connectionDao.withTraversal(async (conn) => {
+            if (currentVersion === 0) {
+                await conn.traversal
+                    .addV(id)
+                    .property(process.t.id, id)
+                    .property(process.cardinality.single, 'version', version)
+                    .iterate();
+            } else {
+                await conn.traversal
+                    .V(id)
+                    .property(process.cardinality.single, 'version', version)
+                    .iterate();
+            }
+        });
 
         logger.debug(`init.dao setVersion: exit:`);
     }
@@ -100,109 +102,114 @@ export class InitDaoFull {
     public async upgrade_from_0(): Promise<void> {
         logger.debug(`init.dao upgrade_from_0: in:`);
 
-        const conn = await this.connectionDao.getConnection();
-        // set groupPath of root group '/'
-        await conn.traversal.V('group___/').property('groupPath', '/').iterate();
+        await this.connectionDao.withTraversal(async (conn) => {
+            // set groupPath of root group '/'
+            await conn.traversal.V('group___/').property('groupPath', '/').iterate();
+        });
 
-        await conn.traversal
-            .V('type___device')
-            .as('type')
-            // add missing template id
-            .property(process.cardinality.single, 'templateId', 'device')
-            // add type definition for the root device template
-            .addV('typeDefinition')
-            .property(process.t.id, 'type___device___1')
-            .property(process.cardinality.single, 'version', 1)
-            .property(
-                process.cardinality.single,
-                'definition',
-                JSON.stringify({
-                    properties: {
-                        deviceId: {
-                            type: 'string',
+        await this.connectionDao.withTraversal(async (conn) => {
+            await conn.traversal
+                .V('type___device')
+                .as('type')
+                // add missing template id
+                .property(process.cardinality.single, 'templateId', 'device')
+                // add type definition for the root device template
+                .addV('typeDefinition')
+                .property(process.t.id, 'type___device___1')
+                .property(process.cardinality.single, 'version', 1)
+                .property(
+                    process.cardinality.single,
+                    'definition',
+                    JSON.stringify({
+                        properties: {
+                            deviceId: {
+                                type: 'string',
+                            },
+                            templateId: {
+                                type: 'string',
+                            },
+                            category: {
+                                type: ['string', 'null'],
+                                const: 'device',
+                            },
+                            name: {
+                                type: 'string',
+                            },
+                            description: {
+                                type: ['string', 'null'],
+                            },
+                            imageUrl: {
+                                type: ['string', 'null'],
+                            },
+                            awsIotThingArn: {
+                                type: ['string', 'null'],
+                            },
+                            connected: {
+                                type: 'boolean',
+                            },
+                            state: {
+                                enum: ['unprovisioned', 'active', 'decommisioned', 'retired'],
+                            },
                         },
-                        templateId: {
-                            type: 'string',
-                        },
-                        category: {
-                            type: ['string', 'null'],
-                            const: 'device',
-                        },
-                        name: {
-                            type: 'string',
-                        },
-                        description: {
-                            type: ['string', 'null'],
-                        },
-                        imageUrl: {
-                            type: ['string', 'null'],
-                        },
-                        awsIotThingArn: {
-                            type: ['string', 'null'],
-                        },
-                        connected: {
-                            type: 'boolean',
-                        },
-                        state: {
-                            enum: ['unprovisioned', 'active', 'decommisioned', 'retired'],
-                        },
-                    },
-                    required: ['deviceId', 'templateId'],
-                })
-            )
-            .property(process.cardinality.single, 'lastUpdated', new Date().toISOString())
-            .as('definition')
-            .addE('current_definition')
-            .property('status', 'published')
-            .from_('type')
-            .to('definition')
-            .next();
+                        required: ['deviceId', 'templateId'],
+                    })
+                )
+                .property(process.cardinality.single, 'lastUpdated', new Date().toISOString())
+                .as('definition')
+                .addE('current_definition')
+                .property('status', 'published')
+                .from_('type')
+                .to('definition')
+                .next();
+        });
 
-        // add type definition for the root group template
-        await conn.traversal
-            .V('type___group')
-            .as('type')
-            // add missing template id
-            .property(process.cardinality.single, 'templateId', 'group')
+        await this.connectionDao.withTraversal(async (conn) => {
             // add type definition for the root group template
-            .addV('typeDefinition')
-            .property(process.t.id, 'type___group___1')
-            .property(process.cardinality.single, 'version', 1)
-            .property(
-                process.cardinality.single,
-                'definition',
-                JSON.stringify({
-                    properties: {
-                        groupPath: {
-                            type: 'string',
+            await conn.traversal
+                .V('type___group')
+                .as('type')
+                // add missing template id
+                .property(process.cardinality.single, 'templateId', 'group')
+                // add type definition for the root group template
+                .addV('typeDefinition')
+                .property(process.t.id, 'type___group___1')
+                .property(process.cardinality.single, 'version', 1)
+                .property(
+                    process.cardinality.single,
+                    'definition',
+                    JSON.stringify({
+                        properties: {
+                            groupPath: {
+                                type: 'string',
+                            },
+                            parentPath: {
+                                type: 'string',
+                            },
+                            templateId: {
+                                type: 'string',
+                            },
+                            category: {
+                                type: ['string'],
+                                const: 'group',
+                            },
+                            name: {
+                                type: 'string',
+                            },
+                            description: {
+                                type: ['string', 'null'],
+                            },
                         },
-                        parentPath: {
-                            type: 'string',
-                        },
-                        templateId: {
-                            type: 'string',
-                        },
-                        category: {
-                            type: ['string'],
-                            const: 'group',
-                        },
-                        name: {
-                            type: 'string',
-                        },
-                        description: {
-                            type: ['string', 'null'],
-                        },
-                    },
-                    required: ['name', 'parentPath', 'templateId'],
-                })
-            )
-            .property(process.cardinality.single, 'lastUpdated', new Date().toISOString())
-            .as('definition')
-            .addE('current_definition')
-            .property('status', 'published')
-            .from_('type')
-            .to('definition')
-            .next();
+                        required: ['name', 'parentPath', 'templateId'],
+                    })
+                )
+                .property(process.cardinality.single, 'lastUpdated', new Date().toISOString())
+                .as('definition')
+                .addE('current_definition')
+                .property('status', 'published')
+                .from_('type')
+                .to('definition')
+                .next();
+        });
 
         logger.debug(`init.dao upgrade_from_0: exit:`);
     }

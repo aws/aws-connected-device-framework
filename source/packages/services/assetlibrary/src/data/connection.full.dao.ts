@@ -28,31 +28,49 @@ export class ConnectionDaoFull {
         this._conn = null;
     }
 
-    public async getConnection(): Promise<NeptuneConnection> {
-        logger.debug(`connection.full.dao getConnection: in:`);
-
+    public async withTraversal<T>(fn: (conn: NeptuneConnection) => Promise<T>): Promise<T> {
+        logger.debug(`connection.full.dao withTraversal: in:`);
         if (this._conn == null) {
-            logger.debug(`connection.full.dao getConnection: create new connection:`);
+            logger.debug(`connection.full.dao withTraversal: create new connection:`);
             this._conn = new driver.DriverRemoteConnection(this.neptuneUrl, {
                 mimeType: 'application/vnd.gremlin-v2.0+json',
                 pingEnabled: false,
                 connectOnStartup: false,
             });
-            this._conn.addListener('close', (code: number, message: string) => {
-                logger.info(`connection.full.dao connection close: code: ${code}, message: ${message}`);
-                this._conn = null;
-                if (code === 1006) {
-                    throw new Error('Connection closed prematurely');
-                }
-            });
-            await this._conn.open();
         }
 
-        logger.debug(`connection.full.dao getConnection: withRemote:`);
-        const res = new NeptuneConnection(this._graph.traversal().withRemote(this._conn));
+        return new Promise((resolve, reject) => {
+            const closeListener = (code: number, message: string) => {
+                logger.info(
+                    `connection.full.dao connection close: code: ${code}, message: ${message}`
+                );
+                this._conn = null;
+                if (code === 1006) {
+                    reject(new Error('Connection closed prematurely'));
+                }
+            };
 
-        logger.debug(`connetion.full.dao getConnection: exit:`);
-        return res;
+            this._conn.addListener('close', closeListener);
+
+            this._conn
+                .open()
+                .then(() => {
+                    logger.debug(`connection.full.dao getConnection: withRemote:`);
+                    const conn = new NeptuneConnection(
+                        this._graph.traversal().withRemote(this._conn)
+                    );
+                    fn(conn)
+                        .then(resolve)
+                        .catch(reject)
+                        .finally(() => {
+                            this._conn?.removeListener('close', closeListener);
+                        });
+                })
+                .catch((e) => {
+                    this._conn?.removeListener('close', closeListener);
+                    reject(e);
+                });
+        });
     }
 }
 

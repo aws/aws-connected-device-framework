@@ -24,9 +24,7 @@ const __ = process.statics;
 
 @injectable()
 export class ProfilesDaoFull {
-    public constructor(
-        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull
-    ) {}
+    public constructor(@inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull) {}
 
     public async create(n: ProfileNode): Promise<string> {
         logger.debug(`profiles.full.dao create: in: n:${JSON.stringify(n)}`);
@@ -36,30 +34,31 @@ export class ProfilesDaoFull {
         const labels = n.types.join('::');
 
         /*  create the profile  */
-        const conn = await this.connectionDao.getConnection();
-        const traversal = conn.traversal
-            .V(templateId)
-            .as('type')
-            .addV(labels)
-            .property(process.t.id, profileId);
+        await this.connectionDao.withTraversal(async (conn) => {
+            const traversal = conn.traversal
+                .V(templateId)
+                .as('type')
+                .addV(labels)
+                .property(process.t.id, profileId);
 
-        /*  set the profiles attributes  */
-        for (const key of Object.keys(n.attributes)) {
-            if (n.attributes[key] !== undefined) {
-                traversal.property(process.cardinality.single, key, n.attributes[key]);
+            /*  set the profiles attributes  */
+            for (const key of Object.keys(n.attributes)) {
+                if (n.attributes[key] !== undefined) {
+                    traversal.property(process.cardinality.single, key, n.attributes[key]);
+                }
             }
-        }
 
-        /*  save any groups  */
-        if (n.groups) {
-            traversal.property(process.cardinality.single, 'groups', JSON.stringify(n.groups));
-        }
+            /*  save any groups  */
+            if (n.groups) {
+                traversal.property(process.cardinality.single, 'groups', JSON.stringify(n.groups));
+            }
 
-        /*  link the profile to the type  */
-        traversal.as('profile').addE('profiles').from_('profile').to('type');
+            /*  link the profile to the type  */
+            traversal.as('profile').addE('profiles').from_('profile').to('type');
 
-        // logger.debug(`profiles.full.dao create: traversal:${traversal}`);
-        await traversal.iterate();
+            // logger.debug(`profiles.full.dao create: traversal:${traversal}`);
+            await traversal.iterate();
+        });
 
         logger.debug(`profiles.full.dao create: exit: id:${profileId}`);
         return profileId;
@@ -73,21 +72,22 @@ export class ProfilesDaoFull {
         const id = `profile___${templateId}___${profileId}`;
 
         // assemble the main query
-        const conn = await this.connectionDao.getConnection();
-        const traverser = conn.traversal
-            .V(id)
-            .as('profile')
-            .out('profiles')
-            .as('template')
-            .out('super_type')
-            .as('category')
-            .project('profile', 'template', 'category')
-            .by(__.select('profile').valueMap().with_(process.withOptions.tokens))
-            .by(__.select('template').valueMap().with_(process.withOptions.tokens))
-            .by(__.select('category').valueMap().with_(process.withOptions.tokens));
+        const result = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = conn.traversal
+                .V(id)
+                .as('profile')
+                .out('profiles')
+                .as('template')
+                .out('super_type')
+                .as('category')
+                .project('profile', 'template', 'category')
+                .by(__.select('profile').valueMap().with_(process.withOptions.tokens))
+                .by(__.select('template').valueMap().with_(process.withOptions.tokens))
+                .by(__.select('category').valueMap().with_(process.withOptions.tokens));
 
-        // execute and retrieve the resutls
-        const result = await traverser.next();
+            // execute and retrieve the resutls
+            return await traverser.next();
+        });
 
         if (result === undefined || result.value === undefined || result.value === null) {
             logger.debug(`profiles.full.dao get: exit: node: undefined`);
@@ -106,25 +106,26 @@ export class ProfilesDaoFull {
 
         const id = `profile___${n.templateId}___${n.attributes['profileId']}`;
 
-        const conn = await this.connectionDao.getConnection();
-        const traversal = conn.traversal.V(id);
-        // drop() step terminates a traversal, process all drops as part of a final union step
-        const dropTraversals: process.GraphTraversal[] = [];
+        await this.connectionDao.withTraversal(async (conn) => {
+            const traversal = conn.traversal.V(id);
+            // drop() step terminates a traversal, process all drops as part of a final union step
+            const dropTraversals: process.GraphTraversal[] = [];
 
-        for (const [key, val] of Object.entries(n.attributes)) {
-            if (val !== undefined) {
-                if (val === null) {
-                    dropTraversals.push(__.properties(key));
-                } else {
-                    traversal.property(process.cardinality.single, key, val);
+            for (const [key, val] of Object.entries(n.attributes)) {
+                if (val !== undefined) {
+                    if (val === null) {
+                        dropTraversals.push(__.properties(key));
+                    } else {
+                        traversal.property(process.cardinality.single, key, val);
+                    }
                 }
             }
-        }
-        if (dropTraversals.length > 0) {
-            traversal.local(__.union(...dropTraversals)).drop();
-        }
+            if (dropTraversals.length > 0) {
+                traversal.local(__.union(...dropTraversals)).drop();
+            }
 
-        await traversal.iterate();
+            await traversal.iterate();
+        });
 
         logger.debug(`profiles.full.dao update: exit: id:${id}`);
         return id;
@@ -167,8 +168,9 @@ export class ProfilesDaoFull {
 
         const id = `profile___${templateId}___${profileId}`;
 
-        const conn = await this.connectionDao.getConnection();
-        await conn.traversal.V(id).drop().iterate();
+        await this.connectionDao.withTraversal(async (conn) => {
+            await conn.traversal.V(id).drop().iterate();
+        });
 
         logger.debug(`profiles.full.dao delete: exit`);
     }
@@ -178,21 +180,22 @@ export class ProfilesDaoFull {
 
         const id = `type___${templateId}`;
 
-        const conn = await this.connectionDao.getConnection();
-        const traverser = conn.traversal
-            .V(id)
-            .as('template')
-            .out('super_type')
-            .as('category')
-            .select('template')
-            .in_('profiles')
-            .as('profiles')
-            .project('profiles', 'template', 'category')
-            .by(__.select('profiles').valueMap().with_(process.withOptions.tokens).fold())
-            .by(__.select('template').valueMap().with_(process.withOptions.tokens))
-            .by(__.select('category').valueMap().with_(process.withOptions.tokens));
+        const result = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = conn.traversal
+                .V(id)
+                .as('template')
+                .out('super_type')
+                .as('category')
+                .select('template')
+                .in_('profiles')
+                .as('profiles')
+                .project('profiles', 'template', 'category')
+                .by(__.select('profiles').valueMap().with_(process.withOptions.tokens).fold())
+                .by(__.select('template').valueMap().with_(process.withOptions.tokens))
+                .by(__.select('category').valueMap().with_(process.withOptions.tokens));
 
-        const result = await traverser.next();
+            return await traverser.next();
+        });
 
         logger.debug(`profiles.full.dao get: results: ${JSON.stringify(result)}`);
 

@@ -197,20 +197,21 @@ export class DevicesDaoFull {
                       .with_(process.withOptions.tokens);
 
         // build the main part of the query, unioning the related traversers with the main entity we want to return
-        const conn = await this.connectionDao.getConnection();
-        const traverser = conn.traversal
-            .V(dbIds)
-            .as('devices')
-            .values('deviceId')
-            .as('entityId')
-            .select('devices')
-            .union(relatedIn, relatedOut, deviceProps);
+        const results = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = conn.traversal
+                .V(dbIds)
+                .as('devices')
+                .values('deviceId')
+                .as('entityId')
+                .select('devices')
+                .union(relatedIn, relatedOut, deviceProps);
 
-        // execute and retrieve the results
-        logger.debug(
-            `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`
-        );
-        const results = await traverser.toList();
+            // execute and retrieve the results
+            logger.debug(
+                `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`
+            );
+            return await traverser.toList();
+        });
         logger.debug(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
 
         if ((results?.length ?? 0) === 0) {
@@ -272,44 +273,45 @@ export class DevicesDaoFull {
         const labels = n.types.join('::');
 
         /*  create the device  */
-        const conn = await this.connectionDao.getConnection();
-        const traversal = conn.traversal.addV(labels).property(process.t.id, id);
+        await this.connectionDao.withTraversal(async (conn) => {
+            const traversal = conn.traversal.addV(labels).property(process.t.id, id);
 
-        /*  set all the device properties  */
-        for (const key of Object.keys(n.attributes)) {
-            if (n.attributes[key] !== undefined) {
-                traversal.property(process.cardinality.single, key, n.attributes[key]);
-            }
-        }
-        traversal.as('device');
-
-        /* associate device with the related devices and/or groups */
-        associateRels(traversal, groups?.in, 'group', 'in');
-        associateRels(traversal, groups?.out, 'group', 'out');
-        associateRels(traversal, devices?.in, 'device', 'in');
-        associateRels(traversal, devices?.out, 'device', 'out');
-
-        /*  create the components  */
-        if (components) {
-            components.forEach((c) => {
-                const componentId = c.attributes['deviceId'] as string;
-                const componentDbId = `${id}___${componentId}`;
-                const componentLabels = c.types.join('::');
-
-                traversal.addV(componentLabels).property(process.t.id, componentDbId);
-
-                for (const key of Object.keys(c.attributes)) {
-                    if (c.attributes[key] !== undefined) {
-                        traversal.property(process.cardinality.single, key, c.attributes[key]);
-                    }
+            /*  set all the device properties  */
+            for (const key of Object.keys(n.attributes)) {
+                if (n.attributes[key] !== undefined) {
+                    traversal.property(process.cardinality.single, key, n.attributes[key]);
                 }
+            }
+            traversal.as('device');
 
-                traversal.as(componentId).addE('component_of').from_(componentId).to('device');
-            });
-        }
+            /* associate device with the related devices and/or groups */
+            associateRels(traversal, groups?.in, 'group', 'in');
+            associateRels(traversal, groups?.out, 'group', 'out');
+            associateRels(traversal, devices?.in, 'device', 'in');
+            associateRels(traversal, devices?.out, 'device', 'out');
 
-        logger.debug(`devices.full.dao create: traversal:${traversal}`);
-        await traversal.iterate();
+            /*  create the components  */
+            if (components) {
+                components.forEach((c) => {
+                    const componentId = c.attributes['deviceId'] as string;
+                    const componentDbId = `${id}___${componentId}`;
+                    const componentLabels = c.types.join('::');
+
+                    traversal.addV(componentLabels).property(process.t.id, componentDbId);
+
+                    for (const key of Object.keys(c.attributes)) {
+                        if (c.attributes[key] !== undefined) {
+                            traversal.property(process.cardinality.single, key, c.attributes[key]);
+                        }
+                    }
+
+                    traversal.as(componentId).addE('component_of').from_(componentId).to('device');
+                });
+            }
+
+            logger.debug(`devices.full.dao create: traversal:${traversal}`);
+            await traversal.iterate();
+        });
 
         logger.debug(`devices.full.dao create: exit: id:${id}`);
         return id;
@@ -325,24 +327,25 @@ export class DevicesDaoFull {
         const labels = n.types.join('::');
 
         /*  create the component  */
-        const conn = await this.connectionDao.getConnection();
-        const traversal = conn.traversal.addV(labels).property(process.t.id, componentId);
+        await this.connectionDao.withTraversal(async (conn) => {
+            const traversal = conn.traversal.addV(labels).property(process.t.id, componentId);
 
-        for (const key of Object.keys(n.attributes)) {
-            if (n.attributes[key] !== undefined) {
-                traversal.property(process.cardinality.single, key, n.attributes[key]);
+            for (const key of Object.keys(n.attributes)) {
+                if (n.attributes[key] !== undefined) {
+                    traversal.property(process.cardinality.single, key, n.attributes[key]);
+                }
             }
-        }
-        traversal.as('component');
+            traversal.as('component');
 
-        /*  add to the parent device  */
-        traversal.V(id).as('device').addE('component_of').from_('component').to('device');
+            /*  add to the parent device  */
+            traversal.V(id).as('device').addE('component_of').from_('component').to('device');
 
-        /* for simplification, always add isAuthCheck from the component to the device, regardless fo whether used or not */
-        traversal.property(process.cardinality.single, 'isAuthCheck', true);
+            /* for simplification, always add isAuthCheck from the component to the device, regardless fo whether used or not */
+            traversal.property(process.cardinality.single, 'isAuthCheck', true);
 
-        logger.debug(`devices.full.dao createComponent: traversal:${traversal}`);
-        await traversal.iterate();
+            logger.debug(`devices.full.dao createComponent: traversal:${traversal}`);
+            await traversal.iterate();
+        });
 
         logger.debug(`devices.full.dao createComponent: exit: componentId:${componentId}`);
         return componentId;
@@ -357,122 +360,123 @@ export class DevicesDaoFull {
 
         const id = `device___${n.attributes['deviceId']}`;
 
-        const conn = await this.connectionDao.getConnection();
-        const traversal = conn.traversal.V(id).as('device');
-        // drop() step terminates a traversal, process all drops as part of a final union step
-        const dropTraversals: process.GraphTraversal[] = [];
+        await this.connectionDao.withTraversal(async (conn) => {
+            const traversal = conn.traversal.V(id).as('device');
+            // drop() step terminates a traversal, process all drops as part of a final union step
+            const dropTraversals: process.GraphTraversal[] = [];
 
-        for (const [key, val] of Object.entries(n.attributes)) {
-            if (val !== undefined) {
-                if (val === null) {
-                    dropTraversals.push(__.properties(key));
-                } else {
-                    traversal.property(process.cardinality.single, key, val);
+            for (const [key, val] of Object.entries(n.attributes)) {
+                if (val !== undefined) {
+                    if (val === null) {
+                        dropTraversals.push(__.properties(key));
+                    } else {
+                        traversal.property(process.cardinality.single, key, val);
+                    }
                 }
             }
-        }
 
-        // Check if related groups or devices part of update request
-        if (groups !== undefined && (groups.in || groups.out || devices.in || devices.out)) {
-            // Update request contains relationships to enforce. This requires current
-            // relationships be dropped where specified and new relations created.
-            logger.info(
-                `devices.full.dao update groups/devices relations specified as part of update: ${JSON.stringify(
-                    { groups: groups }
-                )}/${JSON.stringify({ devices: devices })}`
+            // Check if related groups or devices part of update request
+            if (groups !== undefined && (groups.in || groups.out || devices.in || devices.out)) {
+                // Update request contains relationships to enforce. This requires current
+                // relationships be dropped where specified and new relations created.
+                logger.info(
+                    `devices.full.dao update groups/devices relations specified as part of update: ${JSON.stringify(
+                        { groups: groups }
+                    )}/${JSON.stringify({ devices: devices })}`
+                );
+                const result = await this.get([`${n.attributes['deviceId']}`], false, [], false);
+                let currentDevice: DeviceItem;
+                if (result !== undefined && result.length > 0) {
+                    currentDevice = this.devicesAssembler.toDeviceItem(result[0]);
+                }
+                const existingGroups = currentDevice.groups ? currentDevice.groups : {};
+                const existingDevices = currentDevice.devices ? currentDevice.devices : {};
+                logger.debug(`Current device defintion: ${JSON.stringify(currentDevice)}`);
+                // Methodology
+                // 1. Collect relations to be dropped as independent traversal objects via diassociateRels
+                // 2. Union and then drop() these with traversal.sideEffect(...)
+                //    -- Use of sideEffect acts on the traversal then passes results to next step. Without this, a drop() will terminate traversal.
+                // 3. Add specified relations for groups and devices directly to traversal in associateRels
+                const relationsToDropTraversals: process.GraphTraversal[] = [];
+                if (groups.in && 'in' in existingGroups) {
+                    logger.debug(
+                        `devices.full.dao update device ${id} dropping existing relations for groups.in: ${JSON.stringify(
+                            existingGroups.in
+                        )}`
+                    );
+                    diassociateRels(relationsToDropTraversals, existingGroups.in, 'group', 'in');
+                }
+                if (groups.out && 'out' in existingGroups) {
+                    logger.debug(
+                        `devices.full.dao update device ${id} dropping existing relations for groups.out: ${JSON.stringify(
+                            existingGroups.out
+                        )}`
+                    );
+                    diassociateRels(relationsToDropTraversals, existingGroups.out, 'group', 'out');
+                }
+                if (devices.in && 'in' in existingDevices) {
+                    logger.debug(
+                        `devices.full.dao update device ${id} dropping existing relations for devices.in: ${JSON.stringify(
+                            existingDevices.in
+                        )}`
+                    );
+                    diassociateRels(relationsToDropTraversals, existingDevices.in, 'device', 'in');
+                }
+                if (devices.out && 'out' in existingDevices) {
+                    logger.debug(
+                        `devices.full.dao update device ${id} dropping existing relations for devices.out:: ${JSON.stringify(
+                            existingDevices.out
+                        )}`
+                    );
+                    diassociateRels(
+                        relationsToDropTraversals,
+                        existingDevices.out,
+                        'device',
+                        'out'
+                    );
+                }
+                traversal.sideEffect(__.union(...relationsToDropTraversals).drop());
+                if (groups.in) {
+                    logger.debug(
+                        `devices.full.dao update device ${id} adding relations for groups.in: ${JSON.stringify(
+                            groups.in
+                        )}`
+                    );
+                    associateRels(traversal, groups.in, 'group', 'in');
+                }
+                if (groups.out) {
+                    logger.debug(
+                        `devices.full.dao update device ${id} adding relations for groups.out: ${JSON.stringify(
+                            groups.out
+                        )}`
+                    );
+                    associateRels(traversal, groups.out, 'group', 'out');
+                }
+                if (devices.in) {
+                    logger.debug(
+                        `devices.full.dao update device ${id} adding relations for devices.in: ${JSON.stringify(
+                            devices.in
+                        )}`
+                    );
+                    associateRels(traversal, devices.in, 'device', 'in');
+                }
+                if (devices.out) {
+                    logger.debug(
+                        `devices.full.dao update device ${id} adding relations for devices.out: ${JSON.stringify(
+                            devices.out
+                        )}`
+                    );
+                    associateRels(traversal, devices.out, 'device', 'out');
+                }
+            }
+            if (dropTraversals.length > 0) {
+                traversal.local(__.union(...dropTraversals)).drop();
+            }
+            logger.debug(
+                `devices.full.dao update traversal before iterate is: ${JSON.stringify(traversal)}`
             );
-            const result = await this.get([`${n.attributes['deviceId']}`], false, [], false);
-            let currentDevice: DeviceItem;
-            if (result !== undefined && result.length > 0) {
-                currentDevice = this.devicesAssembler.toDeviceItem(result[0]);
-            }
-            const existingGroups = currentDevice.groups ? currentDevice.groups : {};
-            const existingDevices = currentDevice.devices ? currentDevice.devices : {};
-            logger.debug(`Current device defintion: ${JSON.stringify(currentDevice)}`);
-            // Methodology
-            // 1. Collect relations to be dropped as independent traversal objects via diassociateRels
-            // 2. Union and then drop() these with traversal.sideEffect(...)
-            //    -- Use of sideEffect acts on the traversal then passes results to next step. Without this, a drop() will terminate traversal.
-            // 3. Add specified relations for groups and devices directly to traversal in associateRels
-            const relationsToDropTraversals: process.GraphTraversal[] = [];
-            if (groups.in && 'in' in existingGroups) {
-                logger.debug(
-                    `devices.full.dao update device ${id} dropping existing relations for groups.in: ${JSON.stringify(
-                        existingGroups.in
-                    )}`
-                );
-                diassociateRels(relationsToDropTraversals, existingGroups.in, 'group', 'in');
-            }
-            if (groups.out && 'out' in existingGroups) {
-                logger.debug(
-                    `devices.full.dao update device ${id} dropping existing relations for groups.out: ${JSON.stringify(
-                        existingGroups.out
-                    )}`
-                );
-                diassociateRels(relationsToDropTraversals, existingGroups.out, 'group', 'out');
-            }
-            if (devices.in && 'in' in existingDevices) {
-                logger.debug(
-                    `devices.full.dao update device ${id} dropping existing relations for devices.in: ${JSON.stringify(
-                        existingDevices.in
-                    )}`
-                );
-                diassociateRels(relationsToDropTraversals, existingDevices.in, 'device', 'in');
-            }
-            if (devices.out && 'out' in existingDevices) {
-                logger.debug(
-                    `devices.full.dao update device ${id} dropping existing relations for devices.out:: ${JSON.stringify(
-                        existingDevices.out
-                    )}`
-                );
-                diassociateRels(
-                    relationsToDropTraversals,
-                    existingDevices.out,
-                    'device',
-                    'out'
-                );
-            }
-            traversal.sideEffect(__.union(...relationsToDropTraversals).drop());
-            if (groups.in) {
-                logger.debug(
-                    `devices.full.dao update device ${id} adding relations for groups.in: ${JSON.stringify(
-                        groups.in
-                    )}`
-                );
-                associateRels(traversal, groups.in, 'group', 'in');
-            }
-            if (groups.out) {
-                logger.debug(
-                    `devices.full.dao update device ${id} adding relations for groups.out: ${JSON.stringify(
-                        groups.out
-                    )}`
-                );
-                associateRels(traversal, groups.out, 'group', 'out');
-            }
-            if (devices.in) {
-                logger.debug(
-                    `devices.full.dao update device ${id} adding relations for devices.in: ${JSON.stringify(
-                        devices.in
-                    )}`
-                );
-                associateRels(traversal, devices.in, 'device', 'in');
-            }
-            if (devices.out) {
-                logger.debug(
-                    `devices.full.dao update device ${id} adding relations for devices.out: ${JSON.stringify(
-                        devices.out
-                    )}`
-                );
-                associateRels(traversal, devices.out, 'device', 'out');
-            }
-        }
-        if (dropTraversals.length > 0) {
-            traversal.local(__.union(...dropTraversals)).drop();
-        }
-        logger.debug(
-            `devices.full.dao update traversal before iterate is: ${JSON.stringify(traversal)}`
-        );
-        await traversal.iterate();
+            await traversal.iterate();
+        });
         logger.debug(`devices.full.dao update: exit:`);
     }
 
@@ -481,8 +485,9 @@ export class DevicesDaoFull {
 
         const id = `device___${deviceId}`;
 
-        const conn = await this.connectionDao.getConnection();
-        await conn.traversal.V(id).drop().iterate();
+        await this.connectionDao.withTraversal(async (conn) => {
+            await conn.traversal.V(id).drop().iterate();
+        });
 
         logger.debug(`devices.full.dao delete: exit`);
     }
@@ -509,20 +514,21 @@ export class DevicesDaoFull {
             targetId = `device___${deviceId}`;
         }
 
-        const conn = await this.connectionDao.getConnection();
-        const traverser = conn.traversal
-            .V(targetId)
-            .as('target')
-            .V(sourceId)
-            .as('source')
-            .addE(relationship)
-            .to('target');
+        const result = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = conn.traversal
+                .V(targetId)
+                .as('target')
+                .V(sourceId)
+                .as('source')
+                .addE(relationship)
+                .to('target');
 
-        if (isAuthCheck) {
-            traverser.property(process.cardinality.single, 'isAuthCheck', true);
-        }
+            if (isAuthCheck) {
+                traverser.property(process.cardinality.single, 'isAuthCheck', true);
+            }
 
-        const result = await traverser.iterate();
+            return await traverser.iterate();
+        });
 
         logger.debug(`devices.full.dao attachToGroup: result:${JSON.stringify(result)}`);
 
@@ -568,19 +574,20 @@ export class DevicesDaoFull {
         const sourceId = `device___${source}`;
         const targetId = `device___${target}`;
 
-        const conn = await this.connectionDao.getConnection();
-        const traverser = conn.traversal
-            .V(targetId)
-            .as('other')
-            .V(sourceId)
-            .addE(relationship)
-            .to('other');
+        const result = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = conn.traversal
+                .V(targetId)
+                .as('other')
+                .V(sourceId)
+                .addE(relationship)
+                .to('other');
 
-        if (isAuthCheck) {
-            traverser.property(process.cardinality.single, 'isAuthCheck', true);
-        }
+            if (isAuthCheck) {
+                traverser.property(process.cardinality.single, 'isAuthCheck', true);
+            }
 
-        const result = await traverser.iterate();
+            return await traverser.iterate();
+        });
         logger.debug(`devices.full.dao attachToDevice: result:${JSON.stringify(result)}`);
 
         logger.debug(`devices.full.dao attachToDevice: exit:`);
@@ -639,13 +646,14 @@ export class DevicesDaoFull {
             edgesToDelete.push(t);
         }
 
-        const conn = await this.connectionDao.getConnection();
-        await conn.traversal
-            .V(`device___${deviceId}`)
-            .as('source')
-            .union(...edgesToDelete)
-            .drop()
-            .iterate();
+        await this.connectionDao.withTraversal(async (conn) => {
+            await conn.traversal
+                .V(`device___${deviceId}`)
+                .as('source')
+                .union(...edgesToDelete)
+                .drop()
+                .iterate();
+        });
 
         logger.debug(`devices.full.dao detachFromOthers: exit:`);
     }
