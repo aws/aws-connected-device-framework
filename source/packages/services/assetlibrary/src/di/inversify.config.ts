@@ -25,6 +25,7 @@ import { HttpHeaderUtils } from '../utils/httpHeaders';
 import { TypeUtils } from '../utils/typeUtils';
 import * as full from './inversify.config.full';
 import * as lite from './inversify.config.lite';
+import * as enhanced from './inversify.config.enhanced';
 import { TYPES } from './types';
 
 import AWS from 'aws-sdk';
@@ -33,6 +34,10 @@ export const container = new Container();
 
 if (process.env.MODE === 'lite') {
     container.load(lite.LiteContainerModule);
+} else if (process.env.MODE === 'enhanced') {
+    // EnhancedContainerModule extends, not replaces, FullContainerModule
+    container.load(full.FullContainerModule);
+    container.load(enhanced.EnhancedContainerModule);
 } else {
     container.load(full.FullContainerModule);
 }

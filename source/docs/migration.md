@@ -2,6 +2,10 @@
 
 While we endeavor to always make backward compatible changes, there may be times when we need to make changes that are not backward compatible. If these changes are made at the API level then the affected modules REST API vendor mime types will be versioned supporting both new and old versions, as well as the modules minor version bumped. But if the change affect something else such as how configuration is handled, or how applications are deployed, then the major versions of the modules will be bumped with migration notes added here.
 
+## Migrating an existing Asset Library deployment to Enhanced Search
+
+Starting with CDF Asset Library version 6.0.10 (part of CDF version 1.0.13), a new "enhanced" mode is available for CDF Asset Library. See the section [Migrating from full mode to enhanced mode](../packages/services/assetlibrary/docs/enhanced-search.md#migrating-from-full-mode-to-enhanced-mode) for guidance on migrating to enanced mode.
+
 ## Migrating from Release <=1.0.10 to 1.0.11
 
 ### Asset Library is now optional modules

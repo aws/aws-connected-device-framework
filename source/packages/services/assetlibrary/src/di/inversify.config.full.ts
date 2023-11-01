@@ -1,4 +1,3 @@
-import { structure } from 'gremlin';
 /*********************************************************************************************************************
  *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
  *                                                                                                                    *
@@ -12,6 +11,7 @@ import { structure } from 'gremlin';
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
+import { structure } from 'gremlin';
 
 import { AuthzDaoFull } from '../authz/authz.full.dao';
 import { AuthzServiceFull } from '../authz/authz.full.service';

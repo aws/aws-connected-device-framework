@@ -32,7 +32,7 @@ const __ = process.statics;
 export class SearchDaoFull extends BaseDaoFull {
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
-        @inject('enableDfeOptimization') private enableDfeOptimization: boolean,
+        @inject('enableDfeOptimization') protected enableDfeOptimization: boolean,
         @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
         @inject(TYPES.NodeAssembler) private assembler: NodeAssembler,
         @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
@@ -40,7 +40,7 @@ export class SearchDaoFull extends BaseDaoFull {
         super(neptuneUrl, graphSourceFactory);
     }
 
-    private buildSearchTraverser(
+    protected buildSearchTraverser(
         conn: NeptuneConnection,
         request: SearchRequestModel,
         authorizedPaths: string[]
@@ -184,7 +184,7 @@ export class SearchDaoFull extends BaseDaoFull {
         return traverser.select('a').dedup();
     }
 
-    private buildSearchFilterVBase(
+    protected buildSearchFilterVBase(
         filter: SearchRequestFilter | SearchRequestFacet,
         traverser: process.GraphTraversal
     ): void {
@@ -199,7 +199,7 @@ export class SearchDaoFull extends BaseDaoFull {
         }
     }
 
-    private buildSearchFilterEBase(
+    protected buildSearchFilterEBase(
         filter: SearchRequestFilter | SearchRequestFacet,
         traverser: process.GraphTraversal
     ): void {
@@ -215,7 +215,7 @@ export class SearchDaoFull extends BaseDaoFull {
         }
     }
 
-    private buildSearchFilterEBaseNegated(
+    protected buildSearchFilterEBaseNegated(
         filter: SearchRequestFilter | SearchRequestFacet,
         traverser: process.GraphTraversal,
         field: unknown,

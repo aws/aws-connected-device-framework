@@ -36,10 +36,13 @@ describe('SearchServiceAssembler', () => {
         neqs: string | string[] | undefined;
         lts: string | string[] | undefined;
         gtes: string | string[] | undefined;
-        facetField: string | undefined;
         startsWiths: string | string[] | undefined;
         endsWiths: string | string[] | undefined;
         containses: string | string[] | undefined;
+        fulltexts: string | string[] | undefined;
+        regexes: string | string[] | undefined;
+        lucenes: string | string[] | undefined;
+        facetField: string | undefined;
     };
     beforeEach(() => {
         mockedDeviceAssembler = createMockInstance(DevicesAssembler);
@@ -66,6 +69,9 @@ describe('SearchServiceAssembler', () => {
             startsWiths: undefined,
             endsWiths: undefined,
             containses: undefined,
+            fulltexts: undefined,
+            regexes: undefined,
+            lucenes: undefined,
             exists: undefined,
             nexists: undefined,
             facetField: undefined,
@@ -85,6 +91,9 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.startsWiths,
             mockedSearchRequest.endsWiths,
             mockedSearchRequest.containses,
+            mockedSearchRequest.fulltexts,
+            mockedSearchRequest.regexes,
+            mockedSearchRequest.lucenes,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
             mockedSearchRequest.facetField
@@ -118,6 +127,9 @@ describe('SearchServiceAssembler', () => {
             startsWiths: 'swfield:abc',
             endsWiths: 'ewfield:xyz',
             containses: 'confield:opq',
+            fulltexts: 'ftfield:*abc*',
+            regexes: 'refield:AB[CD]12++',
+            lucenes: undefined,
             exists: 'exfield:exval',
             nexists: 'nexfield:nexval',
             facetField: undefined,
@@ -137,6 +149,9 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.startsWiths,
             mockedSearchRequest.endsWiths,
             mockedSearchRequest.containses,
+            mockedSearchRequest.fulltexts,
+            mockedSearchRequest.regexes,
+            mockedSearchRequest.lucenes,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
             mockedSearchRequest.facetField
@@ -174,6 +189,12 @@ describe('SearchServiceAssembler', () => {
         expect(searchRequestModel.contains).toHaveLength(1);
         expect(searchRequestModel.contains[0].field).toEqual('confield');
         expect(searchRequestModel.contains[0].value).toEqual('opq');
+        expect(searchRequestModel.fulltext).toHaveLength(1);
+        expect(searchRequestModel.fulltext[0].field).toEqual('ftfield');
+        expect(searchRequestModel.fulltext[0].value).toEqual('*abc*');
+        expect(searchRequestModel.regex).toHaveLength(1);
+        expect(searchRequestModel.regex[0].field).toEqual('refield');
+        expect(searchRequestModel.regex[0].value).toEqual('AB[CD]12++');
         expect(searchRequestModel.exists).toHaveLength(1);
         expect(searchRequestModel.exists[0].field).toEqual('exfield');
         expect(searchRequestModel.exists[0].value).toEqual('exval');
@@ -197,6 +218,9 @@ describe('SearchServiceAssembler', () => {
             startsWiths: undefined,
             endsWiths: undefined,
             containses: undefined,
+            fulltexts: undefined,
+            regexes: undefined,
+            lucenes: undefined,
             exists: undefined,
             nexists: undefined,
             facetField: undefined,
@@ -216,6 +240,9 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.startsWiths,
             mockedSearchRequest.endsWiths,
             mockedSearchRequest.containses,
+            mockedSearchRequest.fulltexts,
+            mockedSearchRequest.regexes,
+            mockedSearchRequest.lucenes,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
             mockedSearchRequest.facetField
@@ -249,6 +276,9 @@ describe('SearchServiceAssembler', () => {
             startsWiths: undefined,
             endsWiths: undefined,
             containses: undefined,
+            fulltexts: undefined,
+            regexes: undefined,
+            lucenes: undefined,
             exists: undefined,
             nexists: undefined,
             facetField: undefined,
@@ -268,6 +298,9 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.startsWiths,
             mockedSearchRequest.endsWiths,
             mockedSearchRequest.containses,
+            mockedSearchRequest.fulltexts,
+            mockedSearchRequest.regexes,
+            mockedSearchRequest.lucenes,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
             mockedSearchRequest.facetField

@@ -10,11 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { CreateServiceLinkedRoleCommand, GetRoleCommand, IAMClient } from '@aws-sdk/client-iam';
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
 import path from 'path';
-import { Answers } from '../../../models/answers';
+import { Answers, AssetLibraryMode } from '../../../models/answers';
 import { ModuleName, PostmanEnvironment, RestModule } from '../../../models/modules';
 import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
 import {
@@ -44,6 +45,13 @@ const ASSUMED_NEPTUNE_ENGINE_VERSION = '1.1.0.0';
 // AWS.RDS.DescribeOrderableDBInstanceOptions API.
 const DEFAULT_NEPTUNE_INSTANCE_TYPE = 'db.r5.xlarge';
 
+export function modeRequiresNeptune(mode: string): boolean {
+    return mode === AssetLibraryMode.Full || mode === AssetLibraryMode.Enhanced;
+}
+
+export function modeRequiresOpenSearch(mode: string): boolean {
+    return mode === AssetLibraryMode.Enhanced;
+}
 export class AssetLibraryInstaller implements RestModule {
     public readonly friendlyName = 'Asset Library';
     public readonly name = 'assetLibrary';
@@ -51,13 +59,15 @@ export class AssetLibraryInstaller implements RestModule {
 
     public readonly type = 'SERVICE';
     public readonly dependsOnMandatory: ModuleName[] = ['apigw', 'deploymentHelper'];
-    public readonly dependsOnOptional: ModuleName[] = ['vpc'];
+    public readonly dependsOnOptional: ModuleName[] = ['vpc', 'kms'];
 
     public readonly stackName: string;
     private readonly neptuneStackName: string;
+    private readonly enhancedSearchStackName: string;
 
     constructor(environment: string) {
         this.neptuneStackName = `cdf-assetlibrary-neptune-${environment}`;
+        this.enhancedSearchStackName = `cdf-assetlibrary-enhancedsearch-${environment}`;
         this.stackName = `cdf-assetlibrary-${environment}`;
     }
     includeOptionalModules: (answers: Answers) => Answers;
@@ -79,11 +89,15 @@ export class AssetLibraryInstaller implements RestModule {
             updatedAnswers = await inquirer.prompt(
                 [
                     {
-                        message: `Run in 'full' mode (with Amazon Neptune), or 'lite' mode (using AWS IoT Device Registry only). Note that 'lite' mode supports a reduced set of Asset Library features (see documentation for further info).`,
+                        message: `Asset library mode: 'full' uses Amazon Neptune as data store. 'enhanced' adds Amazon OpenSearch for enhanced search features. 'lite' uses only AWS IoT Device Registry and supports a reduced feature set. See documentation for details.`,
                         type: 'list',
-                        choices: ['full', 'lite'],
+                        choices: [
+                            AssetLibraryMode.Full,
+                            AssetLibraryMode.Lite,
+                            AssetLibraryMode.Enhanced,
+                        ],
                         name: 'assetLibrary.mode',
-                        default: answers.assetLibrary?.mode ?? 'full',
+                        default: answers.assetLibrary?.mode ?? AssetLibraryMode.Full,
                         askAnswered: true,
                         validate(answer: string) {
                             if (answer?.length === 0) {
@@ -108,7 +122,7 @@ export class AssetLibraryInstaller implements RestModule {
                         loop: false,
                         pageSize: 10,
                         when(answers: Answers) {
-                            return answers.assetLibrary?.mode === 'full';
+                            return modeRequiresNeptune(answers.assetLibrary?.mode);
                         },
                         validate(answer: string) {
                             if (
@@ -129,7 +143,7 @@ export class AssetLibraryInstaller implements RestModule {
                         default: answers.assetLibrary?.createDbReplicaInstance ?? false,
                         askAnswered: true,
                         when(answers: Answers) {
-                            return answers.assetLibrary?.mode === 'full';
+                            return modeRequiresNeptune(answers.assetLibrary?.mode);
                         },
                         validate(answer: string) {
                             if (answer?.length === 0) {
@@ -145,11 +159,58 @@ export class AssetLibraryInstaller implements RestModule {
                         default: answers.assetLibrary?.restoreFromSnapshot ?? false,
                         askAnswered: true,
                         when(answers: Answers) {
-                            return answers.assetLibrary?.mode === 'full';
+                            return modeRequiresNeptune(answers.assetLibrary?.mode);
                         },
                         validate(answer: string) {
                             if (answer?.length === 0) {
                                 return 'You must confirm whether to restore from a snapshot or not.';
+                            }
+                            return true;
+                        },
+                    },
+                    {
+                        message: `Select the OpenSearch cluster data node instance type:`,
+                        type: 'input',
+                        name: 'assetLibrary.openSearchDataNodeInstanceType',
+                        default:
+                            answers.assetLibrary?.openSearchDataNodeInstanceType ??
+                            't3.small.search',
+                        askAnswered: true,
+                        when: (answers: Answers) =>
+                            modeRequiresOpenSearch(answers.assetLibrary?.mode),
+                        validate(answer: string) {
+                            if (answer?.length === 0) {
+                                return 'You must enter the OpenSearch data node instance type.';
+                            }
+                            return true;
+                        },
+                    },
+                    {
+                        message: `Enter the number of OpenSearch cluster data node instances. This number must either be 1 or a multiple of the number of private subnets in the VPC:`,
+                        type: 'number',
+                        name: 'assetLibrary.openSearchDataNodeInstanceCount',
+                        default: answers.assetLibrary?.openSearchDataNodeInstanceCount ?? 1,
+                        askAnswered: true,
+                        when: (answers: Answers) =>
+                            modeRequiresOpenSearch(answers.assetLibrary?.mode),
+                        validate(answer: number) {
+                            if (answer < 1) {
+                                return 'The number of OpenSearch data node instances must be a non-zero multiple of the number of availability zones.';
+                            }
+                            return true;
+                        },
+                    },
+                    {
+                        message: `Size of the EBS volume attached to OpenSearch data nodes in GiB`,
+                        type: 'number',
+                        name: 'assetLibrary.openSearchEBSVolumeSize',
+                        default: answers.assetLibrary?.openSearchEBSVolumeSize ?? 10,
+                        askAnswered: true,
+                        when: (answers: Answers) =>
+                            modeRequiresOpenSearch(answers.assetLibrary?.mode),
+                        validate(answer: number) {
+                            if (answer < 10) {
+                                return `You must specify at least 10 GiB for EBS volume size. For detailed documentation, see: https://docs.aws.amazon.com/opensearch-service/latest/developerguide/limits.html#ebsresource`;
                             }
                             return true;
                         },
@@ -162,7 +223,7 @@ export class AssetLibraryInstaller implements RestModule {
                         askAnswered: true,
                         when(answers: Answers) {
                             return (
-                                answers.assetLibrary?.mode === 'full' &&
+                                modeRequiresNeptune(answers.assetLibrary?.mode) &&
                                 answers.assetLibrary?.restoreFromSnapshot
                             );
                         },
@@ -216,7 +277,12 @@ export class AssetLibraryInstaller implements RestModule {
         includeOptionalModule(
             'vpc',
             updatedAnswers.modules,
-            updatedAnswers.assetLibrary.mode === 'full'
+            modeRequiresNeptune(updatedAnswers.assetLibrary.mode)
+        );
+        includeOptionalModule(
+            'kms',
+            updatedAnswers.modules,
+            modeRequiresOpenSearch(updatedAnswers.assetLibrary.mode)
         );
         return updatedAnswers;
     }
@@ -290,7 +356,7 @@ export class AssetLibraryInstaller implements RestModule {
         );
         addIfSpecified(
             'CustomResourceVPCLambdaArn',
-            answers.assetLibrary.mode === 'full'
+            modeRequiresNeptune(answers.assetLibrary?.mode)
                 ? answers.deploymentHelper.vpcLambdaArn
                 : answers.deploymentHelper.lambdaArn
         );
@@ -320,6 +386,10 @@ export class AssetLibraryInstaller implements RestModule {
         addIfSpecified('DbInstanceType', answers.assetLibrary.neptuneDbInstanceType);
         addIfSpecified('CreateDBReplicaInstance', answers.assetLibrary.createDbReplicaInstance);
         addIfSpecified('SnapshotIdentifier', answers.assetLibrary.neptuneSnapshotIdentifier);
+        // The Neptune-to-OpenSearch integration relies on Neptune Streams
+        if (modeRequiresOpenSearch(answers.assetLibrary.mode)) {
+            parameterOverrides.push('NeptuneEnableStreams=1');
+        }
         return parameterOverrides;
     }
 
@@ -335,7 +405,7 @@ export class AssetLibraryInstaller implements RestModule {
             return [answers, tasks];
         }
 
-        if (answers.assetLibrary.mode === 'full') {
+        if (modeRequiresNeptune(answers.assetLibrary?.mode)) {
             tasks.push({
                 title: `Deploying stack '${this.neptuneStackName}'`,
                 task: async () => {
@@ -367,6 +437,130 @@ export class AssetLibraryInstaller implements RestModule {
                     answers.assetLibrary.neptuneUrl = byOutputKey('GremlinEndpoint');
                 },
             });
+
+            if (modeRequiresOpenSearch(answers.assetLibrary.mode)) {
+                tasks.push({
+                    title: `Ensure service-linked role 'AWSServiceRoleForAmazonElasticsearchService' exists`,
+                    task: async () => {
+                        const iamClient = new IAMClient({});
+
+                        const getCommand1 = new GetRoleCommand({
+                            RoleName: 'AWSServiceRoleForAmazonOpenSearchService',
+                        });
+                        try {
+                            const data1 = await iamClient.send(getCommand1);
+                            console.log(
+                                `First attempt at finding SLR ${data1.$metadata.httpStatusCode}`
+                            );
+                            if (data1.$metadata.httpStatusCode === 200) return;
+                        } catch {
+                            /* do nothing */
+                        }
+                        // also probe for the legacy name of the role
+                        const getCommand2 = new GetRoleCommand({
+                            RoleName: 'AWSServiceRoleForAmazonElasticsearchService',
+                        });
+                        try {
+                            const data2 = await iamClient.send(getCommand2);
+                            console.log(
+                                `Second attempt at finding SLR ${data2.$metadata.httpStatusCode}`
+                            );
+                            if (data2.$metadata.httpStatusCode === 200) return;
+                        } catch {
+                            /* do nothing */
+                        }
+
+                        // if neither role exists, create it
+                        const createCommand = new CreateServiceLinkedRoleCommand({
+                            AWSServiceName: 'es.amazonaws.com',
+                        });
+                        await iamClient.send(createCommand);
+
+                        // An error occurred (InvalidInput) when calling the CreateServiceLinkedRole operation: Service role name
+                        // AWSServiceRoleForAmazonElasticsearchService has been taken in this account, please try a different suffix.
+                    },
+                });
+
+                tasks.push({
+                    title: `Deploying stack '${this.enhancedSearchStackName}'`,
+                    task: async () => {
+                        const vpcSubnetIdsArr = answers.vpc.privateSubnetIds.split(',');
+                        const instanceCount = answers.assetLibrary.openSearchDataNodeInstanceCount;
+                        let subnetIds = answers.vpc.privateSubnetIds;
+                        if (instanceCount < vpcSubnetIdsArr.length) {
+                            subnetIds = vpcSubnetIdsArr.slice(0, instanceCount).join(',');
+                        } else if (instanceCount % vpcSubnetIdsArr.length != 0) {
+                            throw new Error(
+                                `The chosen number of OpenSearch data nodes (${instanceCount}) is not an integer multiple of the number of VPC subnets given (${vpcSubnetIdsArr.length}: ${answers.vpc.privateSubnetIds}).`
+                            );
+                        }
+                        const availabilityZoneCount = subnetIds.split(',').length;
+
+                        const parameterOverrides = [
+                            `Environment=${answers.environment}`,
+                            `VpcId=${answers.vpc.id}`,
+                            `CDFSecurityGroupId=${answers.vpc.securityGroupId}`,
+                            `PrivateSubNetIds=${subnetIds}`,
+                            `CustomResourceVPCLambdaArn=${answers.deploymentHelper.vpcLambdaArn}`,
+                            `KmsKeyId=${answers.kms.id}`,
+                            `NeptuneSecurityGroupId=${answers.assetLibrary.neptuneSecurityGroup}`,
+                            `NeptuneClusterEndpoint=${answers.assetLibrary.neptuneClusterReadEndpoint}`,
+                            `OpenSearchInstanceType=${answers.assetLibrary.openSearchDataNodeInstanceType}`,
+                            `OpenSearchInstanceCount=${answers.assetLibrary.openSearchDataNodeInstanceCount}`,
+                            `OpenSearchEBSVolumeSize=${answers.assetLibrary.openSearchEBSVolumeSize}`,
+                            `OpenSearchAvailabilityZoneCount=${availabilityZoneCount}`,
+                            // # Parameters available in the Cloudformation template but not currently exposed in the installer are
+                            // # listed as comments below.
+                            // ## Unused Parameters for defining OpenSearch cluster setup:
+                            // OpenSearchDedicatedMasterCount
+                            // OpenSearchDedicatedMasterInstanceType
+                            // OpenSearchEBSVolumeType
+                            // OpenSearchEBSProvisionedIOPS
+                            // NumberOfShards
+                            // NumberOfReplica
+                            // ## Unused Parameters for defining stream poller lambda behavior:
+                            // NeptunePollerLambdaMemorySize
+                            // NeptunePollerLambdaLoggingLevel
+                            // NeptunePollerStreamRecordsBatchSize
+                            // NeptunePollerMaxPollingWaitTime
+                            // NeptunePollerMaxPollingInterval
+                            // NeptunePollerStepFunctionFallbackPeriod
+                            // NeptunePollerStepFunctionFallbackPeriodUnit
+                            // ## Unused Parameters for defining data syncing behavior:
+                            // GeoLocationFields
+                            // PropertiesToExclude
+                            // DatatypesToExclude
+                            // IgnoreMissingDocument
+                            // EnableNonStringIndexing
+                            // ## Unused Parameters for defining monitoring and alerting:
+                            // OpenSearchAuditLogsCloudWatchLogsLogGroupArn
+                            // OpenSearchApplicationLogsCloudWatchLogsLogGroupArn
+                            // OpenSearchIndexSlowLogsCloudWatchLogsLogGroupArn
+                            // OpenSearchSearchSlowLogsCloudWatchLogsLogGroupArn
+                            // CreateCloudWatchAlarm
+                            // NotificationEmail
+                        ];
+
+                        await packageAndDeployStack({
+                            answers: answers,
+                            stackName: this.enhancedSearchStackName,
+                            serviceName: 'assetlibrary',
+                            templateFile: 'infrastructure/cfn-enhancedsearch.yaml',
+                            cwd: path.join(
+                                monorepoRoot,
+                                'source',
+                                'packages',
+                                'services',
+                                'assetlibrary'
+                            ),
+                            parameterOverrides: parameterOverrides,
+                            needsPackaging: false,
+                            needsCapabilityNamedIAM: true,
+                            needsCapabilityAutoExpand: false,
+                        });
+                    },
+                });
+            }
         }
 
         tasks.push({
@@ -433,12 +627,14 @@ export class AssetLibraryInstaller implements RestModule {
             },
         });
 
-        tasks.push({
-            title: `Deleting stack '${this.neptuneStackName}'`,
-            task: async () => {
-                await deleteStack(this.neptuneStackName, answers.region);
-            },
-        });
+        if (modeRequiresNeptune(answers.assetLibrary?.mode)) {
+            tasks.push({
+                title: `Deleting stack '${this.neptuneStackName}'`,
+                task: async () => {
+                    await deleteStack(this.neptuneStackName, answers.region);
+                },
+            });
+        }
         return tasks;
     }
 }

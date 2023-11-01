@@ -1,38 +1,47 @@
-# Asset Library integration tests
+# Asset Library Integration Tests
 
-Note:  only the _full_ mode is tested as part of the CI/CD pipeline.  We need to add both the _full (witht FGAC)_ and _lite_ modes to it.  But for now, these need testing manually...
+After following the [general steps for setting up an environment for integration testing](../README.md), the commands below can be used to run integration tests for Asset Library in various configurations.
+The tests are executed locally on your development environment and send HTTP requests to an Asset Library API deployed in an AWS account.
 
-### Testing full-with-authz mode
+The subset of tests must match the mode and configuration of the Asset Library deployment at the URL configured in `ASSETLIBRARY_BASE_URL` in `path/to/local/.env`.
+For example, integration tests in the `full-with-authz` folder only pass with an Asset Library deployment that is configured with `AUTHORIZATION_ENABLED=true`.
 
-- Run asset library with FGAC enabled (only supported in _full_ mode):
+Note: Only the _full_ mode is currently tested as part of the CI/CD pipeline.
+
+## Testing full/enhanced mode
+
+To run integration tests for Asset Library in _full_ or _enhanced_ mode, irrespective of `AUTHORIZATION_ENABLED` setting:
+
 ```sh
-$ assetlibrary> CONFIG_LOCATION="path/to/local/.env" ASSETLIBRARY_AUTHORIZATION_ENABLED=true  npm run start
-```
-- Run FGAC specific integration tests:
-```sh
-$ integration-tests> CONFIG_LOCATION="path/to/integrationtest/.env" pnpm run integration-test  -- features/assetlibrary/full-with-authz/*
-```
-
-### Testing lite mode
-
-See the [special notes for running lite mode tests](./lite/README.md).
-
-- Run asset library in _lite_ mode:
-```sh
-$ assetlibrary> CONFIG_LOCATION="path/to/local/.env" ASSETLIBRARY_MODE=lite  npm run start
-```
-- Run FGAC specific integration tests:
-```sh
-$ integration-tests> CONFIG_LOCATION="path/to/integrationtest/.env" pnpm run integration-test  -- features/assetlibrary/lite/*
+$ source/packages/integration-tests> CONFIG_LOCATION="path/to/integrationtest/.env" pnpm run integration-test -- features/assetlibrary/full/*
 ```
 
-### Testing full mode
+## Testing full-with-authz mode
 
-- Run asset library in the default _full_ mode (requires a Neptune tunnel of running loc)
+To run integration tests for Asset Library in _full_ mode, when `AUTHORIZATION_ENABLED` is set to `true`:
+
 ```sh
-$ assetlibrary> CONFIG_LOCATION="path/to/local/.env" npm run start
+$ source/packages/integration-tests> CONFIG_LOCATION="path/to/integrationtest/.env" npm run integration-test  -- features/assetlibrary/full-with-authz/*
 ```
-- Run FGAC specific integration tests:
+
+These tests are an addition to, not a superset of, "Testing full/enhanced mode".
+
+## Testing enhanced mode
+
+To run integration tests for Asset Library in _enhanced_ mode, irrespective of `AUTHORIZATION_ENABLED` setting:
+
 ```sh
-$ integration-tests> CONFIG_LOCATION="path/to/integrationtest/.env" pnpm run integration-test  -- features/assetlibrary/full/*
+$ source/packages/integration-tests> CONFIG_LOCATION="path/to/integrationtest/.env" npm run integration-test  -- features/assetlibrary/full-with-enhancedsearch/*
+```
+
+These tests are an addition to, not a superset of, "Testing full/enhanced mode".
+
+## Testing lite mode
+
+See the [special notes for running lite mode tests](lite/README.md).
+
+To run integration tests for Asset Library in _lite_ mode:
+
+```sh
+$ source/packages/integration-tests> CONFIG_LOCATION="path/to/integrationtest/.env" npm run integration-test  -- features/assetlibrary/lite/*
 ```
