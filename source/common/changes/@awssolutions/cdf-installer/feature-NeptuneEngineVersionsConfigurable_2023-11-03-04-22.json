@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-installer",
+      "comment": "Users can pick from a list of Neptune Engine Version",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-installer"
+}

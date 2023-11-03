@@ -28,6 +28,7 @@
     "@aws-sdk/client-sts": "~3.53.0",
     "@aws-sdk/client-ssm": "~3.53.0",
     "@aws-sdk/lib-storage": "~3.53.0",
+    "@aws-sdk/client-neptune": "~3.441.0",
     "chalk": "~4.1.2",
     "commander": "~9.2.0",
     "execa": "~5.1.1",

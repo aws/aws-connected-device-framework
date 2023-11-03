@@ -33,13 +33,15 @@ import {
 import { ConfigBuilder } from '../../../utils/configBuilder';
 import { getNeptuneInstancetypeList } from '../../../utils/instancetypes';
 import { includeOptionalModule } from '../../../utils/modules.util';
+import { fetchNeptuneEngineVersions } from '../../../utils/neptune-engine-versions';
 
 // CDF does not specify a Neptune engine version in its Cloudformation templates. When updating a CDF
 // deployment, the existing Neptune engine version remains unchanged, for new deployments the Neptune
 // service default applies. For rendering a list of available Neptune instance types, however, some
 // recent Neptune engine version number must be assumed or else obsolete old versions are included in
 // the response from the AWS.RDS.DescribeOrderableDBInstanceOptions API.
-const ASSUMED_NEPTUNE_ENGINE_VERSION = '1.1.0.0';
+const ASSUMED_NEPTUNE_ENGINE_VERSION = '1.2';
+const ASSUMED_NEPTUNE_ENGINE_VERSION_TYPE = "1.2.1.0"
 // This value is ignored if it is not included in the list of instance types returned by the
 // AWS.RDS.DescribeOrderableDBInstanceOptions API.
 const DEFAULT_NEPTUNE_INSTANCE_TYPE = 'db.r5.xlarge';
@@ -73,6 +75,11 @@ export class AssetLibraryInstaller implements RestModule {
         if (updatedAnswers.assetLibrary?.redeploy ?? true) {
             const neptuneInstanceTypes = await getNeptuneInstancetypeList(
                 answers.region,
+                ASSUMED_NEPTUNE_ENGINE_VERSION_TYPE
+            );
+
+            const neptuneEngineVersions = await fetchNeptuneEngineVersions(
+                answers.region,
                 ASSUMED_NEPTUNE_ENGINE_VERSION
             );
 
@@ -102,6 +109,36 @@ export class AssetLibraryInstaller implements RestModule {
                         default:
                             answers.assetLibrary?.neptuneDbInstanceType ??
                             neptuneInstanceTypes.indexOf(DEFAULT_NEPTUNE_INSTANCE_TYPE) >= 0
+                                ? DEFAULT_NEPTUNE_INSTANCE_TYPE
+                                : undefined,
+                        askAnswered: true,
+                        loop: false,
+                        pageSize: 10,
+                        when(answers: Answers) {
+                            return answers.assetLibrary?.mode === 'full';
+                        },
+                        validate(answer: string) {
+                            if (
+                                neptuneInstanceTypes.length > 0 &&
+                                !neptuneInstanceTypes.includes(answer)
+                            ) {
+                                return `Neptune DB Instance Type must be one of: ${neptuneInstanceTypes.join(
+                                    ', '
+                                )}`;
+                            }
+                            return true;
+                        },
+                    },
+                    {
+                        message: `${
+                            neptuneEngineVersions.length > 0 ? 'Select' : 'Enter'
+                        } the Neptune database engine version :`,
+                        type: neptuneEngineVersions.length > 0 ? 'list' : 'input',
+                        choices: neptuneEngineVersions,
+                        name: 'assetLibrary.DbInstanceVersion',
+                        default:
+                            answers.assetLibrary?.neptuneDbInstanceVersion ??
+                            neptuneEngineVersions.indexOf(ASSUMED_NEPTUNE_ENGINE_VERSION) >= 0
                                 ? DEFAULT_NEPTUNE_INSTANCE_TYPE
                                 : undefined,
                         askAnswered: true,
@@ -318,6 +355,7 @@ export class AssetLibraryInstaller implements RestModule {
         };
 
         addIfSpecified('DbInstanceType', answers.assetLibrary.neptuneDbInstanceType);
+        addIfSpecified('DbInstanceVersion', answers.assetLibrary.neptuneDbInstanceVersion);
         addIfSpecified('CreateDBReplicaInstance', answers.assetLibrary.createDbReplicaInstance);
         addIfSpecified('SnapshotIdentifier', answers.assetLibrary.neptuneSnapshotIdentifier);
         return parameterOverrides;

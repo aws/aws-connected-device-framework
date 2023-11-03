@@ -26,46 +26,46 @@ importers:
         specifier: ~3.38.0
         version: 3.38.0(@aws-sdk/signature-v4-crt@3.38.0)
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-assetlibraryhistory-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/clients/assetlibraryhistory-client
       '@awssolutions/cdf-commandandcontrol-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/clients/commandandcontrol-client
       '@awssolutions/cdf-commands-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/clients/commands-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/config/config-inject
       '@awssolutions/cdf-device-patcher-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/clients/device-patcher-client
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/core/errors
       '@awssolutions/cdf-greengrass2-provisioning-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/clients/greengrass2-provisioning-client
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/core/lambda-invoke
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/core/logger
       '@awssolutions/cdf-notifications-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/clients/notifications-client
       '@awssolutions/cdf-organizationmanager-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/clients/organizationmanager-client
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/clients/provisioning-client
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../libraries/core/simple-cdf-logger
       '@cucumber/cucumber':
         specifier: 7.3.2
@@ -204,13 +204,13 @@ importers:
   ../../packages/libraries/clients/assetlibrary-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -322,13 +322,13 @@ importers:
   ../../packages/libraries/clients/assetlibraryhistory-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -428,13 +428,13 @@ importers:
   ../../packages/libraries/clients/bulkcerts-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -537,19 +537,19 @@ importers:
   ../../packages/libraries/clients/commandandcontrol-client:
     dependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../assetlibrary-client
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../config/config-inject
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -652,7 +652,7 @@ importers:
   ../../packages/libraries/clients/commands-client:
     dependencies:
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/lambda-invoke
       aws-sdk:
         specifier: 2.1386.0
@@ -749,13 +749,13 @@ importers:
   ../../packages/libraries/clients/device-patcher-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -861,16 +861,16 @@ importers:
   ../../packages/libraries/clients/greengrass2-provisioning-client:
     dependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../assetlibrary-client
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -973,13 +973,13 @@ importers:
   ../../packages/libraries/clients/notifications-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -1082,13 +1082,13 @@ importers:
   ../../packages/libraries/clients/organizationmanager-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -1194,13 +1194,13 @@ importers:
   ../../packages/libraries/clients/provisioning-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -1300,13 +1300,13 @@ importers:
   ../../packages/libraries/config/config-inject:
     dependencies:
       '@awssolutions/cdf-environment-sanitizer':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/environment-sanitizer
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/errors
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../core/logger
       dotenv:
         specifier: ^8.2.0
@@ -1447,25 +1447,25 @@ importers:
   ../../packages/libraries/core/deployment-helper:
     devDependencies:
       '@awssolutions/cdf-commandandcontrol-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../clients/commandandcontrol-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../config/config-inject
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.65
@@ -1672,13 +1672,13 @@ importers:
         specifier: ~3.37.0
         version: 3.37.0
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../lambda-invoke
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../logger
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../simple-cdf-logger
       inversify:
         specifier: 6.0.1
@@ -1803,7 +1803,7 @@ importers:
   ../../packages/libraries/core/lambda-invoke:
     dependencies:
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -2056,16 +2056,16 @@ importers:
         specifier: ~3.37.0
         version: 3.37.0
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../clients/assetlibrary-client
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../lambda-invoke
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../logger
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../simple-cdf-logger
       inversify:
         specifier: 6.0.1
@@ -2259,10 +2259,10 @@ importers:
   ../../packages/services/assetlibrary:
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -2271,13 +2271,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/body-parser':
         specifier: 1.19.2
@@ -2343,8 +2343,8 @@ importers:
         specifier: 1.7.0
         version: 1.7.0
       fast-json-patch:
-        specifier: 3.0.0-1
-        version: 3.0.0-1
+        specifier: 3.1.1
+        version: 3.1.1
       gremlin:
         specifier: 3.4.12
         version: 3.4.12
@@ -2436,19 +2436,19 @@ importers:
   ../../packages/services/assetlibrary-export:
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/body-parser':
         specifier: 1.19.2
@@ -2601,10 +2601,10 @@ importers:
   ../../packages/services/assetlibraryhistory:
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -2613,13 +2613,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/atob':
         specifier: 2.1.2
@@ -2751,10 +2751,10 @@ importers:
   ../../packages/services/auth-devicecert:
     dependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       aws-sdk:
         specifier: 2.1386.0
@@ -2839,10 +2839,10 @@ importers:
   ../../packages/services/auth-jwt:
     dependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       axios:
         specifier: 0.21.2
@@ -2942,10 +2942,10 @@ importers:
   ../../packages/services/bulkcerts:
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -2954,13 +2954,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.65
@@ -3095,31 +3095,31 @@ importers:
   ../../packages/services/certificateactivator:
     devDependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/clients/provisioning-client
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/atob':
         specifier: 2.1.2
@@ -3227,28 +3227,28 @@ importers:
   ../../packages/services/certificatevendor:
     devDependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/dotenv-flow':
         specifier: ~3.2.0
@@ -3344,28 +3344,28 @@ importers:
   ../../packages/services/command-and-control:
     devDependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/express-middleware
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/clients/provisioning-client
       '@awssolutions/cdf-thing-list-builder':
         specifier: workspace:~0.0.0
@@ -3374,7 +3374,7 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.89
@@ -3515,25 +3515,25 @@ importers:
   ../../packages/services/commands:
     dependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/express-middleware
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/clients/provisioning-client
       ajv:
         specifier: 6.12.3
@@ -3672,28 +3672,28 @@ importers:
   ../../packages/services/device-monitoring:
     devDependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/dotenv-flow':
         specifier: ~3.2.0
@@ -3789,10 +3789,10 @@ importers:
   ../../packages/services/device-patcher:
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -3801,13 +3801,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/atob':
         specifier: 2.1.2
@@ -3957,22 +3957,22 @@ importers:
   ../../packages/services/events-alerts:
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/cors':
         specifier: 2.8.10
@@ -4080,10 +4080,10 @@ importers:
   ../../packages/services/events-processor:
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -4092,13 +4092,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.65
@@ -4239,22 +4239,22 @@ importers:
   ../../packages/services/greengrass2-installer-config-generators:
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.84
@@ -4380,13 +4380,13 @@ importers:
         specifier: 3.38.0
         version: 3.38.0
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-event-publisher':
         specifier: workspace:~0.0.0
@@ -4395,16 +4395,16 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/express-middleware
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/clients/provisioning-client
       '@awssolutions/cdf-thing-list-builder':
         specifier: workspace:~0.0.0
@@ -4413,7 +4413,7 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/adm-zip':
         specifier: 0.4.34
@@ -4562,6 +4562,9 @@ importers:
       '@aws-sdk/client-lambda':
         specifier: ~3.53.0
         version: 3.53.0
+      '@aws-sdk/client-neptune':
+        specifier: ~3.441.0
+        version: 3.441.0
       '@aws-sdk/client-pricing':
         specifier: ~3.53.0
         version: 3.53.0
@@ -4581,7 +4584,7 @@ importers:
         specifier: ~3.53.0
         version: 3.53.0(@aws-sdk/abort-controller@3.38.0)(@aws-sdk/client-s3@3.53.0)
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       chalk:
         specifier: ~4.1.2
@@ -4696,28 +4699,28 @@ importers:
   ../../packages/services/organization-manager:
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/express-middleware
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: ~8.10.83
@@ -4837,10 +4840,10 @@ importers:
   ../../packages/services/provisioning:
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -4849,13 +4852,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/body-parser':
         specifier: 1.19.2
@@ -4996,7 +4999,7 @@ importers:
   ../../packages/services/simulation-launcher:
     dependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       aws-sdk:
         specifier: 2.1386.0
@@ -5081,7 +5084,7 @@ importers:
   ../../packages/services/simulation-manager:
     dependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.4.0
+        specifier: workspace:^2.5.2
         version: link:../../libraries/config/config-inject
       aws-sdk:
         specifier: 2.1386.0
@@ -5240,6 +5243,14 @@ packages:
       tslib: 1.14.1
     dev: false
 
+  /@aws-crypto/crc32@3.0.0:
+    resolution: {integrity: sha512-IzSgsrxUcsrejQbPVilIKy16kAT52EwB6zSaI+M3xxIhKh5+aldEyvI+z6erM7TCLB2BJsFrtHjp6/4/sr+3dA==}
+    dependencies:
+      '@aws-crypto/util': 3.0.0
+      '@aws-sdk/types': 3.433.0
+      tslib: 1.14.1
+    dev: false
+
   /@aws-crypto/crc32c@2.0.0:
     resolution: {integrity: sha512-vF0eMdMHx3O3MoOXUfBZry8Y4ZDtcuskjjKgJz8YfIDjLStxTZrYXk+kZqtl6A0uCmmiN/Eb/JbC/CndTV1MHg==}
     dependencies:
@@ -5259,6 +5270,12 @@ packages:
       tslib: 1.14.1
     dev: false
 
+  /@aws-crypto/ie11-detection@3.0.0:
+    resolution: {integrity: sha512-341lBBkiY1DfDNKai/wXM3aujNBkXR7tq1URPQDL9wi3AUbI80NR74uF1TXHMm7po1AcnFk8iu2S2IeU/+/A+Q==}
+    dependencies:
+      tslib: 1.14.1
+    dev: false
+
   /@aws-crypto/sha1-browser@2.0.0:
     resolution: {integrity: sha512-3fIVRjPFY8EG5HWXR+ZJZMdWNRpwbxGzJ9IH9q93FpbgCH8u8GHRi46mZXp3cYD7gealmyqpm3ThZwLKJjWJhA==}
     dependencies:
@@ -5266,7 +5283,7 @@ packages:
       '@aws-crypto/supports-web-crypto': 2.0.2
       '@aws-sdk/types': 3.38.0
       '@aws-sdk/util-locate-window': 3.310.0
-      '@aws-sdk/util-utf8-browser': 3.52.0
+      '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
     dev: false
 
@@ -5290,7 +5307,20 @@ packages:
       '@aws-crypto/util': 2.0.2
       '@aws-sdk/types': 3.38.0
       '@aws-sdk/util-locate-window': 3.310.0
-      '@aws-sdk/util-utf8-browser': 3.52.0
+      '@aws-sdk/util-utf8-browser': 3.259.0
+      tslib: 1.14.1
+    dev: false
+
+  /@aws-crypto/sha256-browser@3.0.0:
+    resolution: {integrity: sha512-8VLmW2B+gjFbU5uMeqtQM6Nj0/F1bro80xQXCW6CQBWgosFWXTx77aeOF5CAIAmbOK64SdMBJdNr6J41yP5mvQ==}
+    dependencies:
+      '@aws-crypto/ie11-detection': 3.0.0
+      '@aws-crypto/sha256-js': 3.0.0
+      '@aws-crypto/supports-web-crypto': 3.0.0
+      '@aws-crypto/util': 3.0.0
+      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/util-locate-window': 3.310.0
+      '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
     dev: false
 
@@ -5309,6 +5339,14 @@ packages:
       tslib: 1.14.1
     dev: false
 
+  /@aws-crypto/sha256-js@3.0.0:
+    resolution: {integrity: sha512-PnNN7os0+yd1XvXAy23CFOmTbMaDxgxXtTKHybrJ39Y8kGzBATgBFibWJKH6BhytLI/Zyszs87xCOBNyBig6vQ==}
+    dependencies:
+      '@aws-crypto/util': 3.0.0
+      '@aws-sdk/types': 3.433.0
+      tslib: 1.14.1
+    dev: false
+
   /@aws-crypto/supports-web-crypto@1.0.0:
     resolution: {integrity: sha512-IHLfv+WmVH89EW4n6a5eE8/hUlz6qkWGMn/v4r5ZgzcXdTC5nolii2z3k46y01hWRiC2PPhOdeSLzMUCUMco7g==}
     dependencies:
@@ -5320,18 +5358,32 @@ packages:
       tslib: 1.14.1
     dev: false
 
+  /@aws-crypto/supports-web-crypto@3.0.0:
+    resolution: {integrity: sha512-06hBdMwUAb2WFTuGG73LSC0wfPu93xWwo5vL2et9eymgmu3Id5vFAHBbajVWiGhPO37qcsdCap/FqXvJGJWPIg==}
+    dependencies:
+      tslib: 1.14.1
+    dev: false
+
   /@aws-crypto/util@1.2.2:
     resolution: {integrity: sha512-H8PjG5WJ4wz0UXAFXeJjWCW1vkvIJ3qUUD+rGRwJ2/hj+xT58Qle2MTql/2MGzkU+1JLAFuR6aJpLAjHwhmwwg==}
     dependencies:
       '@aws-sdk/types': 3.38.0
-      '@aws-sdk/util-utf8-browser': 3.37.0
+      '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
 
   /@aws-crypto/util@2.0.2:
     resolution: {integrity: sha512-Lgu5v/0e/BcrZ5m/IWqzPUf3UYFTy/PpeED+uc9SWUR1iZQL8XXbGQg10UfllwwBryO3hFF5dizK+78aoXC1eA==}
     dependencies:
       '@aws-sdk/types': 3.378.0
-      '@aws-sdk/util-utf8-browser': 3.52.0
+      '@aws-sdk/util-utf8-browser': 3.259.0
+      tslib: 1.14.1
+    dev: false
+
+  /@aws-crypto/util@3.0.0:
+    resolution: {integrity: sha512-2OJlpeJpCR48CC8r+uKVChzs9Iungj9wkZrl8Z041DWEWvyIHILYKCPNzJghKsivj+S3mLo6BVc7mBNzdxA46w==}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
     dev: false
 
@@ -5992,6 +6044,56 @@ packages:
       tslib: 2.6.1
     dev: false
 
+  /@aws-sdk/client-neptune@3.441.0:
+    resolution: {integrity: sha512-xqW8Va5bwhxf/T6XUEyIR3tBdbp7O4L6TmcrdUU7Ehgwu5J5VC1a02QK7UpkYhw1pBuSOK65grOB5bcKQBpayw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-crypto/sha256-browser': 3.0.0
+      '@aws-crypto/sha256-js': 3.0.0
+      '@aws-sdk/client-sts': 3.441.0
+      '@aws-sdk/core': 3.441.0
+      '@aws-sdk/credential-provider-node': 3.441.0
+      '@aws-sdk/middleware-host-header': 3.433.0
+      '@aws-sdk/middleware-logger': 3.433.0
+      '@aws-sdk/middleware-recursion-detection': 3.433.0
+      '@aws-sdk/middleware-sdk-rds': 3.433.0
+      '@aws-sdk/middleware-signing': 3.433.0
+      '@aws-sdk/middleware-user-agent': 3.438.0
+      '@aws-sdk/region-config-resolver': 3.433.0
+      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/util-endpoints': 3.438.0
+      '@aws-sdk/util-user-agent-browser': 3.433.0
+      '@aws-sdk/util-user-agent-node': 3.437.0
+      '@smithy/config-resolver': 2.0.16
+      '@smithy/fetch-http-handler': 2.2.4
+      '@smithy/hash-node': 2.0.12
+      '@smithy/invalid-dependency': 2.0.12
+      '@smithy/middleware-content-length': 2.0.14
+      '@smithy/middleware-endpoint': 2.1.3
+      '@smithy/middleware-retry': 2.0.18
+      '@smithy/middleware-serde': 2.0.12
+      '@smithy/middleware-stack': 2.0.6
+      '@smithy/node-config-provider': 2.1.3
+      '@smithy/node-http-handler': 2.1.8
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/smithy-client': 2.1.12
+      '@smithy/types': 2.4.0
+      '@smithy/url-parser': 2.0.12
+      '@smithy/util-base64': 2.0.0
+      '@smithy/util-body-length-browser': 2.0.0
+      '@smithy/util-body-length-node': 2.1.0
+      '@smithy/util-defaults-mode-browser': 2.0.16
+      '@smithy/util-defaults-mode-node': 2.0.21
+      '@smithy/util-endpoints': 1.0.2
+      '@smithy/util-retry': 2.0.5
+      '@smithy/util-utf8': 2.0.0
+      '@smithy/util-waiter': 2.0.12
+      fast-xml-parser: 4.2.5
+      tslib: 2.6.1
+    transitivePeerDependencies:
+      - aws-crt
+    dev: false
+
   /@aws-sdk/client-pricing@3.53.0:
     resolution: {integrity: sha512-vfXK2huPSQSzA310awFU582yXXISAjeBFSZcA+hJdPxLCG1cu/H5pocM6iZZ1Za6TC215pYNlmEjUnl5J1TEvg==}
     engines: {node: '>=12.0.0'}
@@ -6419,6 +6521,50 @@ packages:
       '@aws-sdk/util-utf8-node': 3.37.0
       tslib: 2.6.1
 
+  /@aws-sdk/client-sso@3.441.0:
+    resolution: {integrity: sha512-gndGymu4cEIN7WWhQ67RO0JMda09EGBlay2L8IKCHBK/65Y34FHUX1tCNbO2qezEzsi6BPW5o2n53Rd9QqpHUw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-crypto/sha256-browser': 3.0.0
+      '@aws-crypto/sha256-js': 3.0.0
+      '@aws-sdk/core': 3.441.0
+      '@aws-sdk/middleware-host-header': 3.433.0
+      '@aws-sdk/middleware-logger': 3.433.0
+      '@aws-sdk/middleware-recursion-detection': 3.433.0
+      '@aws-sdk/middleware-user-agent': 3.438.0
+      '@aws-sdk/region-config-resolver': 3.433.0
+      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/util-endpoints': 3.438.0
+      '@aws-sdk/util-user-agent-browser': 3.433.0
+      '@aws-sdk/util-user-agent-node': 3.437.0
+      '@smithy/config-resolver': 2.0.16
+      '@smithy/fetch-http-handler': 2.2.4
+      '@smithy/hash-node': 2.0.12
+      '@smithy/invalid-dependency': 2.0.12
+      '@smithy/middleware-content-length': 2.0.14
+      '@smithy/middleware-endpoint': 2.1.3
+      '@smithy/middleware-retry': 2.0.18
+      '@smithy/middleware-serde': 2.0.12
+      '@smithy/middleware-stack': 2.0.6
+      '@smithy/node-config-provider': 2.1.3
+      '@smithy/node-http-handler': 2.1.8
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/smithy-client': 2.1.12
+      '@smithy/types': 2.4.0
+      '@smithy/url-parser': 2.0.12
+      '@smithy/util-base64': 2.0.0
+      '@smithy/util-body-length-browser': 2.0.0
+      '@smithy/util-body-length-node': 2.1.0
+      '@smithy/util-defaults-mode-browser': 2.0.16
+      '@smithy/util-defaults-mode-node': 2.0.21
+      '@smithy/util-endpoints': 1.0.2
+      '@smithy/util-retry': 2.0.5
+      '@smithy/util-utf8': 2.0.0
+      tslib: 2.6.1
+    transitivePeerDependencies:
+      - aws-crt
+    dev: false
+
   /@aws-sdk/client-sso@3.53.0:
     resolution: {integrity: sha512-X32YHHc5MO7xO4W3Ly8DeryieeEiDOsnl6ypBkfML7loO3M0ckvvL+HnNUR1J+HYyseEV7V93BsF/A1z5HmINQ==}
     engines: {node: '>=12.0.0'}
@@ -6577,6 +6723,54 @@ packages:
       fast-xml-parser: 3.19.0
       tslib: 2.6.1
 
+  /@aws-sdk/client-sts@3.441.0:
+    resolution: {integrity: sha512-GL0Cw2v7XL1cn0T+Sk5VHLlgBJoUdMsysXsHa1mFdk0l6XHMAAnwXVXiNnjmoDSPrG0psz7dL2AKzPVRXbIUjA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-crypto/sha256-browser': 3.0.0
+      '@aws-crypto/sha256-js': 3.0.0
+      '@aws-sdk/core': 3.441.0
+      '@aws-sdk/credential-provider-node': 3.441.0
+      '@aws-sdk/middleware-host-header': 3.433.0
+      '@aws-sdk/middleware-logger': 3.433.0
+      '@aws-sdk/middleware-recursion-detection': 3.433.0
+      '@aws-sdk/middleware-sdk-sts': 3.433.0
+      '@aws-sdk/middleware-signing': 3.433.0
+      '@aws-sdk/middleware-user-agent': 3.438.0
+      '@aws-sdk/region-config-resolver': 3.433.0
+      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/util-endpoints': 3.438.0
+      '@aws-sdk/util-user-agent-browser': 3.433.0
+      '@aws-sdk/util-user-agent-node': 3.437.0
+      '@smithy/config-resolver': 2.0.16
+      '@smithy/fetch-http-handler': 2.2.4
+      '@smithy/hash-node': 2.0.12
+      '@smithy/invalid-dependency': 2.0.12
+      '@smithy/middleware-content-length': 2.0.14
+      '@smithy/middleware-endpoint': 2.1.3
+      '@smithy/middleware-retry': 2.0.18
+      '@smithy/middleware-serde': 2.0.12
+      '@smithy/middleware-stack': 2.0.6
+      '@smithy/node-config-provider': 2.1.3
+      '@smithy/node-http-handler': 2.1.8
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/smithy-client': 2.1.12
+      '@smithy/types': 2.4.0
+      '@smithy/url-parser': 2.0.12
+      '@smithy/util-base64': 2.0.0
+      '@smithy/util-body-length-browser': 2.0.0
+      '@smithy/util-body-length-node': 2.1.0
+      '@smithy/util-defaults-mode-browser': 2.0.16
+      '@smithy/util-defaults-mode-node': 2.0.21
+      '@smithy/util-endpoints': 1.0.2
+      '@smithy/util-retry': 2.0.5
+      '@smithy/util-utf8': 2.0.0
+      fast-xml-parser: 4.2.5
+      tslib: 2.6.1
+    transitivePeerDependencies:
+      - aws-crt
+    dev: false
+
   /@aws-sdk/client-sts@3.53.0:
     resolution: {integrity: sha512-MNG+Pmw/zZQ0kboZtsc8UEGM9pn8abjStDN0Yk67fwFAZMqz8sUHDtFXpa3gSXMrFqBwT+jMFXmIxqiq7XuAeA==}
     engines: {node: '>=12.0.0'}
@@ -6656,6 +6850,13 @@ packages:
       tslib: 2.6.1
     dev: false
 
+  /@aws-sdk/core@3.441.0:
+    resolution: {integrity: sha512-gV0eQwR0VnSPUYAbgDkbBtfXbSpZgl/K6UB13DP1IFFjQYbF/BxYwvcQe4jHoPOBifSgjEbl8MfOOeIyI7k9vg==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/smithy-client': 2.1.12
+    dev: false
+
   /@aws-sdk/credential-provider-cognito-identity@3.252.0:
     resolution: {integrity: sha512-QW3pBYetF06FOQ85FbsFjK6xpon8feF/UOHsL0lMGi4CxUZE6zshV/ectU7tACcc4QV8uMvN7OgcK947CMEEWA==}
     engines: {node: '>=14.0.0'}
@@ -6693,6 +6894,16 @@ packages:
       '@aws-sdk/property-provider': 3.38.0
       '@aws-sdk/types': 3.38.0
       tslib: 2.6.1
+
+  /@aws-sdk/credential-provider-env@3.433.0:
+    resolution: {integrity: sha512-Vl7Qz5qYyxBurMn6hfSiNJeUHSqfVUlMt0C1Bds3tCkl3IzecRWwyBOlxtxO3VCrgVeW3HqswLzCvhAFzPH6nQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@smithy/property-provider': 2.0.13
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
 
   /@aws-sdk/credential-provider-env@3.53.0:
     resolution: {integrity: sha512-ocqZ4w7y7eay2M+uUBAD6NkhikUPoajEFX1/7iMvEFMmS5MyzjuolHPNK7Hh8lFmPyoflxaMXJVKO8C1MguA/A==}
@@ -6792,6 +7003,24 @@ packages:
       '@aws-sdk/util-credentials': 3.37.0
       tslib: 2.6.1
 
+  /@aws-sdk/credential-provider-ini@3.441.0:
+    resolution: {integrity: sha512-SQipQYxYqDUuSOfIhDmaTdwPTcndGQotGZXWJl56mMWqAhU8MkwjK+oMf3VgRt/umJC0QwUCF5HUHIj7gSB1JA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/credential-provider-env': 3.433.0
+      '@aws-sdk/credential-provider-process': 3.433.0
+      '@aws-sdk/credential-provider-sso': 3.441.0
+      '@aws-sdk/credential-provider-web-identity': 3.433.0
+      '@aws-sdk/types': 3.433.0
+      '@smithy/credential-provider-imds': 2.0.18
+      '@smithy/property-provider': 2.0.13
+      '@smithy/shared-ini-file-loader': 2.2.2
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    transitivePeerDependencies:
+      - aws-crt
+    dev: false
+
   /@aws-sdk/credential-provider-ini@3.53.0:
     resolution: {integrity: sha512-g+UoJ1ikDrfpI1wHAhlrcBtX4OHxoLV6vakirpG27hhFwuMih565Q/Sjn3o5hLT8PBlWxwT2YeRuxCjtaL3cDA==}
     engines: {node: '>= 12.0.0'}
@@ -6858,6 +7087,25 @@ packages:
       '@aws-sdk/util-credentials': 3.37.0
       tslib: 2.6.1
 
+  /@aws-sdk/credential-provider-node@3.441.0:
+    resolution: {integrity: sha512-WB9p37yHq6fGJt6Vll29ijHbkh9VDbPM/n5ns73bTAgFD7R0ht5kPmdmHGQA6m3RKjcHLPbymQ3lXykkMwWf/Q==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/credential-provider-env': 3.433.0
+      '@aws-sdk/credential-provider-ini': 3.441.0
+      '@aws-sdk/credential-provider-process': 3.433.0
+      '@aws-sdk/credential-provider-sso': 3.441.0
+      '@aws-sdk/credential-provider-web-identity': 3.433.0
+      '@aws-sdk/types': 3.433.0
+      '@smithy/credential-provider-imds': 2.0.18
+      '@smithy/property-provider': 2.0.13
+      '@smithy/shared-ini-file-loader': 2.2.2
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    transitivePeerDependencies:
+      - aws-crt
+    dev: false
+
   /@aws-sdk/credential-provider-node@3.53.0:
     resolution: {integrity: sha512-sy0NeuJHOBhe7XwxCX2y+YZAB4CqcHveyXJfT6mv7eY6bYQskkMTCPp2D586hSH3c6cfIsmvLSxNhNJApj1Atw==}
     engines: {node: '>=12.0.0'}
@@ -6905,6 +7153,17 @@ packages:
       '@aws-sdk/types': 3.38.0
       '@aws-sdk/util-credentials': 3.37.0
       tslib: 2.6.1
+
+  /@aws-sdk/credential-provider-process@3.433.0:
+    resolution: {integrity: sha512-W7FcGlQjio9Y/PepcZGRyl5Bpwb0uWU7qIUCh+u4+q2mW4D5ZngXg8V/opL9/I/p4tUH9VXZLyLGwyBSkdhL+A==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@smithy/property-provider': 2.0.13
+      '@smithy/shared-ini-file-loader': 2.2.2
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
 
   /@aws-sdk/credential-provider-process@3.53.0:
     resolution: {integrity: sha512-nazHndueCa4y5jUM58OHSysb52E953r3VhmpCs0qIv1ZH5Ijs3kT/usbUq7Yms7pcpaUmpu00VZTc6IfOOC0GA==}
@@ -6954,6 +7213,21 @@ packages:
       '@aws-sdk/util-credentials': 3.37.0
       tslib: 2.6.1
 
+  /@aws-sdk/credential-provider-sso@3.441.0:
+    resolution: {integrity: sha512-pTg16G+62mWCE8yGKuQnEBqPdpG5g71remf2jUqXaI1c7GCzbnkQDV9eD4DaAGOvzIs0wo9zAQnS2kVDPFlCYA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/client-sso': 3.441.0
+      '@aws-sdk/token-providers': 3.438.0
+      '@aws-sdk/types': 3.433.0
+      '@smithy/property-provider': 2.0.13
+      '@smithy/shared-ini-file-loader': 2.2.2
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    transitivePeerDependencies:
+      - aws-crt
+    dev: false
+
   /@aws-sdk/credential-provider-sso@3.53.0:
     resolution: {integrity: sha512-EongClNxdVw+O4y+S0mZFjNeLHv1ssdAnBM/9L1PfR6sH06eikVmU6isEN2quwoKBy9HRVPaIVF075Q8QIpipg==}
     engines: {node: '>= 12.0.0'}
@@ -6991,6 +7265,16 @@ packages:
       '@aws-sdk/property-provider': 3.38.0
       '@aws-sdk/types': 3.38.0
       tslib: 2.6.1
+
+  /@aws-sdk/credential-provider-web-identity@3.433.0:
+    resolution: {integrity: sha512-RlwjP1I5wO+aPpwyCp23Mk8nmRbRL33hqRASy73c4JA2z2YiRua+ryt6MalIxehhwQU6xvXUKulJnPG9VaMFZg==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@smithy/property-provider': 2.0.13
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
 
   /@aws-sdk/credential-provider-web-identity@3.53.0:
     resolution: {integrity: sha512-YbysBkX3mbomHJZULxk/3jyQ7NWn6rZ68IDY28bmp8cNWajWeGzDxKmR4Y+c8gNiN2ziWjUZWfHcnZC056/79Q==}
@@ -7496,6 +7780,16 @@ packages:
       '@aws-sdk/types': 3.38.0
       tslib: 2.6.1
 
+  /@aws-sdk/middleware-host-header@3.433.0:
+    resolution: {integrity: sha512-mBTq3UWv1UzeHG+OfUQ2MB/5GEkt5LTKFaUqzL7ESwzW8XtpBgXnjZvIwu3Vcd3sEetMwijwaGiJhY0ae/YyaA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
   /@aws-sdk/middleware-host-header@3.53.0:
     resolution: {integrity: sha512-w5qMAUgy52fvJGqzqruNJhv4BtkanE4I368zWiysmwXXL5xmpKs8TpkGqcSQw4g2wKS8MR2Yxh21LukHlsgAJw==}
     engines: {node: '>= 12.0.0'}
@@ -7543,6 +7837,15 @@ packages:
       '@aws-sdk/types': 3.38.0
       tslib: 2.6.1
 
+  /@aws-sdk/middleware-logger@3.433.0:
+    resolution: {integrity: sha512-We346Fb5xGonTGVZC9Nvqtnqy74VJzYuTLLiuuftA5sbNzftBDy/22QCfvYSTOAl3bvif+dkDUzQY2ihc5PwOQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
   /@aws-sdk/middleware-logger@3.53.0:
     resolution: {integrity: sha512-jMME8OOyPHliHhVD3FaBQ+4X+FDCQovw6CYGqPdqP0JUuhR8E1LWKHV1+xRpkpOICKwBnIXrgD8/0NQo/+Z84A==}
     engines: {node: '>= 12.0.0'}
@@ -7557,6 +7860,16 @@ packages:
     dependencies:
       '@aws-sdk/protocol-http': 3.226.0
       '@aws-sdk/types': 3.226.0
+      tslib: 2.6.1
+    dev: false
+
+  /@aws-sdk/middleware-recursion-detection@3.433.0:
+    resolution: {integrity: sha512-HEvYC9PQlWY/ccUYtLvAlwwf1iCif2TSAmLNr3YTBRVa98x6jKL0hlCrHWYklFeqOGSKy6XhE+NGJMUII0/HaQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/types': 2.4.0
       tslib: 2.6.1
     dev: false
 
@@ -7625,6 +7938,19 @@ packages:
       '@aws-sdk/signature-v4': 3.53.0
       '@aws-sdk/types': 3.53.0
       '@aws-sdk/util-format-url': 3.53.0
+      tslib: 2.6.1
+    dev: false
+
+  /@aws-sdk/middleware-sdk-rds@3.433.0:
+    resolution: {integrity: sha512-Vuyx6s717TP5f6xVlXPIOpo41Fhf2O+VhrFYqfuyTOEJ8b74OmPbRCuUJ7Y0X03LpZXmHJajcx2HzSaikTLttA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/util-format-url': 3.433.0
+      '@smithy/middleware-endpoint': 2.1.3
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/signature-v4': 2.0.12
+      '@smithy/types': 2.4.0
       tslib: 2.6.1
     dev: false
 
@@ -7710,6 +8036,16 @@ packages:
       '@aws-sdk/types': 3.38.0
       tslib: 2.6.1
 
+  /@aws-sdk/middleware-sdk-sts@3.433.0:
+    resolution: {integrity: sha512-ORYbJnBejUyonFl5FwIqhvI3Cq6sAp9j+JpkKZtFNma9tFPdrhmYgfCeNH32H/wGTQV/tUoQ3luh0gA4cuk6DA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/middleware-signing': 3.433.0
+      '@aws-sdk/types': 3.433.0
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
   /@aws-sdk/middleware-sdk-sts@3.53.0:
     resolution: {integrity: sha512-b9AUXYqA5jaUTpWu7wPZz43RQnmy1WGPFVHd8CvcUzFdMzwJlQeH4wq+sEdZ1KtIsz6n6TmY7vobzrScgq3ftg==}
     engines: {node: '>= 12.0.0'}
@@ -7785,6 +8121,19 @@ packages:
       '@aws-sdk/signature-v4': 3.38.0
       '@aws-sdk/types': 3.38.0
       tslib: 2.6.1
+
+  /@aws-sdk/middleware-signing@3.433.0:
+    resolution: {integrity: sha512-jxPvt59NZo/epMNLNTu47ikmP8v0q217I6bQFGJG7JVFnfl36zDktMwGw+0xZR80qiK47/2BWrNpta61Zd2FxQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@smithy/property-provider': 2.0.13
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/signature-v4': 2.0.12
+      '@smithy/types': 2.4.0
+      '@smithy/util-middleware': 2.0.5
+      tslib: 2.6.1
+    dev: false
 
   /@aws-sdk/middleware-signing@3.53.0:
     resolution: {integrity: sha512-r3g2ytin1YbhXCDedMfR7ZSlt1B39GWA0+J04ZZzUdevtnS2VnkFNhsanO5os/WOpVUV7iqk/ncJgSpn9LI2DA==}
@@ -7864,6 +8213,17 @@ packages:
       '@aws-sdk/protocol-http': 3.38.0
       '@aws-sdk/types': 3.38.0
       tslib: 2.6.1
+
+  /@aws-sdk/middleware-user-agent@3.438.0:
+    resolution: {integrity: sha512-a+xHT1wOxT6EA6YyLmrfaroKWOkwwyiktUfXKM0FsUutGzNi4fKhb5NZ2al58NsXzHgHFrasSDp+Lqbd/X2cEw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/util-endpoints': 3.438.0
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
 
   /@aws-sdk/middleware-user-agent@3.53.0:
     resolution: {integrity: sha512-ClKxpFXoHLhdnDxyDRRVNaFYQnfylps7rk1wfbRLWb+FWQwKWBvLq5c5ZPvznBU8BvftDSkFtrY+7OLMlj6qxA==}
@@ -8084,6 +8444,17 @@ packages:
       tslib: 2.6.1
     dev: false
 
+  /@aws-sdk/region-config-resolver@3.433.0:
+    resolution: {integrity: sha512-xpjRjCZW+CDFdcMmmhIYg81ST5UAnJh61IHziQEk0FXONrg4kjyYPZAOjEdzXQ+HxJQuGQLKPhRdzxmQnbX7pg==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/node-config-provider': 2.1.3
+      '@smithy/types': 2.4.0
+      '@smithy/util-config-provider': 2.0.0
+      '@smithy/util-middleware': 2.0.5
+      tslib: 2.6.1
+    dev: false
+
   /@aws-sdk/s3-request-presigner@3.38.0(@aws-sdk/signature-v4-crt@3.38.0):
     resolution: {integrity: sha512-L0IdErczNd7L1DLWVb/MVYKclywcT8b4v6bzXFWR5qPkbDjEYwvoWHRtjAuxwW3ciBb2Q71PBTZWU1Bt8k7ujg==}
     engines: {node: '>= 10.0.0'}
@@ -8257,6 +8628,51 @@ packages:
       - aws-crt
     dev: false
 
+  /@aws-sdk/token-providers@3.438.0:
+    resolution: {integrity: sha512-G2fUfTtU6/1ayYRMu0Pd9Ln4qYSvwJOWCqJMdkDgvXSwdgcOSOLsnAIk1AHGJDAvgLikdCzuyOsdJiexr9Vnww==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-crypto/sha256-browser': 3.0.0
+      '@aws-crypto/sha256-js': 3.0.0
+      '@aws-sdk/middleware-host-header': 3.433.0
+      '@aws-sdk/middleware-logger': 3.433.0
+      '@aws-sdk/middleware-recursion-detection': 3.433.0
+      '@aws-sdk/middleware-user-agent': 3.438.0
+      '@aws-sdk/region-config-resolver': 3.433.0
+      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/util-endpoints': 3.438.0
+      '@aws-sdk/util-user-agent-browser': 3.433.0
+      '@aws-sdk/util-user-agent-node': 3.437.0
+      '@smithy/config-resolver': 2.0.16
+      '@smithy/fetch-http-handler': 2.2.4
+      '@smithy/hash-node': 2.0.12
+      '@smithy/invalid-dependency': 2.0.12
+      '@smithy/middleware-content-length': 2.0.14
+      '@smithy/middleware-endpoint': 2.1.3
+      '@smithy/middleware-retry': 2.0.18
+      '@smithy/middleware-serde': 2.0.12
+      '@smithy/middleware-stack': 2.0.6
+      '@smithy/node-config-provider': 2.1.3
+      '@smithy/node-http-handler': 2.1.8
+      '@smithy/property-provider': 2.0.13
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/shared-ini-file-loader': 2.2.2
+      '@smithy/smithy-client': 2.1.12
+      '@smithy/types': 2.4.0
+      '@smithy/url-parser': 2.0.12
+      '@smithy/util-base64': 2.0.0
+      '@smithy/util-body-length-browser': 2.0.0
+      '@smithy/util-body-length-node': 2.1.0
+      '@smithy/util-defaults-mode-browser': 2.0.16
+      '@smithy/util-defaults-mode-node': 2.0.21
+      '@smithy/util-endpoints': 1.0.2
+      '@smithy/util-retry': 2.0.5
+      '@smithy/util-utf8': 2.0.0
+      tslib: 2.6.1
+    transitivePeerDependencies:
+      - aws-crt
+    dev: false
+
   /@aws-sdk/types@3.226.0:
     resolution: {integrity: sha512-MmmNHrWeO4man7wpOwrAhXlevqtOV9ZLcH4RhnG5LmRce0RFOApx24HoKENfFCcOyCm5LQBlsXCqi0dZWDWU0A==}
     engines: {node: '>=14.0.0'}
@@ -8280,6 +8696,14 @@ packages:
   /@aws-sdk/types@3.38.0:
     resolution: {integrity: sha512-Opux3HLwMlWb7GIJxERsOnmbHrT2A1gsd8aF5zHapWPPH5Z0rYsgTIq64qgim896XlKlOw6/YzhD5CdyNjlQWg==}
     engines: {node: '>= 10.0.0'}
+
+  /@aws-sdk/types@3.433.0:
+    resolution: {integrity: sha512-0jEE2mSrNDd8VGFjTc1otYrwYPIkzZJEIK90ZxisKvQ/EURGBhNzWn7ejWB9XCMFT6XumYLBR0V9qq5UPisWtA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
 
   /@aws-sdk/types@3.53.0:
     resolution: {integrity: sha512-FqHfWRXdnQvfxgngDKfYpYOuQ1HmPgxaGKELx3pFaEnQdMo/dMXjfBGQcEQgP8jqU6bPLaJSfykjWjDzua8JBg==}
@@ -8522,12 +8946,31 @@ packages:
       tslib: 2.6.1
     dev: false
 
+  /@aws-sdk/util-endpoints@3.438.0:
+    resolution: {integrity: sha512-6VyPTq1kN3GWxwFt5DdZfOsr6cJZPLjWh0troY/0uUv3hK74C9o3Y0Xf/z8UAUvQFkVqZse12O0/BgPVMImvfA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@smithy/util-endpoints': 1.0.2
+      tslib: 2.6.1
+    dev: false
+
   /@aws-sdk/util-format-url@3.38.0:
     resolution: {integrity: sha512-x3bhcKsNZ/LDu4fsc3m67ZFQwxOHSXOC56rq/vT94vwfGgkEabJtOSL9U08k+M7jhXe9O5Qmery/Lu/ETtR++Q==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       '@aws-sdk/querystring-builder': 3.38.0
       '@aws-sdk/types': 3.38.0
+      tslib: 2.6.1
+    dev: false
+
+  /@aws-sdk/util-format-url@3.433.0:
+    resolution: {integrity: sha512-Z6T7I4hELoQ4eeIuKIKx+52B9bc3SCPhjgMcFAFQeesjmHAr0drHyoGNJIat6ckvgI6zzFaeaBZTvWDA2hyDkA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@smithy/querystring-builder': 2.0.12
+      '@smithy/types': 2.4.0
       tslib: 2.6.1
     dev: false
 
@@ -8639,6 +9082,15 @@ packages:
       bowser: 2.11.0
       tslib: 2.6.1
 
+  /@aws-sdk/util-user-agent-browser@3.433.0:
+    resolution: {integrity: sha512-2Cf/Lwvxbt5RXvWFXrFr49vXv0IddiUwrZoAiwhDYxvsh+BMnh+NUFot+ZQaTrk/8IPZVDeLPWZRdVy00iaVXQ==}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@smithy/types': 2.4.0
+      bowser: 2.11.0
+      tslib: 2.6.1
+    dev: false
+
   /@aws-sdk/util-user-agent-browser@3.53.0:
     resolution: {integrity: sha512-fJsxzjo4UMv2o6KYSvw8cwfDhAQiao3X+iY1lGNVKrcY2bnI4zW5pWYge94oIJXMyFjjg6k6Ek+JIvGLMFY0XA==}
     dependencies:
@@ -8677,6 +9129,21 @@ packages:
       '@aws-sdk/node-config-provider': 3.38.0
       '@aws-sdk/types': 3.38.0
       tslib: 2.6.1
+
+  /@aws-sdk/util-user-agent-node@3.437.0:
+    resolution: {integrity: sha512-JVEcvWaniamtYVPem4UthtCNoTBCfFTwYj7Y3CrWZ2Qic4TqrwLkAfaBGtI2TGrhIClVr77uzLI6exqMTN7orA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      aws-crt: '>=1.0.0'
+    peerDependenciesMeta:
+      aws-crt:
+        optional: true
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@smithy/node-config-provider': 2.1.3
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
 
   /@aws-sdk/util-user-agent-node@3.53.0:
     resolution: {integrity: sha512-YbrqMpTi+ArL9qG+NIXPInmnjGwYu0lohiH5uyEMHAHolqg4vqdKBlXyZ7Pjls2Nka7px2UUfX/Ba2RIssBBMQ==}
@@ -10022,15 +10489,379 @@ packages:
   /@sinonjs/text-encoding@0.7.2:
     resolution: {integrity: sha512-sXXKG+uL9IrKqViTtao2Ws6dy0znu9sOaP1di/jKGW1M6VssO8vlpXCQcpZ+jisQ1tTFAC5Jo/EOzFbggBagFQ==}
 
+  /@smithy/abort-controller@2.0.12:
+    resolution: {integrity: sha512-YIJyefe1mi3GxKdZxEBEuzYOeQ9xpYfqnFmWzojCssRAuR7ycxwpoRQgp965vuW426xUAQhCV5rCaWElQ7XsaA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/config-resolver@2.0.16:
+    resolution: {integrity: sha512-1k+FWHQDt2pfpXhJsOmNMmlAZ3NUQ98X5tYsjQhVGq+0X6cOBMhfh6Igd0IX3Ut6lEO6DQAdPMI/blNr3JZfMQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/node-config-provider': 2.1.3
+      '@smithy/types': 2.4.0
+      '@smithy/util-config-provider': 2.0.0
+      '@smithy/util-middleware': 2.0.5
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/credential-provider-imds@2.0.18:
+    resolution: {integrity: sha512-QnPBi6D2zj6AHJdUTo5zXmk8vwHJ2bNevhcVned1y+TZz/OI5cizz5DsYNkqFUIDn8tBuEyKNgbmKVNhBbuY3g==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/node-config-provider': 2.1.3
+      '@smithy/property-provider': 2.0.13
+      '@smithy/types': 2.4.0
+      '@smithy/url-parser': 2.0.12
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/eventstream-codec@2.0.12:
+    resolution: {integrity: sha512-ZZQLzHBJkbiAAdj2C5K+lBlYp/XJ+eH2uy+jgJgYIFW/o5AM59Hlj7zyI44/ZTDIQWmBxb3EFv/c5t44V8/g8A==}
+    dependencies:
+      '@aws-crypto/crc32': 3.0.0
+      '@smithy/types': 2.4.0
+      '@smithy/util-hex-encoding': 2.0.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/fetch-http-handler@2.2.4:
+    resolution: {integrity: sha512-gIPRFEGi+c6V52eauGKrjDzPWF2Cu7Z1r5F8A3j2wcwz25sPG/t8kjsbEhli/tS/2zJp/ybCZXe4j4ro3yv/HA==}
+    dependencies:
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/querystring-builder': 2.0.12
+      '@smithy/types': 2.4.0
+      '@smithy/util-base64': 2.0.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/hash-node@2.0.12:
+    resolution: {integrity: sha512-fDZnTr5j9t5qcbeJ037aMZXxMka13Znqwrgy3PAqYj6Dm3XHXHftTH3q+NWgayUxl1992GFtQt1RuEzRMy3NnQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.4.0
+      '@smithy/util-buffer-from': 2.0.0
+      '@smithy/util-utf8': 2.0.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/invalid-dependency@2.0.12:
+    resolution: {integrity: sha512-p5Y+iMHV3SoEpy3VSR7mifbreHQwVSvHSAz/m4GdoXfOzKzaYC8hYv10Ks7Deblkf7lhas8U+lAp9ThbBM+ZXA==}
+    dependencies:
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/is-array-buffer@2.0.0:
+    resolution: {integrity: sha512-z3PjFjMyZNI98JFRJi/U0nGoLWMSJlDjAW4QUX2WNZLas5C0CmVV6LJ01JI0k90l7FvpmixjWxPFmENSClQ7ug==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/middleware-content-length@2.0.14:
+    resolution: {integrity: sha512-poUNgKTw9XwPXfX9nEHpVgrMNVpaSMZbshqvPxFVoalF4wp6kRzYKOfdesSVectlQ51VtigoLfbXcdyPwvxgTg==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/middleware-endpoint@2.1.3:
+    resolution: {integrity: sha512-ZrQ0/YX6hNVTxqMEHtEaDbDv6pNeEji/a5Vk3HuFC5R3ZY8lfoATyxmOGxBVYnF3NUvZLNC7umEv1WzWGWvCGQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/middleware-serde': 2.0.12
+      '@smithy/node-config-provider': 2.1.3
+      '@smithy/shared-ini-file-loader': 2.2.2
+      '@smithy/types': 2.4.0
+      '@smithy/url-parser': 2.0.12
+      '@smithy/util-middleware': 2.0.5
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/middleware-retry@2.0.18:
+    resolution: {integrity: sha512-VyrHQRldGSb3v9oFOB5yPxmLT7U2sQic2ytylOnYlnsmVOLlFIaI6sW22c+w2675yq+XZ6HOuzV7x2OBYCWRNA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/node-config-provider': 2.1.3
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/service-error-classification': 2.0.5
+      '@smithy/types': 2.4.0
+      '@smithy/util-middleware': 2.0.5
+      '@smithy/util-retry': 2.0.5
+      tslib: 2.6.1
+      uuid: 8.3.2
+    dev: false
+
+  /@smithy/middleware-serde@2.0.12:
+    resolution: {integrity: sha512-IBeco157lIScecq2Z+n0gq56i4MTnfKxS7rbfrAORveDJgnbBAaEQgYqMqp/cYqKrpvEXcyTjwKHrBjCCIZh2A==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/middleware-stack@2.0.6:
+    resolution: {integrity: sha512-YSvNZeOKWLJ0M/ycxwDIe2Ztkp6Qixmcml1ggsSv2fdHKGkBPhGrX5tMzPGMI1yyx55UEYBi2OB4s+RriXX48A==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/node-config-provider@2.1.3:
+    resolution: {integrity: sha512-J6lXvRHGVnSX3n1PYi+e1L5HN73DkkJpUviV3Ebf+8wSaIjAf+eVNbzyvh/S5EQz7nf4KVfwbD5vdoZMAthAEQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/property-provider': 2.0.13
+      '@smithy/shared-ini-file-loader': 2.2.2
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/node-http-handler@2.1.8:
+    resolution: {integrity: sha512-KZylM7Wff/So5SmCiwg2kQNXJ+RXgz34wkxS7WNwIUXuZrZZpY/jKJCK+ZaGyuESDu3TxcaY+zeYGJmnFKbQsA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/abort-controller': 2.0.12
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/querystring-builder': 2.0.12
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/property-provider@2.0.13:
+    resolution: {integrity: sha512-VJqUf2CbsQX6uUiC5dUPuoEATuFjkbkW3lJHbRnpk9EDC9X+iKqhfTK+WP+lve5EQ9TcCI1Q6R7hrg41FyC54w==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/protocol-http@3.0.8:
+    resolution: {integrity: sha512-SHJvYeWq8q0FK8xHk+xjV9dzDUDjFMT+G1pZbV+XB6OVoac/FSVshlMNPeUJ8AmSkcDKHRu5vASnRqZHgD3qhw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/querystring-builder@2.0.12:
+    resolution: {integrity: sha512-cDbF07IuCjiN8CdGvPzfJjXIrmDSelScRfyJYrYBNBbKl2+k7QD/KqiHhtRyEKgID5mmEVrV6KE6L/iPJ98sFw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.4.0
+      '@smithy/util-uri-escape': 2.0.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/querystring-parser@2.0.12:
+    resolution: {integrity: sha512-fytyTcXaMzPBuNtPlhj5v6dbl4bJAnwKZFyyItAGt4Tgm9HFPZNo7a9r1SKPr/qdxUEBzvL9Rh+B9SkTX3kFxg==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
   /@smithy/service-error-classification@1.1.0:
     resolution: {integrity: sha512-OCTEeJ1igatd5kFrS2VDlYbainNNpf7Lj1siFOxnRWqYOP9oNvC5HOJBd3t+Z8MbrmehBtuDJ2QqeBsfeiNkww==}
     engines: {node: '>=14.0.0'}
     dev: true
 
+  /@smithy/service-error-classification@2.0.5:
+    resolution: {integrity: sha512-M0SeJnEgD2ywJyV99Fb1yKFzmxDe9JfpJiYTVSRMyRLc467BPU0qsuuDPzMCdB1mU8M8u1rVOdkqdoyFN8UFTw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.4.0
+    dev: false
+
+  /@smithy/shared-ini-file-loader@2.2.2:
+    resolution: {integrity: sha512-noyQUPn7b1M8uB0GEXc/Zyxq+5K2b7aaqWnLp+hgJ7+xu/FCvtyWy5eWLDjQEsHnAet2IZhS5QF8872OR69uNg==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/signature-v4@2.0.12:
+    resolution: {integrity: sha512-6Kc2lCZEVmb1nNYngyNbWpq0d82OZwITH11SW/Q0U6PX5fH7B2cIcFe7o6eGEFPkTZTP8itTzmYiGcECL0D0Lw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/eventstream-codec': 2.0.12
+      '@smithy/is-array-buffer': 2.0.0
+      '@smithy/types': 2.4.0
+      '@smithy/util-hex-encoding': 2.0.0
+      '@smithy/util-middleware': 2.0.5
+      '@smithy/util-uri-escape': 2.0.0
+      '@smithy/util-utf8': 2.0.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/smithy-client@2.1.12:
+    resolution: {integrity: sha512-XXqhridfkKnpj+lt8vM6HRlZbqUAqBjVC74JIi13F/AYQd/zTj9SOyGfxnbp4mjY9q28LityxIuV8CTinr9r5w==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/middleware-stack': 2.0.6
+      '@smithy/types': 2.4.0
+      '@smithy/util-stream': 2.0.17
+      tslib: 2.6.1
+    dev: false
+
   /@smithy/types@2.0.2:
     resolution: {integrity: sha512-wcymEjIXQ9+NEfE5Yt5TInAqe1o4n+Nh+rh00AwoazppmUt8tdo6URhc5gkDcOYrcvlDVAZE7uG69nDpEGUKxw==}
     engines: {node: '>=14.0.0'}
     dependencies:
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/types@2.4.0:
+    resolution: {integrity: sha512-iH1Xz68FWlmBJ9vvYeHifVMWJf82ONx+OybPW8ZGf5wnEv2S0UXcU4zwlwJkRXuLKpcSLHrraHbn2ucdVXLb4g==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/url-parser@2.0.12:
+    resolution: {integrity: sha512-qgkW2mZqRvlNUcBkxYB/gYacRaAdck77Dk3/g2iw0S9F0EYthIS3loGfly8AwoWpIvHKhkTsCXXQfzksgZ4zIA==}
+    dependencies:
+      '@smithy/querystring-parser': 2.0.12
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-base64@2.0.0:
+    resolution: {integrity: sha512-Zb1E4xx+m5Lud8bbeYi5FkcMJMnn+1WUnJF3qD7rAdXpaL7UjkFQLdmW5fHadoKbdHpwH9vSR8EyTJFHJs++tA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/util-buffer-from': 2.0.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-body-length-browser@2.0.0:
+    resolution: {integrity: sha512-JdDuS4ircJt+FDnaQj88TzZY3+njZ6O+D3uakS32f2VNnDo3vyEuNdBOh/oFd8Df1zSZOuH1HEChk2AOYDezZg==}
+    dependencies:
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-body-length-node@2.1.0:
+    resolution: {integrity: sha512-/li0/kj/y3fQ3vyzn36NTLGmUwAICb7Jbe/CsWCktW363gh1MOcpEcSO3mJ344Gv2dqz8YJCLQpb6hju/0qOWw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-buffer-from@2.0.0:
+    resolution: {integrity: sha512-/YNnLoHsR+4W4Vf2wL5lGv0ksg8Bmk3GEGxn2vEQt52AQaPSCuaO5PM5VM7lP1K9qHRKHwrPGktqVoAHKWHxzw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/is-array-buffer': 2.0.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-config-provider@2.0.0:
+    resolution: {integrity: sha512-xCQ6UapcIWKxXHEU4Mcs2s7LcFQRiU3XEluM2WcCjjBtQkUN71Tb+ydGmJFPxMUrW/GWMgQEEGipLym4XG0jZg==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-defaults-mode-browser@2.0.16:
+    resolution: {integrity: sha512-Uv5Cu8nVkuvLn0puX+R9zWbSNpLIR3AxUlPoLJ7hC5lvir8B2WVqVEkJLwtixKAncVLasnTVjPDCidtAUTGEQw==}
+    engines: {node: '>= 10.0.0'}
+    dependencies:
+      '@smithy/property-provider': 2.0.13
+      '@smithy/smithy-client': 2.1.12
+      '@smithy/types': 2.4.0
+      bowser: 2.11.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-defaults-mode-node@2.0.21:
+    resolution: {integrity: sha512-cUEsttVZ79B7Al2rWK2FW03HBpD9LyuqFtm+1qFty5u9sHSdesr215gS2Ln53fTopNiPgeXpdoM3IgjvIO0rJw==}
+    engines: {node: '>= 10.0.0'}
+    dependencies:
+      '@smithy/config-resolver': 2.0.16
+      '@smithy/credential-provider-imds': 2.0.18
+      '@smithy/node-config-provider': 2.1.3
+      '@smithy/property-provider': 2.0.13
+      '@smithy/smithy-client': 2.1.12
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-endpoints@1.0.2:
+    resolution: {integrity: sha512-QEdq+sP68IJHAMVB2ugKVVZEWeKQtZLuf+akHzc8eTVElsZ2ZdVLWC6Cp+uKjJ/t4yOj1qu6ZzyxJQEQ8jdEjg==}
+    engines: {node: '>= 14.0.0'}
+    dependencies:
+      '@smithy/node-config-provider': 2.1.3
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-hex-encoding@2.0.0:
+    resolution: {integrity: sha512-c5xY+NUnFqG6d7HFh1IFfrm3mGl29lC+vF+geHv4ToiuJCBmIfzx6IeHLg+OgRdPFKDXIw6pvi+p3CsscaMcMA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-middleware@2.0.5:
+    resolution: {integrity: sha512-1lyT3TcaMJQe+OFfVI+TlomDkPuVzb27NZYdYtmSTltVmLaUjdCyt4KE+OH1CnhZKsz4/cdCL420Lg9UH5Z2Mw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-retry@2.0.5:
+    resolution: {integrity: sha512-x3t1+MQAJ6QONk3GTbJNcugCFDVJ+Bkro5YqQQK1EyVesajNDqxFtCx9WdOFNGm/Cbm7tUdwVEmfKQOJoU2Vtw==}
+    engines: {node: '>= 14.0.0'}
+    dependencies:
+      '@smithy/service-error-classification': 2.0.5
+      '@smithy/types': 2.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-stream@2.0.17:
+    resolution: {integrity: sha512-fP/ZQ27rRvHsqItds8yB7jerwMpZFTL3QqbQbidUiG0+mttMoKdP0ZqnvM8UK5q0/dfc3/pN7g4XKPXOU7oRWw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/fetch-http-handler': 2.2.4
+      '@smithy/node-http-handler': 2.1.8
+      '@smithy/types': 2.4.0
+      '@smithy/util-base64': 2.0.0
+      '@smithy/util-buffer-from': 2.0.0
+      '@smithy/util-hex-encoding': 2.0.0
+      '@smithy/util-utf8': 2.0.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-uri-escape@2.0.0:
+    resolution: {integrity: sha512-ebkxsqinSdEooQduuk9CbKcI+wheijxEb3utGXkCoYQkJnwTnLbH1JXGimJtUkQwNQbsbuYwG2+aFVyZf5TLaw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-utf8@2.0.0:
+    resolution: {integrity: sha512-rctU1VkziY84n5OXe3bPNpKR001ZCME2JCaBBFgtiM2hfKbHFudc/BkMuPab8hRbLd0j3vbnBTTZ1igBf0wgiQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/util-buffer-from': 2.0.0
+      tslib: 2.6.1
+    dev: false
+
+  /@smithy/util-waiter@2.0.12:
+    resolution: {integrity: sha512-3sENmyVa1NnOPoiT2NCApPmu7ukP7S/v7kL9IxNmnygkDldn7/yK0TP42oPJLwB2k3mospNsSePIlqdXEUyPHA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/abort-controller': 2.0.12
+      '@smithy/types': 2.4.0
       tslib: 2.6.1
     dev: false
 
@@ -13234,8 +14065,8 @@ packages:
       merge2: 1.4.1
       micromatch: 4.0.5
 
-  /fast-json-patch@3.0.0-1:
-    resolution: {integrity: sha512-6pdFb07cknxvPzCeLsFHStEy+MysPJPgZQ9LbQ/2O67unQF93SNqfdSqnPPl71YMHX+AD8gbl7iuoGFzHEdDuw==}
+  /fast-json-patch@3.1.1:
+    resolution: {integrity: sha512-vf6IHUX2SBcA+5/+4883dsIjpBTqmfBjmYiWK1savxQmFk4JfBMLa7ynTYOs1Rolp/T1betJxHiGD3g1Mn8lUQ==}
     dev: true
 
   /fast-json-stable-stringify@2.1.0:
@@ -13253,6 +14084,13 @@ packages:
 
   /fast-xml-parser@4.0.11:
     resolution: {integrity: sha512-4aUg3aNRR/WjQAcpceODG1C3x3lFANXRo8+1biqfieHmg9pyMt7qB4lQV/Ta6sJCTbA5vfD8fnA8S54JATiFUA==}
+    hasBin: true
+    dependencies:
+      strnum: 1.0.5
+    dev: false
+
+  /fast-xml-parser@4.2.5:
+    resolution: {integrity: sha512-B9/wizE4WngqQftFPmdaMYlXoJlJOYxGQOanC77fq9k8+Z0v5dDSVh+3glErdIROP//s/jgb7ZuxKfB8nVyo0g==}
     hasBin: true
     dependencies:
       strnum: 1.0.5
