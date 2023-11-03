@@ -2,9 +2,18 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "noImplicitReturns": false
   },
   "references": [],
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", ".vscode", ".git", "./**/__mocks__/*.ts"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".vscode",
+    ".git",
+    "./**/__mocks__/*.ts"
+  ]
 }

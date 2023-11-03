@@ -138,6 +138,7 @@ export interface AssetLibrary
     defaultGroupsValidateAllowedParentPath?: string;
     enableDfeOptimization?: boolean;
     authorizationEnabled?: boolean;
+    neptuneDbInstanceVersion?: string;
 }
 
 export interface AssetLibraryExport extends ServiceModuleAttributes {
