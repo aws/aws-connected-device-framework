@@ -18,7 +18,7 @@ Refer to the [Swagger](docs/swagger.yml) for a detailed list of the available RE
 
 ## Walkthrough
 
-The following walkthroughs give examples of how to configure commands sent vis MQTT topics, via AWS IoT Device Shadows, and via AWS IoT Jobs. Even though the definition of each command is slightly different, what is important is that the way the messages are sent, the way the messages are received, the way recipients are listed, and the way replies are listed, is consistent across all three methods.
+The following walkthroughs give examples of how to configure commands sent via MQTT topics, via AWS IoT Device Shadows, and via AWS IoT Jobs. Even though the definition of each command is slightly different, what is important is that the way the messages are sent, the way the messages are received, the way recipients are listed, and the way replies are listed, is consistent across all three methods.
 
 ### Example 1: Send a reboot command to a single device via an MQTT topic
 
