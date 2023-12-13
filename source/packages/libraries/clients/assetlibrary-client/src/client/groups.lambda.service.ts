@@ -353,8 +353,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('GET')
             .setPath(super.bulkGroupsRelativeUrl())
-            .setQueryStringParameters({includeGroups: `${includeGroups}`})
-            .setQueryStringParameters({groupPaths: query })
+            .setQueryStringParameters({groupPaths: query, includeGroups: `${includeGroups}`})
             .setHeaders(super.buildHeaders(additionalHeaders));
             
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
