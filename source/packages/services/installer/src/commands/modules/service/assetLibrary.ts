@@ -19,7 +19,11 @@ import { ModuleName, PostmanEnvironment, RestModule } from '../../../models/modu
 import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
 import {
     enableAutoScaling,
-    provisionedConcurrentExecutions,
+    enableNeptuneAutoScaling,
+    maxNeptuneReadReplicas,
+    minNeptuneReadReplicas,
+    neptuneTargetUtilization,
+    provisionedConcurrentExecutions
 } from '../../../prompts/autoscaling.prompt';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
@@ -175,6 +179,10 @@ export class AssetLibraryInstaller implements RestModule {
                     },
                     enableAutoScaling(this.name, answers),
                     provisionedConcurrentExecutions(this.name, answers),
+                    enableNeptuneAutoScaling(this.name, answers),
+                    minNeptuneReadReplicas(this.name, answers),
+                    maxNeptuneReadReplicas(this.name, answers),
+                    neptuneTargetUtilization(this.name, answers),
                     ...applicationConfigurationPrompt(this.name, answers, [
                         {
                             question: 'Enable authorization?',
@@ -288,6 +296,11 @@ export class AssetLibraryInstaller implements RestModule {
             'ProvisionedConcurrentExecutions',
             answers.assetLibrary.provisionedConcurrentExecutions
         );
+        addIfSpecified('ApplyNeptuneAutoscaling', answers.assetLibrary.enableNeptuneAutoScaling);
+        addIfSpecified('NeptuneAutoScalingMinCapacity', answers.assetLibrary.minNeptuneReadReplicaCapacity);
+        addIfSpecified('NeptuneAutoScalingMaxCapacity', answers.assetLibrary.maxNeptuneReadReplicaCapacity);
+        addIfSpecified('NeptuneTargetUtilization', answers.assetLibrary.neptuneTargetUtilization);
+
         addIfSpecified(
             'CustomResourceVPCLambdaArn',
             answers.assetLibrary.mode === 'full'
