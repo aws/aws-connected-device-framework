@@ -122,7 +122,7 @@ Parameters:
     Default: 1
 
   NeptuneAutoScalingMaxCapacity:
-    Description: The no. of desired minimum read replicas to provision
+    Description: The no. of desired maximum read replicas to provision
     Type: Number
     Default: 1
 
