@@ -1,3 +1,4 @@
+---
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -10,7 +11,7 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 
 Description: |
@@ -18,14 +19,13 @@ Description: |
   =================================
   This template provides an example of how to apply auto-scaling to the Asset Library Neptune Cluster.
 
-
 Parameters:
   MinCapacity:
-    Description:  The minimum value to scale to in response to a scale-in event.
+    Description: The minimum value to scale to in response to a scale-in event.
     Type: Number
     Default: 1
   MaxCapacity:
-    Description:  The maximum value to scale to in response to a scale-out event.
+    Description: The maximum value to scale to in response to a scale-out event.
     Type: Number
     Default: 1
   TargetUtilization:
@@ -38,7 +38,6 @@ Parameters:
     Default: cluster:test
 
 Resources:
-
   ScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
     Properties:
