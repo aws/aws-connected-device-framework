@@ -1,0 +1,60 @@
+---
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the 'License'). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: |
+  CDF Asset Library Service Scaling
+  =================================
+  This template provides an example of how to apply auto-scaling to the Asset Library Neptune Cluster.
+
+Parameters:
+  MinCapacity:
+    Description: The minimum value to scale to in response to a scale-in event.
+    Type: Number
+    Default: 1
+  MaxCapacity:
+    Description: The maximum value to scale to in response to a scale-out event.
+    Type: Number
+    Default: 1
+  TargetUtilization:
+    Description: Target utilization (0 to 90).
+    Type: Number
+    Default: 75
+  NeptuneClusterID:
+    Description: This parameter will contain the ClusterID used for Neptune Auto Scaling
+    Type: String
+    Default: cluster:test
+
+Resources:
+  ScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      MaxCapacity: !Ref MaxCapacity
+      MinCapacity: !Ref MinCapacity
+      ResourceId: !Ref NeptuneClusterID
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/neptune.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_NeptuneCluster
+      ScalableDimension: neptune:cluster:ReadReplicaCount
+      ServiceNamespace: neptune
+
+  TargetTrackingScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: utilizationNeptune
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref ScalableTarget
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: !Ref TargetUtilization
+        PredefinedMetricSpecification:
+          PredefinedMetricType: NeptuneReaderAverageCPUUtilization

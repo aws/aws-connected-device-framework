@@ -103,6 +103,13 @@ export interface ProvisionedConcurrencyModuleAttribues extends ServiceModuleAttr
     provisionedConcurrentExecutions?: number;
     enableAutoScaling?: boolean;
 }
+
+export interface NeptuneScalingAttributes {
+  minNeptuneReadReplicaCapacity?: number;
+  maxNeptuneReadReplicaCapacity?: number;
+  enableNeptuneAutoScaling?: boolean;
+  neptuneTargetUtilization?: number;
+}
 export interface RestServiceModuleAttribues extends ServiceModuleAttributes {
     enableCustomDomain?: boolean;
     customDomainBasePath?: string;
@@ -123,7 +130,8 @@ export interface OrganizationManager extends RestServiceModuleAttribues {
 
 export interface AssetLibrary
     extends RestServiceModuleAttribues,
-        ProvisionedConcurrencyModuleAttribues {
+        ProvisionedConcurrencyModuleAttribues,
+        NeptuneScalingAttributes {
     mode?: 'full' | 'lite';
     neptuneDbInstanceType?: string;
     createDbReplicaInstance?: boolean;
