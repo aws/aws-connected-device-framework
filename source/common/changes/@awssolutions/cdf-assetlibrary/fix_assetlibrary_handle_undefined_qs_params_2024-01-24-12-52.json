@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-assetlibrary",
+      "comment": "properly handle undefined string for count and offset",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-assetlibrary"
+}

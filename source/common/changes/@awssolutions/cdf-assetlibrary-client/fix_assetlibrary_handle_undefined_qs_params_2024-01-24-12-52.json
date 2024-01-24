@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-assetlibrary-client",
+      "comment": "don't pass count and offset if they are undefined",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-assetlibrary-client"
+}
