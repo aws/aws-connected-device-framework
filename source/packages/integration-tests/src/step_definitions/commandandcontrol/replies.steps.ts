@@ -153,8 +153,13 @@ async function reply(thingName: string, action: string, data?: DataTable) {
                     payload as { [key: string]: string }
                 );
             } catch (e) {
-                const { requestId, cfId, extendedRequestId } = e.$metadata;
-                console.log({ requestId, cfId, extendedRequestId });
+                if (e instanceof Error) {
+                    console.log(e.message);
+                    console.log(e.stack);
+                } else {
+                    const { requestId, cfId, extendedRequestId } = e.$metadata;
+                    console.log({ requestId, cfId, extendedRequestId });
+                }
             }
             break;
         }
