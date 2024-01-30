@@ -87,7 +87,9 @@ Feature: Command & Control - Jobs
       | $.status                              | awaiting_replies                                                       |
       | $.createdAt                           | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
       | $.updatedAt                           | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
-    When I pause for 3000ms
+    # TODO: Discover why this message has a 30second delay, which necessitates this 30sec pause
+    # https://github.com/aws/aws-connected-device-framework/blob/main/source/packages/services/command-and-control/src/messages/workflow/workflow.createEphemeralGroup.ts#L190
+    When I pause for 30000ms
     Then last command-and-control message has recipients:
       | $.recipients.length            | 2                                     |
       | $.recipients.[0].id            | cdf-integration-test-cac-jobs-device1 |
