@@ -12,8 +12,8 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { container } from './di/inversify.config';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from './di/types';
 import { EventModel } from './events/events.models';
 import { EventsService } from './events/events.service';

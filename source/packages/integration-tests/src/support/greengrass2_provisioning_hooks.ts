@@ -56,16 +56,13 @@ const templateBucket = process.env.PROVISIONING_TEMPLATES_BUCKET;
 const templatePrefix = process.env.PROVISIONING_TEMPLATES_PREFIX;
 
 async function teardown(world: unknown) {
-    // logger.debug(`\ngreengrass_provisioning_hooks: teardown: in:`);
-
-    logger.debug(`\ngreengrass_provisioning_hooks: teardown: in: ${JSON.stringify(world)}`);
-
     // service cleanup
     const templates = ['IntegrationTest'];
     for (const t of templates) {
         try {
             await templatesSvc.deleteTemplate(t, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
         } catch (err) {
+            logger.silly(`teardown: deleteTemplate: ${JSON.stringify(err)}`);
             // swallow the error
         }
     }
@@ -75,6 +72,7 @@ async function teardown(world: unknown) {
         try {
             await deviceSvc.deleteDevice(clientDevice);
         } catch (err) {
+            logger.silly(`teardown: deleteDevice: ${JSON.stringify(err)}`);
             // swallow the error
         }
     }
@@ -95,6 +93,7 @@ async function teardown(world: unknown) {
             }),
         });
     } catch (err) {
+        logger.silly(`teardown: createCoreTask: ${JSON.stringify(err)}`);
         // swallow the error
     }
 

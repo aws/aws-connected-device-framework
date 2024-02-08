@@ -1,3 +1,5 @@
+import '@awssolutions/cdf-config-inject';
+
 import { format } from 'logform';
 import { LoggerOptions, createLogger, transports } from 'winston';
 const { combine, timestamp, printf } = format;
@@ -19,19 +21,25 @@ export function setRequestId(newRequestId: string) {
     }
 }
 
-export const logger = createLogger(<LoggerOptions>{
-    level,
-    exitOnError: false,
-    transports: [new transports.Console()],
-    format: combine(
-        timestamp(),
-        printf((nfo) => {
-            return `${nfo.timestamp} ${nfo.level}: rid-${requestId ? requestId : 'not-set-yet'}: ${
-                nfo.message
-            }`;
-        })
-    ),
-});
+export const logger = (function () {
+    if (typeof level == 'undefined') {
+        // this indicates that no log level was set through .env (see: cdf-config-inject)
+        console.error('LOGGING_LEVEL not set');
+    }
+    return createLogger(<LoggerOptions>{
+        level,
+        exitOnError: false,
+        transports: [new transports.Console()],
+        format: combine(
+            timestamp(),
+            printf((nfo) => {
+                return `${nfo.timestamp} ${nfo.level}: rid-${
+                    requestId ? requestId : 'not-set-yet'
+                }: ${nfo.message}`;
+            })
+        ),
+    });
+})();
 
 export function getRequestIdFromContext(context: any) {
     let requestId;

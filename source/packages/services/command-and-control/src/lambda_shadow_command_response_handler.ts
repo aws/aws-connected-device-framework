@@ -13,8 +13,8 @@
 
 import ow from 'ow';
 
-import { logger } from '@awssolutions/simple-cdf-logger';
 import { container } from './di/inversify.config';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from './di/types';
 import { Response } from './responses/responses.models';
 import { ResponsesService } from './responses/responses.service';

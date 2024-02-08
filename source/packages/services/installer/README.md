@@ -165,7 +165,7 @@ You can generate the `.env` file automatically for running modules locally. This
 | `output-folder` | the folder to store the generated env file(s) |
 
 ```shell
-> cdf-cli cloud-to-env <environment> <region> <output-folder>
+> cdf-cli generate-local-config <environment> <region> <output-folder>
 ```
 
 The `.env` file for each of the deployed modules will be generated in the `output-folder`.

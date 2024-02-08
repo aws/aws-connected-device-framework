@@ -322,8 +322,18 @@ export class PatchDao {
             },
         };
 
-        const queryResults = await this.dc.query(queryParams).promise();
-        if (queryResults.Items === undefined || queryResults.Items.length === 0) {
+        let queryResults;
+        try {
+            queryResults = await this.dc.query(queryParams).promise();
+        } catch (err) {
+            logger.error(
+                `patch.dao: delete: query: params: ${JSON.stringify(
+                    queryParams
+                )}, error: ${JSON.stringify(err)}`
+            );
+            throw err;
+        }
+        if (queryResults?.Items === undefined || queryResults?.Items.length === 0) {
             logger.debug('patches.dao delete: exit: nothing to delete');
             return;
         }

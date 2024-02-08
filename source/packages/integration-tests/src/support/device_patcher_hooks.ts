@@ -14,27 +14,33 @@
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import { resolve } from 'path';
 
-import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 import {
-    TemplatesService,
-    PatchType,
     CreatePatchTemplateParams,
+    DEVICE_PATCHER_CLIENT_TYPES,
+    ListPatchResponse,
+    PatchResponse,
+    PatchService,
+    PatchType,
+    TemplatesService,
 } from '@awssolutions/cdf-device-patcher-client';
-import { DEVICE_PATCHER_CLIENT_TYPES } from '@awssolutions/cdf-device-patcher-client';
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 
-import { container } from '../di/inversify.config';
-import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
-import { logger } from '@awssolutions/simple-cdf-logger';
 import {
     DescribeInstancesCommand,
     EC2Client,
     TerminateInstancesCommand,
 } from '@aws-sdk/client-ec2';
+import { logger } from '@awssolutions/simple-cdf-logger';
+import { container } from '../di/inversify.config';
+import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
 
 setDefaultTimeout(30 * 1000);
 
 const INTEGRATION_TEST_PATCH_TEMPLATE = 'integration_test_template';
 const GGV2_CORE_INSTALLATION_TEMPLATE = 'ggv2_ec2_amazonlinux2_template';
+const PATCH_ENHANCED_DEVICE_ID = 'DevicePatcherIntegrationTestCore';
+const PATCH_DEVICE_ID_1 = 'IntegrationTestCore1';
+const PATCH_DEVICE_ID_2 = 'ec2_edge_device_01';
 
 const ec2 = new EC2Client({ region: process.env.AWS_REGION });
 
@@ -45,12 +51,33 @@ function getAdditionalHeaders(world: unknown): Dictionary {
 }
 
 const templatesSvc: TemplatesService = container.get(DEVICE_PATCHER_CLIENT_TYPES.TemplatesService);
+const patchSvc: PatchService = container.get(DEVICE_PATCHER_CLIENT_TYPES.PatchService);
 
 async function deletePatchTemplate(world: unknown, name: string) {
     try {
         await templatesSvc.deleteTemplate(name, getAdditionalHeaders(world));
     } catch (e) {
-        logger.error(e);
+        logger.error(`deletePatchTemplate: ${JSON.stringify(e)}`);
+    }
+}
+
+async function deletePatchesForDevice(world: unknown, deviceId: string) {
+    try {
+        // get all patches for the given device
+        const patchList: ListPatchResponse = await patchSvc.listPatchesByDeviceId(
+            deviceId,
+            undefined,
+            getAdditionalHeaders(world)
+        );
+        const patches: PatchResponse[] = patchList.patches;
+
+        // delete all patches for the given device
+        const deletionPromises = patches.map((patch): Promise<void> => {
+            return patchSvc.deletePatch(patch.patchId, getAdditionalHeaders(world));
+        });
+        await Promise.all(deletionPromises);
+    } catch (e) {
+        logger.error(`deletePatchesForDevice: ${JSON.stringify(e)}`);
     }
 }
 
@@ -71,7 +98,7 @@ async function createIntegrationTestPatchTemplate(world: unknown, name: string) 
         };
         await templatesSvc.createTemplate(template, getAdditionalHeaders(world));
     } catch (e) {
-        logger.error(e);
+        logger.error(`createIntegrationTestPatchTemplate: ${JSON.stringify(e)}`);
     }
 }
 
@@ -88,7 +115,7 @@ async function createGGV2CorePatchTemplate(world: unknown, name: string) {
         };
         await templatesSvc.createTemplate(template, getAdditionalHeaders(world));
     } catch (e) {
-        logger.error(e);
+        logger.error(`createGGV2CorePatchTemplate: ${JSON.stringify(e)}`);
     }
 }
 
@@ -111,15 +138,19 @@ async function cleanupEC2Instances() {
     }
 }
 
-async function teardown_patches_feature() {
+async function teardown_patches_feature(world: unknown) {
+    await deletePatchesForDevice(world, PATCH_DEVICE_ID_1);
+    await deletePatchesForDevice(world, PATCH_DEVICE_ID_2);
+    await deletePatchTemplate(world, INTEGRATION_TEST_PATCH_TEMPLATE);
     await cleanupEC2Instances();
 }
 
 async function teardown_activation_features() {
-    console.log('teardown_activation_features');
+    logger.debug('teardown_activation_features');
 }
 
 async function teardown_enhanced_patch_templates_features(world: unknown) {
+    await deletePatchesForDevice(world, PATCH_ENHANCED_DEVICE_ID);
     await deletePatchTemplate(world, GGV2_CORE_INSTALLATION_TEMPLATE);
     await cleanupEC2Instances();
 }
@@ -130,7 +161,7 @@ Before({ tags: '@setup_patch_features' }, async function () {
 });
 
 Before({ tags: '@teardown_patch_features' }, async function () {
-    await teardown_patches_feature();
+    await teardown_patches_feature(this);
 });
 
 Before({ tags: '@setup_activation_features' }, async function () {

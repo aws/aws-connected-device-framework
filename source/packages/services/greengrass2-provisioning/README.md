@@ -352,7 +352,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 
 ### Create a deployment task
 
-A deployment task is what takes the components defined in the template and create a Greengrass2 deployment job. As this can take time, is an asynchronous process, with the response header `x-taskId` identifying the task.
+A deployment task is what takes the components defined in the template and creates a Greengrass2 deployment job. As this can take time, it is an asynchronous process, with the response header `x-taskId` identifying the task.
 
 Replace the following:
 
