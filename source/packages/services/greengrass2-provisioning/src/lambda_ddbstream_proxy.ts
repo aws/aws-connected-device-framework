@@ -11,9 +11,9 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { AttributeValue, DynamoDBStreamEvent } from 'aws-lambda';
+import { container } from './di/inversify.config';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
 import { FleetService, TemplateAttributes } from './fleet/fleet.service';
 import { PkType, expandDelimitedAttribute } from './utils/pkUtils.util';

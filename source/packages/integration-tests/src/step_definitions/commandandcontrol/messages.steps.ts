@@ -12,18 +12,18 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 
+import { DataTable, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { expect, use } from 'chai';
-import { setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 
-import { container } from '../../di/inversify.config';
-import { buildModel, validateExpectedAttributes } from '../common/common.steps';
-import { getAdditionalHeaders } from '../notifications/notifications.utils';
-import { world } from './commandandcontrol.world';
 import {
     COMMANDANDCONTROL_CLIENT_TYPES,
     MessageResource,
     MessagesService,
 } from '@awssolutions/cdf-commandandcontrol-client';
+import { container } from '../../di/inversify.config';
+import { buildModel, validateExpectedAttributes } from '../common/common.steps';
+import { getAdditionalHeaders } from '../notifications/notifications.utils';
+import { world } from './commandandcontrol.world';
 
 import chai_string = require('chai-string');
 use(chai_string);
