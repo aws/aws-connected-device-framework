@@ -35,15 +35,15 @@ export class TypeUtils {
      * range using ow base methods instead of owCheckOptionalNumber.
      */
     public parseAndValidateOffsetAndCount(
-        offset?: number,
-        count?: number
+        offset?: number | string,
+        count?: number | string
     ): { offsetAsInt: number; countAsInt: number } {
         // use default count and offset if omitted
-        if (offset === undefined) {
-            offset = this.DEFAULT_PAGINATION_OFFSET;
+        if (offset === undefined || offset === 'undefined') {
+            offset = this.DEFAULT_PAGINATION_OFFSET.toString();
         }
-        if (count === undefined) {
-            count = this.DEFAULT_PAGINATION_COUNT;
+        if (count === undefined || count === 'undefined') {
+            count = this.DEFAULT_PAGINATION_COUNT.toString();
         }
 
         // do the previous parse int (which should be a )

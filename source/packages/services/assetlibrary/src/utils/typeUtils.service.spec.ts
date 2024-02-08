@@ -25,6 +25,7 @@ describe('typeUtils', () => {
         { label: 'number as number', input: 1, expected: 1 },
         { label: 'number as string', input: '1', expected: 1 },
         { label: 'undefined', input: undefined, expected: 0 },
+        { label: 'undefined as string', input: 'undefined', expected: 0 },
     ];
 
     offsetsAndExpectedSuccesses.forEach((metadata) => {
@@ -62,6 +63,7 @@ describe('typeUtils', () => {
         { label: 'number as number', input: 1, expected: 1 },
         { label: 'number as string', input: '1', expected: 1 },
         { label: 'undefined', input: undefined, expected: 500 }, // default is five hundred
+        { label: 'undefined as string', input: 'undefined', expected: 500 }, // default is five hundred
     ];
 
     countsAndExpectedSuccess.forEach((metadata) => {
