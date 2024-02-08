@@ -110,7 +110,7 @@ Resources:
       FunctionName: !Sub 'cdf-deviceMonitoring-${Environment}'
       CodeUri: ../bundle.zip
       Handler: iot_lifecycle_event.lambda_handler
-      MemorySize: 128
+      MemorySize: 512
       Role: !GetAtt IoTLifecycleLambdaRole.Arn
       Runtime: nodejs18.x
       Timeout: 29
