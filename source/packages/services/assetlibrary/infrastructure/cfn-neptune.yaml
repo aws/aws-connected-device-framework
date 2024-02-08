@@ -30,10 +30,10 @@ Parameters:
     Type: List<AWS::EC2::Subnet::Id>
   DbInstanceType:
     Description: >
-      Neptune DB instance type. The list of available instance types for your region can be found here: 
+      Neptune DB instance type. The list of available instance types for your region can be found here:
       https://aws.amazon.com/neptune/pricing/
     Type: String
-    AllowedPattern: '^db\\.[tr]\\d+[a-z0-9]*\\.[a-z0-9]*$'
+    AllowedPattern: "^db\\.[tr]\\d+[a-z0-9]*\\.[a-z0-9]*$"
     ConstraintDescription: Must be a valid Neptune instance type.
   CreateDBReplicaInstance:
     Description: Create a read replica for MultiAZ?

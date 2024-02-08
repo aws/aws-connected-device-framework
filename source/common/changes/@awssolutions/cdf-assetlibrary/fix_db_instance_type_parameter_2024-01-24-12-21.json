@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-assetlibrary",
+      "comment": "properly quote escaped regex pattern in cloudformation",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-assetlibrary"
+}
