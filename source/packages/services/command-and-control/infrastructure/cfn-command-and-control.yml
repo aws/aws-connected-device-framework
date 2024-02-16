@@ -221,7 +221,7 @@ Resources:
               - 'iot:Publish'
             Effect: Allow
             Resource:
-              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/cmd/cdf/cac/*'
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/cmd/nga/cac/*'
           - Sid: 'iotshadow'
             Action:
               - iot:GetThingShadow
@@ -405,7 +405,7 @@ Resources:
           Type: IoTRule
           Properties:
             AwsIotSqlVersion: '2016-03-23'
-            Sql: !Sub "SELECT topic(4) as thingName, topic(5) as correlationId, topic(6) as action, * as payload FROM 'cmd/cdf/cac/+/+/+'"
+            Sql: !Sub "SELECT topic(4) as thingName, topic(5) as correlationId, topic(6) as action, * as payload FROM 'cmd/nga/cac/+/+/+'"
 
   ShadowCommandResponseLambdaFunction:
     Type: AWS::Serverless::Function
