@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
-#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  Licensed under the Apache License, Version 2.0 (the 'License'). You may not use this file except in compliance
 #  with the License. A copy of the License is located at
 #
 #      http://www.apache.org/licenses/LICENSE-2.0
@@ -30,7 +30,7 @@ Parameters:
     Type: List<AWS::EC2::Subnet::Id>
   DbInstanceType:
     Description: >
-      Neptune DB instance type. The list of available instance types for your region can be found here: 
+      Neptune DB instance type. The list of available instance types for your region can be found here:
       https://aws.amazon.com/neptune/pricing/
     Type: String
     AllowedPattern: "^db\\.[tr]\\d+[a-z0-9]*\\.[a-z0-9]*$"
@@ -307,6 +307,14 @@ Resources:
           Value: !Ref CdfService
     DependsOn:
       - NeptuneDBInstance
+
+  DBClusterIdSsmParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Description: VPC ID for the account
+      Name: !Sub '/cdf/asset-library/${Environment}/neptuneClusterID'
+      Type: String
+      Value: !Sub 'cluster:${NeptuneDBCluster}'
 
 Outputs:
   DBClusterId:

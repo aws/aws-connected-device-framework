@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
+import { container } from './di/inversify.config';
 
 import { logger } from '@awssolutions/simple-cdf-logger';
 import { Context, EventBridgeEvent } from 'aws-lambda';
@@ -22,7 +23,6 @@ import {
 } from './accounts/accounts.models';
 import { AccountsService } from './accounts/accounts.service';
 import { ComponentsService } from './components/components.service';
-import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
 import { ManifestService } from './manifest/manifest.service';
 

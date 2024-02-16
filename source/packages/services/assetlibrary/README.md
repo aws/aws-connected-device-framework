@@ -160,7 +160,7 @@ Devices:
 - `device001` associated with group `/location/usa/colorado/denver/factory1`
 - `device002` associated with group `/location/china/northern/beijing/factory2`
 
-In the example above, retrieving the list of policies for `device001` would return `policy_permissive`, whereas retrieiving the policy list for `device002` will be the chain `policy_restrictive` then `policy_permissive`, with the consuming application containing the business logic for which policy to use (e.g. use `policy_permissive` as that's associated with the lowest level group `/location/china`).
+In the example above, retrieving the list of policies for `device001` would return `policy_permissive`, whereas retrieiving the policy list for `device002` will be the chain `policy_restrictive` then `policy_permissive`, with the consuming application containing the business logic for which policy to use (e.g. use `policy_restrictive` as that's associated with the lowest level group `/location/china`).
 
 #### Scenario 2
 

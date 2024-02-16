@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
-#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  Licensed under the Apache License, Version 2.0 (the 'License'). You may not use this file except in compliance
 #  with the License. A copy of the License is located at
 #
 #      http://www.apache.org/licenses/LICENSE-2.0
@@ -107,6 +107,30 @@ Parameters:
       - false
     MinLength: 1
 
+  ApplyNeptuneAutoscaling:
+    Description: If true, will apply auto-scaling as defined in `./cfn-autoscaling-neptune.yml'
+    Type: String
+    Default: false
+    AllowedValues:
+      - true
+      - false
+    MinLength: 1
+
+  NeptuneAutoScalingMinCapacity:
+    Description: The no. of desired minimum read replicas to provision
+    Type: Number
+    Default: 1
+
+  NeptuneAutoScalingMaxCapacity:
+    Description: The no. of desired maximum read replicas to provision
+    Type: Number
+    Default: 1
+
+  NeptuneTargetUtilization:
+    Description: Target utilization (0 to 100).
+    Type: Number
+    Default: 75
+
   CdfService:
     Description: Service name to tag resources.
     Type: String
@@ -136,11 +160,16 @@ Conditions:
 
   DeployInVPC: !Not [!Equals [!Ref VpcId, 'N/A']]
 
-  DeployWithProvisionedCapacity: !Not [!Equals [!Ref ProvisionedConcurrentExecutions, '0']]
+  DeployWithProvisionedCapacity:
+    !Not [!Equals [!Ref ProvisionedConcurrentExecutions, '0']]
   DeployWithScaling: !Equals [!Ref ApplyAutoscaling, 'true']
+  DeployWithNeptuneScaling: !Equals [!Ref ApplyNeptuneAutoscaling, 'true']
 
   DeployWithLambdaAuth:
-    !Or [!Equals [!Ref AuthType, 'LambdaRequest'], !Equals [!Ref AuthType, 'LambdaToken']]
+    !Or [
+      !Equals [!Ref AuthType, 'LambdaRequest'],
+      !Equals [!Ref AuthType, 'LambdaToken'],
+    ]
   EnableApiGatewayAccessLogs: !Equals [!Ref EnableApiGatewayAccessLogs, 'true']
 
 Resources:
@@ -313,6 +342,25 @@ Resources:
       Parameters:
         LambdaName: !Ref LambdaFunction
         LambdaAlias: live
+      TimeoutInMinutes: 5
+      Tags:
+        - Key: cdf_environment
+          Value: !Ref Environment
+        - Key: cdf_service
+          Value: !Ref CdfService
+    DependsOn: LambdaFunction
+
+  # Optional Neptune auto-scaling configuration
+  AutoScalingNeptuneNestedStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: DeployWithNeptuneScaling
+    Properties:
+      TemplateURL: ./cfn-autoscaling-neptune.yml
+      Parameters:
+        NeptuneClusterID: !Sub '{{resolve:ssm:/cdf/asset-library/${Environment}/neptuneClusterID}}'
+        MinCapacity: !Ref NeptuneAutoScalingMinCapacity
+        MaxCapacity: !Ref NeptuneAutoScalingMaxCapacity
+        TargetUtilization: !Ref NeptuneTargetUtilization
       TimeoutInMinutes: 5
       Tags:
         - Key: cdf_environment

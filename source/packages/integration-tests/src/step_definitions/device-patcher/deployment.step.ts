@@ -25,6 +25,7 @@ import {
 } from '@awssolutions/cdf-device-patcher-client';
 
 import { EC2Client, RunInstancesCommand, RunInstancesCommandInput } from '@aws-sdk/client-ec2';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { fail } from 'assert';
 import fs from 'fs';
 import { container } from '../../di/inversify.config';
@@ -102,7 +103,7 @@ When(
                 options.to = activation.activationRegion;
                 await replaceInFile(options);
             } catch (err) {
-                console.log(`preparing bootstrap script failed: ${err}`);
+                logger.error(`preparing bootstrap script failed: ${err}`);
                 throw err;
             }
 
@@ -136,7 +137,7 @@ When(
                 };
                 await ec2.send(new RunInstancesCommand(params));
             } catch (err) {
-                console.log(`launching ec2 failed: ${err}`);
+                logger.error(`launching ec2 failed: ${err}`);
                 throw err;
             }
         } catch (err) {
@@ -267,7 +268,6 @@ Then(
         const artifacts_certs_key = this['core']?.artifacts?.certs?.key;
         const artifacts_config_bucket = this['core']?.artifacts?.config?.bucket;
         const artifacts_config_key = this['core']?.artifacts?.config?.key;
-
         const patch: CreatePatchRequest = {
             deviceId,
             patchTemplateName: template,
@@ -295,6 +295,7 @@ Then(
                 patchTask,
                 getAdditionalHeaders(world.authToken)
             );
+            logger.debug('patchTaskId: ' + this['patchTaskId']);
         } catch (e) {
             this[RESPONSE_STATUS] = e.status;
         }

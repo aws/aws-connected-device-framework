@@ -10,13 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { container } from './di/inversify.config';
+
 import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
 import { logger } from '@awssolutions/simple-cdf-logger';
 import { CoreTemplateUpdatedEvent, CoreTemplateUpdatedPayload } from './cores/cores.models';
 import { CoresService } from './cores/cores.service';
 import { DeploymentTasksService } from './deploymentTasks/deploymentTasks.service';
 import { DeploymentsService } from './deployments/deployments.service';
-import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
 
 const coresService = container.get<CoresService>(TYPES.CoresService);

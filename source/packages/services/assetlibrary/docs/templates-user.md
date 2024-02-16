@@ -2,7 +2,7 @@
 
 ## Introduction
 
-All groups and devices created within the Asset Library must confirm to a template. A template represents a custom group or device type, with a schema that defines the attributes it may contain, along with the allowed relations a group or device may have between each other.
+All groups and devices created within the Asset Library must conform to a template. A template represents a custom group or device type, with a schema that defines the attributes it may contain, along with the allowed relations a group or device may have between each other.
 
 In addition, a device can be classified as a component which is a special type of device that can only exist when it is part of a larger device assembly. A real world example could be a robotic arm that is represented as a Thing in AWS IoT, which itself is comprised of multiple sensors that are also represented as individual Things within AWS IoT.
 

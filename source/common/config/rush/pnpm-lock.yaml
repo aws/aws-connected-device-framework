@@ -2007,6 +2007,9 @@ importers:
         specifier: 4.4.0
         version: 4.4.0
     devDependencies:
+      '@awssolutions/cdf-config-inject':
+        specifier: workspace:^2.5.2
+        version: link:../../config/config-inject
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../config/eslint-config-custom

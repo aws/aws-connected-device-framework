@@ -471,6 +471,16 @@ describe('GroupsService', () => {
         await instance.getMembers('agrouppath', TypeCategory.Group, 'testtemplate', 'active', 1);
         expect(mockedDao.listRelated).toBeCalledTimes(4);
 
+        // validate undefined string
+        await instance.getMembers(
+            'agrouppath',
+            TypeCategory.Group,
+            'testtemplate',
+            'active',
+            'undefined' as any
+        );
+        expect(mockedDao.listRelated).toBeCalledTimes(5);
+
         // validate errors with non-number string
         try {
             const result = await instance.getMembers(
@@ -485,23 +495,7 @@ describe('GroupsService', () => {
             expect(err.name).toEqual('ArgumentError');
             expect(err.message).toMatch('Invalid offset = something');
         }
-        expect(mockedDao.listRelated).toBeCalledTimes(4);
-
-        // validate errors with undefined string
-        try {
-            const result = await instance.getMembers(
-                'agrouppath',
-                TypeCategory.Group,
-                'testtemplate',
-                'active',
-                'undefined' as any
-            );
-            fail(`Call should trigger an error. Got ${result}`);
-        } catch (err) {
-            expect(err.name).toEqual('ArgumentError');
-            expect(err.message).toMatch('Invalid offset = undefined');
-        }
-        expect(mockedDao.listRelated).toBeCalledTimes(4);
+        expect(mockedDao.listRelated).toBeCalledTimes(5);
 
         // validate errors with NaN
         try {
@@ -517,7 +511,7 @@ describe('GroupsService', () => {
             expect(err.name).toEqual('ArgumentError');
             expect(err.message).toMatch('Invalid offset = NaN');
         }
-        expect(mockedDao.listRelated).toBeCalledTimes(4);
+        expect(mockedDao.listRelated).toBeCalledTimes(5);
 
         // validate errors with -1
         try {
@@ -535,6 +529,6 @@ describe('GroupsService', () => {
                 'Expected number `offset` to be greater than or equal to 0, got -1'
             );
         }
-        expect(mockedDao.listRelated).toBeCalledTimes(4);
+        expect(mockedDao.listRelated).toBeCalledTimes(5);
     });
 });

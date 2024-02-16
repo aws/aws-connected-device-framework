@@ -126,8 +126,8 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
             .setQueryStringParameters({
                 template,
                 state,
-                offset: `${offset}`,
-                count: `${count}`,
+                offset: offset ? `${offset}` : undefined,
+                count: count ? `${count}` : undefined,
             })
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -149,8 +149,8 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
             .setPath(super.groupGroupMembersRelativeUrl(groupPath))
             .setQueryStringParameters({
                 template,
-                offset: `${offset}`,
-                count: `${count}`,
+                offset: offset ? `${offset}` : undefined,
+                count: count ? `${count}` : undefined,
             })
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -170,8 +170,8 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
             .setMethod('GET')
             .setPath(super.groupMembershipsRelativeUrl(groupPath))
             .setQueryStringParameters({
-                offset: `${offset}`,
-                count: `${count}`,
+                offset: offset ? `${offset}` : undefined,
+                count: count ? `${count}` : undefined,
             })
             .setHeaders(super.buildHeaders(additionalHeaders));
 

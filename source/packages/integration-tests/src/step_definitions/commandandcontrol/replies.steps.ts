@@ -12,29 +12,29 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 
-import { use } from 'chai';
-import { setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
+import { DataTable, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import axios from 'axios';
+import { use } from 'chai';
 
-import { container } from '../../di/inversify.config';
 import {
     COMMANDANDCONTROL_CLIENT_TYPES,
     MessagesService,
 } from '@awssolutions/cdf-commandandcontrol-client';
+import { container } from '../../di/inversify.config';
 
-import { iot, mqtt, iotshadow, iotjobs } from 'aws-iot-device-sdk-v2';
-
-import chai_string = require('chai-string');
-import { world } from './commandandcontrol.world';
-import {
-    getAdditionalHeaders,
-    validateExpectedAttributes,
-    buildModel,
-} from '../common/common.steps';
 import { fail } from 'assert';
-import { JobsTestClient } from './jobsTestClient';
+import { iot, iotjobs, iotshadow, mqtt } from 'aws-iot-device-sdk-v2';
 import fs from 'fs';
 import os from 'os';
+import {
+    buildModel,
+    getAdditionalHeaders,
+    validateExpectedAttributes,
+} from '../common/common.steps';
+import { world } from './commandandcontrol.world';
+import { JobsTestClient } from './jobsTestClient';
+
+import chai_string = require('chai-string');
 import path = require('path');
 
 use(chai_string);
@@ -153,8 +153,13 @@ async function reply(thingName: string, action: string, data?: DataTable) {
                     payload as { [key: string]: string }
                 );
             } catch (e) {
-                const { requestId, cfId, extendedRequestId } = e.$metadata;
-                console.log({ requestId, cfId, extendedRequestId });
+                if (e instanceof Error) {
+                    console.log(e.message);
+                    console.log(e.stack);
+                } else {
+                    const { requestId, cfId, extendedRequestId } = e.$metadata;
+                    console.log({ requestId, cfId, extendedRequestId });
+                }
             }
             break;
         }

@@ -80,8 +80,10 @@ export class CreateEphemeralGroupAction extends WorkflowPublishAction {
                 thingNames.map((t) => t.id)
             );
 
-            // as we have created an ephemeral group from the target, we can remove the things from the resolved targets lit
-            // TODO: removing resolved targets means their status will never change from 'pending'. This is to address issues with batching. if status is required then a rethink and redesign of job batching is required. As a workaround, if recipient status is needed it can be retrieved directly from the AWS IoT job execution status.
+            // as we have created an ephemeral group from the target, we can remove the things from the resolved targets list
+            // TODO: removing resolved targets means their status will never change from 'pending'.
+            // This is to address issues with batching. if status is required then a rethink and redesign of job batching is required.
+            // As a workaround, if recipient status is needed it can be retrieved directly from the AWS IoT job execution status.
             resolvedTargets = resolvedTargets.filter((o) => o.type !== 'thing');
             resolvedTargets.push({
                 id: ephemeralGroupResponse.groupName,
