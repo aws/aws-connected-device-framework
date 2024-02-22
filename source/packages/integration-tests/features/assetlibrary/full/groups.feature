@@ -335,6 +335,12 @@ Feature: Group lifecycle
     When I delete assetlibrary group template "TEST-groups-groupTemplate001"
     Then it fails with a 409
     And published assetlibrary group template "TEST-groups-groupTemplate001" exists
+  
+  Scenario: Retrieving a list of groups in bulk
+    Given my authorization is
+      | / | * |
+    When I get bulk groups "/TEST-groups-group001,/TEST-groups-group002"
+    Then result contains groups "/test-groups-group001,/test-groups-group002"
 
   Scenario: Teardown device artifacts
     Given my authorization is
