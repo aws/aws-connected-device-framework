@@ -91,7 +91,7 @@ export class UpdateAction implements EventAction {
                     ]?.filter((value: string) => {
                         return value !== event.attributes['detachedFromDevice'];
                     });
-                    mergedState['groups']['out'][event.attributes['relationship']] =
+                    mergedState['devices']['out'][event.attributes['relationship']] =
                         newRelationship;
                 }
             }
