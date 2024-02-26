@@ -20,6 +20,8 @@ import { UpdateAction } from './actions/eventaction.update';
 import { EventsDao } from './events.dao';
 import { Category, EventModel, EventType } from './events.models';
 import { EventsService } from './events.service';
+const TEST_USER_STATE =
+    '{"groups":{},"attributes":{"email":"test_email@test.com","lastUserCaptureTime":"1698712913","country":"US","language":"en-us","firstName":"Test","lastName":"Tester"},"name":"test_user_id","templateId":"user","parentPath":"/user","groupPath":"/user/test_user_id","category":"group"}';
 
 describe('EventsService', () => {
     let instance: EventsService;
@@ -43,7 +45,7 @@ describe('EventsService', () => {
                     objectId: '/user/test_user_id',
                     time: 'latest',
                     event: 'modify',
-                    state: '{"groups":{},"attributes":{"email":"test_email@test.com","lastUserCaptureTime":"1698712913","country":"US","language":"en-us","firstName":"Test","lastName":"Tester"},"name":"test_user_id","templateId":"user","parentPath":"/user","groupPath":"/user/test_user_id","category":"group"}',
+                    state: TEST_USER_STATE,
                     type: 'groups',
                 });
             } else if (objectId === 'test_device_id') {
@@ -51,7 +53,7 @@ describe('EventsService', () => {
                     objectId: 'test_device_id',
                     time: 'latest',
                     event: 'modify',
-                    state: '{"attributes":{},"groups":{"out":{"manufactured_by":["/supplier/supplier1"],"has_firmware":["/firmware/firmwareId1"],"is_model":["/device/robot/testDevice"]}},"devices":{},"templateId":"testDevice","deviceId":"test_device_id","state":"unprovisioned","category":"device","connected":false}',
+                    state: '{"attributes":{},"groups":{"out":{"manufactured_by":["/supplier/supplier1"],"has_firmware":["/firmware/firmwareId1"],"is_model":["/device/robot/testDevice"]}},"devices":{},"templateId":"testDevice","deviceId":"test_device_id","state":"unprovisioned","category":"device","connected":true}',
                     type: 'devices',
                 });
             } else if ((objectId = 'test_undefined_object')) {
@@ -93,7 +95,26 @@ describe('EventsService', () => {
         await instance.create(testEvent);
 
         expect(mockedEventDao.create).toBeCalledTimes(1);
+        // Calling `create` will add the `out: {}` to the user state in dynamo
+        let userState = JSON.parse(TEST_USER_STATE);
+        userState.groups = { out: {} };
+        expect(mockedEventDao.create).toHaveBeenCalledWith({
+            objectId: testEvent.objectId,
+            type: testEvent.type,
+            event: testEvent.event,
+            state: JSON.stringify(userState),
+            time: testEvent.time,
+            user: undefined,
+        });
         expect(mockedEventDao.update).toBeCalledTimes(1);
+        expect(mockedEventDao.update).toHaveBeenCalledWith({
+            objectId: testEvent.objectId,
+            type: testEvent.type,
+            event: testEvent.event,
+            state: JSON.stringify(userState),
+            time: 'latest',
+            user: undefined,
+        });
     });
 
     it('happy path update a pre-existing device', async () => {
@@ -109,7 +130,23 @@ describe('EventsService', () => {
         await instance.create(testEvent);
 
         expect(mockedEventDao.create).toBeCalledTimes(1);
+        expect(mockedEventDao.create).toHaveBeenCalledWith({
+            objectId: testEvent.objectId,
+            type: testEvent.type,
+            event: testEvent.event,
+            state: testEvent.payload,
+            time: testEvent.time,
+            user: undefined,
+        });
         expect(mockedEventDao.update).toBeCalledTimes(1);
+        expect(mockedEventDao.update).toHaveBeenCalledWith({
+            objectId: testEvent.objectId,
+            type: testEvent.type,
+            event: testEvent.event,
+            state: testEvent.payload,
+            time: 'latest',
+            user: undefined,
+        });
     });
 
     it('happy path create a new device', async () => {
@@ -125,6 +162,22 @@ describe('EventsService', () => {
         await instance.create(testEvent);
 
         expect(mockedEventDao.create).toBeCalledTimes(2);
+        expect(mockedEventDao.create).toHaveBeenNthCalledWith(1, {
+            objectId: testEvent.objectId,
+            type: testEvent.type,
+            event: testEvent.event,
+            state: testEvent.payload,
+            time: testEvent.time,
+            user: undefined,
+        });
+        expect(mockedEventDao.create).toHaveBeenNthCalledWith(2, {
+            objectId: testEvent.objectId,
+            type: testEvent.type,
+            event: testEvent.event,
+            state: testEvent.payload,
+            time: 'latest',
+            user: undefined,
+        });
         expect(mockedEventDao.update).toBeCalledTimes(0);
     });
 
@@ -140,7 +193,23 @@ describe('EventsService', () => {
         };
         await instance.create(testEvent);
 
-        expect(mockedEventDao.create).toBeCalledTimes(1);
-        expect(mockedEventDao.update).toBeCalledTimes(1);
+        expect(mockedEventDao.create).toBeCalledTimes(2);
+        expect(mockedEventDao.create).toHaveBeenNthCalledWith(1, {
+            objectId: testEvent.objectId,
+            type: testEvent.type,
+            event: testEvent.event,
+            state: testEvent.payload,
+            time: testEvent.time,
+            user: undefined,
+        });
+        expect(mockedEventDao.create).toHaveBeenNthCalledWith(2, {
+            objectId: testEvent.objectId,
+            type: testEvent.type,
+            event: testEvent.event,
+            state: testEvent.payload,
+            time: 'latest',
+            user: undefined,
+        });
+        expect(mockedEventDao.update).toBeCalledTimes(0);
     });
 });

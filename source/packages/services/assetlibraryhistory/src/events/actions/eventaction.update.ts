@@ -60,7 +60,7 @@ export class UpdateAction implements EventAction {
                 } else {
                     const newRelationship = mergedState['groups']['out'][
                         event.attributes['relationship']
-                    ].filter((value: string) => {
+                    ]?.filter((value: string) => {
                         return value !== event.attributes['detachedFromGroup'];
                     });
 
@@ -88,7 +88,7 @@ export class UpdateAction implements EventAction {
                 } else {
                     const newRelationship = mergedState['devices']['out'][
                         event.attributes['relationship']
-                    ].filter((value: string) => {
+                    ]?.filter((value: string) => {
                         return value !== event.attributes['detachedFromDevice'];
                     });
                     mergedState['groups']['out'][event.attributes['relationship']] =
@@ -122,9 +122,19 @@ export class UpdateAction implements EventAction {
             state: event.payload,
         };
 
+        const toUpdate: StateHistoryModel = {
+            ...toSave,
+            time: 'latest',
+        };
         await this.eventsDao.create(toSave);
-        toSave.time = 'latest';
-        await this.eventsDao.update(toSave);
+        // If there is no "latest" event, then we need to create it...not update it
+        // This is probably an error getting here (like when the item was initially created, it didn't get the latest entry),
+        // but we should recover gracefully from it
+        if (existingEvent === undefined) {
+            await this.eventsDao.create(toUpdate);
+        } else {
+            await this.eventsDao.update(toUpdate);
+        }
 
         return event;
     }
