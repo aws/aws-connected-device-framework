@@ -55,13 +55,18 @@ export class UpdateAction implements EventAction {
                     event.attributes['attachedToGroup']
                 );
             } else if (event.attributes['detachedFromGroup'] !== undefined) {
-                const newRelationship = mergedState['groups']['out'][
-                    event.attributes['relationship']
-                ].filter((value: string) => {
-                    return value !== event.attributes['detachedFromGroup'];
-                });
+                if (mergedState['groups']['out'] === undefined) {
+                    mergedState['groups']['out'] = {};
+                } else {
+                    const newRelationship = mergedState['groups']['out'][
+                        event.attributes['relationship']
+                    ].filter((value: string) => {
+                        return value !== event.attributes['detachedFromGroup'];
+                    });
 
-                mergedState['groups']['out'][event.attributes['relationship']] = newRelationship;
+                    mergedState['groups']['out'][event.attributes['relationship']] =
+                        newRelationship;
+                }
             } else if (event.attributes['attachedToDevice'] !== undefined) {
                 if (mergedState['devices'] === undefined) {
                     mergedState['devices'] = {};
@@ -78,23 +83,29 @@ export class UpdateAction implements EventAction {
                     event.attributes['attachedToDevice']
                 );
             } else if (event.attributes['detachedFromDevice'] !== undefined) {
-                const newRelationship = mergedState['devices']['out'][
-                    event.attributes['relationship']
-                ].filter((value: string) => {
-                    return value !== event.attributes['detachedFromDevice'];
-                });
-
-                mergedState['groups']['out'][event.attributes['relationship']] = newRelationship;
+                if (mergedState['devices']['out'] === undefined) {
+                    mergedState['devices']['out'] = {};
+                } else {
+                    const newRelationship = mergedState['devices']['out'][
+                        event.attributes['relationship']
+                    ].filter((value: string) => {
+                        return value !== event.attributes['detachedFromDevice'];
+                    });
+                    mergedState['groups']['out'][event.attributes['relationship']] =
+                        newRelationship;
+                }
             }
         }
 
-        if (event.event === 'modify' && event.type === 'devices') {
-            const state = JSON.parse(existingEvent.state);
-            if (state['groups'] !== undefined) {
-                mergedState['groups'] = state['groups'];
-            }
-            if (state['devices'] !== undefined) {
-                mergedState['devices'] = state['devices'];
+        if (existingEvent !== undefined) {
+            if (event.event === 'modify' && event.type === 'devices') {
+                const state = JSON.parse(existingEvent.state);
+                if (state['groups'] !== undefined) {
+                    mergedState['groups'] = state['groups'];
+                }
+                if (state['devices'] !== undefined) {
+                    mergedState['devices'] = state['devices'];
+                }
             }
         }
 
