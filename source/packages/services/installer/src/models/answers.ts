@@ -113,6 +113,7 @@ export interface NeptuneScalingAttributes {
 export interface RestServiceModuleAttribues extends ServiceModuleAttributes {
     enableCustomDomain?: boolean;
     customDomainBasePath?: string;
+    dynamoCapacity?: number;
 }
 
 export interface OrganizationManager extends RestServiceModuleAttribues {

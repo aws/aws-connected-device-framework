@@ -99,6 +99,11 @@ Parameters:
       - 'false'
     MinLength: 1
 
+  DynamoProvisionedThroughputCapacity:
+    Description: The Read/Write units to provision on the dynamo table
+    Type: Number
+    Default: 5
+
 Conditions:
   DeployInVPC: !Not [!Equals [!Ref VpcId, 'N/A']]
   DeployWithLambdaAuth:
@@ -248,6 +253,7 @@ Resources:
             reason: 'Can be decided by the customer, to specify the billing mode'
     Properties:
       TableName: !Sub 'cdf-assetlibraryhistory-${Environment}'
+      BillingMode: 'PROVISIONED'
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       SSESpecification:
@@ -279,11 +285,11 @@ Resources:
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: '5'
-            WriteCapacityUnits: '5'
+            ReadCapacityUnits: !Ref DynamoProvisionedThroughputCapacity
+            WriteCapacityUnits: !Ref DynamoProvisionedThroughputCapacity
       ProvisionedThroughput:
-        ReadCapacityUnits: '5'
-        WriteCapacityUnits: '5'
+        ReadCapacityUnits: !Ref DynamoProvisionedThroughputCapacity
+        WriteCapacityUnits: !Ref DynamoProvisionedThroughputCapacity
 
   EventsLambdaFunction:
     Type: AWS::Serverless::Function
