@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-assetlibrary-history",
+      "comment": "expose dynamo capacity values through cloudformation",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-assetlibrary-history"
+}
