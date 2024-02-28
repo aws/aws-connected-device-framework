@@ -137,21 +137,41 @@ Resources:
         Actions:
           - Kinesis:
               PartitionKey: ${topic(4)}
-              RoleArn: !GetAtt LambdaExecutionRole.Arn
+              RoleArn: !GetAtt KinesisExecutionRole.Arn
               StreamName: !Ref EventsKinesisStream
         Description: 'Saves AssetLibrary configuration changes'
         AwsIotSqlVersion: '2016-03-23'
         RuleDisabled: false
         Sql: !Sub "SELECT * FROM '${AssetLibraryEventsTopic}'"
 
-  LambdaInvocationPermission:
-    Type: AWS::Lambda::Permission
+  KinesisExecutionRole:
+    Type: AWS::IAM::Role
     Properties:
-      SourceArn: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${AssetLibraryEventsRule}'
-      Action: lambda:InvokeFunction
-      Principal: iot.amazonaws.com
-      FunctionName: !GetAtt EventsLambdaFunction.Arn
-      SourceAccount: !Ref AWS::AccountId
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - iot.amazonaws.com
+            Action: sts:AssumeRole
+      Path: '/cdf/assetlibraryhistory/'
+      ManagedPolicyArns:
+        - !Ref KinesisPolicy
+
+  KinesisPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'Role policy for IoT rule engine'
+      Path: '/cdf/assetlibraryhistory/'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+              - 'kinesis:PutRecord'
+            Effect: Allow
+            Resource:
+              - !GetAtt EventsKinesisStream.Arn
 
   LambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -184,6 +204,16 @@ Resources:
                   - 'dynamodb:PutItem'
                   - 'dynamodb:UpdateItem'
                   - 'dynamodb:DeleteItem'
+                Effect: Allow
+                Resource:
+                  - !GetAtt HistoryTable.Arn
+                  - !Sub '${HistoryTable.Arn}/index/type-time-index'
+                  - !GetAtt EventsKinesisStream.Arn
+        - PolicyName: 'Kinesis'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
                   - 'kinesis:DescribeStream'
                   - 'kinesis:DescribeStreamSummary'
                   - 'kinesis:GetRecords'
@@ -193,8 +223,6 @@ Resources:
                   - 'kinesis:SubscribeToShard'
                 Effect: Allow
                 Resource:
-                  - !GetAtt HistoryTable.Arn
-                  - !Sub '${HistoryTable.Arn}/index/type-time-index'
                   - !GetAtt EventsKinesisStream.Arn
 
   RESTLambdaExecutionRole:
@@ -300,7 +328,7 @@ Resources:
     Properties:
       Name: !Sub 'cdf-assetlibrary-history-stream-${Environment}'
       StreamModeDetails:
-        StreamMode: 'on-demand'
+        StreamMode: 'ON_DEMAND'
 
   EventsLambdaFunction:
     Type: AWS::Serverless::Function
@@ -323,8 +351,8 @@ Resources:
           Type: Kinesis
           Properties:
             Stream: !GetAtt EventsKinesisStream.Arn
-            BatchSize: 100
-            MaximumBatchingWindowInSeconds: 30
+            BatchSize: 1000
+            MaximumBatchingWindowInSeconds: 60
             StartingPosition: LATEST
             MaximumRetryAttempts: 1
 
