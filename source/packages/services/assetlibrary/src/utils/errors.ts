@@ -204,3 +204,10 @@ export class ArgumentError extends Error {
         this.name = 'ArgumentError';
     }
 }
+
+export class PrematurelyClosedConnectionError extends Error {
+    constructor() {
+        super(`Connection closed Prematurely`);
+        this.name = 'PrematurelyClosedConnectionError';
+    }
+}

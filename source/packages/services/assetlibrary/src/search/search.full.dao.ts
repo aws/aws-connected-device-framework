@@ -11,10 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { process, structure } from 'gremlin';
+import { process } from 'gremlin';
 import { inject, injectable } from 'inversify';
 import { NodeAssembler } from '../data/assembler';
-import { BaseDaoFull, NeptuneConnection } from '../data/base.full.dao';
+import { ConnectionDaoFull, NeptuneConnection } from '../data/connection.full.dao';
 import { Node } from '../data/node';
 import { TYPES } from '../di/types';
 import { TypeUtils } from '../utils/typeUtils';
@@ -29,16 +29,13 @@ import {
 const __ = process.statics;
 
 @injectable()
-export class SearchDaoFull extends BaseDaoFull {
+export class SearchDaoFull {
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
         @inject('enableDfeOptimization') private enableDfeOptimization: boolean,
         @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
         @inject(TYPES.NodeAssembler) private assembler: NodeAssembler,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
-    ) {
-        super(neptuneUrl, graphSourceFactory);
-    }
+        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull
+    ) {}
 
     private buildSearchTraverser(
         conn: NeptuneConnection,
@@ -243,32 +240,33 @@ export class SearchDaoFull extends BaseDaoFull {
             )}, authorizedPaths:${authorizedPaths}`
         );
 
-        const conn = await super.getConnection();
-        const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
+        const results = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
 
-        if (request.sort?.length > 0) {
-            traverser.order();
-            request.sort.forEach((s) => {
-                const order = s.direction === 'ASC' ? process.order.asc : process.order.desc;
-                traverser.by(__.coalesce(__.values(s.field), __.constant('')), order);
-            });
-        }
+            if (request.sort?.length > 0) {
+                traverser.order();
+                request.sort.forEach((s) => {
+                    const order = s.direction === 'ASC' ? process.order.asc : process.order.desc;
+                    traverser.by(__.coalesce(__.values(s.field), __.constant('')), order);
+                });
+            }
 
-        // TODO: this should be done from any service that calls this, so we should replace this with a simple number/range validation
-        const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
-            request.offset,
-            request.count
-        );
-        traverser
-            .range(offsetAsInt, offsetAsInt + countAsInt)
-            .valueMap()
-            .with_(process.withOptions.tokens);
+            // TODO: this should be done from any service that calls this, so we should replace this with a simple number/range validation
+            const { offsetAsInt, countAsInt } = this.typeUtils.parseAndValidateOffsetAndCount(
+                request.offset,
+                request.count
+            );
+            traverser
+                .range(offsetAsInt, offsetAsInt + countAsInt)
+                .valueMap()
+                .with_(process.withOptions.tokens);
 
-        logger.debug(
-            `search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`
-        );
+            logger.debug(
+                `search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`
+            );
 
-        const results = await traverser.toList();
+            return await traverser.toList();
+        });
 
         logger.debug(`search.full.dao search: results:${JSON.stringify(results)}`);
 
@@ -299,13 +297,14 @@ export class SearchDaoFull extends BaseDaoFull {
                 request
             )}, authorizedPaths:${authorizedPaths}`
         );
-        const conn = await super.getConnection();
-        const traverser = this.buildSearchTraverser(conn, request, authorizedPaths).union(
-            __.hasLabel('group'),
-            __.has('deviceId')
-        );
-        logger.debug(`search.full.dao delete: in: traverser: ${traverser.toString()}`);
-        await traverser.drop().iterate();
+        await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = this.buildSearchTraverser(conn, request, authorizedPaths).union(
+                __.hasLabel('group'),
+                __.has('deviceId')
+            );
+            logger.debug(`search.full.dao delete: in: traverser: ${traverser.toString()}`);
+            await traverser.drop().iterate();
+        });
     }
 
     public async facet(
@@ -318,27 +317,28 @@ export class SearchDaoFull extends BaseDaoFull {
             )}, authorizedPaths:${authorizedPaths}`
         );
 
-        const conn = await super.getConnection();
-        const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
+        const results = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
 
-        if (request.facetField !== undefined) {
-            if (request.facetField.traversals !== undefined) {
-                request.facetField.traversals.forEach((t) => {
-                    if (t.direction === SearchRequestFilterDirection.in) {
-                        traverser.in_(t.relation);
-                    } else {
-                        traverser.out(t.relation);
-                    }
-                });
+            if (request.facetField !== undefined) {
+                if (request.facetField.traversals !== undefined) {
+                    request.facetField.traversals.forEach((t) => {
+                        if (t.direction === SearchRequestFilterDirection.in) {
+                            traverser.in_(t.relation);
+                        } else {
+                            traverser.out(t.relation);
+                        }
+                    });
+                }
+                traverser.values(request.facetField.field).groupCount();
             }
-            traverser.values(request.facetField.field).groupCount();
-        }
-        logger.debug(
-            `search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(
-                traverser.toString()
-            )}`
-        );
-        const results = await traverser.next();
+            logger.debug(
+                `search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(
+                    traverser.toString()
+                )}`
+            );
+            return await traverser.next();
+        });
 
         logger.debug(`search.full.dao facet: results: ${JSON.stringify(results)}`);
 
@@ -360,9 +360,10 @@ export class SearchDaoFull extends BaseDaoFull {
             )}, authorizedPaths:${authorizedPaths}`
         );
 
-        const conn = await super.getConnection();
-        const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
-        const result = await traverser.count().next();
+        const result = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
+            return await traverser.count().next();
+        });
 
         const total = result.value as number;
         logger.debug(`search.full.dao summarize: exit: total: ${total}`);
