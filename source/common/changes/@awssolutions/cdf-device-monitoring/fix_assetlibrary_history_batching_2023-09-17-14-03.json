@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-device-monitoring",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-device-monitoring"
+}
