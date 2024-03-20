@@ -208,7 +208,6 @@ Resources:
                 Resource:
                   - !GetAtt HistoryTable.Arn
                   - !Sub '${HistoryTable.Arn}/index/type-time-index'
-                  - !GetAtt EventsKinesisStream.Arn
         - PolicyName: 'Kinesis'
           PolicyDocument:
             Version: '2012-10-17'
@@ -339,7 +338,7 @@ Resources:
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs18.x
-      Timeout: 30
+      Timeout: 120
       Environment:
         Variables:
           APP_CONFIG_DIR: 'config'
