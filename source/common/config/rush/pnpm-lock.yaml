@@ -80,8 +80,8 @@ importers:
         specifier: 2.1386.0
         version: 2.1386.0
       axios:
-        specifier: 0.25.0
-        version: 0.25.0
+        specifier: 1.6.0
+        version: 1.6.0
       chai:
         specifier: 4.2.0
         version: 4.2.0
@@ -2848,8 +2848,8 @@ importers:
         specifier: workspace:^2.5.2
         version: link:../../libraries/core/errors
       axios:
-        specifier: 0.21.2
-        version: 0.21.2(debug@4.3.4)
+        specifier: 1.6.0
+        version: 1.6.0
       dotenv-flow:
         specifier: ~3.2.0
         version: 3.2.0
@@ -11272,7 +11272,7 @@ packages:
     requiresBuild: true
     dependencies:
       '@httptoolkit/websocket-stream': 6.0.1
-      axios: 0.21.4
+      axios: 0.21.4(debug@4.3.4)
       cmake-js: 6.3.0
       crypto-js: 4.1.1
       fastestsmallesttextencoderdecoder: 1.0.22
@@ -11428,20 +11428,12 @@ packages:
     resolution: {integrity: sha512-NmWvPnx0F1SfrQbYwOi7OeaNGokp9XhzNioJ/CSBs8Qa4vxug81mhJEAVZwxXuBmYB5KDRfMq/F3RR0BIU7sWg==}
     dev: false
 
-  /axios@0.21.2(debug@4.3.4):
-    resolution: {integrity: sha512-87otirqUw3e8CzHTMO+/9kh/FSgXt/eVDvipijwDtEuwbkySWZ9SBm6VEubmJ/kLKEoLQV/POhxXFb66bfekfg==}
-    dependencies:
-      follow-redirects: 1.15.2(debug@4.3.4)
-    transitivePeerDependencies:
-      - debug
-
-  /axios@0.21.4:
+  /axios@0.21.4(debug@4.3.4):
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
       follow-redirects: 1.15.2(debug@4.3.4)
     transitivePeerDependencies:
       - debug
-    dev: false
 
   /axios@0.24.0:
     resolution: {integrity: sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==}
@@ -11450,10 +11442,12 @@ packages:
     transitivePeerDependencies:
       - debug
 
-  /axios@0.25.0:
-    resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
+  /axios@1.6.0:
+    resolution: {integrity: sha512-EZ1DYihju9pwVB+jg67ogm+Tmqc6JmhamRN6I4Zt8DfZu5lbcQGw3ozH9lFejSJgs/ibaef3A9PMXPLeefFGJg==}
     dependencies:
       follow-redirects: 1.15.2(debug@4.3.4)
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
     dev: false
@@ -12100,7 +12094,7 @@ packages:
     engines: {node: '>= 10.0.0'}
     hasBin: true
     dependencies:
-      axios: 0.21.2(debug@4.3.4)
+      axios: 0.21.4(debug@4.3.4)
       debug: 4.3.4(supports-color@8.0.0)
       fs-extra: 5.0.0
       is-iojs: 1.1.0
@@ -12124,7 +12118,7 @@ packages:
     engines: {node: '>= 10.0.0'}
     hasBin: true
     dependencies:
-      axios: 0.21.2(debug@4.3.4)
+      axios: 0.21.4(debug@4.3.4)
       bluebird: 3.7.2
       debug: 4.3.4(supports-color@8.0.0)
       fs-extra: 5.0.0
@@ -17312,6 +17306,10 @@ packages:
     dependencies:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
+
+  /proxy-from-env@1.1.0:
+    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
+    dev: false
 
   /prr@1.0.1:
     resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}

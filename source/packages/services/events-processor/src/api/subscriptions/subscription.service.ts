@@ -319,13 +319,13 @@ export class SubscriptionService {
 
         ow(eventId, ow.string.nonEmpty);
 
-        const [results, pagintion] = await this.subscriptionDao.listSubscriptionsForEvent(
+        const [results, pagination] = await this.subscriptionDao.listSubscriptionsForEvent(
             eventId,
             from
         );
 
         logger.debug(`subscription.service listByEvent: exit: model: ${JSON.stringify(results)}`);
-        return [results, pagintion];
+        return [results, pagination];
     }
 
     public async create(item: SubscriptionItem): Promise<string> {
