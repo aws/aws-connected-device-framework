@@ -391,4 +391,43 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
                 throw createError(err.response.status, err.response.text);
             });
     }
+
+    /**
+     * Gets the group details in bulk for the given group paths. 
+     * @param groupPaths List of group paths to get details for
+     * @param includeGroups Optional flag to include the groups in the response. 
+     * @param additionalHeaders Optional additional headers to send with the request. 
+     * @returns Group details for the given group paths. 
+     * @throws Error if the groupPaths is not an array. 
+     * 
+     */
+    async bulkGetGroups(
+        groupPaths: string[], 
+        includeGroups?:boolean,
+        additionalHeaders?:RequestHeaders, 
+    ): Promise<GroupResourceList> {
+        ow(groupPaths, 'groupPaths', ow.array.nonEmpty);
+        let url = `${this.baseUrl}${super.bulkGroupsRelativeUrl()}`;
+        const qs = QSHelper.getQueryString({includeGroups});
+        let query = "";
+        groupPaths.forEach(gp => {
+            query += gp + ",";
+        });
+        query = query.substring(0, query.length - 1);
+        if (qs) {
+            url += `?${qs}&groupPaths=${query}`;
+        } else {
+            url += `?groupPaths=${query}`;
+        }
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
+    }
 }
