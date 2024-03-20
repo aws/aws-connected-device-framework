@@ -311,6 +311,61 @@ describe('FilterService', () => {
         expect(mockedGetEventConfigCall).toBeCalled();
     });
 
+    it('undefined value from listSubscriptionsForEvent should not error filter function', async () => {
+        const eventSourceId = 'ES123';
+        const principal = 'deviceId';
+        const principalValue = 'device001';
+
+        // stubs
+        const commonMessageAttributes = {
+            eventSourceId,
+            principal,
+            principalValue,
+        };
+
+        const events: CommonEvent[] = [
+            {
+                ...commonMessageAttributes,
+                attributes: {
+                    sequence: 1,
+                    batteryLevel: 25,
+                    batteryLevelThreshold: 22,
+                },
+            },
+            {
+                ...commonMessageAttributes,
+                attributes: {
+                    sequence: 2,
+                    batteryLevel: 22,
+                    batteryLevelThreshold: 22,
+                },
+            },
+        ];
+
+        // mocks
+        // mockedSubscriptionDao.listSubscriptionsForEventMessage is already mocked
+        // and will return the undefined result we need for this test
+
+        const mockedGetEventConfigCall = (mockedEventDao.getEventConfig = jest
+            .fn()
+            .mockImplementation(() => {
+                // do nothing, acting as a spy only
+            }));
+
+        const mockedCreateAlertsCall = (mockedAlertDao.create = jest
+            .fn()
+            .mockImplementationOnce((_alerts) => {
+                // do nothing, acting as a spy only
+            }));
+
+        // execute
+        await instance.filter(events);
+
+        // verify
+        expect(mockedCreateAlertsCall).toBeCalledTimes(0);
+        expect(mockedGetEventConfigCall).toBeCalledTimes(0);
+    });
+
     it('disabling alert thresholds should alert each time', async () => {
         const eventSourceId = 'ES123';
         const principal = 'deviceId';

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-events-processor",
+      "comment": "keep filter from erroring when no events are found, additional cleanup",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-events-processor"
+}
