@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@awssolutions/cdf-installer",
+      "comment": "expose dynamo capacity values in the installer",
+      "type": "none"
+    }
+  ],
+  "packageName": "@awssolutions/cdf-installer"
+}
