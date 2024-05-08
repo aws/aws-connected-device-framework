@@ -1,0 +1,25 @@
+{
+  "name": "@awssolutions/cdf-version",
+  "version": "0.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "npx shx rm -rf dist *.tsbuildinfo .rush .nyc_output *.log",
+    "lint": "npx eslint . --ext '.ts'",
+    "build": "npx ts-node --swc scripts/compile.ts",
+    "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
+  },
+  "devDependencies": {
+    "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
+    "@types/node": "^18.17.0",
+    "typescript": "4.2.4",
+    "ts-morph": "~22.0.0"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^18.17.0",
+    "@swc/core": "~1.5.3"
+  }
+}
