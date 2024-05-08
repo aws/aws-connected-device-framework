@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import '@awssolutions/cdf-config-inject';
-import { version } from '@awssolutions/cdf-version';
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import AWS from 'aws-sdk';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 import { HttpHeaderUtils } from '../utils/httpHeaders';
@@ -104,7 +104,7 @@ const managementAccountCredentials = new AWS.ChainableTemporaryCredentials({
 });
 
 AWS.config.update({
-    customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ogm`,
+    customUserAgent: getCustomUserAgent('ogm'),
 });
 
 // for 3rd party objects, we need to use factory injectors

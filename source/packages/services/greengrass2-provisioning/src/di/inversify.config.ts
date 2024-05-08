@@ -14,7 +14,7 @@ import 'reflect-metadata';
 
 import '@awssolutions/cdf-config-inject';
 
-import { version } from '@awssolutions/cdf-version';
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
@@ -134,7 +134,7 @@ container
             if (!container.isBound(TYPES.DynamoDB)) {
                 const ddb = new DynamoDBClient({
                     region: process.env.AWS_REGION,
-                    customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ggp`,
+                    customUserAgent: getCustomUserAgent('ggp'),
                 });
                 container.bind<DynamoDBClient>(TYPES.DynamoDB).toConstantValue(ddb);
             }
@@ -181,7 +181,7 @@ container.bind<interfaces.Factory<SQSClient>>(TYPES.SQSFactory).toFactory<SQSCli
         if (!container.isBound(TYPES.SQS)) {
             const sqs = new SQSClient({
                 region: process.env.AWS_REGION,
-                customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ggp`,
+                customUserAgent: getCustomUserAgent('ggp'),
             });
             container.bind<SQSClient>(TYPES.SQS).toConstantValue(sqs);
         }
@@ -195,7 +195,7 @@ container.bind<interfaces.Factory<S3Client>>(TYPES.S3Factory).toFactory<S3Client
         if (!container.isBound(TYPES.S3)) {
             const s3 = new S3Client({
                 region: process.env.AWS_REGION,
-                customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ggp`,
+                customUserAgent: getCustomUserAgent('ggp'),
             });
             container.bind<S3Client>(TYPES.S3).toConstantValue(s3);
         }
@@ -209,7 +209,7 @@ container.bind<interfaces.Factory<IoTClient>>(TYPES.IotFactory).toFactory<IoTCli
         if (!container.isBound(TYPES.Iot)) {
             const iot = new IoTClient({
                 region: process.env.AWS_REGION,
-                customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ggp`,
+                customUserAgent: getCustomUserAgent('ggp'),
             });
             container.bind<IoTClient>(TYPES.Iot).toConstantValue(iot);
         }
@@ -227,7 +227,7 @@ container
             if (!container.isBound(TYPES.Greengrassv2)) {
                 const ggv2 = new GreengrassV2Client({
                     region: process.env.AWS_REGION,
-                    customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ggp`,
+                    customUserAgent: getCustomUserAgent('ggp'),
                 });
                 container.bind<GreengrassV2Client>(TYPES.Greengrassv2).toConstantValue(ggv2);
             }
@@ -243,7 +243,7 @@ container
             if (!container.isBound(TYPES.Lambda)) {
                 const l = new LambdaClient({
                     region: process.env.AWS_REGION,
-                    customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ggp`,
+                    customUserAgent: getCustomUserAgent('ggp'),
                 });
                 container.bind<LambdaClient>(TYPES.Lambda).toConstantValue(l);
             }

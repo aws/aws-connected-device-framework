@@ -13,7 +13,7 @@
 import 'reflect-metadata';
 
 import '@awssolutions/cdf-config-inject';
-import { version } from '@awssolutions/cdf-version';
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 import AWS from 'aws-sdk';
@@ -92,7 +92,7 @@ container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory).toFactory<AWS.S3>(()
         if (!container.isBound(TYPES.S3)) {
             const s3 = new AWS.S3({
                 region: process.env.AWS_REGION,
-                customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ale`,
+                customUserAgent: getCustomUserAgent('ale'),
             });
             container.bind<AWS.S3>(TYPES.S3).toConstantValue(s3);
         }

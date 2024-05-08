@@ -93,6 +93,6 @@
     "winston-transport": "4.3.0"
   },
   "dependencies": {
-    "@awssolutions/cdf-version": "workspace:~0.0.0"
+    "@awssolutions/cdf-attribution": "workspace:~0.0.0"
   }
 }
