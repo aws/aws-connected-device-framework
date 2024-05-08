@@ -13,6 +13,7 @@
 import 'reflect-metadata';
 
 import '@awssolutions/cdf-config-inject';
+import { version } from '@awssolutions/cdf-version';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 import '../certificates/certificates.controller';
@@ -84,6 +85,10 @@ container
     .bind<CertificatesTaskDao>(TYPES.CertificatesTaskDao)
     .to(CertificatesTaskDao)
     .inSingletonScope();
+
+AWS.config.update({
+    customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_bct`,
+});
 
 // for 3rd party objects, we need to use factory injectors
 // DynamoDB

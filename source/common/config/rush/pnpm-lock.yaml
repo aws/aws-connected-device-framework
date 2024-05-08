@@ -2279,6 +2279,10 @@ importers:
         version: 4.2.4
 
   ../../packages/services/assetlibrary:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@awssolutions/cdf-config-inject':
         specifier: workspace:^2.5.2
@@ -2456,6 +2460,10 @@ importers:
         version: 4.4.0
 
   ../../packages/services/assetlibrary-export:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@awssolutions/cdf-config-inject':
         specifier: workspace:^2.5.2
@@ -2621,6 +2629,10 @@ importers:
         version: 4.3.0
 
   ../../packages/services/assetlibraryhistory:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@awssolutions/cdf-config-inject':
         specifier: workspace:^2.5.2
@@ -2962,6 +2974,10 @@ importers:
         version: 4.2.4
 
   ../../packages/services/bulkcerts:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@awssolutions/cdf-config-inject':
         specifier: workspace:^2.5.2
@@ -3115,6 +3131,10 @@ importers:
         version: 4.4.0
 
   ../../packages/services/certificateactivator:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@awssolutions/cdf-assetlibrary-client':
         specifier: workspace:^2.5.2
@@ -3247,6 +3267,10 @@ importers:
         version: 4.4.0
 
   ../../packages/services/certificatevendor:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@awssolutions/cdf-assetlibrary-client':
         specifier: workspace:^2.5.2
@@ -3364,6 +3388,10 @@ importers:
         version: 4.4.0
 
   ../../packages/services/command-and-control:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@awssolutions/cdf-assetlibrary-client':
         specifier: workspace:^2.5.2
@@ -3809,6 +3837,10 @@ importers:
         version: 4.4.0
 
   ../../packages/services/device-patcher:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@awssolutions/cdf-config-inject':
         specifier: workspace:^2.5.2
@@ -3977,6 +4009,10 @@ importers:
         version: 4.4.0
 
   ../../packages/services/events-alerts:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@awssolutions/cdf-config-inject':
         specifier: workspace:^2.5.2
@@ -4100,6 +4136,10 @@ importers:
         version: 4.4.0
 
   ../../packages/services/events-processor:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@awssolutions/cdf-config-inject':
         specifier: workspace:^2.5.2
@@ -4358,6 +4398,10 @@ importers:
         version: 1.10.2
 
   ../../packages/services/greengrass2-provisioning:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@aws-sdk/abort-controller':
         specifier: 3.38.0
@@ -4716,6 +4760,10 @@ importers:
         version: 4.2.4
 
   ../../packages/services/organization-manager:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@awssolutions/cdf-config-inject':
         specifier: workspace:^2.5.2
@@ -4857,6 +4905,10 @@ importers:
         version: 4.4.0
 
   ../../packages/services/provisioning:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/version
     devDependencies:
       '@awssolutions/cdf-config-inject':
         specifier: workspace:^2.5.2

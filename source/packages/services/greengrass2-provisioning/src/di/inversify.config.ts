@@ -14,6 +14,7 @@ import 'reflect-metadata';
 
 import '@awssolutions/cdf-config-inject';
 
+import { version } from '@awssolutions/cdf-version';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
@@ -131,7 +132,10 @@ container
     .toFactory<DynamoDBClient>(() => {
         return () => {
             if (!container.isBound(TYPES.DynamoDB)) {
-                const ddb = new DynamoDBClient({ region: process.env.AWS_REGION });
+                const ddb = new DynamoDBClient({
+                    region: process.env.AWS_REGION,
+                    customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ggp`,
+                });
                 container.bind<DynamoDBClient>(TYPES.DynamoDB).toConstantValue(ddb);
             }
             return container.get<DynamoDBClient>(TYPES.DynamoDB);
@@ -175,7 +179,10 @@ decorate(injectable(), SQSClient);
 container.bind<interfaces.Factory<SQSClient>>(TYPES.SQSFactory).toFactory<SQSClient>(() => {
     return () => {
         if (!container.isBound(TYPES.SQS)) {
-            const sqs = new SQSClient({ region: process.env.AWS_REGION });
+            const sqs = new SQSClient({
+                region: process.env.AWS_REGION,
+                customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ggp`,
+            });
             container.bind<SQSClient>(TYPES.SQS).toConstantValue(sqs);
         }
         return container.get<SQSClient>(TYPES.SQS);
@@ -186,7 +193,10 @@ decorate(injectable(), S3Client);
 container.bind<interfaces.Factory<S3Client>>(TYPES.S3Factory).toFactory<S3Client>(() => {
     return () => {
         if (!container.isBound(TYPES.S3)) {
-            const s3 = new S3Client({ region: process.env.AWS_REGION });
+            const s3 = new S3Client({
+                region: process.env.AWS_REGION,
+                customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ggp`,
+            });
             container.bind<S3Client>(TYPES.S3).toConstantValue(s3);
         }
         return container.get<S3Client>(TYPES.S3);
@@ -197,7 +207,10 @@ decorate(injectable(), IoTClient);
 container.bind<interfaces.Factory<IoTClient>>(TYPES.IotFactory).toFactory<IoTClient>(() => {
     return () => {
         if (!container.isBound(TYPES.Iot)) {
-            const iot = new IoTClient({ region: process.env.AWS_REGION });
+            const iot = new IoTClient({
+                region: process.env.AWS_REGION,
+                customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ggp`,
+            });
             container.bind<IoTClient>(TYPES.Iot).toConstantValue(iot);
         }
         return container.get<IoTClient>(TYPES.Iot);
@@ -212,7 +225,10 @@ container
     .toFactory<GreengrassV2Client>(() => {
         return () => {
             if (!container.isBound(TYPES.Greengrassv2)) {
-                const ggv2 = new GreengrassV2Client({ region: process.env.AWS_REGION });
+                const ggv2 = new GreengrassV2Client({
+                    region: process.env.AWS_REGION,
+                    customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ggp`,
+                });
                 container.bind<GreengrassV2Client>(TYPES.Greengrassv2).toConstantValue(ggv2);
             }
             return container.get<GreengrassV2Client>(TYPES.Greengrassv2);
@@ -225,7 +241,10 @@ container
     .toFactory<LambdaClient>(() => {
         return () => {
             if (!container.isBound(TYPES.Lambda)) {
-                const l = new LambdaClient({ region: process.env.AWS_REGION });
+                const l = new LambdaClient({
+                    region: process.env.AWS_REGION,
+                    customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_ggp`,
+                });
                 container.bind<LambdaClient>(TYPES.Lambda).toConstantValue(l);
             }
             return container.get<LambdaClient>(TYPES.Lambda);

@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import '@awssolutions/cdf-config-inject';
+import { version } from '@awssolutions/cdf-version';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 import 'reflect-metadata';
 
@@ -97,6 +98,10 @@ container.bind<ActivationDao>(TYPES.ActivationDao).to(ActivationDao).inSingleton
 
 container.bind<DynamoDbUtils>(TYPES.DynamoDbUtils).to(DynamoDbUtils).inSingletonScope();
 container.bind<ExpressionParser>(TYPES.ExpressionParser).to(ExpressionParser).inSingletonScope();
+
+AWS.config.update({
+    customUserAgent: `awssolutions/99CF47E5-1F4E-4DB2-AB43-0E975D0C7888_${version}_dvp`,
+});
 
 // for 3rd party objects, we need to use factory injectors
 // DynamoDB
