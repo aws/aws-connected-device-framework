@@ -1377,6 +1377,22 @@ importers:
         specifier: 8.46.0
         version: 8.46.0(supports-color@8.0.0)
 
+  ../../packages/libraries/core/attribution:
+    dependencies:
+      '@awssolutions/cdf-version':
+        specifier: workspace:~0.0.0
+        version: link:../version
+      '@types/node':
+        specifier: ^18.17.0
+        version: 18.17.0
+    devDependencies:
+      '@awssolutions/eslint-config-custom':
+        specifier: workspace:~0.0.0
+        version: link:../../config/eslint-config-custom
+      typescript:
+        specifier: 4.2.4
+        version: 4.2.4
+
   ../../packages/libraries/core/cdf-client-request-signer:
     dependencies:
       '@aws-sdk/credential-providers':
@@ -10301,7 +10317,7 @@ packages:
   /@types/aws4@1.11.2:
     resolution: {integrity: sha512-x0f96eBPrCCJzJxdPbUvDFRva4yPpINJzTuXXpmS2j9qLUpF2nyGzvXPlRziuGbCsPukwY4JfuO+8xwsoZLzGw==}
     dependencies:
-      '@types/node': 18.17.0
+      '@types/node': 18.17.1
     dev: true
 
   /@types/babel__core@7.20.1:
@@ -10459,7 +10475,7 @@ packages:
     resolution: {integrity: sha512-8bVUjXZvJacUFkJXHdyZ9iH1Eaj5V7I8c4NdH5sQJsdXkqT4CA5Dhb4yb4VE/3asyx4L9ayZr1NIhTsWHczmMw==}
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 18.11.18
+      '@types/node': 18.17.1
     dev: true
 
   /@types/graceful-fs@4.1.6:
@@ -10568,7 +10584,7 @@ packages:
   /@types/jsonwebtoken@9.0.1:
     resolution: {integrity: sha512-c5ltxazpWabia/4UzhIoaDcIza4KViOQhdbjRlfcIGVnsE3c3brkz9Z+F/EeJIECOQP7W7US2hNE930cWWkPiw==}
     dependencies:
-      '@types/node': 18.17.0
+      '@types/node': 18.17.1
     dev: true
 
   /@types/jwk-to-pem@2.0.0:
@@ -10722,7 +10738,7 @@ packages:
     resolution: {integrity: sha512-tLfnlJf6A5mB6ddqF159GqcDizfzbMUB1/DeT59/wBNqzRTNNKsaw79A/1TZ84X+f/EwWH8FeuSkjlCLyqS/zQ==}
     dependencies:
       '@types/cookiejar': 2.1.2
-      '@types/node': 18.17.0
+      '@types/node': 18.17.1
     dev: true
 
   /@types/through@0.0.30:
