@@ -18,6 +18,7 @@ import AWS from 'aws-sdk';
 import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-client';
 import { provisioningContainerModule } from '@awssolutions/cdf-provisioning-client';
 import { thingListBuilderContainerModule } from '@awssolutions/cdf-thing-list-builder';
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 import { CommandsAssembler } from '../commands/commands.assembler';
 import { CommandsDao } from '../commands/commands.dao';
@@ -112,7 +113,10 @@ container.bind<CheckBulkProvisioningAction>(TYPES.CheckBulkProvisioningAction).t
 
 container.bind<DynamoDbUtils>(TYPES.DynamoDbUtils).to(DynamoDbUtils);
 
-AWS.config.update({ region: process.env.AWS_REGION });
+AWS.config.update({
+    region: process.env.AWS_REGION,
+    customUserAgent: getCustomUserAgent('cnc'),
+});
 
 // for 3rd party objects, we need to use factory injectors
 decorate(injectable(), AWS.DynamoDB.DocumentClient);

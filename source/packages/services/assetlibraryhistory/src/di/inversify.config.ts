@@ -14,6 +14,7 @@ import 'reflect-metadata';
 
 import '@awssolutions/cdf-config-inject';
 
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
@@ -75,7 +76,10 @@ container
     .toFactory<AWS.DynamoDB.DocumentClient>(() => {
         return () => {
             if (!container.isBound(TYPES.DocumentClient)) {
-                const dc = new AWS.DynamoDB.DocumentClient({ region: process.env.AWS_REGION });
+                const dc = new AWS.DynamoDB.DocumentClient({
+                    region: process.env.AWS_REGION,
+                    customUserAgent: getCustomUserAgent('alh'),
+                });
                 container
                     .bind<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient)
                     .toConstantValue(dc);

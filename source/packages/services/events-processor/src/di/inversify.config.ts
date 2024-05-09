@@ -14,6 +14,7 @@ import 'reflect-metadata';
 
 import '@awssolutions/cdf-config-inject';
 
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
@@ -152,6 +153,10 @@ container.bind<SMSTarget>(TYPES.SMSTarget).to(SMSTarget).inSingletonScope();
 container.bind<PushTarget>(TYPES.PushTarget).to(PushTarget).inSingletonScope();
 
 container.bind<DynamoDbUtils>(TYPES.DynamoDbUtils).to(DynamoDbUtils).inSingletonScope();
+
+AWS.config.update({
+    customUserAgent: getCustomUserAgent('ntfp'),
+});
 
 // for 3rd party objects, we need to use factory injectors
 

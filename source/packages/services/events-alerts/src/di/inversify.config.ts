@@ -14,6 +14,7 @@ import 'reflect-metadata';
 
 import '@awssolutions/cdf-config-inject';
 
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 import { AlertAssembler } from '../alerts/assembler';
@@ -57,6 +58,10 @@ container
     .inSingletonScope();
 
 container.bind<AlertAssembler>(TYPES.AlertAssembler).to(AlertAssembler).inSingletonScope();
+
+AWS.config.update({
+    customUserAgent: getCustomUserAgent('ntfa'),
+});
 
 // for 3rd party objects, we need to use factory injectors
 

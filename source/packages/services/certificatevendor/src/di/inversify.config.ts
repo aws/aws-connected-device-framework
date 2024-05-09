@@ -14,6 +14,7 @@ import 'reflect-metadata';
 
 import '@awssolutions/cdf-config-inject';
 
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-client';
@@ -99,6 +100,10 @@ if (registry === 'AssetLibrary') {
 }
 
 container.bind<CertificateService>(TYPES.CertificateService).to(CertificateService);
+
+AWS.config.update({
+    customUserAgent: getCustomUserAgent('ctv'),
+});
 
 // for 3rd party objects, we need to use factory injectors
 decorate(injectable(), AWS.Iot);

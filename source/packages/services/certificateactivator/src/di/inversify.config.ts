@@ -13,6 +13,7 @@
 import 'reflect-metadata';
 
 import '@awssolutions/cdf-config-inject';
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-client';
@@ -33,6 +34,10 @@ container.bind<string>('aws.s3.crl.bucket').toConstantValue(process.env.AWS_S3_C
 container.bind<string>('aws.s3.crl.key').toConstantValue(process.env.AWS_S3_CRL_KEY);
 
 container.bind<ActivationService>(TYPES.ActivationService).to(ActivationService);
+
+AWS.config.update({
+    customUserAgent: getCustomUserAgent('cta'),
+});
 
 // for 3rd party objects, we need to use factory injectors
 decorate(injectable(), AWS.Iot);

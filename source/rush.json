@@ -147,6 +147,12 @@
       "versionPolicyName": "internal"
     },
     {
+      "packageName": "@awssolutions/cdf-attribution",
+      "projectFolder": "packages/libraries/core/attribution",
+      "reviewCategory": "library",
+      "versionPolicyName": "internal"
+    },
+    {
       "packageName": "@awssolutions/eslint-config-custom",
       "projectFolder": "packages/libraries/config/eslint-config-custom",
       "reviewCategory": "library",

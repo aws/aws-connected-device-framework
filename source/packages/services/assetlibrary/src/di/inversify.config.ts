@@ -14,6 +14,7 @@ import 'reflect-metadata';
 
 import '@awssolutions/cdf-config-inject';
 
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 import { NodeAssembler } from '../data/assembler';
@@ -66,6 +67,7 @@ container
                 const iotData = new AWS.IotData({
                     region: process.env.AWS_REGION,
                     endpoint: `https://${process.env.AWS_IOT_ENDPOINT}`,
+                    customUserAgent: getCustomUserAgent('asl'),
                 });
                 container.bind<AWS.IotData>(TYPES.IotData).toConstantValue(iotData);
             }

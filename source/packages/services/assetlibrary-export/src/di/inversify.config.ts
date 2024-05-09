@@ -13,6 +13,7 @@
 import 'reflect-metadata';
 
 import '@awssolutions/cdf-config-inject';
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 import AWS from 'aws-sdk';
@@ -89,7 +90,10 @@ decorate(injectable(), AWS.S3);
 container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory).toFactory<AWS.S3>(() => {
     return () => {
         if (!container.isBound(TYPES.S3)) {
-            const s3 = new AWS.S3({ region: process.env.AWS_REGION });
+            const s3 = new AWS.S3({
+                region: process.env.AWS_REGION,
+                customUserAgent: getCustomUserAgent('ale'),
+            });
             container.bind<AWS.S3>(TYPES.S3).toConstantValue(s3);
         }
         return container.get<AWS.S3>(TYPES.S3);

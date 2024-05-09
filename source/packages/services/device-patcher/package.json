@@ -94,5 +94,8 @@
     "uuid": "8.3.2",
     "winston": "3.3.3",
     "winston-transport": "4.4.0"
+  },
+  "dependencies": {
+    "@awssolutions/cdf-attribution": "workspace:~0.0.0"
   }
 }

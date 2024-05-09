@@ -14,6 +14,7 @@ import 'reflect-metadata';
 
 import '@awssolutions/cdf-config-inject';
 
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
@@ -93,6 +94,10 @@ container
     .bind<AttachAdditionalPoliciesProcessor>(TYPES.AttachAdditionalPoliciesProcessor)
     .to(AttachAdditionalPoliciesProcessor)
     .inSingletonScope();
+
+AWS.config.update({
+    customUserAgent: getCustomUserAgent('prv'),
+});
 
 // for 3rd party objects, we need to use factory injectors
 // IoT

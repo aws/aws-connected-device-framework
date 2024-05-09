@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import '@awssolutions/cdf-config-inject';
+import { getCustomUserAgent } from '@awssolutions/cdf-attribution';
 import AWS from 'aws-sdk';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 import { HttpHeaderUtils } from '../utils/httpHeaders';
@@ -100,6 +101,10 @@ const managementAccountCredentials = new AWS.ChainableTemporaryCredentials({
         RoleArn: process.env.MANAGEMENT_ACCOUNT_ASSUME_ROLE,
         RoleSessionName: `cdf-organization-assume-management`,
     },
+});
+
+AWS.config.update({
+    customUserAgent: getCustomUserAgent('ogm'),
 });
 
 // for 3rd party objects, we need to use factory injectors
