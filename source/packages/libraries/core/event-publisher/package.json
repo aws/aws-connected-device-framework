@@ -13,7 +13,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@aws-sdk/client-eventbridge": "3.38.0",
+    "@aws-sdk/client-eventbridge": "3.575.0",
     "@awssolutions/cdf-lambda-invoke": "workspace:^2.5.2",
     "@awssolutions/cdf-logger": "workspace:^2.5.2",
     "@awssolutions/simple-cdf-logger": "workspace:^2.5.2",
@@ -24,7 +24,7 @@
     "superagent": "7.1.1",
     "winston": "3.3.3",
     "winston-transport": "4.4.0",
-    "@aws-sdk/client-iot": "~3.37.0"
+    "@aws-sdk/client-iot": "3.575.0"
   },
   "devDependencies": {
     "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
