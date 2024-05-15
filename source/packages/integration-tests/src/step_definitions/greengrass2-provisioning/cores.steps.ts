@@ -12,7 +12,12 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 
-import { EC2Client, RunInstancesCommand, RunInstancesCommandInput } from '@aws-sdk/client-ec2';
+import {
+    EC2Client,
+    RunInstancesCommand,
+    RunInstancesCommandInput,
+    _InstanceType,
+} from '@aws-sdk/client-ec2';
 import {} from '@aws-sdk/client-greengrassv2';
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -195,7 +200,8 @@ When(
                 const userData = fs.readFileSync(bootstrapScript, 'utf8');
                 const params: RunInstancesCommandInput = {
                     ImageId: process.env.GREENGRASS2PROVISIONING_EC2_IMAGEID,
-                    InstanceType: process.env.GREENGRASS2PROVISIONING_EC2_INSTANCETYPE,
+                    InstanceType: process.env
+                        .GREENGRASS2PROVISIONING_EC2_INSTANCETYPE as _InstanceType,
                     IamInstanceProfile: {
                         Name: process.env.GREENGRASS2PROVISIONING_EC2_IAMINSTANCEPROFILE,
                     },

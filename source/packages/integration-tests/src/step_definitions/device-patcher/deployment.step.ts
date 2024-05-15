@@ -24,7 +24,12 @@ import {
     PatchService,
 } from '@awssolutions/cdf-device-patcher-client';
 
-import { EC2Client, RunInstancesCommand, RunInstancesCommandInput } from '@aws-sdk/client-ec2';
+import {
+    _InstanceType,
+    EC2Client,
+    RunInstancesCommand,
+    RunInstancesCommandInput,
+} from '@aws-sdk/client-ec2';
 import { logger } from '@awssolutions/simple-cdf-logger';
 import { fail } from 'assert';
 import fs from 'fs';
@@ -112,7 +117,7 @@ When(
                 const userData = fs.readFileSync(bootstrapScript, 'utf8');
                 const params: RunInstancesCommandInput = {
                     ImageId: process.env.DEVICE_PATCHER_EC2_IMAGEID,
-                    InstanceType: process.env.DEVICE_PATCHER_EC2_INSTANCETYPE,
+                    InstanceType: process.env.DEVICE_PATCHER_EC2_INSTANCETYPE as _InstanceType,
                     IamInstanceProfile: {
                         Name: process.env.DEVICE_PATCHER_EC2_IAMINSTANCEPROFILE,
                     },
