@@ -132,17 +132,29 @@ export class CommandsController implements interfaces.Controller {
             `commands.controller uploadCommandFile: in: commandId:${commandId}, fileId:${fileId}`
         );
 
-        const busboy = new Busboy.default({ headers: req.headers });
+        const busboy = new (Busboy.default as any)({ headers: req.headers });
         const saveTo = path.join(this.tmpDir, `${commandId}_${fileId}`);
         let hasError: string;
 
         await new Promise((resolve, reject) => {
-            busboy.on('file', async (_fieldName, stream, _filename, _encoding, _mimeType) => {
-                stream.pipe(fs.createWriteStream(saveTo));
-                stream.on('limit', () => {
-                    hasError = 'filesSizeLimit';
-                });
-            });
+            busboy.on(
+                'file',
+                async (
+                    _fieldName: any,
+                    stream: {
+                        pipe: (arg0: fs.WriteStream) => void;
+                        on: (arg0: string, arg1: () => void) => void;
+                    },
+                    _filename: any,
+                    _encoding: any,
+                    _mimeType: any
+                ) => {
+                    stream.pipe(fs.createWriteStream(saveTo));
+                    stream.on('limit', () => {
+                        hasError = 'filesSizeLimit';
+                    });
+                }
+            );
             busboy.on('partsLimit', () => {
                 hasError = 'partsLimit';
             });
