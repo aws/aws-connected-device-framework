@@ -13,7 +13,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@aws-sdk/client-iot": "~3.37.0",
+    "@aws-sdk/client-iot": "3.575.0",
     "@awssolutions/cdf-assetlibrary-client": "workspace:^2.5.2",
     "@awssolutions/cdf-lambda-invoke": "workspace:^2.5.2",
     "@awssolutions/cdf-logger": "workspace:^2.5.2",

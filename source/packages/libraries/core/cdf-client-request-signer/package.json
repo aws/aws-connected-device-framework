@@ -11,7 +11,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@aws-sdk/credential-providers": "3.252.0",
+    "@aws-sdk/credential-providers": "3.575.0",
     "aws4": "1.12.0",
     "superagent": "7.1.1",
     "url": "0.11.0"
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
     "@typescript-eslint/eslint-plugin": "6.2.0",
-    "@types/aws4": "1.11.2",
+    "@types/aws4": "1.11.6",
     "@types/jest": "26.0.23",
     "@types/node": "^18.17.0",
     "@types/superagent": "4.1.16",

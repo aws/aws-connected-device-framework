@@ -38,7 +38,7 @@
     "jest-mock": "26.6.2",
     "jest-mock-extended": "1.0.10",
     "jest-resolve": "26.6.2",
-    "nodemon": "2.0.20",
+    "nodemon": "3.1.0",
     "shx": "0.3.3",
     "ts-jest": "26.4.4",
     "typescript": "4.2.4",

@@ -36,7 +36,7 @@
     "@types/jsonwebtoken": "9.0.1",
     "@types/jwk-to-pem": "2.0.0",
     "eslint": "8.46.0",
-    "nodemon": "2.0.20",
+    "nodemon": "3.1.0",
     "nyc": "15.1.0",
     "shx": "0.3.3",
     "@types/jest": "26.0.23",

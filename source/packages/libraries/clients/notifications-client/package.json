@@ -19,7 +19,7 @@
     "http-errors": "~2.0.0",
     "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",
-    "inversify-express-utils": "6.4.3",
+    "inversify-express-utils": "6.4.6",
     "js-yaml": "4.1.0",
     "logform": "2.4.2",
     "ow": "0.23.0",

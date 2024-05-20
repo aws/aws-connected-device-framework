@@ -1,3 +1,5 @@
+import { IoTJobAbortAction, IoTJobExecutionFailureType } from '@aws-sdk/client-greengrassv2';
+
 /*********************************************************************************************************************
  *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
  *                                                                                                                    *
@@ -91,11 +93,11 @@ export interface JobConfig {
     abortConfig?: {
         criteriaList: [
             {
-                failureType: string;
-                action: AbortConfigFailureType;
+                failureType: IoTJobExecutionFailureType;
+                action: IoTJobAbortAction;
                 thresholdPercentage: number;
                 minNumberOfExecutedThings: number;
-            },
+            }
         ];
     };
     timeoutConfig?: {
@@ -114,6 +116,5 @@ export interface DeploymentPolicy {
     };
 }
 
-export type AbortConfigFailureType = 'FAILED' | 'REJECTED' | 'TIMED_OUT' | 'ALL';
 export type FailureHandlingPolicy = 'ROLLBACK' | 'DO_NOTHING';
 export type DeploymentPolicyAction = 'NOTIFY_COMPONENTS' | 'SKIP_NOTIFY_COMPONENTS';
