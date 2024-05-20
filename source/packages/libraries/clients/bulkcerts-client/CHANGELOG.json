@@ -2,6 +2,12 @@
   "name": "@awssolutions/cdf-bulkcerts-client",
   "entries": [
     {
+      "version": "2.6.0",
+      "tag": "@awssolutions/cdf-bulkcerts-client_v2.6.0",
+      "date": "Mon, 20 May 2024 19:16:22 GMT",
+      "comments": {}
+    },
+    {
       "version": "2.5.2",
       "tag": "@awssolutions/cdf-bulkcerts-client_v2.5.2",
       "date": "Fri, 27 Oct 2023 18:10:50 GMT",

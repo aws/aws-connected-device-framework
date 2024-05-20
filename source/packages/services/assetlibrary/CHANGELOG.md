@@ -1,6 +1,14 @@
 # Change Log - @awssolutions/cdf-assetlibrary
 
-This log was last generated on Fri, 27 Oct 2023 18:10:50 GMT and should not be manually modified.
+This log was last generated on Mon, 20 May 2024 19:16:22 GMT and should not be manually modified.
+
+## 2.6.0
+Mon, 20 May 2024 19:16:22 GMT
+
+### Updates
+
+- properly handle undefined string for count and offset
+- properly quote escaped regex pattern in cloudformation
 
 ## 2.5.2
 Fri, 27 Oct 2023 18:10:50 GMT

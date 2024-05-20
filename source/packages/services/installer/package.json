@@ -15,7 +15,7 @@
     "cdf-cli": "./dist/index.js"
   },
   "dependencies": {
-    "@awssolutions/cdf-config-inject": "workspace:^2.5.2",
+    "@awssolutions/cdf-config-inject": "workspace:^2.6.0",
     "@aws-sdk/client-cloudformation": "~3.575.0",
     "@aws-sdk/client-iam": "~3.575.0",
     "@aws-sdk/client-iot": "3.575.0",
