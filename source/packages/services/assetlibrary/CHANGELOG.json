@@ -2,6 +2,21 @@
   "name": "@awssolutions/cdf-assetlibrary",
   "entries": [
     {
+      "version": "2.6.0",
+      "tag": "@awssolutions/cdf-assetlibrary_v2.6.0",
+      "date": "Mon, 20 May 2024 19:16:22 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "properly handle undefined string for count and offset"
+          },
+          {
+            "comment": "properly quote escaped regex pattern in cloudformation"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.5.2",
       "tag": "@awssolutions/cdf-assetlibrary_v2.5.2",
       "date": "Fri, 27 Oct 2023 18:10:50 GMT",
