@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-deployment-helper",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "CDF Deployment Helper",
   "author": "Hassan khokhar",
   "scripts": {
@@ -33,13 +33,13 @@
     }
   },
   "devDependencies": {
-    "@awssolutions/cdf-commandandcontrol-client": "workspace:^2.6.0",
-    "@awssolutions/cdf-config-inject": "workspace:^2.6.0",
-    "@awssolutions/cdf-lambda-invoke": "workspace:^2.6.0",
+    "@awssolutions/cdf-commandandcontrol-client": "workspace:^2.6.1",
+    "@awssolutions/cdf-config-inject": "workspace:^2.6.1",
+    "@awssolutions/cdf-lambda-invoke": "workspace:^2.6.1",
     "@awssolutions/cdf-lambda-zip": "workspace:~0.0.0",
-    "@awssolutions/cdf-logger": "workspace:^2.6.0",
+    "@awssolutions/cdf-logger": "workspace:^2.6.1",
     "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
-    "@awssolutions/simple-cdf-logger": "workspace:^2.6.0",
+    "@awssolutions/simple-cdf-logger": "workspace:^2.6.1",
     "@types/aws-lambda": "8.10.65",
     "@types/dotenv-flow": "~3.2.0",
     "@types/jest": "26.0.23",

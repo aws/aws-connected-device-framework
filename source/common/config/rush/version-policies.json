@@ -57,7 +57,7 @@
   {
     "definitionName": "lockStepVersion",
     "policyName": "external",
-    "version": "2.6.0",
+    "version": "2.6.1",
     "nextBump": "minor"
   },
   {

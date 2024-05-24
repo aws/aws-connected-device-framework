@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/simple-cdf-logger",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -18,7 +18,7 @@
     "winston-transport": "4.4.0"
   },
   "devDependencies": {
-    "@awssolutions/cdf-config-inject": "workspace:^2.6.0",
+    "@awssolutions/cdf-config-inject": "workspace:^2.6.1",
     "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
     "@typescript-eslint/eslint-plugin": "6.2.0",
     "eslint": "8.46.0",

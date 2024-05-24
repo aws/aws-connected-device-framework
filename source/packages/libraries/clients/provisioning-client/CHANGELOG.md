@@ -1,6 +1,11 @@
 # Change Log - @awssolutions/cdf-provisioning-client
 
-This log was last generated on Mon, 20 May 2024 19:16:22 GMT and should not be manually modified.
+This log was last generated on Fri, 24 May 2024 15:27:46 GMT and should not be manually modified.
+
+## 2.6.1
+Fri, 24 May 2024 15:27:46 GMT
+
+_Version update only_
 
 ## 2.6.0
 Mon, 20 May 2024 19:16:22 GMT

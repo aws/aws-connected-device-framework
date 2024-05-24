@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-commandandcontrol-client",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "CDF Command and Control Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -12,11 +12,11 @@
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/cdf-assetlibrary-client": "workspace:^2.6.0",
-    "@awssolutions/cdf-client-request-signer": "workspace:^2.6.0",
-    "@awssolutions/cdf-config-inject": "workspace:^2.6.0",
-    "@awssolutions/cdf-lambda-invoke": "workspace:^2.6.0",
-    "@awssolutions/simple-cdf-logger": "workspace:^2.6.0",
+    "@awssolutions/cdf-assetlibrary-client": "workspace:^2.6.1",
+    "@awssolutions/cdf-client-request-signer": "workspace:^2.6.1",
+    "@awssolutions/cdf-config-inject": "workspace:^2.6.1",
+    "@awssolutions/cdf-lambda-invoke": "workspace:^2.6.1",
+    "@awssolutions/simple-cdf-logger": "workspace:^2.6.1",
     "aws-sdk": "2.1386.0",
     "dotenv-flow": "~3.2.0",
     "http-errors": "~2.0.0",

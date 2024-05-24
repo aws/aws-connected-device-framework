@@ -2,6 +2,12 @@
   "name": "@awssolutions/cdf-commandandcontrol-client",
   "entries": [
     {
+      "version": "2.6.1",
+      "tag": "@awssolutions/cdf-commandandcontrol-client_v2.6.1",
+      "date": "Fri, 24 May 2024 15:27:46 GMT",
+      "comments": {}
+    },
+    {
       "version": "2.6.0",
       "tag": "@awssolutions/cdf-commandandcontrol-client_v2.6.0",
       "date": "Mon, 20 May 2024 19:16:22 GMT",
