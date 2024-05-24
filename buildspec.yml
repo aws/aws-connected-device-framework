@@ -18,6 +18,7 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
+      - npm install -g pnpm@8
       - npm install -g @microsoft/rush
 
   pre_build:
