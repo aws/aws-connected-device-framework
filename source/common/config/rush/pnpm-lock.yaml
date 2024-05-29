@@ -26,46 +26,46 @@ importers:
         specifier: ~3.575.0
         version: 3.575.0
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-assetlibraryhistory-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/clients/assetlibraryhistory-client
       '@awssolutions/cdf-commandandcontrol-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/clients/commandandcontrol-client
       '@awssolutions/cdf-commands-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/clients/commands-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/config/config-inject
       '@awssolutions/cdf-device-patcher-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/clients/device-patcher-client
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/core/errors
       '@awssolutions/cdf-greengrass2-provisioning-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/clients/greengrass2-provisioning-client
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/core/lambda-invoke
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/core/logger
       '@awssolutions/cdf-notifications-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/clients/notifications-client
       '@awssolutions/cdf-organizationmanager-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/clients/organizationmanager-client
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/clients/provisioning-client
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../libraries/core/simple-cdf-logger
       '@cucumber/cucumber':
         specifier: 7.3.2
@@ -204,13 +204,13 @@ importers:
   ../../packages/libraries/clients/assetlibrary-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -322,13 +322,13 @@ importers:
   ../../packages/libraries/clients/assetlibraryhistory-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -428,13 +428,13 @@ importers:
   ../../packages/libraries/clients/bulkcerts-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -537,19 +537,19 @@ importers:
   ../../packages/libraries/clients/commandandcontrol-client:
     dependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../assetlibrary-client
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../config/config-inject
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -652,7 +652,7 @@ importers:
   ../../packages/libraries/clients/commands-client:
     dependencies:
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/lambda-invoke
       aws-sdk:
         specifier: 2.1386.0
@@ -749,13 +749,13 @@ importers:
   ../../packages/libraries/clients/device-patcher-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -861,16 +861,16 @@ importers:
   ../../packages/libraries/clients/greengrass2-provisioning-client:
     dependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../assetlibrary-client
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -973,13 +973,13 @@ importers:
   ../../packages/libraries/clients/notifications-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -1082,13 +1082,13 @@ importers:
   ../../packages/libraries/clients/organizationmanager-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -1194,13 +1194,13 @@ importers:
   ../../packages/libraries/clients/provisioning-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -1300,13 +1300,13 @@ importers:
   ../../packages/libraries/config/config-inject:
     dependencies:
       '@awssolutions/cdf-environment-sanitizer':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/environment-sanitizer
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/errors
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../core/logger
       dotenv:
         specifier: ^8.2.0
@@ -1466,25 +1466,25 @@ importers:
   ../../packages/libraries/core/deployment-helper:
     devDependencies:
       '@awssolutions/cdf-commandandcontrol-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../clients/commandandcontrol-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../config/config-inject
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.65
@@ -1691,13 +1691,13 @@ importers:
         specifier: 3.575.0
         version: 3.575.0
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../lambda-invoke
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../logger
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../simple-cdf-logger
       inversify:
         specifier: 6.0.1
@@ -1822,7 +1822,7 @@ importers:
   ../../packages/libraries/core/lambda-invoke:
     dependencies:
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -2027,7 +2027,7 @@ importers:
         version: 4.4.0
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../config/config-inject
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
@@ -2078,16 +2078,16 @@ importers:
         specifier: 3.575.0
         version: 3.575.0
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../clients/assetlibrary-client
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../lambda-invoke
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../logger
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../simple-cdf-logger
       inversify:
         specifier: 6.0.1
@@ -2310,10 +2310,10 @@ importers:
         version: link:../../libraries/core/attribution
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -2322,13 +2322,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/body-parser':
         specifier: 1.19.2
@@ -2491,19 +2491,19 @@ importers:
         version: link:../../libraries/core/attribution
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/body-parser':
         specifier: 1.19.2
@@ -2660,10 +2660,10 @@ importers:
         version: link:../../libraries/core/attribution
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -2672,13 +2672,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/atob':
         specifier: 2.1.2
@@ -2810,10 +2810,10 @@ importers:
   ../../packages/services/auth-devicecert:
     dependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       aws-sdk:
         specifier: 2.1386.0
@@ -2898,10 +2898,10 @@ importers:
   ../../packages/services/auth-jwt:
     dependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       axios:
         specifier: 1.6.0
@@ -3005,10 +3005,10 @@ importers:
         version: link:../../libraries/core/attribution
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -3017,13 +3017,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.65
@@ -3162,31 +3162,31 @@ importers:
         version: link:../../libraries/core/attribution
     devDependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/clients/provisioning-client
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/atob':
         specifier: 2.1.2
@@ -3298,28 +3298,28 @@ importers:
         version: link:../../libraries/core/attribution
     devDependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/dotenv-flow':
         specifier: ~3.2.0
@@ -3419,28 +3419,28 @@ importers:
         version: link:../../libraries/core/attribution
     devDependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/express-middleware
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/clients/provisioning-client
       '@awssolutions/cdf-thing-list-builder':
         specifier: workspace:~0.0.0
@@ -3449,7 +3449,7 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.89
@@ -3590,25 +3590,25 @@ importers:
   ../../packages/services/commands:
     dependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/express-middleware
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/clients/provisioning-client
       ajv:
         specifier: 6.12.3
@@ -3747,28 +3747,28 @@ importers:
   ../../packages/services/device-monitoring:
     devDependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/dotenv-flow':
         specifier: ~3.2.0
@@ -3868,10 +3868,10 @@ importers:
         version: link:../../libraries/core/attribution
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -3880,13 +3880,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/atob':
         specifier: 2.1.2
@@ -4040,22 +4040,22 @@ importers:
         version: link:../../libraries/core/attribution
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/cors':
         specifier: 2.8.10
@@ -4167,10 +4167,10 @@ importers:
         version: link:../../libraries/core/attribution
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -4179,13 +4179,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.65
@@ -4326,22 +4326,22 @@ importers:
   ../../packages/services/greengrass2-installer-config-generators:
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.84
@@ -4471,13 +4471,13 @@ importers:
         specifier: 3.575.0
         version: 3.575.0(@aws-sdk/client-dynamodb@3.575.0)
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-event-publisher':
         specifier: workspace:~0.0.0
@@ -4486,16 +4486,16 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/express-middleware
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/clients/provisioning-client
       '@awssolutions/cdf-thing-list-builder':
         specifier: workspace:~0.0.0
@@ -4504,7 +4504,7 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/adm-zip':
         specifier: 0.4.34
@@ -4672,7 +4672,7 @@ importers:
         specifier: 3.575.0
         version: 3.575.0(@aws-sdk/client-s3@3.575.0)
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       chalk:
         specifier: ~4.1.2
@@ -4791,28 +4791,28 @@ importers:
         version: link:../../libraries/core/attribution
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/express-middleware
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: ~8.10.83
@@ -4936,10 +4936,10 @@ importers:
         version: link:../../libraries/core/attribution
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -4948,13 +4948,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/core/simple-cdf-logger
       '@types/body-parser':
         specifier: 1.19.2
@@ -5095,7 +5095,7 @@ importers:
   ../../packages/services/simulation-launcher:
     dependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       aws-sdk:
         specifier: 2.1386.0
@@ -5180,7 +5180,7 @@ importers:
   ../../packages/services/simulation-manager:
     dependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.1
+        specifier: workspace:^2.6.2
         version: link:../../libraries/config/config-inject
       aws-sdk:
         specifier: 2.1386.0
@@ -7607,7 +7607,7 @@ packages:
       '@jest/test-result': 26.6.2
       '@jest/transform': 26.6.2(supports-color@8.0.0)
       '@jest/types': 26.6.2
-      '@types/node': 18.17.0
+      '@types/node': 18.19.33
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       exit: 0.1.2
@@ -10425,8 +10425,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001621
-      electron-to-chromium: 1.4.782
+      caniuse-lite: 1.0.30001624
+      electron-to-chromium: 1.4.783
       node-releases: 2.0.14
       update-browserslist-db: 1.0.16(browserslist@4.23.0)
     dev: true
@@ -10544,8 +10544,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /caniuse-lite@1.0.30001621:
-    resolution: {integrity: sha512-+NLXZiviFFKX0fk8Piwv3PfLPGtRqJeq2TiNoUff/qB5KJgwecJTvCXDpmlyP/eCI/GUEmp/h/y5j0yckiiZrA==}
+  /caniuse-lite@1.0.30001624:
+    resolution: {integrity: sha512-0dWnQG87UevOCPYaOR49CBcLBwoZLpws+k6W37nLjWUhumP1Isusj0p2u+3KhjNloRWK9OKMgjBBzPujQHw4nA==}
     dev: true
 
   /capital-case@1.0.4:
@@ -11388,8 +11388,8 @@ packages:
   /ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  /electron-to-chromium@1.4.782:
-    resolution: {integrity: sha512-JUfU61e8tr+i5Y1FKXcKs+Xe+rJ+CEqm4cgv1kMihPE2EvYHmYyVr3Im/+1+Z5B29Be2EEGCZCwAc6Tazdl1Yg==}
+  /electron-to-chromium@1.4.783:
+    resolution: {integrity: sha512-bT0jEz/Xz1fahQpbZ1D7LgmPYZ3iHVY39NcWWro1+hA2IvjiPeaXtfSqrQ+nXjApMvQRE2ASt1itSLRrebHMRQ==}
     dev: true
 
   /elliptic@6.5.5:
@@ -12218,6 +12218,7 @@ packages:
 
   /glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+    deprecated: Glob versions prior to v9 are no longer supported
     dependencies:
       fs.realpath: 1.0.0
       inflight: 1.0.6
@@ -16085,6 +16086,7 @@ packages:
 
   /rimraf@2.6.3:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3
@@ -16092,6 +16094,7 @@ packages:
 
   /rimraf@2.7.1:
     resolution: {integrity: sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3
@@ -16099,6 +16102,7 @@ packages:
 
   /rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3

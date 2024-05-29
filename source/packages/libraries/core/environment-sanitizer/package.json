@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-environment-sanitizer",
-  "version": "2.6.1",
+  "version": "2.6.2",
   "description": "Tools to sanitize process.env, for secure logging",
   "license": "ISC",
   "main": "dist/index.js",
