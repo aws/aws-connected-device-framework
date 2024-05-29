@@ -15,8 +15,8 @@
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/index.js"
   },
   "dependencies": {
-    "@awssolutions/cdf-errors": "workspace:^2.6.1",
-    "@awssolutions/cdf-config-inject": "workspace:^2.6.1",
+    "@awssolutions/cdf-errors": "workspace:^2.6.2",
+    "@awssolutions/cdf-config-inject": "workspace:^2.6.2",
     "axios": "1.6.0",
     "js-yaml": "4.1.0",
     "jsonwebtoken": "9.0.0",

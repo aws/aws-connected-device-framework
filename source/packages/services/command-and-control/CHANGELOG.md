@@ -1,6 +1,11 @@
 # Change Log - @awssolutions/cdf-command-and-control
 
-This log was last generated on Fri, 24 May 2024 15:27:46 GMT and should not be manually modified.
+This log was last generated on Wed, 29 May 2024 04:17:38 GMT and should not be manually modified.
+
+## 2.6.2
+Wed, 29 May 2024 04:17:38 GMT
+
+_Version update only_
 
 ## 2.6.1
 Fri, 24 May 2024 15:27:46 GMT
