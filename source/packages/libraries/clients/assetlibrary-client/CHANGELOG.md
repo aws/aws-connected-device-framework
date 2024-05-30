@@ -1,6 +1,11 @@
 # Change Log - @awssolutions/cdf-assetlibrary-client
 
-This log was last generated on Wed, 29 May 2024 04:17:38 GMT and should not be manually modified.
+This log was last generated on Thu, 30 May 2024 19:52:05 GMT and should not be manually modified.
+
+## 2.6.3
+Thu, 30 May 2024 19:52:05 GMT
+
+_Version update only_
 
 ## 2.6.2
 Wed, 29 May 2024 04:17:38 GMT

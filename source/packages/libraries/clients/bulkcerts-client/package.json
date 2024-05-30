@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-bulkcerts-client",
-  "version": "2.6.2",
+  "version": "2.6.3",
   "description": "Bulkcerts Client",
   "author": "Pouya Bahavar",
   "main": "dist/index.js",
@@ -12,9 +12,9 @@
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/cdf-client-request-signer": "workspace:^2.6.2",
-    "@awssolutions/cdf-lambda-invoke": "workspace:^2.6.2",
-    "@awssolutions/simple-cdf-logger": "workspace:^2.6.2",
+    "@awssolutions/cdf-client-request-signer": "workspace:^2.6.3",
+    "@awssolutions/cdf-lambda-invoke": "workspace:^2.6.3",
+    "@awssolutions/simple-cdf-logger": "workspace:^2.6.3",
     "aws-sdk": "2.1386.0",
     "http-errors": "~2.0.0",
     "inversify": "6.0.1",
