@@ -26,46 +26,46 @@ importers:
         specifier: ~3.575.0
         version: 3.575.0
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-assetlibraryhistory-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/clients/assetlibraryhistory-client
       '@awssolutions/cdf-commandandcontrol-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/clients/commandandcontrol-client
       '@awssolutions/cdf-commands-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/clients/commands-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/config/config-inject
       '@awssolutions/cdf-device-patcher-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/clients/device-patcher-client
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/core/errors
       '@awssolutions/cdf-greengrass2-provisioning-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/clients/greengrass2-provisioning-client
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/core/lambda-invoke
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/core/logger
       '@awssolutions/cdf-notifications-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/clients/notifications-client
       '@awssolutions/cdf-organizationmanager-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/clients/organizationmanager-client
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/clients/provisioning-client
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../libraries/core/simple-cdf-logger
       '@cucumber/cucumber':
         specifier: 7.3.2
@@ -204,13 +204,13 @@ importers:
   ../../packages/libraries/clients/assetlibrary-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -322,13 +322,13 @@ importers:
   ../../packages/libraries/clients/assetlibraryhistory-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -428,13 +428,13 @@ importers:
   ../../packages/libraries/clients/bulkcerts-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -537,19 +537,19 @@ importers:
   ../../packages/libraries/clients/commandandcontrol-client:
     dependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../assetlibrary-client
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../config/config-inject
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -652,7 +652,7 @@ importers:
   ../../packages/libraries/clients/commands-client:
     dependencies:
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/lambda-invoke
       aws-sdk:
         specifier: 2.1386.0
@@ -749,13 +749,13 @@ importers:
   ../../packages/libraries/clients/device-patcher-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -861,16 +861,16 @@ importers:
   ../../packages/libraries/clients/greengrass2-provisioning-client:
     dependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../assetlibrary-client
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -973,13 +973,13 @@ importers:
   ../../packages/libraries/clients/notifications-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -1082,13 +1082,13 @@ importers:
   ../../packages/libraries/clients/organizationmanager-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -1194,13 +1194,13 @@ importers:
   ../../packages/libraries/clients/provisioning-client:
     dependencies:
       '@awssolutions/cdf-client-request-signer':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/cdf-client-request-signer
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/lambda-invoke
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -1300,13 +1300,13 @@ importers:
   ../../packages/libraries/config/config-inject:
     dependencies:
       '@awssolutions/cdf-environment-sanitizer':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/environment-sanitizer
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/errors
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../core/logger
       dotenv:
         specifier: ^8.2.0
@@ -1378,17 +1378,16 @@ importers:
         version: 8.46.0(supports-color@8.0.0)
 
   ../../packages/libraries/core/attribution:
-    dependencies:
+    devDependencies:
       '@awssolutions/cdf-version':
         specifier: workspace:~0.0.0
         version: link:../version
-      '@types/node':
-        specifier: ^18.17.0
-        version: 18.17.0
-    devDependencies:
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../config/eslint-config-custom
+      '@types/node':
+        specifier: ^18.17.0
+        version: 18.17.0
       '@typescript-eslint/eslint-plugin':
         specifier: 6.2.0
         version: 6.2.0(@typescript-eslint/parser@6.2.0)(eslint@8.46.0)(supports-color@8.0.0)(typescript@4.2.4)
@@ -1466,25 +1465,25 @@ importers:
   ../../packages/libraries/core/deployment-helper:
     devDependencies:
       '@awssolutions/cdf-commandandcontrol-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../clients/commandandcontrol-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../config/config-inject
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.65
@@ -1691,13 +1690,13 @@ importers:
         specifier: 3.575.0
         version: 3.575.0
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../lambda-invoke
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../logger
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../simple-cdf-logger
       inversify:
         specifier: 6.0.1
@@ -1822,7 +1821,7 @@ importers:
   ../../packages/libraries/core/lambda-invoke:
     dependencies:
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../simple-cdf-logger
       aws-sdk:
         specifier: 2.1386.0
@@ -2027,7 +2026,7 @@ importers:
         version: 4.4.0
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../config/config-inject
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
@@ -2078,16 +2077,16 @@ importers:
         specifier: 3.575.0
         version: 3.575.0
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../clients/assetlibrary-client
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../lambda-invoke
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../logger
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../simple-cdf-logger
       inversify:
         specifier: 6.0.1
@@ -2304,16 +2303,15 @@ importers:
         version: 4.2.4
 
   ../../packages/services/assetlibrary:
-    dependencies:
+    devDependencies:
       '@awssolutions/cdf-attribution':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/attribution
-    devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -2322,13 +2320,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/body-parser':
         specifier: 1.19.2
@@ -2485,25 +2483,24 @@ importers:
         version: 4.4.0
 
   ../../packages/services/assetlibrary-export:
-    dependencies:
+    devDependencies:
       '@awssolutions/cdf-attribution':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/attribution
-    devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/body-parser':
         specifier: 1.19.2
@@ -2654,16 +2651,15 @@ importers:
         version: 4.3.0
 
   ../../packages/services/assetlibraryhistory:
-    dependencies:
+    devDependencies:
       '@awssolutions/cdf-attribution':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/attribution
-    devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -2672,13 +2668,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/atob':
         specifier: 2.1.2
@@ -2810,10 +2806,10 @@ importers:
   ../../packages/services/auth-devicecert:
     dependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       aws-sdk:
         specifier: 2.1386.0
@@ -2898,10 +2894,10 @@ importers:
   ../../packages/services/auth-jwt:
     dependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       axios:
         specifier: 1.6.0
@@ -2999,16 +2995,15 @@ importers:
         version: 4.2.4
 
   ../../packages/services/bulkcerts:
-    dependencies:
+    devDependencies:
       '@awssolutions/cdf-attribution':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/attribution
-    devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -3017,13 +3012,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.65
@@ -3156,37 +3151,36 @@ importers:
         version: 4.4.0
 
   ../../packages/services/certificateactivator:
-    dependencies:
+    devDependencies:
+      '@awssolutions/cdf-assetlibrary-client':
+        specifier: workspace:^2.6.3
+        version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-attribution':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/attribution
-    devDependencies:
-      '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.2
-        version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/clients/provisioning-client
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/atob':
         specifier: 2.1.2
@@ -3292,34 +3286,33 @@ importers:
         version: 4.4.0
 
   ../../packages/services/certificatevendor:
-    dependencies:
+    devDependencies:
+      '@awssolutions/cdf-assetlibrary-client':
+        specifier: workspace:^2.6.3
+        version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-attribution':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/attribution
-    devDependencies:
-      '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.2
-        version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/dotenv-flow':
         specifier: ~3.2.0
@@ -3413,34 +3406,33 @@ importers:
         version: 4.4.0
 
   ../../packages/services/command-and-control:
-    dependencies:
+    devDependencies:
+      '@awssolutions/cdf-assetlibrary-client':
+        specifier: workspace:^2.6.3
+        version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-attribution':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/attribution
-    devDependencies:
-      '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.2
-        version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/express-middleware
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/clients/provisioning-client
       '@awssolutions/cdf-thing-list-builder':
         specifier: workspace:~0.0.0
@@ -3449,7 +3441,7 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.89
@@ -3590,25 +3582,25 @@ importers:
   ../../packages/services/commands:
     dependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/express-middleware
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/clients/provisioning-client
       ajv:
         specifier: 6.12.3
@@ -3747,28 +3739,28 @@ importers:
   ../../packages/services/device-monitoring:
     devDependencies:
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/clients/assetlibrary-client
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/dotenv-flow':
         specifier: ~3.2.0
@@ -3862,16 +3854,15 @@ importers:
         version: 4.4.0
 
   ../../packages/services/device-patcher:
-    dependencies:
+    devDependencies:
       '@awssolutions/cdf-attribution':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/attribution
-    devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -3880,13 +3871,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/atob':
         specifier: 2.1.2
@@ -4034,28 +4025,27 @@ importers:
         version: 4.4.0
 
   ../../packages/services/events-alerts:
-    dependencies:
+    devDependencies:
       '@awssolutions/cdf-attribution':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/attribution
-    devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/cors':
         specifier: 2.8.10
@@ -4161,16 +4151,15 @@ importers:
         version: 4.4.0
 
   ../../packages/services/events-processor:
-    dependencies:
+    devDependencies:
       '@awssolutions/cdf-attribution':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/attribution
-    devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -4179,13 +4168,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.65
@@ -4326,22 +4315,22 @@ importers:
   ../../packages/services/greengrass2-installer-config-generators:
     devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: 8.10.84
@@ -4423,10 +4412,6 @@ importers:
         version: 1.10.2
 
   ../../packages/services/greengrass2-provisioning:
-    dependencies:
-      '@awssolutions/cdf-attribution':
-        specifier: workspace:~0.0.0
-        version: link:../../libraries/core/attribution
     devDependencies:
       '@aws-sdk/abort-controller':
         specifier: 3.374.0
@@ -4471,13 +4456,16 @@ importers:
         specifier: 3.575.0
         version: 3.575.0(@aws-sdk/client-dynamodb@3.575.0)
       '@awssolutions/cdf-assetlibrary-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/clients/assetlibrary-client
+      '@awssolutions/cdf-attribution':
+        specifier: workspace:~0.0.0
+        version: link:../../libraries/core/attribution
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-event-publisher':
         specifier: workspace:~0.0.0
@@ -4486,16 +4474,16 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/express-middleware
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/cdf-provisioning-client':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/clients/provisioning-client
       '@awssolutions/cdf-thing-list-builder':
         specifier: workspace:~0.0.0
@@ -4504,7 +4492,7 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/adm-zip':
         specifier: 0.4.34
@@ -4667,12 +4655,12 @@ importers:
         version: 3.575.0
       '@aws-sdk/client-sts':
         specifier: ~3.575.0
-        version: 3.575.0
+        version: 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/lib-storage':
         specifier: 3.575.0
         version: 3.575.0(@aws-sdk/client-s3@3.575.0)
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       chalk:
         specifier: ~4.1.2
@@ -4785,34 +4773,33 @@ importers:
         version: 4.2.4
 
   ../../packages/services/organization-manager:
-    dependencies:
+    devDependencies:
       '@awssolutions/cdf-attribution':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/attribution
-    devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/express-middleware
       '@awssolutions/cdf-lambda-invoke':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/lambda-invoke
       '@awssolutions/cdf-lambda-zip':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/aws-lambda':
         specifier: ~8.10.83
@@ -4930,16 +4917,15 @@ importers:
         version: 4.4.0
 
   ../../packages/services/provisioning:
-    dependencies:
+    devDependencies:
       '@awssolutions/cdf-attribution':
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/attribution
-    devDependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       '@awssolutions/cdf-errors':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/errors
       '@awssolutions/cdf-express-middleware':
         specifier: workspace:~0.0.0
@@ -4948,13 +4934,13 @@ importers:
         specifier: workspace:~0.0.0
         version: link:../../libraries/core/lambda-zip
       '@awssolutions/cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/logger
       '@awssolutions/eslint-config-custom':
         specifier: workspace:~0.0.0
         version: link:../../libraries/config/eslint-config-custom
       '@awssolutions/simple-cdf-logger':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/core/simple-cdf-logger
       '@types/body-parser':
         specifier: 1.19.2
@@ -5095,7 +5081,7 @@ importers:
   ../../packages/services/simulation-launcher:
     dependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       aws-sdk:
         specifier: 2.1386.0
@@ -5180,7 +5166,7 @@ importers:
   ../../packages/services/simulation-manager:
     dependencies:
       '@awssolutions/cdf-config-inject':
-        specifier: workspace:^2.6.2
+        specifier: workspace:^2.6.3
         version: link:../../libraries/config/config-inject
       aws-sdk:
         specifier: 2.1386.0
@@ -5396,8 +5382,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -5409,28 +5395,28 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -5447,8 +5433,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -5460,28 +5446,28 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -5496,8 +5482,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-endpoint-discovery': 3.575.0
@@ -5510,28 +5496,28 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -5548,8 +5534,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -5562,28 +5548,28 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -5600,8 +5586,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -5615,27 +5601,27 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
+      '@smithy/config-resolver': 3.0.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
       tslib: 2.6.2
@@ -5648,8 +5634,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -5661,28 +5647,28 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -5697,8 +5683,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -5710,28 +5696,28 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -5747,8 +5733,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -5760,28 +5746,28 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -5796,8 +5782,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -5809,28 +5795,28 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -5845,8 +5831,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -5858,8 +5844,8 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/eventstream-serde-browser': 3.0.0
       '@smithy/eventstream-serde-config-resolver': 3.0.0
       '@smithy/eventstream-serde-node': 3.0.0
@@ -5867,22 +5853,22 @@ packages:
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-stream': 3.0.1
@@ -5898,8 +5884,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -5911,28 +5897,28 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -5947,8 +5933,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -5961,28 +5947,28 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -5999,8 +5985,8 @@ packages:
       '@aws-crypto/sha1-browser': 3.0.0
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-bucket-endpoint': 3.575.0
@@ -6021,8 +6007,8 @@ packages:
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
       '@aws-sdk/xml-builder': 3.575.0
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/eventstream-serde-browser': 3.0.0
       '@smithy/eventstream-serde-config-resolver': 3.0.0
       '@smithy/eventstream-serde-node': 3.0.0
@@ -6033,22 +6019,22 @@ packages:
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/md5-js': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-retry': 3.0.0
       '@smithy/util-stream': 3.0.1
       '@smithy/util-utf8': 3.0.0
@@ -6063,8 +6049,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -6077,29 +6063,29 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/md5-js': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -6114,8 +6100,8 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sso-oidc': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -6127,28 +6113,28 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -6159,13 +6145,13 @@ packages:
       - aws-crt
     dev: false
 
-  /@aws-sdk/client-sso-oidc@3.575.0(@aws-sdk/client-sts@3.575.0):
+  /@aws-sdk/client-sso-oidc@3.575.0:
     resolution: {integrity: sha512-YCstVaW5tAvXs+v4LR9gNAO+VRhIObjk1/knCdVQ5QQRTevtVQtdJWeNrDZYo4ATo0OHGyqGCj5Z09TWMv+e1Q==}
     engines: {node: '>=16.0.0'}
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -6177,34 +6163,33 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
       tslib: 2.6.2
     transitivePeerDependencies:
-      - '@aws-sdk/client-sts'
       - aws-crt
 
   /@aws-sdk/client-sso@3.575.0:
@@ -6223,28 +6208,28 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -6252,13 +6237,13 @@ packages:
     transitivePeerDependencies:
       - aws-crt
 
-  /@aws-sdk/client-sts@3.575.0:
+  /@aws-sdk/client-sts@3.575.0(@aws-sdk/client-sso-oidc@3.575.0):
     resolution: {integrity: sha512-8MrT4J2dRiskf0JFMGL5VNBqPvc6igNa218LGBJzHXmLsm1WfGCGnce84R7U2USr8oPOenu0XzSCLvMQyZbGWQ==}
     engines: {node: '>=16.0.0'}
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
+      '@aws-sdk/client-sso-oidc': 3.575.0
       '@aws-sdk/core': 3.575.0
       '@aws-sdk/credential-provider-node': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/middleware-host-header': 3.575.0
@@ -6270,43 +6255,44 @@ packages:
       '@aws-sdk/util-endpoints': 3.575.0
       '@aws-sdk/util-user-agent-browser': 3.575.0
       '@aws-sdk/util-user-agent-node': 3.575.0(aws-crt@1.21.2)
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/core': 2.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/core': 2.1.1
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/hash-node': 3.0.0
       '@smithy/invalid-dependency': 3.0.0
       '@smithy/middleware-content-length': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/middleware-stack': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/node-http-handler': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-base64': 3.0.0
       '@smithy/util-body-length-browser': 3.0.0
       '@smithy/util-body-length-node': 3.0.0
-      '@smithy/util-defaults-mode-browser': 3.0.1
-      '@smithy/util-defaults-mode-node': 3.0.1
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-defaults-mode-browser': 3.0.3
+      '@smithy/util-defaults-mode-node': 3.0.3
+      '@smithy/util-endpoints': 2.0.1
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
       '@smithy/util-utf8': 3.0.0
       tslib: 2.6.2
     transitivePeerDependencies:
+      - '@aws-sdk/client-sso-oidc'
       - aws-crt
 
   /@aws-sdk/core@3.575.0:
     resolution: {integrity: sha512-117U+kQki2XoKcYQfepmlRcNxn6rELGlOFOBQ8Z2JTBXEYHblW2ke067a0CLmxFwp/zCWuc7IGjd3in3x4Q3rg==}
     engines: {node: '>=16.0.0'}
     dependencies:
-      '@smithy/core': 2.0.1
+      '@smithy/core': 2.1.1
       '@smithy/protocol-http': 4.0.0
       '@smithy/signature-v4': 3.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       fast-xml-parser: 4.2.5
       tslib: 2.6.2
@@ -6317,7 +6303,7 @@ packages:
     dependencies:
       '@aws-sdk/client-cognito-identity': 3.575.0
       '@aws-sdk/types': 3.575.0
-      '@smithy/property-provider': 3.0.0
+      '@smithy/property-provider': 3.1.0
       '@smithy/types': 3.0.0
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -6329,7 +6315,7 @@ packages:
     engines: {node: '>=16.0.0'}
     dependencies:
       '@aws-sdk/types': 3.575.0
-      '@smithy/property-provider': 3.0.0
+      '@smithy/property-provider': 3.1.0
       '@smithy/types': 3.0.0
       tslib: 2.6.2
 
@@ -6340,9 +6326,9 @@ packages:
       '@aws-sdk/types': 3.575.0
       '@smithy/fetch-http-handler': 3.0.1
       '@smithy/node-http-handler': 3.0.0
-      '@smithy/property-provider': 3.0.0
+      '@smithy/property-provider': 3.1.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/util-stream': 3.0.1
       tslib: 2.6.2
@@ -6353,15 +6339,15 @@ packages:
     peerDependencies:
       '@aws-sdk/client-sts': 3.575.0
     dependencies:
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/credential-provider-env': 3.575.0
       '@aws-sdk/credential-provider-process': 3.575.0
       '@aws-sdk/credential-provider-sso': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/credential-provider-web-identity': 3.575.0(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/types': 3.575.0
-      '@smithy/credential-provider-imds': 3.0.0
-      '@smithy/property-provider': 3.0.0
-      '@smithy/shared-ini-file-loader': 3.0.0
+      '@smithy/credential-provider-imds': 3.1.0
+      '@smithy/property-provider': 3.1.0
+      '@smithy/shared-ini-file-loader': 3.1.0
       '@smithy/types': 3.0.0
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -6379,9 +6365,9 @@ packages:
       '@aws-sdk/credential-provider-sso': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/credential-provider-web-identity': 3.575.0(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/types': 3.575.0
-      '@smithy/credential-provider-imds': 3.0.0
-      '@smithy/property-provider': 3.0.0
-      '@smithy/shared-ini-file-loader': 3.0.0
+      '@smithy/credential-provider-imds': 3.1.0
+      '@smithy/property-provider': 3.1.0
+      '@smithy/shared-ini-file-loader': 3.1.0
       '@smithy/types': 3.0.0
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -6394,8 +6380,8 @@ packages:
     engines: {node: '>=16.0.0'}
     dependencies:
       '@aws-sdk/types': 3.575.0
-      '@smithy/property-provider': 3.0.0
-      '@smithy/shared-ini-file-loader': 3.0.0
+      '@smithy/property-provider': 3.1.0
+      '@smithy/shared-ini-file-loader': 3.1.0
       '@smithy/types': 3.0.0
       tslib: 2.6.2
 
@@ -6406,8 +6392,8 @@ packages:
       '@aws-sdk/client-sso': 3.575.0
       '@aws-sdk/token-providers': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/types': 3.575.0
-      '@smithy/property-provider': 3.0.0
-      '@smithy/shared-ini-file-loader': 3.0.0
+      '@smithy/property-provider': 3.1.0
+      '@smithy/shared-ini-file-loader': 3.1.0
       '@smithy/types': 3.0.0
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -6420,9 +6406,9 @@ packages:
     peerDependencies:
       '@aws-sdk/client-sts': 3.575.0
     dependencies:
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/types': 3.575.0
-      '@smithy/property-provider': 3.0.0
+      '@smithy/property-provider': 3.1.0
       '@smithy/types': 3.0.0
       tslib: 2.6.2
 
@@ -6432,7 +6418,7 @@ packages:
     dependencies:
       '@aws-sdk/client-cognito-identity': 3.575.0
       '@aws-sdk/client-sso': 3.575.0
-      '@aws-sdk/client-sts': 3.575.0
+      '@aws-sdk/client-sts': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/credential-provider-cognito-identity': 3.575.0
       '@aws-sdk/credential-provider-env': 3.575.0
       '@aws-sdk/credential-provider-http': 3.575.0
@@ -6442,8 +6428,8 @@ packages:
       '@aws-sdk/credential-provider-sso': 3.575.0(@aws-sdk/client-sso-oidc@3.575.0)
       '@aws-sdk/credential-provider-web-identity': 3.575.0(@aws-sdk/client-sts@3.575.0)
       '@aws-sdk/types': 3.575.0
-      '@smithy/credential-provider-imds': 3.0.0
-      '@smithy/property-provider': 3.0.0
+      '@smithy/credential-provider-imds': 3.1.0
+      '@smithy/property-provider': 3.1.0
       '@smithy/types': 3.0.0
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -6467,7 +6453,7 @@ packages:
     dependencies:
       '@aws-sdk/client-dynamodb': 3.575.0
       '@aws-sdk/util-dynamodb': 3.575.0(@aws-sdk/client-dynamodb@3.575.0)
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       tslib: 2.6.2
     dev: true
@@ -6480,8 +6466,8 @@ packages:
     dependencies:
       '@aws-sdk/client-s3': 3.575.0
       '@smithy/abort-controller': 3.0.0
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       buffer: 5.6.0
       events: 3.3.0
       stream-browserify: 3.0.0
@@ -6493,7 +6479,7 @@ packages:
     dependencies:
       '@aws-sdk/types': 3.575.0
       '@aws-sdk/util-arn-parser': 3.568.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/protocol-http': 4.0.0
       '@smithy/types': 3.0.0
       '@smithy/util-config-provider': 3.0.0
@@ -6505,7 +6491,7 @@ packages:
     dependencies:
       '@aws-sdk/endpoint-cache': 3.572.0
       '@aws-sdk/types': 3.575.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/protocol-http': 4.0.0
       '@smithy/types': 3.0.0
       tslib: 2.6.2
@@ -6573,10 +6559,10 @@ packages:
     dependencies:
       '@aws-sdk/types': 3.575.0
       '@aws-sdk/util-format-url': 3.575.0
-      '@smithy/middleware-endpoint': 3.0.0
+      '@smithy/middleware-endpoint': 3.0.1
       '@smithy/protocol-http': 4.0.0
       '@smithy/signature-v4': 3.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       tslib: 2.6.2
     dev: false
@@ -6587,7 +6573,7 @@ packages:
     dependencies:
       '@aws-sdk/types': 3.575.0
       '@aws-sdk/util-format-url': 3.575.0
-      '@smithy/middleware-endpoint': 3.0.0
+      '@smithy/middleware-endpoint': 3.0.1
       '@smithy/protocol-http': 4.0.0
       '@smithy/signature-v4': 3.0.0
       '@smithy/types': 3.0.0
@@ -6600,10 +6586,10 @@ packages:
     dependencies:
       '@aws-sdk/types': 3.575.0
       '@aws-sdk/util-arn-parser': 3.568.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/protocol-http': 4.0.0
       '@smithy/signature-v4': 3.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/util-config-provider': 3.0.0
       tslib: 2.6.2
@@ -6613,7 +6599,7 @@ packages:
     engines: {node: '>=16.0.0'}
     dependencies:
       '@aws-sdk/types': 3.575.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/util-hex-encoding': 3.0.0
       '@smithy/util-utf8': 3.0.0
@@ -6625,7 +6611,7 @@ packages:
     engines: {node: '>=16.0.0'}
     dependencies:
       '@aws-sdk/types': 3.575.0
-      '@smithy/property-provider': 3.0.0
+      '@smithy/property-provider': 3.1.0
       '@smithy/protocol-http': 4.0.0
       '@smithy/signature-v4': 3.0.0
       '@smithy/types': 3.0.0
@@ -6655,7 +6641,7 @@ packages:
     engines: {node: '>=16.0.0'}
     dependencies:
       '@aws-sdk/types': 3.575.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/types': 3.0.0
       '@smithy/util-config-provider': 3.0.0
       '@smithy/util-middleware': 3.0.0
@@ -6668,9 +6654,9 @@ packages:
       '@aws-sdk/signature-v4-multi-region': 3.575.0
       '@aws-sdk/types': 3.575.0
       '@aws-sdk/util-format-url': 3.575.0
-      '@smithy/middleware-endpoint': 3.0.0
+      '@smithy/middleware-endpoint': 3.0.1
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       tslib: 2.6.2
     dev: false
@@ -6729,10 +6715,10 @@ packages:
     peerDependencies:
       '@aws-sdk/client-sso-oidc': 3.575.0
     dependencies:
-      '@aws-sdk/client-sso-oidc': 3.575.0(@aws-sdk/client-sts@3.575.0)
+      '@aws-sdk/client-sso-oidc': 3.575.0
       '@aws-sdk/types': 3.575.0
-      '@smithy/property-provider': 3.0.0
-      '@smithy/shared-ini-file-loader': 3.0.0
+      '@smithy/property-provider': 3.1.0
+      '@smithy/shared-ini-file-loader': 3.1.0
       '@smithy/types': 3.0.0
       tslib: 2.6.2
 
@@ -6765,7 +6751,7 @@ packages:
     dependencies:
       '@aws-sdk/types': 3.575.0
       '@smithy/types': 3.0.0
-      '@smithy/util-endpoints': 2.0.0
+      '@smithy/util-endpoints': 2.0.1
       tslib: 2.6.2
 
   /@aws-sdk/util-format-url@3.575.0:
@@ -6802,7 +6788,7 @@ packages:
         optional: true
     dependencies:
       '@aws-sdk/types': 3.575.0
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/types': 3.0.0
       aws-crt: 1.21.2
       tslib: 2.6.2
@@ -7539,7 +7525,7 @@ packages:
     engines: {node: '>= 10.14.2'}
     dependencies:
       '@jest/types': 26.6.2
-      '@types/node': 18.17.0
+      '@types/node': 18.19.33
       chalk: 4.1.2
       jest-message-util: 26.6.2
       jest-util: 26.6.2
@@ -7551,7 +7537,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 18.11.18
+      '@types/node': 18.17.0
       chalk: 4.1.2
       jest-message-util: 29.7.0
       jest-util: 29.7.0
@@ -7567,7 +7553,7 @@ packages:
       '@jest/test-result': 26.6.2
       '@jest/transform': 26.6.2(supports-color@8.0.0)
       '@jest/types': 26.6.2
-      '@types/node': 18.17.0
+      '@types/node': 18.19.33
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       exit: 0.1.2
@@ -7652,14 +7638,14 @@ packages:
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 18.11.18
+      '@types/node': 18.17.0
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@18.11.18)
+      jest-config: 29.7.0(@types/node@18.17.0)
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -7812,7 +7798,7 @@ packages:
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
       '@jridgewell/trace-mapping': 0.3.25
-      '@types/node': 18.11.18
+      '@types/node': 18.17.0
       chalk: 4.1.2
       collect-v8-coverage: 1.0.2
       exit: 0.1.2
@@ -8119,35 +8105,35 @@ packages:
     dependencies:
       tslib: 2.6.2
 
-  /@smithy/config-resolver@3.0.0:
-    resolution: {integrity: sha512-2GzOfADwYLQugYkKQhIyZyQlM05K+tMKvRnc6eFfZcpJGRfKoMUMYdPlBKmqHwQFXQKBrGV6cxL9oymWgDzvFw==}
+  /@smithy/config-resolver@3.0.1:
+    resolution: {integrity: sha512-hbkYJc20SBDz2qqLzttjI/EqXemtmWk0ooRznLsiXp3066KQRTvuKHa7U4jCZCJq6Dozqvy0R1/vNESC9inPJg==}
     engines: {node: '>=16.0.0'}
     dependencies:
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/types': 3.0.0
       '@smithy/util-config-provider': 3.0.0
       '@smithy/util-middleware': 3.0.0
       tslib: 2.6.2
 
-  /@smithy/core@2.0.1:
-    resolution: {integrity: sha512-rcMkjvwxH/bER+oZUPR0yTA0ELD6m3A+d92+CFkdF6HJFCBB1bXo7P5pm21L66XwTN01B6bUhSCQ7cymWRD8zg==}
+  /@smithy/core@2.1.1:
+    resolution: {integrity: sha512-0vbIwwUcg0FMhTVJgMhbsRSAFL0rwduy/OQz7Xq1pJXJOyaGv+PGjj1iGawRlzBUPA5BkJv7S6q+YU2U8gk/WA==}
     engines: {node: '>=16.0.0'}
     dependencies:
-      '@smithy/middleware-endpoint': 3.0.0
-      '@smithy/middleware-retry': 3.0.1
+      '@smithy/middleware-endpoint': 3.0.1
+      '@smithy/middleware-retry': 3.0.3
       '@smithy/middleware-serde': 3.0.0
       '@smithy/protocol-http': 4.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/util-middleware': 3.0.0
       tslib: 2.6.2
 
-  /@smithy/credential-provider-imds@3.0.0:
-    resolution: {integrity: sha512-lfmBiFQcA3FsDAPxNfY0L7CawcWtbyWsBOHo34nF095728JLkBX4Y9q/VPPE2r7fqMVK+drmDigqE2/SSQeVRA==}
+  /@smithy/credential-provider-imds@3.1.0:
+    resolution: {integrity: sha512-q4A4d38v8pYYmseu/jTS3Z5I3zXlEOe5Obi+EJreVKgSVyWUHOd7/yaVCinC60QG4MRyCs98tcxBH1IMC0bu7Q==}
     engines: {node: '>=16.0.0'}
     dependencies:
-      '@smithy/node-config-provider': 3.0.0
-      '@smithy/property-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
+      '@smithy/property-provider': 3.1.0
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       tslib: 2.6.2
@@ -8269,26 +8255,26 @@ packages:
       '@smithy/types': 3.0.0
       tslib: 2.6.2
 
-  /@smithy/middleware-endpoint@3.0.0:
-    resolution: {integrity: sha512-aXOAWztw/5qAfp0NcA2OWpv6ZI/E+Dh9mByif7i91D/0iyYNUcKvskmXiowKESFkuZ7PIMd3VOR4fTibZDs2OQ==}
+  /@smithy/middleware-endpoint@3.0.1:
+    resolution: {integrity: sha512-lQ/UOdGD4KM5kLZiAl0q8Qy3dPbynvAXKAdXnYlrA1OpaUwr+neSsVokDZpY6ZVb5Yx8jnus29uv6XWpM9P4SQ==}
     engines: {node: '>=16.0.0'}
     dependencies:
       '@smithy/middleware-serde': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
-      '@smithy/shared-ini-file-loader': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
+      '@smithy/shared-ini-file-loader': 3.1.0
       '@smithy/types': 3.0.0
       '@smithy/url-parser': 3.0.0
       '@smithy/util-middleware': 3.0.0
       tslib: 2.6.2
 
-  /@smithy/middleware-retry@3.0.1:
-    resolution: {integrity: sha512-hBhSEuL841FhJBK/19WpaGk5YWSzFk/P2UaVjANGKRv3eYNO8Y1lANWgqnuPWjOyCEWMPr58vELFDWpxvRKANw==}
+  /@smithy/middleware-retry@3.0.3:
+    resolution: {integrity: sha512-Wve1qzJb83VEU/6q+/I0cQdAkDnuzELC6IvIBwDzUEiGpKqXgX1v10FUuZGbRS6Ov/P+HHthcAoHOJZQvZNAkA==}
     engines: {node: '>=16.0.0'}
     dependencies:
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/protocol-http': 4.0.0
       '@smithy/service-error-classification': 3.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       '@smithy/util-middleware': 3.0.0
       '@smithy/util-retry': 3.0.0
@@ -8316,12 +8302,12 @@ packages:
       '@smithy/types': 3.0.0
       tslib: 2.6.2
 
-  /@smithy/node-config-provider@3.0.0:
-    resolution: {integrity: sha512-buqfaSdDh0zo62EPLf8rGDvcpKwGpO5ho4bXS2cdFhlOta7tBkWJt+O5uiaAeICfIOfPclNOndshDNSanX2X9g==}
+  /@smithy/node-config-provider@3.1.0:
+    resolution: {integrity: sha512-ngfB8QItUfTFTfHMvKuc2g1W60V1urIgZHqD1JNFZC2tTWXahqf2XvKXqcBS7yZqR7GqkQQZy11y/lNOUWzq7Q==}
     engines: {node: '>=16.0.0'}
     dependencies:
-      '@smithy/property-provider': 3.0.0
-      '@smithy/shared-ini-file-loader': 3.0.0
+      '@smithy/property-provider': 3.1.0
+      '@smithy/shared-ini-file-loader': 3.1.0
       '@smithy/types': 3.0.0
       tslib: 2.6.2
 
@@ -8346,8 +8332,8 @@ packages:
       '@smithy/types': 3.0.0
       tslib: 2.6.2
 
-  /@smithy/property-provider@3.0.0:
-    resolution: {integrity: sha512-LmbPgHBswdXCrkWWuUwBm9w72S2iLWyC/5jet9/Y9cGHtzqxi+GVjfCfahkvNV4KXEwgnH8EMpcrD9RUYe0eLQ==}
+  /@smithy/property-provider@3.1.0:
+    resolution: {integrity: sha512-Tj3+oVhqdZgemjCiWjFlADfhvLF4C/uKDuKo7/tlEsRQ9+3emCreR2xndj970QSRSsiCEU8hZW3/8JQu+n5w4Q==}
     engines: {node: '>=16.0.0'}
     dependencies:
       '@smithy/types': 3.0.0
@@ -8403,8 +8389,8 @@ packages:
     dependencies:
       '@smithy/types': 3.0.0
 
-  /@smithy/shared-ini-file-loader@3.0.0:
-    resolution: {integrity: sha512-REVw6XauXk8xE4zo5aGL7Rz4ywA8qNMUn8RtWeTRQsgAlmlvbJ7CEPBcaXU2NDC3AYBgYAXrGyWD8XrN8UGDog==}
+  /@smithy/shared-ini-file-loader@3.1.0:
+    resolution: {integrity: sha512-dAM7wSX0NR3qTNyGVN/nwwpEDzfV9T/3AN2eABExWmda5VqZKSsjlINqomO5hjQWGv+IIkoXfs3u2vGSNz8+Rg==}
     engines: {node: '>=16.0.0'}
     dependencies:
       '@smithy/types': 3.0.0
@@ -8432,11 +8418,11 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /@smithy/smithy-client@3.0.1:
-    resolution: {integrity: sha512-KAiFY4Y4jdHxR+4zerH/VBhaFKM8pbaVmJZ/CWJRwtM/CmwzTfXfvYwf6GoUwiHepdv+lwiOXCuOl6UBDUEINw==}
+  /@smithy/smithy-client@3.1.1:
+    resolution: {integrity: sha512-tj4Ku7MpzZR8cmVuPcSbrLFVxmptWktmJMwST/uIEq4sarabEdF8CbmQdYB7uJ/X51Qq2EYwnRsoS7hdR4B7rA==}
     engines: {node: '>=16.0.0'}
     dependencies:
-      '@smithy/middleware-endpoint': 3.0.0
+      '@smithy/middleware-endpoint': 3.0.1
       '@smithy/middleware-stack': 3.0.0
       '@smithy/protocol-http': 4.0.0
       '@smithy/types': 3.0.0
@@ -8511,33 +8497,33 @@ packages:
     dependencies:
       tslib: 2.6.2
 
-  /@smithy/util-defaults-mode-browser@3.0.1:
-    resolution: {integrity: sha512-nW5kEzdJn1Bn5TF+gOPHh2rcPli8JU9vSSXLbfg7uPnfR1TMRQqs9zlYRhIb87NeSxIbpdXOI94tvXSy+fvDYg==}
+  /@smithy/util-defaults-mode-browser@3.0.3:
+    resolution: {integrity: sha512-3DFON2bvXJAukJe+qFgPV/rorG7ZD3m4gjCXHD1V5z/tgKQp5MCTCLntrd686tX6tj8Uli3lefWXJudNg5WmCA==}
     engines: {node: '>= 10.0.0'}
     dependencies:
-      '@smithy/property-provider': 3.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/property-provider': 3.1.0
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       bowser: 2.11.0
       tslib: 2.6.2
 
-  /@smithy/util-defaults-mode-node@3.0.1:
-    resolution: {integrity: sha512-TFk+Qb+elLc/MOhtSp+50fstyfZ6avQbgH2d96xUBpeScu+Al9elxv+UFAjaTHe0HQe5n+wem8ZLpXvU8lwV6Q==}
+  /@smithy/util-defaults-mode-node@3.0.3:
+    resolution: {integrity: sha512-D0b8GJXecT00baoSQ3Iieu3k3mZ7GY8w1zmg8pdogYrGvWJeLcIclqk2gbkG4K0DaBGWrO6v6r20iwIFfDYrmA==}
     engines: {node: '>= 10.0.0'}
     dependencies:
-      '@smithy/config-resolver': 3.0.0
-      '@smithy/credential-provider-imds': 3.0.0
-      '@smithy/node-config-provider': 3.0.0
-      '@smithy/property-provider': 3.0.0
-      '@smithy/smithy-client': 3.0.1
+      '@smithy/config-resolver': 3.0.1
+      '@smithy/credential-provider-imds': 3.1.0
+      '@smithy/node-config-provider': 3.1.0
+      '@smithy/property-provider': 3.1.0
+      '@smithy/smithy-client': 3.1.1
       '@smithy/types': 3.0.0
       tslib: 2.6.2
 
-  /@smithy/util-endpoints@2.0.0:
-    resolution: {integrity: sha512-+exaXzEY3DNt2qtA2OtRNSDlVrE4p32j1JSsQkzA5AdP0YtJNjkYbYhJxkFmPYcjI1abuwopOZCwUmv682QkiQ==}
+  /@smithy/util-endpoints@2.0.1:
+    resolution: {integrity: sha512-ZRT0VCOnKlVohfoABMc8lWeQo/JEFuPWctfNRXgTHbyOVssMOLYFUNWukxxiHRGVAhV+n3c0kPW+zUqckjVPEA==}
     engines: {node: '>=16.0.0'}
     dependencies:
-      '@smithy/node-config-provider': 3.0.0
+      '@smithy/node-config-provider': 3.1.0
       '@smithy/types': 3.0.0
       tslib: 2.6.2
 
@@ -8962,8 +8948,8 @@ packages:
       '@types/range-parser': 1.2.7
     dev: true
 
-  /@types/express-serve-static-core@4.19.1:
-    resolution: {integrity: sha512-ej0phymbFLoCB26dbbq5PGScsf2JAJ4IJHjG10LalgUV36XKTmA4GdA+PVllKvRk0sEKt64X8975qFnkSi0hqA==}
+  /@types/express-serve-static-core@4.19.3:
+    resolution: {integrity: sha512-KOzM7MhcBFlmnlr/fzISFF5vGWVSvN6fTd4T+ExOt08bA/dA5kpSzY52nMsI1KDFmUREpJelPYyuslLRSjjgCg==}
     dependencies:
       '@types/node': 18.19.33
       '@types/qs': 6.9.15
@@ -8981,7 +8967,7 @@ packages:
     resolution: {integrity: sha512-ejlPM315qwLpaQlQDTjPdsUFSc6ZsP4AN6AlWnogPjQ7CVi7PYF3YVz+CY3jE2pwYf7E/7HlDAN0rV2GxTG0HQ==}
     dependencies:
       '@types/body-parser': 1.19.2
-      '@types/express-serve-static-core': 4.19.1
+      '@types/express-serve-static-core': 4.19.3
       '@types/qs': 6.9.15
       '@types/serve-static': 1.15.7
     dev: true
@@ -10425,8 +10411,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001624
-      electron-to-chromium: 1.4.783
+      caniuse-lite: 1.0.30001625
+      electron-to-chromium: 1.4.787
       node-releases: 2.0.14
       update-browserslist-db: 1.0.16(browserslist@4.23.0)
     dev: true
@@ -10544,8 +10530,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /caniuse-lite@1.0.30001624:
-    resolution: {integrity: sha512-0dWnQG87UevOCPYaOR49CBcLBwoZLpws+k6W37nLjWUhumP1Isusj0p2u+3KhjNloRWK9OKMgjBBzPujQHw4nA==}
+  /caniuse-lite@1.0.30001625:
+    resolution: {integrity: sha512-4KE9N2gcRH+HQhpeiRZXd+1niLB/XNLAhSy4z7fI8EzcbcPoAqjNInxVHTiTwWfTIV4w096XG8OtCOCQQKPv3w==}
     dev: true
 
   /capital-case@1.0.4:
@@ -11080,7 +11066,7 @@ packages:
     engines: {node: '>=0.12'}
     dependencies:
       es5-ext: 0.10.64
-      type: 2.7.2
+      type: 2.7.3
     dev: false
 
   /data-urls@2.0.0:
@@ -11388,8 +11374,8 @@ packages:
   /ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  /electron-to-chromium@1.4.783:
-    resolution: {integrity: sha512-bT0jEz/Xz1fahQpbZ1D7LgmPYZ3iHVY39NcWWro1+hA2IvjiPeaXtfSqrQ+nXjApMvQRE2ASt1itSLRrebHMRQ==}
+  /electron-to-chromium@1.4.787:
+    resolution: {integrity: sha512-d0EFmtLPjctczO3LogReyM2pbBiiZbnsKnGF+cdZhsYzHm/A0GV7W94kqzLD8SN4O3f3iHlgLUChqghgyznvCQ==}
     dev: true
 
   /elliptic@6.5.5:
@@ -11645,7 +11631,7 @@ packages:
       d: 1.0.2
       es5-ext: 0.10.64
       event-emitter: 0.3.5
-      type: 2.7.2
+      type: 2.7.3
     dev: false
 
   /espree@9.6.1:
@@ -11835,7 +11821,7 @@ packages:
   /ext@1.7.0:
     resolution: {integrity: sha512-6hxeJYaL110a9b5TEJSj0gojyHQAmA2ch5Os+ySCiA1QGdS697XWY1pzsrSjqA9LDEEgdB/KypIlR59RcLuHYw==}
     dependencies:
-      type: 2.7.2
+      type: 2.7.3
     dev: false
 
   /extend-shallow@2.0.1:
@@ -12230,6 +12216,7 @@ packages:
   /glob@8.1.0:
     resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
     engines: {node: '>=12'}
+    deprecated: Glob versions prior to v9 are no longer supported
     dependencies:
       fs.realpath: 1.0.0
       inflight: 1.0.6
@@ -13130,7 +13117,7 @@ packages:
       '@jest/expect': 29.7.0
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 18.11.18
+      '@types/node': 18.17.0
       chalk: 4.1.2
       co: 4.6.0
       dedent: 1.5.3
@@ -13492,7 +13479,7 @@ packages:
       '@jest/environment': 26.6.2
       '@jest/fake-timers': 26.6.2
       '@jest/types': 26.6.2
-      '@types/node': 18.17.0
+      '@types/node': 18.19.33
       jest-mock: 26.6.2
       jest-util: 26.6.2
     dev: true
@@ -13504,7 +13491,7 @@ packages:
       '@jest/environment': 29.7.0
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 18.11.18
+      '@types/node': 18.17.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
     dev: true
@@ -13552,7 +13539,7 @@ packages:
     dependencies:
       '@jest/types': 29.6.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 18.11.18
+      '@types/node': 18.17.0
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -14139,7 +14126,7 @@ packages:
     dependencies:
       '@jest/test-result': 26.6.2
       '@jest/types': 26.6.2
-      '@types/node': 18.17.0
+      '@types/node': 18.19.33
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       jest-util: 26.6.2
@@ -14152,7 +14139,7 @@ packages:
     dependencies:
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 18.11.18
+      '@types/node': 18.17.0
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       emittery: 0.13.1
@@ -14173,7 +14160,7 @@ packages:
     resolution: {integrity: sha512-eIz2msL/EzL9UFTFFx7jBTkeZfku0yUAyZZZmJ93H2TYEiroIx2PQjEXcwYtYl8zXCxb+PAmA2hLIt/6ZEkPHw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      '@types/node': 18.11.18
+      '@types/node': 18.17.0
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.0.0
@@ -17236,8 +17223,8 @@ packages:
       media-typer: 0.3.0
       mime-types: 2.1.35
 
-  /type@2.7.2:
-    resolution: {integrity: sha512-dzlvlNlt6AXU7EBSfpAscydQ7gXB+pPGsPnfJnZpiNJBDj7IaJzQlBZYGdEi4R9HmPdBv2XmWJ6YUtoTa7lmCw==}
+  /type@2.7.3:
+    resolution: {integrity: sha512-8j+1QmAbPvLZow5Qpi6NCaN8FB60p/6x8/vfNqOk/hC+HuvFZhL4+WfekuhQLiqFZXOgQdrs3B+XxEmCc6b3FQ==}
     dev: false
 
   /typed-rest-client@1.8.9:

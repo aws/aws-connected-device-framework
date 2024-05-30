@@ -2,6 +2,12 @@
   "name": "@awssolutions/cdf-lambda-invoke",
   "entries": [
     {
+      "version": "2.6.3",
+      "tag": "@awssolutions/cdf-lambda-invoke_v2.6.3",
+      "date": "Thu, 30 May 2024 19:52:05 GMT",
+      "comments": {}
+    },
+    {
       "version": "2.6.2",
       "tag": "@awssolutions/cdf-lambda-invoke_v2.6.2",
       "date": "Wed, 29 May 2024 04:17:38 GMT",
