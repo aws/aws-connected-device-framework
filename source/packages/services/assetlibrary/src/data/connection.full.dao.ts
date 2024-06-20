@@ -14,9 +14,11 @@ import { logger } from '@awssolutions/simple-cdf-logger';
 import { driver, process, structure } from 'gremlin';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
+import { PrematurelyClosedConnectionError } from '../utils/errors';
+import { retry } from '../utils/retry';
 
 @injectable()
-export class BaseDaoFull {
+export class ConnectionDaoFull {
     private _graph: structure.Graph;
     private _conn: driver.DriverRemoteConnection | null;
 
@@ -28,40 +30,65 @@ export class BaseDaoFull {
         this._conn = null;
     }
 
-    protected async getConnection(): Promise<NeptuneConnection> {
-        logger.debug(`base.full.dao getConnection: in:`);
-
+    private async _withTraversal<T>(fn: (conn: NeptuneConnection) => Promise<T>): Promise<T> {
+        logger.debug(`connection.full.dao withTraversal: in:`);
         if (this._conn == null) {
-            logger.debug(`base.full.dao getConnection: create new connection:`);
+            logger.debug(`connection.full.dao withTraversal: create new connection:`);
             this._conn = new driver.DriverRemoteConnection(this.neptuneUrl, {
                 mimeType: 'application/vnd.gremlin-v2.0+json',
                 pingEnabled: false,
                 connectOnStartup: false,
             });
-            this._conn.addListener('close', (code: number, message: string) => {
-                logger.info(`base.full.dao connection close: code: ${code}, message: ${message}`);
-                this._conn = null;
-                if (code === 1006) {
-                    throw new Error('Connection closed prematurely');
-                }
-            });
-            await this._conn.open();
         }
 
-        logger.debug(`base.full.dao getConnection: withRemote:`);
-        const res = new NeptuneConnection(
-            this._graph.traversal().withRemote(this._conn),
-        );
+        return new Promise((resolve, reject) => {
+            const closeListener = (code: number, message: string) => {
+                logger.info(
+                    `connection.full.dao connection close: code: ${code}, message: ${message}`
+                );
+                this._conn = null;
+                if (code === 1006) {
+                    reject(new PrematurelyClosedConnectionError());
+                }
+            };
 
-        logger.debug(`base.full.dao getConnection: exit:`);
-        return res;
+            this._conn.addListener('close', closeListener);
+
+            this._conn
+                .open()
+                .then(() => {
+                    logger.debug(`connection.full.dao getConnection: withRemote:`);
+                    const conn = new NeptuneConnection(
+                        this._graph.traversal().withRemote(this._conn)
+                    );
+                    fn(conn)
+                        .then(resolve)
+                        .catch(reject)
+                        .finally(() => {
+                            this._conn?.removeListener('close', closeListener);
+                        });
+                })
+                .catch((e) => {
+                    this._conn?.removeListener('close', closeListener);
+                    reject(e);
+                });
+        });
+    }
+
+    public async withTraversal<T>(fn: (conn: NeptuneConnection) => Promise<T>): Promise<T> {
+        return await retry(
+            async () => {
+                return await this._withTraversal(fn);
+            },
+            {
+                shouldRetry: (e) => e.name === 'PrematurelyClosedConnectionError',
+            }
+        );
     }
 }
 
 export class NeptuneConnection {
-    constructor(
-        private _traversal: process.GraphTraversalSource,
-    ) {}
+    constructor(private _traversal: process.GraphTraversalSource) {}
 
     public get traversal(): process.GraphTraversalSource {
         return this._traversal;
