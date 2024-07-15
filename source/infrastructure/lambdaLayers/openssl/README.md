@@ -1,20 +1,20 @@
 # OpenSSL Lambda Layer
 
-The Amazon Linux v2 lambda container does not include the OpenSSL unlike Amazon Linux v1.  Therefore, for modules that need to conusme it such as the CDF Bulk Certificates module, we now make OpenSSL available via a Lambda layer for when CDF is deployed upon the Lambda runtime.
+The Amazon Linux v2 lambda container does not include the OpenSSL unlike Amazon Linux v1. Therefore, for modules that need to consume it such as the CDF Bulk Certificates module, we now make OpenSSL available via a Lambda layer for when CDF is deployed upon the Lambda runtime.
 
 Modules that consume OpenSSL (via the `pem` node.js library) are:
 
- - auth-devicecert
- - auth-jwt
- - bulkcerts
- - certificateactivator
- - certificatevendor
- - provisioning
+- auth-devicecert
+- auth-jwt
+- bulkcerts
+- certificateactivator
+- certificatevendor
+- provisioning
 
 ## Preparing:
 
 ```sh
-$> infrastructure/package.bash
+$> infrastructure/build.bash
 ```
 
 The above will use a Docker container to install OpenSSL upon an Amazon Linux v2 images, then zip it.
