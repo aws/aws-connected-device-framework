@@ -16,8 +16,8 @@ export interface EventModel {
     type: Category;
     time: string;
     event: EventType;
-    user: string;
-    payload: string;
+    user?: string;
+    payload?: string;
     attributes: { [key: string]: string };
 }
 
