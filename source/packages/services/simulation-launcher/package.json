@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-simulation-launcher",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "description": "CDF Device Simulator: Simulation launcher",
   "scripts": {
     "clean": "rushx clean:postrelease && npx shx rm -f bundle.zip",
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "aws-sdk": "2.1386.0",
-    "@awssolutions/cdf-config-inject": "workspace:^2.6.3",
+    "@awssolutions/cdf-config-inject": "workspace:^2.6.4",
     "js-yaml": "3.13.1",
     "logform": "2.4.2",
     "ow": "0.17.0",

@@ -2,6 +2,12 @@
   "name": "@awssolutions/cdf-assetlibrary",
   "entries": [
     {
+      "version": "2.6.4",
+      "tag": "@awssolutions/cdf-assetlibrary_v2.6.4",
+      "date": "Mon, 09 Sep 2024 20:07:59 GMT",
+      "comments": {}
+    },
+    {
       "version": "2.6.3",
       "tag": "@awssolutions/cdf-assetlibrary_v2.6.3",
       "date": "Thu, 30 May 2024 19:52:05 GMT",
