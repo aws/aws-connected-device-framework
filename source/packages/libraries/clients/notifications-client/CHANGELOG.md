@@ -1,6 +1,11 @@
 # Change Log - @awssolutions/cdf-notifications-client
 
-This log was last generated on Thu, 30 May 2024 19:52:05 GMT and should not be manually modified.
+This log was last generated on Mon, 09 Sep 2024 20:07:59 GMT and should not be manually modified.
+
+## 2.6.4
+Mon, 09 Sep 2024 20:07:59 GMT
+
+_Version update only_
 
 ## 2.6.3
 Thu, 30 May 2024 19:52:05 GMT

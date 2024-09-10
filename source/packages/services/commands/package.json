@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-commands",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "description": "CDF Commands",
   "author": "Dean Hart",
   "scripts": {
@@ -11,13 +11,13 @@
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js"
   },
   "dependencies": {
-    "@awssolutions/cdf-errors": "workspace:^2.6.3",
-    "@awssolutions/cdf-logger": "workspace:^2.6.3",
-    "@awssolutions/cdf-lambda-invoke": "workspace:^2.6.3",
-    "@awssolutions/cdf-assetlibrary-client": "workspace:^2.6.3",
+    "@awssolutions/cdf-errors": "workspace:^2.6.4",
+    "@awssolutions/cdf-logger": "workspace:^2.6.4",
+    "@awssolutions/cdf-lambda-invoke": "workspace:^2.6.4",
+    "@awssolutions/cdf-assetlibrary-client": "workspace:^2.6.4",
     "@awssolutions/cdf-express-middleware": "workspace:~0.0.0",
-    "@awssolutions/cdf-config-inject": "workspace:^2.6.3",
-    "@awssolutions/cdf-provisioning-client": "workspace:^2.6.3",
+    "@awssolutions/cdf-config-inject": "workspace:^2.6.4",
+    "@awssolutions/cdf-provisioning-client": "workspace:^2.6.4",
     "ajv": "6.12.3",
     "aws-sdk": "2.1386.0",
     "body-parser": "1.20.1",

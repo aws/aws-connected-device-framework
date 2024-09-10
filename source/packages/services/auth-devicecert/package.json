@@ -10,8 +10,8 @@
     "test": "rushx lint && NODE_ENV= jest --silent --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/cdf-errors": "workspace:^2.6.3",
-    "@awssolutions/cdf-config-inject": "workspace:^2.6.3",
+    "@awssolutions/cdf-errors": "workspace:^2.6.4",
+    "@awssolutions/cdf-config-inject": "workspace:^2.6.4",
     "aws-sdk": "2.1386.0",
     "js-yaml": "4.1.0",
     "logform": "2.4.2",

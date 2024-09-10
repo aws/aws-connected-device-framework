@@ -1,7 +1,7 @@
 {
   "name": "@awssolutions/cdf-client-request-signer",
   "description": "Make api gateway calls with IAM credentials",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

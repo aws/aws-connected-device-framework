@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-provisioning",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "description": "CDF Provisioning",
   "author": "Dean Hart",
   "files": [
@@ -36,13 +36,13 @@
     }
   },
   "devDependencies": {
-    "@awssolutions/cdf-config-inject": "workspace:^2.6.3",
-    "@awssolutions/cdf-errors": "workspace:^2.6.3",
+    "@awssolutions/cdf-config-inject": "workspace:^2.6.4",
+    "@awssolutions/cdf-errors": "workspace:^2.6.4",
     "@awssolutions/cdf-express-middleware": "workspace:~0.0.0",
     "@awssolutions/cdf-lambda-zip": "workspace:~0.0.0",
-    "@awssolutions/cdf-logger": "workspace:^2.6.3",
+    "@awssolutions/cdf-logger": "workspace:^2.6.4",
     "@awssolutions/eslint-config-custom": "workspace:~0.0.0",
-    "@awssolutions/simple-cdf-logger": "workspace:^2.6.3",
+    "@awssolutions/simple-cdf-logger": "workspace:^2.6.4",
     "@awssolutions/cdf-attribution": "workspace:~0.0.0",
     "@types/body-parser": "1.19.2",
     "@types/cors": "2.8.10",
