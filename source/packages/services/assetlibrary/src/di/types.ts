@@ -25,6 +25,7 @@ export const TYPES = {
     DevicesAssembler: Symbol.for('DevicesAssembler'),
 
     CommonDao: Symbol.for('CommonDao'),
+    ConnectionDao: Symbol.for('ConnectionDao'),
 
     FullAssembler: Symbol.for('FullAssembler'),
 
