@@ -21,6 +21,27 @@ export interface EventModel {
     attributes: { [key: string]: string };
 }
 
+export interface KinesisRecord {
+    kinesis: {
+        kinesisSchemaVersion: string;
+        partitionKey: string;
+        sequenceNumber: string;
+        data: string;
+        approimateArrivalTimestamp: number;
+    };
+    eventSource: string;
+    eventVersion: string;
+    eventID: string;
+    eventName: string;
+    invokeIdentityArn: string;
+    awsRegion: string;
+    eventSourceARN: string;
+}
+
+export interface KinesisRecords {
+    Records: KinesisRecord[];
+}
+
 export interface StateHistoryModel {
     objectId: string;
     type: Category;
