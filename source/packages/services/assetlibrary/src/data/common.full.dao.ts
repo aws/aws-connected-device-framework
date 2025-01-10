@@ -11,11 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { logger } from '@awssolutions/simple-cdf-logger';
-import { process, structure } from 'gremlin';
+import { process } from 'gremlin';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
 import { TypeUtils } from '../utils/typeUtils';
-import { BaseDaoFull } from './base.full.dao';
+import { ConnectionDaoFull } from './connection.full.dao';
 import { FullAssembler } from './full.assembler';
 import { RelatedEntityDto, VertexDto, isRelatedEntityDto, isVertexDto } from './full.model';
 import { EntityTypeMap, ModelAttributeValue, SortKeys } from './model';
@@ -24,15 +24,12 @@ import { Node } from './node';
 const __ = process.statics;
 
 @injectable()
-export class CommonDaoFull extends BaseDaoFull {
+export class CommonDaoFull {
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
-        @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
-    ) {
-        super(neptuneUrl, graphSourceFactory);
-    }
+        @inject(TYPES.ConnectionDao) private connectionDao: ConnectionDaoFull
+    ) {}
 
     public async listRelated(
         entityDbId: string,
@@ -146,20 +143,21 @@ export class CommonDaoFull extends BaseDaoFull {
         relatedUnion.range(offsetAsInt, offsetAsInt + countAsInt);
 
         // build the main part of the query, unioning the related traversers with the main entity we want to return
-        const conn = await super.getConnection();
-        const traverser = conn.traversal
-            .V(entityDbId)
-            .as('main')
-            .union(
-                relatedUnion,
-                __.select('main').valueMap().with_(process.withOptions.tokens)
-            );
+        const results = await this.connectionDao.withTraversal(async (conn) => {
+            const traverser = conn.traversal
+                .V(entityDbId)
+                .as('main')
+                .union(
+                    relatedUnion,
+                    __.select('main').valueMap().with_(process.withOptions.tokens)
+                );
 
-        // execute and retrieve the results
-        logger.debug(
-            `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`
-        );
-        const results = await traverser.toList();
+            // execute and retrieve the results
+            logger.debug(
+                `common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`
+            );
+            return await traverser.toList();
+        });
         logger.debug(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
 
         if (results === undefined || results.length === 0) {
@@ -188,15 +186,16 @@ export class CommonDaoFull extends BaseDaoFull {
             return {};
         }
 
-        const conn = await super.getConnection();
-        const query = conn.traversal
-            .V(entityDbIds)
-            .project('id', 'labels')
-            .by(__.coalesce(__.values('deviceId'), __.values('groupPath')))
-            .by(__.label().fold());
+        const results = await this.connectionDao.withTraversal(async (conn) => {
+            const query = conn.traversal
+                .V(entityDbIds)
+                .project('id', 'labels')
+                .by(__.coalesce(__.values('deviceId'), __.values('groupPath')))
+                .by(__.label().fold());
 
-        logger.silly(`common.full.dao getLabels: query: ${JSON.stringify(query)}`);
-        const results = await query.toList();
+            logger.silly(`common.full.dao getLabels: query: ${JSON.stringify(query)}`);
+            return await query.toList();
+        });
         logger.silly(`common.full.dao getLabels: results: ${JSON.stringify(results)}`);
 
         if ((results?.length ?? 0) === 0) {

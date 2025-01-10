@@ -16,6 +16,7 @@ import { structure } from 'gremlin';
 import { createMockInstance } from 'jest-create-mock-instance';
 import { TypesDaoFull } from './types.full.dao';
 import { TypeRelationsModel } from './types.models';
+import { ConnectionDaoFull } from '../data/connection.full.dao';
 
 describe('TypesDao', () => {
     let mockedGraph: jest.Mocked<structure.Graph>;
@@ -23,7 +24,8 @@ describe('TypesDao', () => {
 
     beforeEach(() => {
         mockedGraph = createMockInstance(structure.Graph);
-        instance = new TypesDaoFull('neptuneUrl', () => mockedGraph);
+        const connectionDao = new ConnectionDaoFull('neptuneUrl', () => mockedGraph);
+        instance = new TypesDaoFull(connectionDao);
     });
 
     it('All incoming links removed', async () => {

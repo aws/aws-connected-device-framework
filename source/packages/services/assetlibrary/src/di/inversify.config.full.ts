@@ -16,6 +16,7 @@ import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import { AuthzDaoFull } from '../authz/authz.full.dao';
 import { AuthzServiceFull } from '../authz/authz.full.service';
 import { CommonDaoFull } from '../data/common.full.dao';
+import { ConnectionDaoFull } from '../data/connection.full.dao';
 import { FullAssembler } from '../data/full.assembler';
 import { DevicesDaoFull } from '../devices/devices.full.dao';
 import { DevicesServiceFull } from '../devices/devices.full.service';
@@ -80,6 +81,7 @@ export const FullContainerModule = new ContainerModule(
         bind<GroupsDaoFull>(TYPES.GroupsDao).to(GroupsDaoFull).inSingletonScope();
 
         bind<CommonDaoFull>(TYPES.CommonDao).to(CommonDaoFull).inSingletonScope();
+        bind<ConnectionDaoFull>(TYPES.ConnectionDao).to(ConnectionDaoFull).inSingletonScope();
 
         bind<FullAssembler>(TYPES.FullAssembler).to(FullAssembler).inSingletonScope();
 
