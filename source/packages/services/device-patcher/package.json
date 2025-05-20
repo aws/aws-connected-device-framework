@@ -83,7 +83,7 @@
     "js-yaml": "4.1.0",
     "logform": "2.4.2",
     "mime": "2.5.2",
-    "multer": "1.4.5-lts.1",
+    "multer": "2.0.0",
     "nyc": "15.1.0",
     "ow": "0.23.0",
     "readable-stream": "3.6.0",
