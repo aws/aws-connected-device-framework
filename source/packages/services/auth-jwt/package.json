@@ -17,7 +17,7 @@
   "dependencies": {
     "@awssolutions/cdf-errors": "workspace:^2.6.4",
     "@awssolutions/cdf-config-inject": "workspace:^2.6.4",
-    "axios": "1.6.0",
+    "axios": "1.16.0",
     "js-yaml": "4.1.0",
     "jsonwebtoken": "9.0.0",
     "jwk-to-pem": "2.0.4",
