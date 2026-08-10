@@ -199,6 +199,18 @@ export interface GroupsService {
         sort?: string,
         additionalHeaders?: RequestHeaders
     ): Promise<DeviceResourceList>;
+
+    /**
+     * Provide a list of groups based on the supplied group paths.
+     * @param groupPaths List of group paths to return
+     * @param includeGroups Flag to indicate whether the group details need to be fetched
+     * @param additionalHeaders additional headers to pass along with the request.
+     */
+    bulkGetGroups(
+        groupPaths: string[],  
+        includeGroups?:boolean,
+        additionalHeaders?:RequestHeaders,
+    ): Promise<GroupResourceList>;
 }
 
 @injectable()

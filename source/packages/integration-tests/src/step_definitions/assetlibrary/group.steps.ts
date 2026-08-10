@@ -205,6 +205,15 @@ When('I get group {string}', async function (groupPath: string) {
     }
 });
 
+When('I get bulk groups {string}', async function (paths: string) {
+    try {
+        const groupPaths: string[] = paths.split(",");
+        this['members'] = await groupService.bulkGetGroups(groupPaths, false, getAdditionalHeaders(this));
+    } catch (err) {
+        this[RESPONSE_STATUS] = err.status;
+    }
+});
+
 When(
     'I detatch group {string} from group {string} via {string}',
     async function (thisGroup: string, otherGroup: string, relation: string) {
@@ -362,4 +371,19 @@ Then('group contains device {string}', async function (deviceId: string) {
 
 Then('response should fail with {int}', async function (status: number) {
     expect(this[RESPONSE_STATUS]).eq(status);
+});
+
+Then('result contains groups {string}', async function (paths: string) {
+    let found = false;
+    const groupPaths: string[] = paths.split(",");
+    (<GroupResourceList>this['members']).results.forEach((group) => {
+        if (groupPaths.indexOf(group.groupPath) > -1) {
+            // found
+            found = true;
+        } else {
+            // not found
+            found = false;
+        }
+    });
+    expect(found).eq(true);
 });
