@@ -37,8 +37,11 @@ export class DeleteAction implements EventAction {
         };
 
         await this.eventsDao.create(toSave);
-        toSave.time = 'latest';
-        await this.eventsDao.update(toSave);
+        const toUpdate: StateHistoryModel = {
+            ...toSave,
+            time: 'latest',
+        };
+        await this.eventsDao.update(toUpdate);
 
         return event;
     }

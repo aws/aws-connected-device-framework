@@ -37,8 +37,11 @@ export class CreateAction implements EventAction {
 
         // save the updated job info (1 record for the version, 1 to represent the latest)
         await this.eventsDao.create(toSave);
-        toSave.time = 'latest';
-        await this.eventsDao.create(toSave);
+        const toSave2: StateHistoryModel = {
+            ...toSave,
+            time: 'latest',
+        };
+        await this.eventsDao.create(toSave2);
 
         logger.debug('eventaction.create execute: exit:true');
         return event;
