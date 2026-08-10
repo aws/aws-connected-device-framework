@@ -46,7 +46,22 @@ export class AssetLibraryHistoryInstaller implements RestModule {
     public async prompts(answers: Answers): Promise<Answers> {
         delete answers.assetLibraryHistory?.redeploy;
         let updatedAnswers: Answers = await inquirer.prompt(
-            [redeployIfAlreadyExistsPrompt(this.name, this.stackName)],
+            [
+                redeployIfAlreadyExistsPrompt(this.name, this.stackName),
+                {
+                    message: `Provisioned Capacity for the dynamo table?`,
+                    type: 'input',
+                    name: 'assetLibraryHistory.dynamoCapacity',
+                    default: answers.assetLibraryHistory?.dynamoCapacity ?? 5,
+                    askAnswered: true,
+                    validate(answer: number) {
+                        if (answer > 0) {
+                            return 'Capacity must be greater than 0';
+                        }
+                        return true;
+                    },
+                },
+            ],
             answers
         );
         if ((updatedAnswers.assetLibraryHistory?.redeploy ?? true) === false) {
@@ -75,6 +90,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
             `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
             `AuthType=${answers.apigw.type}`,
             `KmsKeyId=${answers.kms.id}`,
+            `DynamoProvisionedThroughputCapacity=${answers.assetLibraryHistory.dynamoCapacity}`,
         ];
 
         const addIfSpecified = (key: string, value: unknown) => {

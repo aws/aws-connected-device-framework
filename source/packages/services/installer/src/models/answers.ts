@@ -105,10 +105,10 @@ export interface ProvisionedConcurrencyModuleAttribues extends ServiceModuleAttr
 }
 
 export interface NeptuneScalingAttributes {
-  minNeptuneReadReplicaCapacity?: number;
-  maxNeptuneReadReplicaCapacity?: number;
-  enableNeptuneAutoScaling?: boolean;
-  neptuneTargetUtilization?: number;
+    minNeptuneReadReplicaCapacity?: number;
+    maxNeptuneReadReplicaCapacity?: number;
+    enableNeptuneAutoScaling?: boolean;
+    neptuneTargetUtilization?: number;
 }
 export interface RestServiceModuleAttribues extends ServiceModuleAttributes {
     enableCustomDomain?: boolean;
@@ -160,7 +160,9 @@ export interface AssetLibraryExport extends ServiceModuleAttributes {
     loadPath?: string;
 }
 
-export type AssetLibraryHistory = RestServiceModuleAttribues;
+export interface AssetLibraryHistory extends RestServiceModuleAttribues {
+    dynamoCapacity?: number;
+}
 
 export type AuthDeviceCert = ServiceModuleAttributes;
 
