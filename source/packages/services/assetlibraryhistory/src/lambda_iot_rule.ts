@@ -12,20 +12,24 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 
-import { container } from './di/inversify.config';
 import { logger } from '@awssolutions/simple-cdf-logger';
+import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
-import { EventModel } from './events/events.models';
+import { EventModel, KinesisRecords } from './events/events.models';
 import { EventsService } from './events/events.service';
 
 const eventsService: EventsService = container.get(TYPES.EventsService);
 
-exports.iot_rule_handler = async (event: EventModel, _context: unknown) => {
+exports.iot_rule_handler = async (event: KinesisRecords, _context: unknown) => {
     logger.debug(`events.service create: in: event: ${JSON.stringify(event)}`);
 
-    // TODO validation
-
-    await eventsService.create(event);
-
-    logger.debug('events.service create: exit:');
+    for (const record of event.Records) {
+        // Kinesis record data is base64 encoded
+        const payload: EventModel = JSON.parse(
+            Buffer.from(record.kinesis.data, 'base64').toString('ascii')
+        );
+        // TODO validation
+        await eventsService.create(payload);
+        logger.debug('events.service create: exit:');
+    }
 };
